@@ -3,8 +3,6 @@ messenger:
     pageAccessToken: EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD
     secret: EAAYIgvzPhgwBAJ2Lp9TU6QtvqrMG2X0P97ImJzBmOoLtSR4Y87PqtxmJcht66n1tNSKUWfH6OlZAxRR9udp1Vl8UVGNrWuFi0ErZAiklLIwACNZCCTmB0JuSZA5EhZAg8F1hbWKswbo3PbENnlIumZAlPfaRtImUuWfPDZAMFCLyQZDZD
     webhookVerificationToken: secreti
-apiAi:
-  clientAccessToken: 45992f59066a4589915866adb751632c
 ---
 spring:
     profiles: development

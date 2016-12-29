@@ -4,6 +4,7 @@ import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.exceptions.MessengerVerificationException;
 import com.github.messenger4j.receive.MessengerReceiveClient;
 import com.timeout.chatbot.config.ApplicationConfig;
+import com.timeout.chatbot.platforms.messenger.receiver.handlers.TextMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +33,8 @@ public class MessengerWebhook {
      */
     @Autowired
     public MessengerWebhook(
-        ApplicationConfig applicationConfig
+        ApplicationConfig applicationConfig,
+        TextMessageHandler textMessageHandler
     ) {
         this.applicationConfig = applicationConfig;
 
@@ -46,7 +48,9 @@ public class MessengerWebhook {
             MessengerPlatform.newReceiveClientBuilder(
                 applicationConfig.getMessenger().getApp().getSecret(),
                 applicationConfig.getMessenger().getApp().getWebhookVerificationToken()
-            ).build();
+            )
+            .onTextMessageEvent(textMessageHandler)
+            .build();
     }
 
     @RequestMapping(method = RequestMethod.GET)
