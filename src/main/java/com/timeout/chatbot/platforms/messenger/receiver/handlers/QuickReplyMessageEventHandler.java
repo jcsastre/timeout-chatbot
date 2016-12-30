@@ -4,7 +4,9 @@ import com.github.messenger4j.receive.events.QuickReplyMessageEvent;
 import com.timeout.chatbot.domain.session.Session;
 import com.timeout.chatbot.domain.session.SessionPool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class QuickReplyMessageEventHandler implements com.github.messenger4j.receive.handlers.QuickReplyMessageEventHandler {
     @Autowired
     private SessionPool sessionPool;

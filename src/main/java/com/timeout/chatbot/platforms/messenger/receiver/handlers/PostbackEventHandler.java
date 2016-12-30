@@ -34,7 +34,9 @@ public class PostbackEventHandler implements com.github.messenger4j.receive.hand
         final PostbackPayloadType postbackPayloadType =
             PostbackPayloadType.valueOf(jsonPayload.get("type").getAsString());
 
-        if (postbackPayloadType == PostbackPayloadType.FIND_CAMPINGS) {
+        if (postbackPayloadType == PostbackPayloadType.FIND_RESTAURANTS) {
+            session.applyUtterance("restaurants");
+        } else if (postbackPayloadType == PostbackPayloadType.FIND_CAMPINGS) {
             session.applyUtterance("campings");
         } else if (postbackPayloadType == PostbackPayloadType.FIND_OFFERS) {
             session.applyUtterance("offers");

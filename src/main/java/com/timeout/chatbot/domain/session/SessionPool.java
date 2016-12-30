@@ -7,12 +7,16 @@ import com.timeout.chatbot.services.ApiAiService;
 import com.timeout.chatbot.services.GraffittiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class SessionPool {
+    @Autowired
+    private RestTemplate restTemplate;
+
     @Autowired
     private GraffittiService campingpongAPIService;
 
@@ -37,6 +41,7 @@ public class SessionPool {
         }
 
         final Session session = new Session(
+            restTemplate,
             campingpongAPIService,
             apiAiService,
             messengerSendClient,

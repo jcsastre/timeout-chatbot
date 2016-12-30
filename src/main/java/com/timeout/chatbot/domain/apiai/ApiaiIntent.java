@@ -3,6 +3,7 @@ package com.timeout.chatbot.domain.apiai;
 public enum ApiaiIntent {
     UNKOWN(null),
     GREETINGS("greetings"),
+    FIND_RESTAURANTS("restaurants"),
     FIND_CAMPINGS("findCampings"),
     FIND_OFFERS("findOffers"),
     SET_LOCATION("setLocation");
@@ -25,6 +26,8 @@ public enum ApiaiIntent {
 
         if (intent.equals(GREETINGS.toString())) {
             return GREETINGS;
+        } else if (intent.equals(FIND_RESTAURANTS.toString())) {
+            return FIND_RESTAURANTS;
         } else if (intent.equals(FIND_CAMPINGS.toString())) {
             return FIND_CAMPINGS;
         } else if (intent.equals(FIND_OFFERS.toString())) {

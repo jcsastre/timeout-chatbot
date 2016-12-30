@@ -4,6 +4,8 @@ import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.exceptions.MessengerVerificationException;
 import com.github.messenger4j.receive.MessengerReceiveClient;
 import com.timeout.chatbot.config.ApplicationConfig;
+import com.timeout.chatbot.platforms.messenger.receiver.handlers.PostbackEventHandler;
+import com.timeout.chatbot.platforms.messenger.receiver.handlers.QuickReplyMessageEventHandler;
 import com.timeout.chatbot.platforms.messenger.receiver.handlers.TextMessageHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,9 @@ public class MessengerWebhook {
     @Autowired
     public MessengerWebhook(
         ApplicationConfig applicationConfig,
-        TextMessageHandler textMessageHandler
+        TextMessageHandler textMessageHandler,
+        QuickReplyMessageEventHandler quickReplyMessageEventHandler,
+        PostbackEventHandler postbackEventHandler
     ) {
         this.applicationConfig = applicationConfig;
 
@@ -50,6 +54,8 @@ public class MessengerWebhook {
                 applicationConfig.getMessenger().getApp().getWebhookVerificationToken()
             )
             .onTextMessageEvent(textMessageHandler)
+            .onQuickReplyMessageEvent(quickReplyMessageEventHandler)
+            .onPostbackEvent(postbackEventHandler)
             .build();
     }
 
@@ -73,9 +79,20 @@ public class MessengerWebhook {
         }
     }
 
-//    @RequestMapping("/")
-//    @ResponseBody
-//    String home() {
-//        return applicationConfig.getMessenger().getApp().getPageAccessToken();
-//    }
+    @RequestMapping(method = RequestMethod.POST)
+    public ResponseEntity<Void> handleCallback(
+        @RequestBody final String payload,
+        @RequestHeader(SIGNATURE_HEADER_NAME) final String signature
+    ) {
+        logger.info("Received Messenger Platform callback - payload: {} | signature: {}", payload, signature);
+
+        try {
+            this.receiveClient.processCallbackPayload(payload, signature);
+            logger.debug("Processed callback payload successfully");
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (MessengerVerificationException e) {
+            logger.warn("Processing of callback payload failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
 }

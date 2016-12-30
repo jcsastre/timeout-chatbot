@@ -9,14 +9,19 @@ import com.google.gson.JsonElement;
 import com.timeout.chatbot.domain.apiai.ApiaiIntent;
 import com.timeout.chatbot.domain.messenger.Page;
 import com.timeout.chatbot.domain.messenger.Recipient;
+import com.timeout.chatbot.graffiti.endpoints.GraffittiEndpoints;
+import com.timeout.chatbot.graffitti.domain.response.Response;
+import com.timeout.chatbot.platforms.messenger.send.blocks.RestaurantsPage;
 import com.timeout.chatbot.platforms.messenger.send.blocks.WelcomeMessage;
 import com.timeout.chatbot.services.ApiAiService;
 import com.timeout.chatbot.services.GraffittiService;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 import java.util.UUID;
 
 public class Session {
+    private final RestTemplate restTemplate;
     private final GraffittiService graffittiService;
     private final ApiAiService apiAiService;
     private final MessengerSendClient messengerSendClient;
@@ -30,12 +35,14 @@ public class Session {
     private final SessionContextBag sessionContextBag;
 
     public Session(
+        RestTemplate restTemplate,
         GraffittiService graffittiService,
         ApiAiService apiAiService,
         MessengerSendClient messengerSendClient,
         Page page,
         Recipient recipient
     ) {
+        this.restTemplate = restTemplate;
         this.graffittiService = graffittiService;
         this.apiAiService = apiAiService;
         this.messengerSendClient = messengerSendClient;
@@ -102,8 +109,8 @@ public class Session {
             case GREETINGS:
                 onIntentGreetings();
                 break;
-            case FIND_CAMPINGS:
-//                fsm.apply(Intent.FIND_CAMPINGS);
+            case FIND_RESTAURANTS:
+                onIntentRestaurants();
                 break;
             case FIND_OFFERS:
 //                fsm.apply(Intent.FIND_OFFERS);
@@ -119,14 +126,33 @@ public class Session {
 
     private void onIntentGreetings() {
         if (sessionContextState == SessionContextState.UNDEFINED) {
-            this.sessionContextState = SessionContextState.GREETINGS;
+            sessionContextState = SessionContextState.GREETINGS;
             new WelcomeMessage(
-                this.messengerSendClient,
-                this.recipient
+                messengerSendClient,
+                recipient
             ).send();
         } else {
             // TODO:
+            try {
+                this.messengerSendClient.sendTextMessage(
+                    recipient.getUid(),
+                    "¡Hola!"
+                );
+            } catch (MessengerApiException | MessengerIOException e) {
+                e.printStackTrace();
+            }
         }
+    }
+
+    private void onIntentRestaurants() {
+        this.sessionContextState = SessionContextState.EXPLORING_RESTAURANTS;
+        final Response response = restTemplate.getForObject(GraffittiEndpoints.RESTAURANTS.toString(), Response.class);
+        new RestaurantsPage(
+            messengerSendClient,
+            response.getItems(),
+            recipient.getUid()
+        ).send();
+        //TODO: send option to paginate
     }
 
     private void onIntentUnknown() {

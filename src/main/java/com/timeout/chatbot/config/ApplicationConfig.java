@@ -4,15 +4,37 @@ import ai.api.AIConfiguration;
 import ai.api.AIDataService;
 import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.send.MessengerSendClient;
+import com.timeout.chatbot.http.HeaderRequestInterceptor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 @EnableConfigurationProperties
 @ConfigurationProperties
 public class ApplicationConfig {
+
+    @Bean
+    public RestTemplate restTemplate() {
+        List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
+        interceptors.add(
+            new HeaderRequestInterceptor(
+                "Authorization",
+                "Bearer 8EOpBX2cpcZkCf3l7bBh476rzlpRtcKPzZVv4t1TGNMu24OIs1lhDMhUIVAil-9q"
+            )
+        );
+
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setInterceptors(interceptors);
+
+        return restTemplate;
+    }
 
     @Bean
     public MessengerSendClient messengerSendClient() {

@@ -22,11 +22,13 @@ public class WelcomeMessage {
         try {
             this.messengerSendClient.sendTextMessage(
                 this.recipient.getUid(),
-                "Hi!\n" +
+                "¡Hola!\n" +
                     "\n" +
-                    "I'm Julio :), I work as chat bot in Timeout.\n" +
+                    "Me llamo Julio, y soy el chat bot de Timeout Barcelona.\n" +
                     "\n" +
-                    "What are you looking for?",
+                    "Me conozco todos los rincones de esta bonita ciudad, sólo tienes que preguntarme.\n" +
+                    "\n" +
+                    "¿Qué andas buscando?",
                 buildQuickReplies()
             );
         } catch (MessengerApiException | MessengerIOException e) {
@@ -37,9 +39,12 @@ public class WelcomeMessage {
     private List<QuickReply> buildQuickReplies() {
         final QuickReply.ListBuilder listBuilder =
             QuickReply.newListBuilder()
-                .addTextQuickReply("Tickets", "PAYLOAD").toList()
-                .addTextQuickReply("Tickets", "PAYLOAD").toList()
-                .addTextQuickReply("Tickets", "PAYLOAD").toList();
+                .addTextQuickReply("Qué hacer", "PAYLOAD").toList()
+                .addTextQuickReply("Restaurantes", "PAYLOAD").toList()
+                .addTextQuickReply("Bares y pubs", "PAYLOAD").toList()
+                .addTextQuickReply("Arte", "PAYLOAD").toList()
+                .addTextQuickReply("Música", "PAYLOAD").toList()
+                .addTextQuickReply("Locales de noche", "PAYLOAD").toList();
 
         return listBuilder.build();
     }
