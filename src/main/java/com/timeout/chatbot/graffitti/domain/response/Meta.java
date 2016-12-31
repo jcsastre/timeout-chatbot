@@ -1,6 +1,7 @@
 package com.timeout.chatbot.graffitti.domain.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +10,10 @@ public class Meta {
     private static final Logger log = LoggerFactory.getLogger(Meta.class);
 
     private String url;
-    private Integer total_items;
+
+    @JsonProperty("total_items")
+    private Integer totalItems;
+
     private Page page;
 
     public String getUrl() {
@@ -20,12 +24,12 @@ public class Meta {
         this.url = url;
     }
 
-    public Integer getTotal_items() {
-        return total_items;
+    public Integer getTotalItems() {
+        return totalItems;
     }
 
-    public void setTotal_items(Integer total_items) {
-        this.total_items = total_items;
+    public void setTotalItems(Integer totalItems) {
+        this.totalItems = totalItems;
     }
 
     public Page getPage() {
@@ -41,7 +45,7 @@ public class Meta {
         return
             "{" +
                 "url= "+ url + ", " +
-                "total_items=" + total_items + ", " +
+                "total_items=" + totalItems + ", " +
                 page.toString() +
             '}';
     }

@@ -1,6 +1,7 @@
 package com.timeout.chatbot.graffitti.domain.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,11 +9,27 @@ import org.slf4j.LoggerFactory;
 public class Item {
     private static final Logger log = LoggerFactory.getLogger(Item.class);
 
+    private Categorisation categorisation;
+
     private String id;
+
     private String name;
+
     private String summary;
+
     private String url;
+
     private String image_url;
+
+    private String location;
+
+    public Categorisation getCategorisation() {
+        return categorisation;
+    }
+
+    public void setCategorisation(Categorisation categorisation) {
+        this.categorisation = categorisation;
+    }
 
     public String getId() {
         return id;
@@ -52,6 +69,14 @@ public class Item {
 
     public void setImage_url(String image_url) {
         this.image_url = image_url;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     @Override

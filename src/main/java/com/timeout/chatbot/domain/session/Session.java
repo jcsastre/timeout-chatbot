@@ -127,26 +127,20 @@ public class Session {
     private void onIntentGreetings() {
         if (sessionContextState == SessionContextState.UNDEFINED) {
             sessionContextState = SessionContextState.GREETINGS;
-            new WelcomeMessage(
-                messengerSendClient,
-                recipient
-            ).send();
+            WelcomeMessage.send(messengerSendClient,recipient);
         } else {
-            // TODO:
-            try {
-                this.messengerSendClient.sendTextMessage(
-                    recipient.getUid(),
-                    "¡Hola!"
-                );
-            } catch (MessengerApiException | MessengerIOException e) {
-                e.printStackTrace();
-            }
+            sendTextMessage("¡Hola!");
         }
     }
 
     private void onIntentRestaurants() {
         this.sessionContextState = SessionContextState.EXPLORING_RESTAURANTS;
+
+        // Fetch api
         final Response response = restTemplate.getForObject(GraffittiEndpoints.RESTAURANTS.toString(), Response.class);
+
+        final Integer totalItems = response.getMeta().getTotalItems();
+
         new RestaurantsPage(
             messengerSendClient,
             response.getItems(),
@@ -156,10 +150,14 @@ public class Session {
     }
 
     private void onIntentUnknown() {
+        sendTextMessage("Lo siento, no te entiendo");
+    }
+
+    private void sendTextMessage(String msg) {
         try {
             this.messengerSendClient.sendTextMessage(
                 this.recipient.getUid(),
-                "Lo siento, no te entiendo"
+                msg
             );
         } catch (MessengerApiException | MessengerIOException e) {
             e.printStackTrace();

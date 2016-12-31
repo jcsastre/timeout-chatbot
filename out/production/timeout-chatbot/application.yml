@@ -4,7 +4,7 @@ messenger:
     secret: 0c582f67650e79c351a05aac5dd91d6e
     webhookVerificationToken: secreti
 apiAi:
-  clientAccessToken: 45992f59066a4589915866adb751632c
+  clientAccessToken: 440f2d056d94418ea4f903db566b618a
 ---
 spring:
     profiles: development

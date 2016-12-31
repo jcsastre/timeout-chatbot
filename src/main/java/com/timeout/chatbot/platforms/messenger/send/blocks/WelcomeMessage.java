@@ -5,30 +5,30 @@ import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.domain.messenger.Recipient;
+import org.json.JSONObject;
 
 import java.util.List;
 
-public class WelcomeMessage {
+public abstract class WelcomeMessage {
 
-    private MessengerSendClient messengerSendClient;
-    private Recipient recipient;
+    public static void send(MessengerSendClient messengerSendClient, Recipient recipient) {
+        StringBuffer sbMessage = new StringBuffer();
+        if (recipient.getUserProfile().getFirstName() != null) {
+            sbMessage.append("Hi " + recipient.getUserProfile().getFirstName() + "!");
+        } else {
+            sbMessage.append("Hi!");
+        }
+        sbMessage.append("\n\n");
+        sbMessage.append("I'm Julio, I work as chatbot on Timeout London.");
+        sbMessage.append("\n\n");
+        sbMessage.append("I know every corner in London, just ask me.");
+        sbMessage.append("\n\n");
+        sbMessage.append("What are you looking for?");
 
-    public WelcomeMessage(MessengerSendClient messengerSendClient, Recipient recipient) {
-        this.messengerSendClient = messengerSendClient;
-        this.recipient = recipient;
-    }
-
-    public void send() {
         try {
-            this.messengerSendClient.sendTextMessage(
-                this.recipient.getUid(),
-                "¡Hola!\n" +
-                    "\n" +
-                    "Me llamo Julio, y soy el chat bot de Timeout Barcelona.\n" +
-                    "\n" +
-                    "Me conozco todos los rincones de esta bonita ciudad, sólo tienes que preguntarme.\n" +
-                    "\n" +
-                    "¿Qué andas buscando?",
+            messengerSendClient.sendTextMessage(
+                recipient.getUid(),
+                sbMessage.toString(),
                 buildQuickReplies()
             );
         } catch (MessengerApiException | MessengerIOException e) {
@@ -36,15 +36,24 @@ public class WelcomeMessage {
         }
     }
 
-    private List<QuickReply> buildQuickReplies() {
+    private static List<QuickReply> buildQuickReplies() {
+
         final QuickReply.ListBuilder listBuilder =
             QuickReply.newListBuilder()
-                .addTextQuickReply("Qué hacer", "PAYLOAD").toList()
-                .addTextQuickReply("Restaurantes", "PAYLOAD").toList()
-                .addTextQuickReply("Bares y pubs", "PAYLOAD").toList()
-                .addTextQuickReply("Arte", "PAYLOAD").toList()
-                .addTextQuickReply("Música", "PAYLOAD").toList()
-                .addTextQuickReply("Locales de noche", "PAYLOAD").toList();
+                .addTextQuickReply(
+                    "Things to do",
+                    new JSONObject().put("type", "things-to-to").toString()
+                ).toList()
+                .addTextQuickReply("" +
+                    "Restaurants",
+                    new JSONObject().put("type", "restaurants").toString()
+                ).toList()
+                .addTextQuickReply("Bars and pubs", "PAYLOAD").toList()
+                .addTextQuickReply("Art", "PAYLOAD").toList()
+                .addTextQuickReply("Theatre", "PAYLOAD").toList()
+                .addTextQuickReply("Music", "PAYLOAD").toList()
+                .addTextQuickReply("Nightlife", "PAYLOAD").toList()
+                .addTextQuickReply("Film", "PAYLOAD").toList();
 
         return listBuilder.build();
     }

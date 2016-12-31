@@ -1,8 +1,10 @@
 package com.timeout.chatbot.domain.session;
 
 import com.github.messenger4j.send.MessengerSendClient;
+import com.timeout.chatbot.config.ApplicationConfig;
 import com.timeout.chatbot.domain.messenger.Page;
 import com.timeout.chatbot.domain.messenger.Recipient;
+import com.timeout.chatbot.platforms.messenger.domain.UserProfile;
 import com.timeout.chatbot.services.ApiAiService;
 import com.timeout.chatbot.services.GraffittiService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,19 +16,32 @@ import java.util.List;
 
 @Component
 public class SessionPool {
-    @Autowired
-    private RestTemplate restTemplate;
+    private final ApplicationConfig applicationConfig;
 
-    @Autowired
-    private GraffittiService campingpongAPIService;
+    private final RestTemplate restTemplate;
 
-    @Autowired
-    private ApiAiService apiAiService;
+    private final GraffittiService campingpongAPIService;
 
-    @Autowired
-    private MessengerSendClient messengerSendClient;
+    private final ApiAiService apiAiService;
+
+    private final MessengerSendClient messengerSendClient;
 
     private final List<Session> sessions = new ArrayList<>();
+
+    @Autowired
+    public SessionPool(
+        ApplicationConfig applicationConfig,
+        RestTemplate restTemplate,
+        GraffittiService campingpongAPIService,
+        ApiAiService apiAiService,
+        MessengerSendClient messengerSendClient
+    ) {
+        this.applicationConfig = applicationConfig;
+        this.restTemplate = restTemplate;
+        this.campingpongAPIService = campingpongAPIService;
+        this.apiAiService = apiAiService;
+        this.messengerSendClient = messengerSendClient;
+    }
 
     public Session getSession(String pageUid, String recipientUid) {
         synchronized (sessions) {
@@ -40,17 +55,33 @@ public class SessionPool {
             }
         }
 
+        final Recipient recipient = buildRecipient(recipientUid);
+
         final Session session = new Session(
             restTemplate,
             campingpongAPIService,
             apiAiService,
             messengerSendClient,
             new Page(pageUid),
-            new Recipient(recipientUid)
+            recipient
         );
 
         sessions.add(session);
 
         return session;
+    }
+
+    private Recipient buildRecipient(String recipientUid) {
+        final Recipient recipient = new Recipient(recipientUid);
+
+        final String url =
+            "https://graph.facebook.com/v2.6/" + recipientUid +
+            "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" +
+            applicationConfig.getMessenger().getApp().getPageAccessToken();
+
+        final UserProfile userProfile = restTemplate.getForObject(url, UserProfile.class);
+        recipient.setUserProfile(userProfile);
+
+        return recipient;
     }
 }
