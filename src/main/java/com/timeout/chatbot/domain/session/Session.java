@@ -12,7 +12,7 @@ import com.timeout.chatbot.domain.messenger.Recipient;
 import com.timeout.chatbot.graffiti.endpoints.GraffittiEndpoints;
 import com.timeout.chatbot.graffitti.domain.response.Response;
 import com.timeout.chatbot.platforms.messenger.send.blocks.RestaurantsPage;
-import com.timeout.chatbot.platforms.messenger.send.blocks.WelcomeMessage;
+import com.timeout.chatbot.platforms.messenger.send.blocks.WelcomeMessageSendBlock;
 import com.timeout.chatbot.services.ApiAiService;
 import com.timeout.chatbot.services.GraffittiService;
 import org.springframework.web.client.RestTemplate;
@@ -34,18 +34,22 @@ public class Session {
     private SessionContextState sessionContextState;
     private final SessionContextBag sessionContextBag;
 
+    private final WelcomeMessageSendBlock welcomeMessageSendBlock;
+
     public Session(
         RestTemplate restTemplate,
         GraffittiService graffittiService,
         ApiAiService apiAiService,
         MessengerSendClient messengerSendClient,
         Page page,
-        Recipient recipient
+        Recipient recipient,
+        WelcomeMessageSendBlock welcomeMessageSendBlock
     ) {
         this.restTemplate = restTemplate;
         this.graffittiService = graffittiService;
         this.apiAiService = apiAiService;
         this.messengerSendClient = messengerSendClient;
+        this.welcomeMessageSendBlock = welcomeMessageSendBlock;
 
         this.uuid = UUID.randomUUID();
 
@@ -127,7 +131,7 @@ public class Session {
     private void onIntentGreetings() {
         if (sessionContextState == SessionContextState.UNDEFINED) {
             sessionContextState = SessionContextState.GREETINGS;
-            WelcomeMessage.send(messengerSendClient,recipient);
+            welcomeMessageSendBlock.send(recipient);
         } else {
             sendTextMessage("¡Hola!");
         }
@@ -153,7 +157,7 @@ public class Session {
         sendTextMessage("Lo siento, no te entiendo");
     }
 
-    private void sendTextMessage(String msg) {
+    public void sendTextMessage(String msg) {
         try {
             this.messengerSendClient.sendTextMessage(
                 this.recipient.getUid(),

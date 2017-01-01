@@ -5,6 +5,8 @@ import ai.api.AIDataService;
 import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.http.HeaderRequestInterceptor;
+import com.timeout.chatbot.platforms.messenger.send.blocks.WelcomeMessageSendBlock;
+import com.timeout.chatbot.services.GraffittiService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +21,20 @@ import java.util.List;
 @EnableConfigurationProperties
 @ConfigurationProperties
 public class ApplicationConfig {
+
+    @Bean
+    public WelcomeMessageSendBlock welcomeMessageSendBlock() {
+        return
+            new WelcomeMessageSendBlock(
+                graffittiService(),
+                messengerSendClient()
+            );
+    }
+
+    @Bean
+    public GraffittiService graffittiService() {
+        return new GraffittiService();
+    }
 
     @Bean
     public RestTemplate restTemplate() {

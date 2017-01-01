@@ -5,6 +5,7 @@ import com.timeout.chatbot.config.ApplicationConfig;
 import com.timeout.chatbot.domain.messenger.Page;
 import com.timeout.chatbot.domain.messenger.Recipient;
 import com.timeout.chatbot.platforms.messenger.domain.UserProfile;
+import com.timeout.chatbot.platforms.messenger.send.blocks.WelcomeMessageSendBlock;
 import com.timeout.chatbot.services.ApiAiService;
 import com.timeout.chatbot.services.GraffittiService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,19 +29,23 @@ public class SessionPool {
 
     private final List<Session> sessions = new ArrayList<>();
 
+    private final WelcomeMessageSendBlock welcomeMessageSendBlock;
+
     @Autowired
     public SessionPool(
         ApplicationConfig applicationConfig,
         RestTemplate restTemplate,
         GraffittiService campingpongAPIService,
         ApiAiService apiAiService,
-        MessengerSendClient messengerSendClient
+        MessengerSendClient messengerSendClient,
+        WelcomeMessageSendBlock welcomeMessageSendBlock
     ) {
         this.applicationConfig = applicationConfig;
         this.restTemplate = restTemplate;
         this.campingpongAPIService = campingpongAPIService;
         this.apiAiService = apiAiService;
         this.messengerSendClient = messengerSendClient;
+        this.welcomeMessageSendBlock = welcomeMessageSendBlock;
     }
 
     public Session getSession(String pageUid, String recipientUid) {
@@ -63,7 +68,8 @@ public class SessionPool {
             apiAiService,
             messengerSendClient,
             new Page(pageUid),
-            recipient
+            recipient,
+            welcomeMessageSendBlock
         );
 
         sessions.add(session);
