@@ -5,21 +5,19 @@ import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
-import com.timeout.chatbot.graffitti.domain.response.Item;
-import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
-import com.timeout.chatbot.graffitti.domain.response.categorisation.CategorisationSecondary;
+import com.timeout.chatbot.graffitti.domain.response.PageItem;
 import org.json.JSONObject;
 
 import java.util.List;
 
 public class RestaurantsPage {
     private final MessengerSendClient messengerSendClient;
-    private final List<Item> restaurants;
+    private final List<PageItem> restaurants;
     private final String recipientId;
 
     public RestaurantsPage(
         MessengerSendClient messengerSendClient,
-        List<Item> restaurants,
+        List<PageItem> restaurants,
         String recipientId
     ) {
         this.messengerSendClient = messengerSendClient;
@@ -30,30 +28,27 @@ public class RestaurantsPage {
     public void send() {
         final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
         final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
-        for (Item restaurant : restaurants) {
+        for (PageItem restaurant : restaurants) {
             listBuilder.addElement(restaurant.getName())
                 .imageUrl(restaurant.getImage_url())
-                .subtitle(buildShortDescription(restaurant))
+                .subtitle(buildSubtitle(restaurant))
                 .buttons(
                     Button.newListBuilder()
                         .addPostbackButton(
-                            "Más información",
+                            "Get a summary",
                             new JSONObject()
-                                .put("type", "restaurant-more-info")
+                                .put("type", "restaurant_get_a_summary")
                                 .put("restaurant_id", restaurant.getId())
                                 .toString()
                         ).toList()
-                        .addPostbackButton(
-                            "Ver fotos",
-                            new JSONObject()
-                                .put("type", "restaurant-more-info")
-                                .put("restaurant_id", restaurant.getId())
-                                .toString()
+                        .addUrlButton(
+                            "See at Timeout",
+                            restaurant.getToWebsite()
                         ).toList()
                         .addPostbackButton(
-                            "Reservar",
+                            "Book",
                             new JSONObject()
-                                .put("type", "restaurant-more-info")
+                                .put("type", "restaurant_more_info")
                                 .put("restaurant_id", restaurant.getId())
                                 .toString()
                         ).toList()
@@ -70,25 +65,27 @@ public class RestaurantsPage {
         }
     }
 
-    private String buildShortDescription(Item restaurant) {
+    private String buildSubtitle(PageItem restaurant) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Restaurants");
+        sb.append(restaurant.getSummary());
 
-        final Categorisation categorisation = restaurant.getCategorisation();
-        if (categorisation != null) {
-            final CategorisationSecondary categorisationSecondary = categorisation.getCategorisationSecondary();
-            if (categorisationSecondary != null) {
-                final String name = categorisationSecondary.getName();
-                if (name != null) {
-                    sb.append(", " + name);
-                }
-            }
-        }
-
-        if (restaurant.getLocation() != null) {
-            sb.append(". " + restaurant.getLocation());
-        }
+//        sb.append("Restaurants");
+//
+//        final Categorisation categorisation = restaurant.getCategorisation();
+//        if (categorisation != null) {
+//            final CategorisationSecondary categorisationSecondary = categorisation.getCategorisationSecondary();
+//            if (categorisationSecondary != null) {
+//                final String name = categorisationSecondary.getName();
+//                if (name != null) {
+//                    sb.append(", " + name);
+//                }
+//            }
+//        }
+//
+//        if (restaurant.getLocation() != null) {
+//            sb.append(". " + restaurant.getLocation());
+//        }
 
         if (sb.length() > 80) {
             sb = sb.delete(80, sb.length());

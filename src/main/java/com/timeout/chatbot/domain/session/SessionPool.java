@@ -3,7 +3,7 @@ package com.timeout.chatbot.domain.session;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.config.ApplicationConfig;
 import com.timeout.chatbot.domain.messenger.Page;
-import com.timeout.chatbot.domain.messenger.Recipient;
+import com.timeout.chatbot.domain.messenger.User;
 import com.timeout.chatbot.platforms.messenger.domain.UserProfile;
 import com.timeout.chatbot.platforms.messenger.send.blocks.WelcomeMessageSendBlock;
 import com.timeout.chatbot.services.ApiAiService;
@@ -53,14 +53,14 @@ public class SessionPool {
             for (Session session : sessions) {
                 if (
                     session.getPage().getUid().equals(pageUid) &&
-                        session.getRecipient().getUid().equals(recipientUid)
+                        session.getUser().getUid().equals(recipientUid)
                     ) {
                     return session;
                 }
             }
         }
 
-        final Recipient recipient = buildRecipient(recipientUid);
+        final User user = buildRecipient(recipientUid);
 
         final Session session = new Session(
             restTemplate,
@@ -68,7 +68,7 @@ public class SessionPool {
             apiAiService,
             messengerSendClient,
             new Page(pageUid),
-            recipient,
+            user,
             welcomeMessageSendBlock
         );
 
@@ -77,8 +77,8 @@ public class SessionPool {
         return session;
     }
 
-    private Recipient buildRecipient(String recipientUid) {
-        final Recipient recipient = new Recipient(recipientUid);
+    private User buildRecipient(String recipientUid) {
+        final User user = new User(recipientUid);
 
         final String url =
             "https://graph.facebook.com/v2.6/" + recipientUid +
@@ -86,8 +86,8 @@ public class SessionPool {
             applicationConfig.getMessenger().getApp().getPageAccessToken();
 
         final UserProfile userProfile = restTemplate.getForObject(url, UserProfile.class);
-        recipient.setUserProfile(userProfile);
+        user.setUserProfile(userProfile);
 
-        return recipient;
+        return user;
     }
 }

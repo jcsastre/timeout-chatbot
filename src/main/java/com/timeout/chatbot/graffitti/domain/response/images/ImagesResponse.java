@@ -1,24 +1,19 @@
-package com.timeout.chatbot.graffitti.domain.response;
+package com.timeout.chatbot.graffitti.domain.response.images;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.timeout.chatbot.graffitti.domain.response.Meta;
 import com.timeout.chatbot.http.HeaderRequestInterceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Response {
-    private static final Logger log = LoggerFactory.getLogger(Response.class);
-
+public class ImagesResponse {
     private Meta meta;
 
     @JsonProperty("body")
-    private List<PageItem> pageItems;
+    private List<Image> images;
 
     public Meta getMeta() {
         return meta;
@@ -28,20 +23,12 @@ public class Response {
         this.meta = meta;
     }
 
-    public List<PageItem> getPageItems() {
-        return pageItems;
+    public List<Image> getImages() {
+        return images;
     }
 
-    public void setPageItems(List<PageItem> pageItems) {
-        this.pageItems = pageItems;
-    }
-
-    @Override
-    public String toString() {
-        return
-            "{" +
-                "meta: " + meta.toString() +
-            "}";
+    public void setImages(List<Image> images) {
+        this.images = images;
     }
 
     public static void main(String[] args) {
@@ -56,13 +43,15 @@ public class Response {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setInterceptors(interceptors);
 
-        Response response =
+        ImagesResponse imagesResponse =
             restTemplate.getForObject(
-                "http://graffiti.timeout.com/v1/sites/es-barcelona/search?what=node-7083",
-                Response.class
+                "http://graffiti.timeout.com/v1/sites/uk-london/venues/244579/images",
+                ImagesResponse.class
             );
 
-        System.out.println("response: " + response);
+        for (Image image : imagesResponse.getImages()) {
+            System.out.println(image.getUrl());
+        }
 
 //        final PageItem[] pageItems = response.getPageItems();
 //        for (PageItem item : pageItems) {

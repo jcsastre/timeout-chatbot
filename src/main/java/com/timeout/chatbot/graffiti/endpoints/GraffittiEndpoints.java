@@ -1,7 +1,8 @@
 package com.timeout.chatbot.graffiti.endpoints;
 
 public enum GraffittiEndpoints {
-    RESTAURANTS("http://graffiti.timeout.com/v1/sites/uk-london/search?what=node-7083");
+    RESTAURANTS("http://graffiti.timeout.com/v1/sites/uk-london/search?what=node-7083"),
+    VENUE("http://graffiti.timeout.com/v1/sites/uk-london/venues/");
 
     private final String url;
 

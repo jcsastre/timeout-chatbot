@@ -8,13 +8,18 @@ import com.github.messenger4j.send.MessengerSendClient;
 import com.google.gson.JsonElement;
 import com.timeout.chatbot.domain.apiai.ApiaiIntent;
 import com.timeout.chatbot.domain.messenger.Page;
-import com.timeout.chatbot.domain.messenger.Recipient;
+import com.timeout.chatbot.domain.messenger.User;
 import com.timeout.chatbot.graffiti.endpoints.GraffittiEndpoints;
+import com.timeout.chatbot.graffitti.domain.Restaurant;
 import com.timeout.chatbot.graffitti.domain.response.Response;
+import com.timeout.chatbot.graffitti.domain.response.images.Image;
+import com.timeout.chatbot.graffitti.domain.response.images.ImagesResponse;
 import com.timeout.chatbot.platforms.messenger.send.blocks.RestaurantsPage;
 import com.timeout.chatbot.platforms.messenger.send.blocks.WelcomeMessageSendBlock;
 import com.timeout.chatbot.services.ApiAiService;
 import com.timeout.chatbot.services.GraffittiService;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
@@ -29,7 +34,7 @@ public class Session {
     private final UUID uuid;
 
     private final Page page;
-    private final Recipient recipient;
+    private final User user;
 
     private SessionContextState sessionContextState;
     private final SessionContextBag sessionContextBag;
@@ -42,7 +47,7 @@ public class Session {
         ApiAiService apiAiService,
         MessengerSendClient messengerSendClient,
         Page page,
-        Recipient recipient,
+        User user,
         WelcomeMessageSendBlock welcomeMessageSendBlock
     ) {
         this.restTemplate = restTemplate;
@@ -54,7 +59,7 @@ public class Session {
         this.uuid = UUID.randomUUID();
 
         this.page = page;
-        this.recipient = recipient;
+        this.user = user;
 
         this.sessionContextState = SessionContextState.UNDEFINED;
         this.sessionContextBag = new SessionContextBag();
@@ -67,7 +72,7 @@ public class Session {
 //
 //        OnEnterExploringCampingsHandler onEnterExploringCampingsHandler =
 //            new OnEnterExploringCampingsHandler(
-//                this.recipient,
+//                this.user,
 //                this.filterParams,
 //                this.graffittiService,
 //                this.messengerSendClient
@@ -75,7 +80,7 @@ public class Session {
 //
 //        OnEnterExploringOffersHandler onEnterExploringOffersHandler =
 //            new OnEnterExploringOffersHandler(
-//                this.recipient,
+//                this.user,
 //                this.filterParams,
 //                this.graffittiService,
 //                this.messengerSendClient
@@ -86,8 +91,8 @@ public class Session {
         return uuid;
     }
 
-    public Recipient getRecipient() {
-        return recipient;
+    public User getUser() {
+        return user;
     }
 
     public Page getPage() {
@@ -128,10 +133,59 @@ public class Session {
         }
     }
 
+    public void applyPayloadAsJsonString(String payload) {
+        final JSONObject payloadAsJson = new JSONObject(payload);
+
+        try {
+            final String type = payloadAsJson.getString("type");
+            switch (type) {
+                case "utterance":
+                    final String utterance = payloadAsJson.getString("utterance");
+                    applyUtterance(utterance);
+                    break;
+                case "restaurant_get_a_summary":
+
+                    final String restaurantId = payloadAsJson.getString("restaurant_id");
+
+                    String url = GraffittiEndpoints.VENUE.toString() + restaurantId;
+                    final Restaurant restaurant = restTemplate.getForObject(url, Restaurant.class);
+
+                    String urlImages = GraffittiEndpoints.VENUE.toString() + restaurantId + "/images";
+                    final ImagesResponse imagesResponse = restTemplate.getForObject(urlImages, ImagesResponse.class);
+
+                    sendTextMessage(restaurant.getBody().getSummary());
+                    for (Image image : imagesResponse.getImages()) {
+                        try {
+                            messengerSendClient.sendImageAttachment(user.getUid(), image.getUrl());
+                        } catch (MessengerApiException | MessengerIOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    break;
+                default:
+                    sendTextMessage("Lo siento ha ocurrido un error.");
+                    break;
+            }
+        } catch(JSONException e) {
+            sendTextMessage("Lo siento ha ocurrido un error.");
+        }
+
+//        try {
+//            final String type = new JSONObject(event.getPayload()).getString("type");
+//
+//            if (type.equals("restaurants")) {
+//                session.applyUtterance("restaurants");
+//            }
+//        } catch(JSONException exception) {
+//            //TODO
+//        }
+    }
+
     private void onIntentGreetings() {
         if (sessionContextState == SessionContextState.UNDEFINED) {
             sessionContextState = SessionContextState.GREETINGS;
-            welcomeMessageSendBlock.send(recipient);
+            welcomeMessageSendBlock.send(user);
         } else {
             sendTextMessage("¡Hola!");
         }
@@ -147,8 +201,8 @@ public class Session {
 
         new RestaurantsPage(
             messengerSendClient,
-            response.getItems(),
-            recipient.getUid()
+            response.getPageItems(),
+            user.getUid()
         ).send();
         //TODO: send option to paginate
     }
@@ -158,9 +212,13 @@ public class Session {
     }
 
     public void sendTextMessage(String msg) {
+        if (msg.length() > 320) {
+            msg = msg.substring(0, 320);
+        }
+
         try {
             this.messengerSendClient.sendTextMessage(
-                this.recipient.getUid(),
+                this.user.getUid(),
                 msg
             );
         } catch (MessengerApiException | MessengerIOException e) {
@@ -186,7 +244,7 @@ public class Session {
             apiaiResult = apiAiService.processText(utterance);
         } catch (AIServiceException e) {
             try {
-                messengerSendClient.sendTextMessage(recipient.getUid(), "Lo siento ha habido un problema");
+                messengerSendClient.sendTextMessage(user.getUid(), "Lo siento ha habido un problema");
             } catch (MessengerApiException | MessengerIOException e1) {
                 e1.printStackTrace();
             }
@@ -195,7 +253,7 @@ public class Session {
 
         if (apiaiResult == null) {
             try {
-                messengerSendClient.sendTextMessage(recipient.getUid(), "Lo siento ha habido un problema");
+                messengerSendClient.sendTextMessage(user.getUid(), "Lo siento ha habido un problema");
             } catch (MessengerApiException | MessengerIOException e1) {
                 e1.printStackTrace();
             }

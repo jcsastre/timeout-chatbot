@@ -2,11 +2,11 @@ package com.timeout.chatbot.domain.messenger;
 
 import com.timeout.chatbot.platforms.messenger.domain.UserProfile;
 
-public class Recipient implements Comparable<Recipient> {
+public class User implements Comparable<User> {
     private String uid;
     private UserProfile userProfile;
 
-    public Recipient(String uid) {
+    public User(String uid) {
         this.uid = uid;
     }
 
@@ -23,7 +23,7 @@ public class Recipient implements Comparable<Recipient> {
     }
 
     @Override
-    public int compareTo(Recipient recipient) {
-        return this.uid.compareTo(recipient.getUid());
+    public int compareTo(User user) {
+        return this.uid.compareTo(user.getUid());
     }
 }

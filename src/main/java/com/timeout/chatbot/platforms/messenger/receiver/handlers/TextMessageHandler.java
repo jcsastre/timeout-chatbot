@@ -62,7 +62,7 @@ public class TextMessageHandler implements TextMessageEventHandler {
 //            e.printStackTrace();
 //        }
 //
-////        Recipient fbRecipient = new Recipient(recipientId);
+////        User fbRecipient = new User(recipientId);
 ////
 ////        List<QuickReply> quickReplies = QuickReply.newListBuilder()
 ////                .addTextQuickReply("great", "GREAT_PAYLOAD").toList()

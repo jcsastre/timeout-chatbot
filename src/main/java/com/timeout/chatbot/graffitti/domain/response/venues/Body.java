@@ -1,4 +1,4 @@
-package com.timeout.chatbot.graffitti.domain.response;
+package com.timeout.chatbot.graffitti.domain.response.venues;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
@@ -6,22 +6,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Item {
-    private static final Logger log = LoggerFactory.getLogger(Item.class);
+public class Body {
+    private static final Logger log = LoggerFactory.getLogger(Body.class);
 
     private Categorisation categorisation;
-
     private String id;
-
     private String name;
-
     private String summary;
-
     private String url;
-
     private String image_url;
-
     private String location;
+    private String annotation;
 
     public Categorisation getCategorisation() {
         return categorisation;
@@ -79,16 +74,25 @@ public class Item {
         this.location = location;
     }
 
-    @Override
-    public String toString() {
-        return
-            "Item: {" +
-                "id='" + id + "', " +
-                "name='" + name + "', " +
-                "summary='" + summary + "', " +
-                "id='" + id + "', " +
-                "url='" + url + "', " +
-                "image_url=" + image_url +
-            "}";
+    public String getAnnotation() {
+        return annotation;
     }
+
+    public void setAnnotation(String annotation) {
+        this.annotation = annotation;
+    }
+
+//    @Override
+//    public String toString() {
+//        return
+//            "{" +
+//                "id='" + id + "', " +
+//                "name='" + name + "', " +
+//                "summary='" + summary + "', " +
+//                "url='" + url + "', " +
+//                "image_url='" + image_url + "', " +
+//                "location='" + location + "', " +
+//                "annotation=" + annotation +
+//            "}";
+//    }
 }

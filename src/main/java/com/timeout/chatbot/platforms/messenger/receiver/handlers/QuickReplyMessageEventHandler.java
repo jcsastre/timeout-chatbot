@@ -3,15 +3,17 @@ package com.timeout.chatbot.platforms.messenger.receiver.handlers;
 import com.github.messenger4j.receive.events.QuickReplyMessageEvent;
 import com.timeout.chatbot.domain.session.Session;
 import com.timeout.chatbot.domain.session.SessionPool;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class QuickReplyMessageEventHandler implements com.github.messenger4j.receive.handlers.QuickReplyMessageEventHandler {
+    private final SessionPool sessionPool;
+
     @Autowired
-    private SessionPool sessionPool;
+    public QuickReplyMessageEventHandler(SessionPool sessionPool) {
+        this.sessionPool = sessionPool;
+    }
 
     @Override
     public void handle(QuickReplyMessageEvent event) {
@@ -21,12 +23,9 @@ public class QuickReplyMessageEventHandler implements com.github.messenger4j.rec
                 event.getSender().getId()
             );
 
-        final JSONObject payloadAsJson = new JSONObject(event.getQuickReply().getPayload());
-
         try {
-            final String utterance = payloadAsJson.getString("utterance");
-            session.applyUtterance(utterance);
-        } catch(JSONException e) {
+            session.applyPayloadAsJsonString(event.getQuickReply().getPayload());
+        } catch(Exception e) {
             session.sendTextMessage("Lo siento ha ocurrido un error.");
         }
     }

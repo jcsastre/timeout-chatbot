@@ -1,6 +1,8 @@
 package com.timeout.chatbot.graffitti.domain;
 
-import com.timeout.chatbot.graffitti.domain.response.Item;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.timeout.chatbot.graffitti.domain.response.venues.Venue;
 
-public class Restaurant extends Item {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Restaurant extends Venue {
 }

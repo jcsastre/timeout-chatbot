@@ -4,7 +4,7 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.QuickReply;
-import com.timeout.chatbot.domain.messenger.Recipient;
+import com.timeout.chatbot.domain.messenger.User;
 import com.timeout.chatbot.graffitti.domain.Category;
 import com.timeout.chatbot.services.GraffittiService;
 import org.json.JSONObject;
@@ -28,10 +28,10 @@ public class WelcomeMessageSendBlock {
         this.messengerSendClient = messengerSendClient;
     }
 
-    public void send(Recipient recipient) {
+    public void send(User user) {
         StringBuilder sbMessage = new StringBuilder();
-        if (recipient.getUserProfile().getFirstName() != null) {
-            sbMessage.append("Hi " + recipient.getUserProfile().getFirstName() + "!");
+        if (user.getUserProfile().getFirstName() != null) {
+            sbMessage.append("Hi " + user.getUserProfile().getFirstName() + "!");
         } else {
             sbMessage.append("Hi!");
         }
@@ -44,7 +44,7 @@ public class WelcomeMessageSendBlock {
 
         try {
             messengerSendClient.sendTextMessage(
-                recipient.getUid(),
+                user.getUid(),
                 sbMessage.toString(),
                 buildQuickReplies()
             );
@@ -61,6 +61,7 @@ public class WelcomeMessageSendBlock {
             listBuilder.addTextQuickReply(
                 primaryCategory.getName(),
                 new JSONObject()
+                    .put("type", "utterance")
                     .put("utterance", primaryCategory.getName())
                     .toString()
 //                new JSONObject()
