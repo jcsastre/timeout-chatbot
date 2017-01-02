@@ -153,7 +153,12 @@ public class Session {
                     String urlImages = GraffittiEndpoints.VENUE.toString() + restaurantId + "/images";
                     final ImagesResponse imagesResponse = restTemplate.getForObject(urlImages, ImagesResponse.class);
 
-                    sendTextMessage(restaurant.getBody().getSummary());
+                    sendTextMessage(
+                        "\uD83D\uDE01 '" + restaurant.getBody().getName() + "': " + restaurant.getBody().getSummary()
+                    );
+
+                    sendTextMessage("And some images");
+
                     for (Image image : imagesResponse.getImages()) {
                         try {
                             messengerSendClient.sendImageAttachment(user.getUid(), image.getUrl());

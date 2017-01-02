@@ -6,6 +6,8 @@ import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.graffitti.domain.response.PageItem;
+import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
+import com.timeout.chatbot.graffitti.domain.response.categorisation.CategorisationSecondary;
 import org.json.JSONObject;
 
 import java.util.List;
@@ -68,24 +70,28 @@ public class RestaurantsPage {
     private String buildSubtitle(PageItem restaurant) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(restaurant.getSummary());
+        sb.append("Restaurants");
 
-//        sb.append("Restaurants");
-//
-//        final Categorisation categorisation = restaurant.getCategorisation();
-//        if (categorisation != null) {
-//            final CategorisationSecondary categorisationSecondary = categorisation.getCategorisationSecondary();
-//            if (categorisationSecondary != null) {
-//                final String name = categorisationSecondary.getName();
-//                if (name != null) {
-//                    sb.append(", " + name);
-//                }
-//            }
-//        }
-//
-//        if (restaurant.getLocation() != null) {
-//            sb.append(". " + restaurant.getLocation());
-//        }
+        final Categorisation categorisation = restaurant.getCategorisation();
+        if (categorisation != null) {
+            final CategorisationSecondary categorisationSecondary = categorisation.getCategorisationSecondary();
+            if (categorisationSecondary != null) {
+                final String name = categorisationSecondary.getName();
+                if (name != null) {
+                    sb.append(", " + name);
+                }
+            }
+        }
+
+        if (restaurant.getLocation() != null) {
+            sb.append(" ");
+            sb.append("\uD83D\uDCCCgit st");
+            sb.append(" ");
+            sb.append(restaurant.getLocation());
+        }
+
+//        sb.append("\uD83D\uDEA9");
+//        sb.append(restaurant.getSummary());
 
         if (sb.length() > 80) {
             sb = sb.delete(80, sb.length());
