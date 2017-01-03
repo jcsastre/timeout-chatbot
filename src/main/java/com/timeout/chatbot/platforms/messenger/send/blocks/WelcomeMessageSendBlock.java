@@ -1,11 +1,9 @@
 package com.timeout.chatbot.platforms.messenger.send.blocks;
 
-import com.github.messenger4j.exceptions.MessengerApiException;
-import com.github.messenger4j.exceptions.MessengerIOException;
-import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.domain.messenger.User;
 import com.timeout.chatbot.graffitti.domain.Category;
+import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.GraffittiService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +15,15 @@ import java.util.List;
 public class WelcomeMessageSendBlock {
 
     private final GraffittiService graffittiService;
-    private final MessengerSendClient messengerSendClient;
+    private final MessengerSendClientWrapper messengerSendClientWrapper;
 
     @Autowired
     public WelcomeMessageSendBlock(
         GraffittiService graffittiService,
-        MessengerSendClient messengerSendClient
+        MessengerSendClientWrapper messengerSendClientWrapper
     ) {
         this.graffittiService = graffittiService;
-        this.messengerSendClient = messengerSendClient;
+        this.messengerSendClientWrapper = messengerSendClientWrapper;
     }
 
     public void send(User user) {
@@ -42,15 +40,11 @@ public class WelcomeMessageSendBlock {
         sbMessage.append("\n\n");
         sbMessage.append("What are you looking for?");
 
-        try {
-            messengerSendClient.sendTextMessage(
-                user.getUid(),
-                sbMessage.toString(),
-                buildQuickReplies()
-            );
-        } catch (MessengerApiException | MessengerIOException e) {
-            e.printStackTrace();
-        }
+        messengerSendClientWrapper.sendTextMessage(
+            user.getUid(),
+            sbMessage.toString(),
+            buildQuickReplies()
+        );
     }
 
     private List<QuickReply> buildQuickReplies() {

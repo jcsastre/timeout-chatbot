@@ -2,18 +2,14 @@ package com.timeout.chatbot.domain.session;
 
 import ai.api.AIServiceException;
 import ai.api.model.Result;
-import com.github.messenger4j.exceptions.MessengerApiException;
-import com.github.messenger4j.exceptions.MessengerIOException;
-import com.github.messenger4j.send.MessengerSendClient;
 import com.google.gson.JsonElement;
 import com.timeout.chatbot.domain.apiai.ApiaiIntent;
 import com.timeout.chatbot.domain.messenger.Page;
 import com.timeout.chatbot.domain.messenger.User;
 import com.timeout.chatbot.graffiti.endpoints.GraffittiEndpoints;
-import com.timeout.chatbot.graffitti.domain.Restaurant;
 import com.timeout.chatbot.graffitti.domain.response.Response;
-import com.timeout.chatbot.graffitti.domain.response.images.Image;
-import com.timeout.chatbot.graffitti.domain.response.images.ImagesResponse;
+import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
+import com.timeout.chatbot.platforms.messenger.send.blocks.RestaurantSummarySendBlock;
 import com.timeout.chatbot.platforms.messenger.send.blocks.RestaurantsPage;
 import com.timeout.chatbot.platforms.messenger.send.blocks.WelcomeMessageSendBlock;
 import com.timeout.chatbot.services.ApiAiService;
@@ -29,7 +25,7 @@ public class Session {
     private final RestTemplate restTemplate;
     private final GraffittiService graffittiService;
     private final ApiAiService apiAiService;
-    private final MessengerSendClient messengerSendClient;
+    private final MessengerSendClientWrapper messengerSendClientWrapper;
 
     private final UUID uuid;
 
@@ -40,21 +36,24 @@ public class Session {
     private final SessionContextBag sessionContextBag;
 
     private final WelcomeMessageSendBlock welcomeMessageSendBlock;
+    private final RestaurantSummarySendBlock restaurantSummarySendBlock;
 
     public Session(
         RestTemplate restTemplate,
         GraffittiService graffittiService,
         ApiAiService apiAiService,
-        MessengerSendClient messengerSendClient,
+        MessengerSendClientWrapper messengerSendClientWrapper,
         Page page,
         User user,
-        WelcomeMessageSendBlock welcomeMessageSendBlock
+        WelcomeMessageSendBlock welcomeMessageSendBlock,
+        RestaurantSummarySendBlock restaurantSummarySendBlock
     ) {
         this.restTemplate = restTemplate;
         this.graffittiService = graffittiService;
         this.apiAiService = apiAiService;
-        this.messengerSendClient = messengerSendClient;
+        this.messengerSendClientWrapper = messengerSendClientWrapper;
         this.welcomeMessageSendBlock = welcomeMessageSendBlock;
+        this.restaurantSummarySendBlock = restaurantSummarySendBlock;
 
         this.uuid = UUID.randomUUID();
 
@@ -67,7 +66,7 @@ public class Session {
 //        OnEnterGreetingsHandler onEnterGreetingsHandler =
 //            new OnEnterGreetingsHandler(
 //                this,
-//                this.messengerSendClient
+//                this.messengerSendClientWrapper
 //            );
 //
 //        OnEnterExploringCampingsHandler onEnterExploringCampingsHandler =
@@ -75,7 +74,7 @@ public class Session {
 //                this.user,
 //                this.filterParams,
 //                this.graffittiService,
-//                this.messengerSendClient
+//                this.messengerSendClientWrapper
 //            );
 //
 //        OnEnterExploringOffersHandler onEnterExploringOffersHandler =
@@ -83,7 +82,7 @@ public class Session {
 //                this.user,
 //                this.filterParams,
 //                this.graffittiService,
-//                this.messengerSendClient
+//                this.messengerSendClientWrapper
 //            );
     }
 
@@ -144,29 +143,10 @@ public class Session {
                     applyUtterance(utterance);
                     break;
                 case "restaurant_get_a_summary":
-
-                    final String restaurantId = payloadAsJson.getString("restaurant_id");
-
-                    String url = GraffittiEndpoints.VENUE.toString() + restaurantId;
-                    final Restaurant restaurant = restTemplate.getForObject(url, Restaurant.class);
-
-                    String urlImages = GraffittiEndpoints.VENUE.toString() + restaurantId + "/images";
-                    final ImagesResponse imagesResponse = restTemplate.getForObject(urlImages, ImagesResponse.class);
-
-                    sendTextMessage(
-                        "\uD83D\uDE01 '" + restaurant.getBody().getName() + "': " + restaurant.getBody().getSummary()
+                    restaurantSummarySendBlock.send(
+                        user.getUid(),
+                        payloadAsJson.getString("restaurant_id")
                     );
-
-                    sendTextMessage("And some images");
-
-                    for (Image image : imagesResponse.getImages()) {
-                        try {
-                            messengerSendClient.sendImageAttachment(user.getUid(), image.getUrl());
-                        } catch (MessengerApiException | MessengerIOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
                     break;
                 default:
                     sendTextMessage("Lo siento ha ocurrido un error.");
@@ -205,7 +185,7 @@ public class Session {
         final Integer totalItems = response.getMeta().getTotalItems();
 
         new RestaurantsPage(
-            messengerSendClient,
+            messengerSendClientWrapper,
             response.getPageItems(),
             user.getUid()
         ).send();
@@ -221,14 +201,10 @@ public class Session {
             msg = msg.substring(0, 320);
         }
 
-        try {
-            this.messengerSendClient.sendTextMessage(
-                this.user.getUid(),
-                msg
-            );
-        } catch (MessengerApiException | MessengerIOException e) {
-            e.printStackTrace();
-        }
+        messengerSendClientWrapper.sendTextMessage(
+            this.user.getUid(),
+            msg
+        );
     }
 
     private void updateFilterParams(Map<String, JsonElement> apiaiParameters) {
@@ -248,21 +224,14 @@ public class Session {
         try {
             apiaiResult = apiAiService.processText(utterance);
         } catch (AIServiceException e) {
-            try {
-                messengerSendClient.sendTextMessage(user.getUid(), "Lo siento ha habido un problema");
-            } catch (MessengerApiException | MessengerIOException e1) {
-                e1.printStackTrace();
-            }
+            messengerSendClientWrapper.sendTextMessage(user.getUid(), "Lo siento ha habido un problema");
             e.printStackTrace();
         }
 
         if (apiaiResult == null) {
-            try {
-                messengerSendClient.sendTextMessage(user.getUid(), "Lo siento ha habido un problema");
-            } catch (MessengerApiException | MessengerIOException e1) {
-                e1.printStackTrace();
-            }
+            messengerSendClientWrapper.sendTextMessage(user.getUid(), "Lo siento ha habido un problema");
         }
+
         return apiaiResult;
     }
 

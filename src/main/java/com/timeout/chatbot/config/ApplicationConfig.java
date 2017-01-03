@@ -5,6 +5,7 @@ import ai.api.AIDataService;
 import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.http.HeaderRequestInterceptor;
+import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.platforms.messenger.send.blocks.WelcomeMessageSendBlock;
 import com.timeout.chatbot.services.GraffittiService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -27,7 +28,7 @@ public class ApplicationConfig {
         return
             new WelcomeMessageSendBlock(
                 graffittiService(),
-                messengerSendClient()
+                messengerSendClientWrapper()
             );
     }
 
@@ -53,11 +54,12 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public MessengerSendClient messengerSendClient() {
-        return
-            MessengerPlatform.newSendClientBuilder(
-                getMessenger().getApp().getPageAccessToken()
-            ).build();
+    public MessengerSendClientWrapper messengerSendClientWrapper() {
+        final MessengerSendClient messengerSendClient = MessengerPlatform.newSendClientBuilder(
+            getMessenger().getApp().getPageAccessToken()
+        ).build();
+
+        return new MessengerSendClientWrapper(messengerSendClient);
     }
 
     @Bean

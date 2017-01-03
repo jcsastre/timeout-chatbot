@@ -1,28 +1,26 @@
 package com.timeout.chatbot.platforms.messenger.send.blocks;
 
-import com.github.messenger4j.exceptions.MessengerApiException;
-import com.github.messenger4j.exceptions.MessengerIOException;
-import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.graffitti.domain.response.PageItem;
 import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
 import com.timeout.chatbot.graffitti.domain.response.categorisation.CategorisationSecondary;
+import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.json.JSONObject;
 
 import java.util.List;
 
 public class RestaurantsPage {
-    private final MessengerSendClient messengerSendClient;
+    private final MessengerSendClientWrapper messengerSendClientWrapper;
     private final List<PageItem> restaurants;
     private final String recipientId;
 
     public RestaurantsPage(
-        MessengerSendClient messengerSendClient,
+        MessengerSendClientWrapper messengerSendClientWrapper,
         List<PageItem> restaurants,
         String recipientId
     ) {
-        this.messengerSendClient = messengerSendClient;
+        this.messengerSendClientWrapper = messengerSendClientWrapper;
         this.restaurants = restaurants;
         this.recipientId = recipientId;
     }
@@ -43,49 +41,78 @@ public class RestaurantsPage {
                                 .put("restaurant_id", restaurant.getId())
                                 .toString()
                         ).toList()
-                        .addUrlButton(
-                            "See at Timeout",
-                            restaurant.getToWebsite()
+                        .addCallButton(
+                            "Call",
+                            "+34678750727"
                         ).toList()
                         .addPostbackButton(
                             "Book",
                             new JSONObject()
-                                .put("type", "restaurant_more_info")
+                                .put("type", "restaurant_book")
                                 .put("restaurant_id", restaurant.getId())
                                 .toString()
                         ).toList()
+//                        .addUrlButton(
+//                            "See at Timeout",
+//                            restaurant.getToWebsite()
+//                        ).toList()
                         .build()
                 )
                 .toList().done();
         }
 
+        // Last item-summary
+        listBuilder.addElement("292 restaurants more")
+            .buttons(
+                Button.newListBuilder()
+                    .addPostbackButton(
+                        "See more",
+                        new JSONObject()
+                            .put("type", "restaurant_get_a_summary")
+                            .toString()
+                    ).toList()
+                    .addPostbackButton(
+                        "Near me",
+                        new JSONObject()
+                            .put("type", "restaurant_get_a_summary")
+                            .toString()
+                    ).toList()
+                    .addPostbackButton(
+                        "By food",
+                        new JSONObject()
+                            .put("type", "restaurant_get_a_summary")
+                            .toString()
+                    ).toList()
+                    .build()
+            )
+            .toList().done();
+
         final GenericTemplate genericTemplate = genericTemplateBuilder.build();
-        try {
-            messengerSendClient.sendTemplate(recipientId, genericTemplate);
-        } catch (MessengerApiException | MessengerIOException e) {
-            e.printStackTrace();
-        }
+        messengerSendClientWrapper.sendTemplate(recipientId, genericTemplate);
     }
 
     private String buildSubtitle(PageItem restaurant) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Restaurants");
-
+        boolean secondaryCategoryFound = false;
         final Categorisation categorisation = restaurant.getCategorisation();
         if (categorisation != null) {
             final CategorisationSecondary categorisationSecondary = categorisation.getCategorisationSecondary();
             if (categorisationSecondary != null) {
-                final String name = categorisationSecondary.getName();
-                if (name != null) {
-                    sb.append(", " + name);
+                final String categorisationSecondaryName = categorisationSecondary.getName();
+                if (categorisationSecondaryName != null) {
+                    sb.append(categorisationSecondaryName + " restaurant");
+                    secondaryCategoryFound = true;
                 }
             }
+        }
+        if (secondaryCategoryFound == false) {
+            sb.append("Restaurant");
         }
 
         if (restaurant.getLocation() != null) {
             sb.append(" ");
-            sb.append("\uD83D\uDCCCgit st");
+            sb.append("\uD83D\uDCCC");
             sb.append(" ");
             sb.append(restaurant.getLocation());
         }

@@ -5,7 +5,6 @@ import ai.api.AIServiceException;
 import ai.api.model.AIRequest;
 import ai.api.model.AIResponse;
 import ai.api.model.Result;
-import com.github.messenger4j.send.MessengerSendClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -13,15 +12,12 @@ import org.springframework.stereotype.Component;
 public class ApiAiService {
 
     private final AIDataService aiDataService;
-    private final MessengerSendClient messengerSendClient;
 
     @Autowired
     public ApiAiService(
-        AIDataService aiDataService,
-        MessengerSendClient messengerSendClient
+        AIDataService aiDataService
     ) {
         this.aiDataService = aiDataService;
-        this.messengerSendClient = messengerSendClient;
     }
 
     public Result processText(String text) throws AIServiceException {
@@ -34,10 +30,10 @@ public class ApiAiService {
 //                String response = aiResponse.getResult().getParameters().toString();
 //                response = aiResponse.getResult().toString();
 //                try {
-//                    messengerSendClient.sendTextMessage(recipientId, "Eco: " + response);
+//                    messengerSendClientWrapper.sendTextMessage(recipientId, "Eco: " + response);
 //                    HashMap<String, JsonElement> parameters = aiResponse.getResult().getParameters();
 //                    for (Map.Entry<String, JsonElement> entry : parameters.entrySet()) {
-//                        messengerSendClient.sendTextMessage(recipientId, entry.getKey() + "/" + entry.getValue());
+//                        messengerSendClientWrapper.sendTextMessage(recipientId, entry.getKey() + "/" + entry.getValue());
 //                    }
 //                } catch (MessengerApiException | MessengerIOException e) {
 //                    e.printStackTrace();
