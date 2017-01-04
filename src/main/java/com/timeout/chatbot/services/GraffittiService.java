@@ -28,6 +28,16 @@ public class GraffittiService {
         return facetGroup.getBody().getFacets().getWhat().getPrimaryCategories();
     }
 
+    public CategoryPrimary getCategoryPrimaryById(String id) {
+        for (CategoryPrimary categoryPrimary : getPrimaryCategories()) {
+            if (categoryPrimary.getId().equals(id)) {
+                return categoryPrimary;
+            }
+        }
+
+        return null;
+    }
+
     public List<CategorySecondary> getSecondaryCategories(CategoryPrimary primaryCategoryPrimary) {
         for (CategoryPrimary categoryPrimary : getPrimaryCategories()) {
             if (categoryPrimary.getId().equals(primaryCategoryPrimary.getId())) {

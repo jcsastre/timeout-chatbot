@@ -56,19 +56,20 @@ public class SessionPool {
         this.restaurantsPageSendBlock = restaurantsPageSendBlock;
     }
 
-    public Session getSession(String pageUid, String recipientUid) {
+    public Session getSession(String pageUid, String userId) {
         synchronized (sessions) {
             for (Session session : sessions) {
                 if (
                     session.getPage().getUid().equals(pageUid) &&
-                        session.getUser().getUid().equals(recipientUid)
-                    ) {
+                    session.getUser().getUid().equals(userId)
+                ) {
                     return session;
                 }
             }
         }
 
-        final User user = buildRecipient(recipientUid);
+        final User user = buildUser(userId);
+        final Page page = new Page(pageUid);
 
         final Session session =
             new Session(
@@ -76,7 +77,7 @@ public class SessionPool {
                 campingpongAPIService,
                 apiAiService,
                 messengerSendClientWrapper,
-                new Page(pageUid),
+                page,
                 user,
                 welcomeMessageSendBlock,
                 restaurantSummarySendBlock,
@@ -88,11 +89,11 @@ public class SessionPool {
         return session;
     }
 
-    private User buildRecipient(String recipientUid) {
-        final User user = new User(recipientUid);
+    private User buildUser(String userId) {
+        final User user = new User(userId);
 
         final String url =
-            "https://graph.facebook.com/v2.6/" + recipientUid +
+            "https://graph.facebook.com/v2.6/" + userId +
             "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" +
             applicationConfig.getMessenger().getApp().getPageAccessToken();
 

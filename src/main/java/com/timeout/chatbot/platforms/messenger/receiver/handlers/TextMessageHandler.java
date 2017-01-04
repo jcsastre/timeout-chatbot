@@ -18,12 +18,14 @@ public class TextMessageHandler implements TextMessageEventHandler {
     }
 
     @Override
-    public void handle(TextMessageEvent textMessageEvent) {
-        final String pageId = textMessageEvent.getSender().getId();
-        final String recipientId = textMessageEvent.getSender().getId();
+    public void handle(TextMessageEvent event) {
+        final Session session =
+            sessionPool.getSession(
+                event.getRecipient().getId(),
+                event.getSender().getId()
+            );
 
-        final Session session = sessionPool.getSession(pageId, recipientId);
-        session.applyUtterance(textMessageEvent.getText());
+        session.applyUtterance(event.getText());
 
 //        String pageId = event.getSender().getId();
 //        String recipientId = event.getSender().getId();

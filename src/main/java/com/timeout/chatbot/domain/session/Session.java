@@ -65,28 +65,6 @@ public class Session {
 
         this.sessionContextState = SessionContextState.UNDEFINED;
         this.sessionContextBag = new SessionContextBag();
-
-//        OnEnterGreetingsHandler onEnterGreetingsHandler =
-//            new OnEnterGreetingsHandler(
-//                this,
-//                this.messengerSendClientWrapper
-//            );
-//
-//        OnEnterExploringCampingsHandler onEnterExploringCampingsHandler =
-//            new OnEnterExploringCampingsHandler(
-//                this.user,
-//                this.filterParams,
-//                this.graffittiService,
-//                this.messengerSendClientWrapper
-//            );
-//
-//        OnEnterExploringOffersHandler onEnterExploringOffersHandler =
-//            new OnEnterExploringOffersHandler(
-//                this.user,
-//                this.filterParams,
-//                this.graffittiService,
-//                this.messengerSendClientWrapper
-//            );
     }
 
     public UUID getUuid() {
@@ -135,6 +113,18 @@ public class Session {
         }
     }
 
+    public void applyLocation(Double latitude, Double longitude) {
+        sessionContextBag.setLatitude(latitude);
+        sessionContextBag.setLongitude(longitude);
+
+        //TODO: check context to see if further actions are required
+        if(sessionContextState == SessionContextState.EXPLORING_RESTAURANTS) {
+            onIntentRestaurants();
+        } else {
+            //TODO:
+        }
+    }
+
     public void applyPayloadAsJsonString(String payload) {
         final JSONObject payloadAsJson = new JSONObject(payload);
 
@@ -150,6 +140,9 @@ public class Session {
                         user.getUid(),
                         payloadAsJson.getString("restaurant_id")
                     );
+                    break;
+                case "restaurants_set_cuisine":
+                    //TODO:
                     break;
                 default:
                     sendTextMessage("Lo siento ha ocurrido un error.");
@@ -182,14 +175,35 @@ public class Session {
     private void onIntentRestaurants() {
         this.sessionContextState = SessionContextState.EXPLORING_RESTAURANTS;
 
-        // Fetch api
-        final Response response = restTemplate.getForObject(GraffittiEndpoints.RESTAURANTS.toString(), Response.class);
+        String lookingTxt = "Looking for restaurants in London";
 
-        restaurantsPageSendBlock.send(
-            user.getUid(),
-            response.getPageItems(),
-            response.getMeta().getTotalItems()
-        );
+        String url = GraffittiEndpoints.RESTAURANTS.toString();
+
+        final Double latitude = sessionContextBag.getLatitude();
+        final Double longitude = sessionContextBag.getLongitude();
+        if (latitude!=null && longitude!=null) {
+            url = url + "&latitude="+latitude+"&longitude="+longitude+"&radius=0.5";
+            lookingTxt = lookingTxt + " within 500 meters from you";
+        }
+
+        sendTextMessage(lookingTxt);
+
+        final Response response =
+            restTemplate.getForObject(
+                url,
+                Response.class
+            );
+
+        int totalItems = response.getMeta().getTotalItems();
+        if (totalItems>0) {
+            restaurantsPageSendBlock.send(
+                user.getUid(),
+                response.getPageItems(),
+                response.getMeta().getTotalItems()
+            );
+        } else {
+            sendTextMessage("There are not available restaurants for your request.");
+        }
     }
 
     private void onIntentUnknown() {
