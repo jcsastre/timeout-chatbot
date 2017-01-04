@@ -1,6 +1,7 @@
 package com.timeout.chatbot.graffitti.domain.response.venues;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,8 @@ public class Body {
     private String image_url;
     private String location;
     private String annotation;
+    @JsonProperty("to_website")
+    private String toWebsite;
 
     public Categorisation getCategorisation() {
         return categorisation;
@@ -82,17 +85,11 @@ public class Body {
         this.annotation = annotation;
     }
 
-//    @Override
-//    public String toString() {
-//        return
-//            "{" +
-//                "id='" + id + "', " +
-//                "name='" + name + "', " +
-//                "summary='" + summary + "', " +
-//                "url='" + url + "', " +
-//                "image_url='" + image_url + "', " +
-//                "location='" + location + "', " +
-//                "annotation=" + annotation +
-//            "}";
-//    }
+    public String getToWebsite() {
+        return toWebsite;
+    }
+
+    public void setToWebsite(String toWebsite) {
+        this.toWebsite = toWebsite;
+    }
 }

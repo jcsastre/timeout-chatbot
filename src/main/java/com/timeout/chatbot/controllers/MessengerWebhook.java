@@ -4,6 +4,7 @@ import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.exceptions.MessengerVerificationException;
 import com.github.messenger4j.receive.MessengerReceiveClient;
 import com.timeout.chatbot.config.ApplicationConfig;
+import com.timeout.chatbot.platforms.messenger.receiver.handlers.AttachmentMessageEventHandlerImpl;
 import com.timeout.chatbot.platforms.messenger.receiver.handlers.PostbackEventHandler;
 import com.timeout.chatbot.platforms.messenger.receiver.handlers.QuickReplyMessageEventHandler;
 import com.timeout.chatbot.platforms.messenger.receiver.handlers.TextMessageHandler;
@@ -38,7 +39,8 @@ public class MessengerWebhook {
         ApplicationConfig applicationConfig,
         TextMessageHandler textMessageHandler,
         QuickReplyMessageEventHandler quickReplyMessageEventHandler,
-        PostbackEventHandler postbackEventHandler
+        PostbackEventHandler postbackEventHandler,
+        AttachmentMessageEventHandlerImpl attachmentMessageEventHandler
     ) {
         this.applicationConfig = applicationConfig;
 
@@ -56,6 +58,7 @@ public class MessengerWebhook {
             .onTextMessageEvent(textMessageHandler)
             .onQuickReplyMessageEvent(quickReplyMessageEventHandler)
             .onPostbackEvent(postbackEventHandler)
+            .onAttachmentMessageEvent(attachmentMessageEventHandler)
             .build();
     }
 

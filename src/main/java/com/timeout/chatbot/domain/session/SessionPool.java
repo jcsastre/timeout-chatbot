@@ -6,6 +6,7 @@ import com.timeout.chatbot.domain.messenger.User;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.platforms.messenger.domain.UserProfile;
 import com.timeout.chatbot.platforms.messenger.send.blocks.RestaurantSummarySendBlock;
+import com.timeout.chatbot.platforms.messenger.send.blocks.RestaurantsPageSendBlock;
 import com.timeout.chatbot.platforms.messenger.send.blocks.WelcomeMessageSendBlock;
 import com.timeout.chatbot.services.ApiAiService;
 import com.timeout.chatbot.services.GraffittiService;
@@ -33,6 +34,7 @@ public class SessionPool {
     private final WelcomeMessageSendBlock welcomeMessageSendBlock;
 
     private final RestaurantSummarySendBlock restaurantSummarySendBlock;
+    private final RestaurantsPageSendBlock restaurantsPageSendBlock;
 
     @Autowired
     public SessionPool(
@@ -42,8 +44,8 @@ public class SessionPool {
         ApiAiService apiAiService,
         MessengerSendClientWrapper messengerSendClientWrapper,
         WelcomeMessageSendBlock welcomeMessageSendBlock,
-        RestaurantSummarySendBlock restaurantSummarySendBlock
-    ) {
+        RestaurantSummarySendBlock restaurantSummarySendBlock,
+        RestaurantsPageSendBlock restaurantsPageSendBlock) {
         this.applicationConfig = applicationConfig;
         this.restTemplate = restTemplate;
         this.campingpongAPIService = campingpongAPIService;
@@ -51,6 +53,7 @@ public class SessionPool {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
         this.welcomeMessageSendBlock = welcomeMessageSendBlock;
         this.restaurantSummarySendBlock = restaurantSummarySendBlock;
+        this.restaurantsPageSendBlock = restaurantsPageSendBlock;
     }
 
     public Session getSession(String pageUid, String recipientUid) {
@@ -67,16 +70,18 @@ public class SessionPool {
 
         final User user = buildRecipient(recipientUid);
 
-        final Session session = new Session(
-            restTemplate,
-            campingpongAPIService,
-            apiAiService,
-            messengerSendClientWrapper,
-            new Page(pageUid),
-            user,
-            welcomeMessageSendBlock,
-            restaurantSummarySendBlock
-        );
+        final Session session =
+            new Session(
+                restTemplate,
+                campingpongAPIService,
+                apiAiService,
+                messengerSendClientWrapper,
+                new Page(pageUid),
+                user,
+                welcomeMessageSendBlock,
+                restaurantSummarySendBlock,
+                restaurantsPageSendBlock
+            );
 
         sessions.add(session);
 

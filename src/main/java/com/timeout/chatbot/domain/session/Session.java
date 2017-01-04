@@ -10,7 +10,7 @@ import com.timeout.chatbot.graffiti.endpoints.GraffittiEndpoints;
 import com.timeout.chatbot.graffitti.domain.response.Response;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.platforms.messenger.send.blocks.RestaurantSummarySendBlock;
-import com.timeout.chatbot.platforms.messenger.send.blocks.RestaurantsPage;
+import com.timeout.chatbot.platforms.messenger.send.blocks.RestaurantsPageSendBlock;
 import com.timeout.chatbot.platforms.messenger.send.blocks.WelcomeMessageSendBlock;
 import com.timeout.chatbot.services.ApiAiService;
 import com.timeout.chatbot.services.GraffittiService;
@@ -37,6 +37,7 @@ public class Session {
 
     private final WelcomeMessageSendBlock welcomeMessageSendBlock;
     private final RestaurantSummarySendBlock restaurantSummarySendBlock;
+    private final RestaurantsPageSendBlock restaurantsPageSendBlock;
 
     public Session(
         RestTemplate restTemplate,
@@ -46,7 +47,8 @@ public class Session {
         Page page,
         User user,
         WelcomeMessageSendBlock welcomeMessageSendBlock,
-        RestaurantSummarySendBlock restaurantSummarySendBlock
+        RestaurantSummarySendBlock restaurantSummarySendBlock,
+        RestaurantsPageSendBlock restaurantsPageSendBlock
     ) {
         this.restTemplate = restTemplate;
         this.graffittiService = graffittiService;
@@ -54,6 +56,7 @@ public class Session {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
         this.welcomeMessageSendBlock = welcomeMessageSendBlock;
         this.restaurantSummarySendBlock = restaurantSummarySendBlock;
+        this.restaurantsPageSendBlock = restaurantsPageSendBlock;
 
         this.uuid = UUID.randomUUID();
 
@@ -182,14 +185,11 @@ public class Session {
         // Fetch api
         final Response response = restTemplate.getForObject(GraffittiEndpoints.RESTAURANTS.toString(), Response.class);
 
-        final Integer totalItems = response.getMeta().getTotalItems();
-
-        new RestaurantsPage(
-            messengerSendClientWrapper,
+        restaurantsPageSendBlock.send(
+            user.getUid(),
             response.getPageItems(),
-            user.getUid()
-        ).send();
-        //TODO: send option to paginate
+            response.getMeta().getTotalItems()
+        );
     }
 
     private void onIntentUnknown() {

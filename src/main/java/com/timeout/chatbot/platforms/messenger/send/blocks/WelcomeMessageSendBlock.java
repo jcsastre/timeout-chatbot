@@ -2,7 +2,7 @@ package com.timeout.chatbot.platforms.messenger.send.blocks;
 
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.domain.messenger.User;
-import com.timeout.chatbot.graffitti.domain.Category;
+import com.timeout.chatbot.graffitti.domain.response.facets.CategoryPrimary;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.GraffittiService;
 import org.json.JSONObject;
@@ -51,16 +51,16 @@ public class WelcomeMessageSendBlock {
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
-        for (Category primaryCategory : graffittiService.getPrimaryCategories()) {
+        for (CategoryPrimary primaryCategoryPrimary : graffittiService.getPrimaryCategories()) {
             listBuilder.addTextQuickReply(
-                primaryCategory.getName(),
+                primaryCategoryPrimary.getName(),
                 new JSONObject()
                     .put("type", "utterance")
-                    .put("utterance", primaryCategory.getName())
+                    .put("utterance", primaryCategoryPrimary.getName())
                     .toString()
 //                new JSONObject()
 //                    .put("type", "search-by-primary-category")
-//                    .put("uid", primaryCategory.getUuid())
+//                    .put("uid", primaryCategoryPrimary.getId())
 //                    .toString()
             ).toList();
         }

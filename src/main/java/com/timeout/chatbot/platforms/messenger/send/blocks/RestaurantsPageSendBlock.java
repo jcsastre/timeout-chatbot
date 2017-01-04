@@ -1,5 +1,6 @@
 package com.timeout.chatbot.platforms.messenger.send.blocks;
 
+import com.github.messenger4j.send.QuickReply;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.graffitti.domain.response.PageItem;
@@ -7,25 +8,36 @@ import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisati
 import com.timeout.chatbot.graffitti.domain.response.categorisation.CategorisationSecondary;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-public class RestaurantsPage {
+@Component
+public class RestaurantsPageSendBlock {
     private final MessengerSendClientWrapper messengerSendClientWrapper;
-    private final List<PageItem> restaurants;
-    private final String recipientId;
 
-    public RestaurantsPage(
-        MessengerSendClientWrapper messengerSendClientWrapper,
-        List<PageItem> restaurants,
-        String recipientId
+    @Autowired
+    public RestaurantsPageSendBlock(
+        MessengerSendClientWrapper messengerSendClientWrapper
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
-        this.restaurants = restaurants;
-        this.recipientId = recipientId;
     }
 
-    public void send() {
+    public void send(
+        String recipientId,
+        List<PageItem> restaurants,
+        Integer totalItems
+
+    ) {
+        sendHorizontalCarroussel(recipientId, restaurants);
+        sendOptions(recipientId, totalItems);
+    }
+
+    private void sendHorizontalCarroussel(
+        String recipientId,
+        List<PageItem> restaurants
+    ) {
         final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
         final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
         for (PageItem restaurant : restaurants) {
@@ -35,7 +47,7 @@ public class RestaurantsPage {
                 .buttons(
                     Button.newListBuilder()
                         .addPostbackButton(
-                            "Get a summary",
+                            "More info",
                             new JSONObject()
                                 .put("type", "restaurant_get_a_summary")
                                 .put("restaurant_id", restaurant.getId())
@@ -61,34 +73,37 @@ public class RestaurantsPage {
                 .toList().done();
         }
 
-        // Last item-summary
-        listBuilder.addElement("292 restaurants more")
-            .buttons(
-                Button.newListBuilder()
-                    .addPostbackButton(
-                        "See more",
-                        new JSONObject()
-                            .put("type", "restaurant_get_a_summary")
-                            .toString()
-                    ).toList()
-                    .addPostbackButton(
-                        "Near me",
-                        new JSONObject()
-                            .put("type", "restaurant_get_a_summary")
-                            .toString()
-                    ).toList()
-                    .addPostbackButton(
-                        "By food",
-                        new JSONObject()
-                            .put("type", "restaurant_get_a_summary")
-                            .toString()
-                    ).toList()
-                    .build()
-            )
-            .toList().done();
-
         final GenericTemplate genericTemplate = genericTemplateBuilder.build();
         messengerSendClientWrapper.sendTemplate(recipientId, genericTemplate);
+    }
+
+    private void sendOptions(
+        String recipientId,
+        Integer totalItems
+    ) {
+        final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
+
+        listBuilder.addLocationQuickReply().toList();
+
+        listBuilder.addTextQuickReply(
+            "Narrow by cuisine",
+            new JSONObject()
+                .put("type", "restaurants_page_narrow_by_cuisine")
+                .toString()
+        ).toList();
+
+        listBuilder.addTextQuickReply(
+            "See more",
+            new JSONObject()
+                .put("type", "restaurants_page_see_more")
+                .toString()
+        ).toList();
+
+        messengerSendClientWrapper.sendTextMessage(
+            recipientId,
+            "There are " + totalItems + " restaurants. Maybe you should narrow your search.",
+            listBuilder.build()
+        );
     }
 
     private String buildSubtitle(PageItem restaurant) {
@@ -116,9 +131,6 @@ public class RestaurantsPage {
             sb.append(" ");
             sb.append(restaurant.getLocation());
         }
-
-//        sb.append("\uD83D\uDEA9");
-//        sb.append(restaurant.getSummary());
 
         if (sb.length() > 80) {
             sb = sb.delete(80, sb.length());

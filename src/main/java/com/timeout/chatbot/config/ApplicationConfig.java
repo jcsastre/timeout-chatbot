@@ -34,7 +34,7 @@ public class ApplicationConfig {
 
     @Bean
     public GraffittiService graffittiService() {
-        return new GraffittiService();
+        return new GraffittiService(restTemplate());
     }
 
     @Bean
