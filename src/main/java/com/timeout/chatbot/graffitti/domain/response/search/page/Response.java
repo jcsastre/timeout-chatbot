@@ -1,4 +1,4 @@
-package com.timeout.chatbot.graffitti.domain.response;
+package com.timeout.chatbot.graffitti.domain.response.search.page;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

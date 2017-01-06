@@ -1,23 +1,24 @@
 messenger:
-  app:
-    pageAccessToken: EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD
-    secret: 0c582f67650e79c351a05aac5dd91d6e
-    webhookVerificationToken: secreti
-apiAi:
+  secret: 0c582f67650e79c351a05aac5dd91d6e
+  pageAccessToken: EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD
+  webhookVerificationToken: secreti
+apiai:
   clientAccessToken: 440f2d056d94418ea4f903db566b618a
 ---
 spring:
     profiles: development
 messenger:
-  app:
-    pageAccessToken: EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD
-    secret: 0c582f67650e79c351a05aac5dd91d6e
-    webhookVerificationToken: secreti
+  secret: 0c582f67650e79c351a05aac5dd91d6e
+  pageAccessToken: EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD
+  webhookVerificationToken: secreti
+apiai:
+  clientAccessToken: 440f2d056d94418ea4f903db566b618a
 ---
 spring:
     profiles: production
 messenger:
-  app:
-    pageAccessToken: EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD
-    secret: 0c582f67650e79c351a05aac5dd91d6e
-    webhookVerificationToken: secreti
+  secret: 0c582f67650e79c351a05aac5dd91d6e
+  pageAccessToken: EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD
+  webhookVerificationToken: secreti
+apiai:
+  clientAccessToken: 440f2d056d94418ea4f903db566b618a

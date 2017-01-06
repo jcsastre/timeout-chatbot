@@ -1,7 +1,7 @@
 package com.timeout.chatbot.graffitti.domain.response.images;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.timeout.chatbot.graffitti.domain.response.Meta;
+import com.timeout.chatbot.graffitti.domain.response.search.page.Meta;
 import com.timeout.chatbot.http.HeaderRequestInterceptor;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;

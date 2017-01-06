@@ -7,7 +7,7 @@ import com.timeout.chatbot.domain.apiai.ApiaiIntent;
 import com.timeout.chatbot.domain.messenger.Page;
 import com.timeout.chatbot.domain.messenger.User;
 import com.timeout.chatbot.graffiti.endpoints.GraffittiEndpoints;
-import com.timeout.chatbot.graffitti.domain.response.Response;
+import com.timeout.chatbot.graffitti.domain.response.search.page.Response;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.platforms.messenger.send.blocks.RestaurantSummarySendBlock;
 import com.timeout.chatbot.platforms.messenger.send.blocks.RestaurantsPageSendBlock;

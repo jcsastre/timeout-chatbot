@@ -4,7 +4,7 @@ import com.github.messenger4j.send.QuickReply;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.ButtonTemplate;
 import com.github.messenger4j.send.templates.GenericTemplate;
-import com.timeout.chatbot.graffitti.domain.response.PageItem;
+import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
 import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
 import com.timeout.chatbot.graffitti.domain.response.categorisation.CategorisationSecondary;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
