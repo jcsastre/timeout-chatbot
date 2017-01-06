@@ -5,7 +5,7 @@ curl -X POST -H "Content-Type: application/json" -d '{
   "thread_state":"new_thread",
   "call_to_actions":[
     {
-      "payload":"USER_DEFINED_PAYLOAD"
+      "payload": "{\"type\": \"get_started\"}"
     }
   ]
 }' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD"
@@ -22,4 +22,4 @@ curl -X POST -H "Content-Type: application/json" -d '{
   "greeting":{
     "text":"Timeout London."
   }
-}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=PAGE_ACCESS_TOKEN"
+}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD"

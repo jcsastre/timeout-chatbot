@@ -37,8 +37,6 @@ public class WelcomeMessageSendBlock {
         sbMessage.append("I'm Julio, I work as chatbot on Timeout London.");
         sbMessage.append("\n\n");
         sbMessage.append("I know every corner in London, just ask me.");
-        sbMessage.append("\n\n");
-        sbMessage.append("What are you looking for?");
 
         messengerSendClientWrapper.sendTextMessage(
             user.getUid(),

@@ -1,6 +1,6 @@
 package com.timeout.chatbot.domain.session;
 
-import com.timeout.chatbot.config.ApplicationConfig;
+import com.timeout.chatbot.config.properties.MessengerConfiguration;
 import com.timeout.chatbot.domain.messenger.Page;
 import com.timeout.chatbot.domain.messenger.User;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
@@ -19,7 +19,7 @@ import java.util.List;
 
 @Component
 public class SessionPool {
-    private final ApplicationConfig applicationConfig;
+    private final MessengerConfiguration messengerConfiguration;
 
     private final RestTemplate restTemplate;
 
@@ -38,15 +38,16 @@ public class SessionPool {
 
     @Autowired
     public SessionPool(
-        ApplicationConfig applicationConfig,
+        MessengerConfiguration messengerConfiguration,
         RestTemplate restTemplate,
         GraffittiService campingpongAPIService,
         ApiAiService apiAiService,
         MessengerSendClientWrapper messengerSendClientWrapper,
         WelcomeMessageSendBlock welcomeMessageSendBlock,
         RestaurantSummarySendBlock restaurantSummarySendBlock,
-        RestaurantsPageSendBlock restaurantsPageSendBlock) {
-        this.applicationConfig = applicationConfig;
+        RestaurantsPageSendBlock restaurantsPageSendBlock
+    ) {
+        this.messengerConfiguration = messengerConfiguration;
         this.restTemplate = restTemplate;
         this.campingpongAPIService = campingpongAPIService;
         this.apiAiService = apiAiService;
@@ -95,7 +96,7 @@ public class SessionPool {
         final String url =
             "https://graph.facebook.com/v2.6/" + userId +
             "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" +
-            applicationConfig.getMessenger().getApp().getPageAccessToken();
+            messengerConfiguration.getPageAccessToken();
 
         final UserProfile userProfile = restTemplate.getForObject(url, UserProfile.class);
         user.setUserProfile(userProfile);

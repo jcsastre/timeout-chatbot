@@ -3,7 +3,7 @@ package com.timeout.chatbot.controllers;
 import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.exceptions.MessengerVerificationException;
 import com.github.messenger4j.receive.MessengerReceiveClient;
-import com.timeout.chatbot.config.ApplicationConfig;
+import com.timeout.chatbot.config.properties.MessengerConfiguration;
 import com.timeout.chatbot.platforms.messenger.receiver.handlers.AttachmentMessageEventHandlerImpl;
 import com.timeout.chatbot.platforms.messenger.receiver.handlers.PostbackEventHandler;
 import com.timeout.chatbot.platforms.messenger.receiver.handlers.QuickReplyMessageEventHandler;
@@ -22,8 +22,6 @@ import static com.github.messenger4j.MessengerPlatform.*;
 public class MessengerWebhook {
     private static final Logger logger = LoggerFactory.getLogger(MessengerWebhook.class);
 
-    private final ApplicationConfig applicationConfig;
-
     private final MessengerReceiveClient receiveClient;
 
     /**
@@ -36,24 +34,22 @@ public class MessengerWebhook {
      */
     @Autowired
     public MessengerWebhook(
-        ApplicationConfig applicationConfig,
+        MessengerConfiguration messengerConfiguration,
         TextMessageHandler textMessageHandler,
         QuickReplyMessageEventHandler quickReplyMessageEventHandler,
         PostbackEventHandler postbackEventHandler,
         AttachmentMessageEventHandlerImpl attachmentMessageEventHandler
     ) {
-        this.applicationConfig = applicationConfig;
-
         logger.debug(
             "Initializing MessengerReceiveClient - appSecret: {} | verifyToken: {}",
-            applicationConfig.getMessenger().getApp().getSecret(),
-            applicationConfig.getMessenger().getApp().getWebhookVerificationToken()
+            messengerConfiguration.getSecret(),
+            messengerConfiguration.getWebhookVerificationToken()
         );
 
         this.receiveClient =
             MessengerPlatform.newReceiveClientBuilder(
-                applicationConfig.getMessenger().getApp().getSecret(),
-                applicationConfig.getMessenger().getApp().getWebhookVerificationToken()
+                messengerConfiguration.getSecret(),
+                messengerConfiguration.getWebhookVerificationToken()
             )
             .onTextMessageEvent(textMessageHandler)
             .onQuickReplyMessageEvent(quickReplyMessageEventHandler)

@@ -4,7 +4,8 @@ import ai.api.AIConfiguration;
 import ai.api.AIDataService;
 import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.timeout.chatbot.config.properties.ApplicationProperties;
+import com.timeout.chatbot.config.properties.ApiaiConfiguration;
+import com.timeout.chatbot.config.properties.MessengerConfiguration;
 import com.timeout.chatbot.http.HeaderRequestInterceptor;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.platforms.messenger.send.blocks.WelcomeMessageSendBlock;
@@ -21,11 +22,16 @@ import java.util.List;
 @Configuration
 public class ApplicationConfig {
 
-    private final ApplicationProperties applicationProperties;
+    private final MessengerConfiguration messengerConfiguration;
+    private final ApiaiConfiguration apiaiConfiguration;
 
     @Autowired
-    public ApplicationConfig(ApplicationProperties applicationProperties) {
-        this.applicationProperties = applicationProperties;
+    public ApplicationConfig(
+        MessengerConfiguration messengerConfiguration,
+        ApiaiConfiguration apiaiConfiguration
+    ) {
+        this.messengerConfiguration = messengerConfiguration;
+        this.apiaiConfiguration = apiaiConfiguration;
     }
 
     @Bean
@@ -61,7 +67,7 @@ public class ApplicationConfig {
     @Bean
     public MessengerSendClientWrapper messengerSendClientWrapper() {
         final MessengerSendClient messengerSendClient = MessengerPlatform.newSendClientBuilder(
-            applicationProperties.getMessenger().getApp().getPageAccessToken()
+            messengerConfiguration.getPageAccessToken()
         ).build();
 
         return new MessengerSendClientWrapper(messengerSendClient);
@@ -69,7 +75,7 @@ public class ApplicationConfig {
 
     @Bean
     public AIDataService aIDataService() {
-        AIConfiguration aiConfiguration = new AIConfiguration(applicationProperties.getApiAi().getClientAccessToken());
+        AIConfiguration aiConfiguration = new AIConfiguration(apiaiConfiguration.getClientAccessToken());
         return new AIDataService(aiConfiguration);
     }
 }

@@ -9,12 +9,12 @@ import com.timeout.chatbot.domain.messenger.User;
 import com.timeout.chatbot.graffiti.endpoints.GraffittiEndpoints;
 import com.timeout.chatbot.graffitti.domain.response.search.page.Response;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
+import com.timeout.chatbot.platforms.messenger.payload.PayloadType;
 import com.timeout.chatbot.platforms.messenger.send.blocks.RestaurantSummarySendBlock;
 import com.timeout.chatbot.platforms.messenger.send.blocks.RestaurantsPageSendBlock;
 import com.timeout.chatbot.platforms.messenger.send.blocks.WelcomeMessageSendBlock;
 import com.timeout.chatbot.services.ApiAiService;
 import com.timeout.chatbot.services.GraffittiService;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.web.client.RestTemplate;
 
@@ -129,26 +129,29 @@ public class Session {
         final JSONObject payloadAsJson = new JSONObject(payload);
 
         try {
-            final String type = payloadAsJson.getString("type");
-            switch (type) {
-                case "utterance":
+            PayloadType payloadType = PayloadType.valueOf(payloadAsJson.getString("type"));
+            switch (payloadType) {
+                case get_started:
+                    welcomeMessageSendBlock.send(user);
+                    break;
+                case utterance:
                     final String utterance = payloadAsJson.getString("utterance");
                     applyUtterance(utterance);
                     break;
-                case "restaurant_get_a_summary":
+                case restaurant_get_a_summary:
                     restaurantSummarySendBlock.send(
                         user.getUid(),
                         payloadAsJson.getString("restaurant_id")
                     );
                     break;
-                case "restaurants_set_cuisine":
+                case restaurants_set_cuisine:
                     //TODO:
                     break;
                 default:
                     sendTextMessage("Lo siento ha ocurrido un error.");
                     break;
             }
-        } catch(JSONException e) {
+        } catch(Exception e) {
             sendTextMessage("Lo siento ha ocurrido un error.");
         }
 
@@ -164,12 +167,12 @@ public class Session {
     }
 
     private void onIntentGreetings() {
-        if (sessionContextState == SessionContextState.UNDEFINED) {
-            sessionContextState = SessionContextState.GREETINGS;
-            welcomeMessageSendBlock.send(user);
-        } else {
+//        if (sessionContextState == SessionContextState.UNDEFINED) {
+//            sessionContextState = SessionContextState.GREETINGS;
+//            welcomeMessageSendBlock.send(user);
+//        } else {
             sendTextMessage("¡Hola!");
-        }
+//        }
     }
 
     private void onIntentRestaurants() {

@@ -2,11 +2,10 @@ package com.timeout.chatbot.platforms.messenger.send.blocks;
 
 import com.github.messenger4j.send.QuickReply;
 import com.github.messenger4j.send.buttons.Button;
-import com.github.messenger4j.send.templates.ButtonTemplate;
 import com.github.messenger4j.send.templates.GenericTemplate;
-import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
 import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
 import com.timeout.chatbot.graffitti.domain.response.categorisation.CategorisationSecondary;
+import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ public class RestaurantsPageSendBlock {
         String recipientId,
         List<PageItem> restaurants,
         Integer totalItems
-
     ) {
         sendHorizontalCarroussel(recipientId, restaurants);
         sendNarrowAlternativesQuickReplies(recipientId, totalItems);
@@ -78,44 +76,42 @@ public class RestaurantsPageSendBlock {
         messengerSendClientWrapper.sendTemplate(recipientId, genericTemplate);
     }
 
-    private void sendNarrowAlternativesButtonTemplate(
-        String recipientId,
-        Integer totalItems
-    ) {
-
-        String msg =
-            "There are " + totalItems + " restaurants \uD83D\uDE31" +
-            "\n" +
-            "\n" +
-            "Maybe you should tune your search a little more, isn't it?";
-
-        final ButtonTemplate yes = ButtonTemplate.newBuilder(
-            msg,
-            Button.newListBuilder()
-                .addPostbackButton(
-                    "Near me",
-                    new JSONObject()
-                        .put("type", "restaurants_set_location")
-                        .toString()
-
-                ).toList()
-                .addPostbackButton(
-                    "Show cuisines",
-                    new JSONObject()
-                        .put("type", "restaurants_set_cuisine")
-                        .toString()
-                ).toList()
-                .addPostbackButton(
-                    "No, see more",
-                    new JSONObject()
-                        .put("type", "restaurants_see_more")
-                        .toString()
-                ).toList()
-                .build()
-        ).build();
-
-        messengerSendClientWrapper.sendTemplate(recipientId, yes);
-    }
+//    private void sendNarrowAlternativesButtonTemplate(
+//        String recipientId,
+//        Integer totalItems
+//    ) {
+//
+//        String msg =
+//            "There are " + totalItems + " restaurants \uD83D\uDE31. " +
+//            "Maybe you can search restaurants by location or by cuisine.";
+//
+//        final ButtonTemplate yes = ButtonTemplate.newBuilder(
+//            msg,
+//            Button.newListBuilder()
+//                .addPostbackButton(
+//                    "Near me",
+//                    new JSONObject()
+//                        .put("type", "restaurants_set_location")
+//                        .toString()
+//
+//                ).toList()
+//                .addPostbackButton(
+//                    "Show cuisines",
+//                    new JSONObject()
+//                        .put("type", "restaurants_set_cuisine")
+//                        .toString()
+//                ).toList()
+//                .addPostbackButton(
+//                    "No, see more",
+//                    new JSONObject()
+//                        .put("type", "restaurants_see_more")
+//                        .toString()
+//                ).toList()
+//                .build()
+//        ).build();
+//
+//        messengerSendClientWrapper.sendTemplate(recipientId, yes);
+//    }
 
     private void sendNarrowAlternativesQuickReplies(
         String recipientId,
@@ -123,11 +119,8 @@ public class RestaurantsPageSendBlock {
     ) {
 
         String msg =
-            "There are " + totalItems + " restaurants \uD83D\uDE31" +
-            "\n" +
-            "\n" +
-            "Maybe you should tune your search a little more, isn't it?";
-
+            "There are " + totalItems + " restaurants \uD83D\uDE31. " +
+            "Maybe you can search restaurants by location or by cuisine.";
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
@@ -138,9 +131,14 @@ public class RestaurantsPageSendBlock {
                 .toString()
         ).toList();
 
-        listBuilder.addLocationQuickReply().toList();
+        listBuilder.addTextQuickReply(
+            "Set location",
+            new JSONObject()
+                .put("type", "restaurants_page_see_more")
+                .toString()
+        ).toList();
 
-
+//        listBuilder.addLocationQuickReply().toList();
 
         listBuilder.addTextQuickReply(
             "Set cuisine",
