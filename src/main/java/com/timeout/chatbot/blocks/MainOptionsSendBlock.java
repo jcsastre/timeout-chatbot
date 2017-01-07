@@ -1,7 +1,7 @@
-package com.timeout.chatbot.platforms.messenger.send.blocks;
+package com.timeout.chatbot.blocks;
 
 import com.github.messenger4j.send.QuickReply;
-import com.timeout.chatbot.domain.messenger.User;
+import com.timeout.chatbot.domain.User;
 import com.timeout.chatbot.graffitti.domain.response.facets.CategoryPrimary;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.GraffittiService;
@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class WelcomeMessageSendBlock {
+public class MainOptionsSendBlock {
 
     private final GraffittiService graffittiService;
     private final MessengerSendClientWrapper messengerSendClientWrapper;
 
     @Autowired
-    public WelcomeMessageSendBlock(
+    public MainOptionsSendBlock(
         GraffittiService graffittiService,
         MessengerSendClientWrapper messengerSendClientWrapper
     ) {
@@ -27,20 +27,11 @@ public class WelcomeMessageSendBlock {
     }
 
     public void send(User user) {
-        StringBuilder sbMessage = new StringBuilder();
-        if (user.getUserProfile().getFirstName() != null) {
-            sbMessage.append("Hi " + user.getUserProfile().getFirstName() + "!");
-        } else {
-            sbMessage.append("Hi!");
-        }
-        sbMessage.append("\n\n");
-        sbMessage.append("I'm Julio, I work as chatbot on Timeout London.");
-        sbMessage.append("\n\n");
-        sbMessage.append("I know every corner in London, just ask me.");
+        String msg = "What are you looking for?";
 
         messengerSendClientWrapper.sendTextMessage(
-            user.getUid(),
-            sbMessage.toString(),
+            user.getMessengerId(),
+            msg,
             buildQuickReplies()
         );
     }
@@ -56,10 +47,6 @@ public class WelcomeMessageSendBlock {
                     .put("type", "utterance")
                     .put("utterance", primaryCategoryPrimary.getName())
                     .toString()
-//                new JSONObject()
-//                    .put("type", "search-by-primary-category")
-//                    .put("uid", primaryCategoryPrimary.getId())
-//                    .toString()
             ).toList();
         }
 

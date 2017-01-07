@@ -1,4 +1,4 @@
-package com.timeout.chatbot.platforms.messenger.receiver.handlers;
+package com.timeout.chatbot.handlers;
 
 import com.github.messenger4j.receive.events.AttachmentMessageEvent;
 import com.github.messenger4j.receive.handlers.AttachmentMessageEventHandler;

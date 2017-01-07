@@ -1,4 +1,4 @@
-package com.timeout.chatbot.graffiti.endpoints;
+package com.timeout.chatbot.graffitti.endpoints;
 
 public enum GraffittiEndpoints {
     FACETS("http://graffiti.timeout.com/v1/sites/uk-london/facet-groups/browsing-v5?locale=en-GB"),

@@ -1,6 +1,6 @@
 package com.timeout.chatbot.services;
 
-import com.timeout.chatbot.graffiti.endpoints.GraffittiEndpoints;
+import com.timeout.chatbot.graffitti.endpoints.GraffittiEndpoints;
 import com.timeout.chatbot.graffitti.domain.response.facets.CategoryPrimary;
 import com.timeout.chatbot.graffitti.domain.response.facets.CategorySecondary;
 import com.timeout.chatbot.graffitti.domain.response.facets.FacetGroup;
@@ -26,6 +26,16 @@ public class GraffittiService {
 
     public List<CategoryPrimary> getPrimaryCategories() {
         return facetGroup.getBody().getFacets().getWhat().getPrimaryCategories();
+    }
+
+    public CategoryPrimary getCategoryPrimaryByName(String name) {
+        for (CategoryPrimary categoryPrimary : getPrimaryCategories()) {
+            if (categoryPrimary.getName().equals(name)) {
+                return categoryPrimary;
+            }
+        }
+
+        return null;
     }
 
     public CategoryPrimary getCategoryPrimaryById(String id) {

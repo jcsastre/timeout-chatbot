@@ -1,4 +1,4 @@
-package com.timeout.chatbot.platforms.messenger.receiver.handlers;
+package com.timeout.chatbot.handlers;
 
 import com.github.messenger4j.receive.events.TextMessageEvent;
 import com.github.messenger4j.receive.handlers.TextMessageEventHandler;
@@ -64,7 +64,7 @@ public class TextMessageHandler implements TextMessageEventHandler {
 //            e.printStackTrace();
 //        }
 //
-////        User fbRecipient = new User(recipientId);
+////        UserMessenger fbRecipient = new UserMessenger(recipientId);
 ////
 ////        List<QuickReply> quickReplies = QuickReply.newListBuilder()
 ////                .addTextQuickReply("great", "GREAT_PAYLOAD").toList()

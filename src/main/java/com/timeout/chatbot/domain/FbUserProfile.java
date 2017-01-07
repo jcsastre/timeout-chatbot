@@ -1,24 +1,19 @@
-package com.timeout.chatbot.platforms.messenger.domain;
+package com.timeout.chatbot.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserProfile {
+public class FbUserProfile {
 
     @JsonProperty("first_name")
     private String firstName;
-
     @JsonProperty("last_name")
     private String lastName;
-
     @JsonProperty("profile_pic")
     private String profilePic;
-
     private String locale;
-
     private String timezone;
-
     private String gender;
 
     public String getFirstName() {

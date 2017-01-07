@@ -1,5 +1,6 @@
 package com.timeout.chatbot.controllers;
 
+import com.timeout.chatbot.domain.FbUserProfile;
 import com.timeout.chatbot.domain.User;
 import com.timeout.chatbot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,26 +21,21 @@ public class MongoController {
     @ResponseBody
     public ResponseEntity<String> doGet() {
 
-        //TODO:
         repository.deleteAll();
 
-        // save a couple of customers
-        repository.save(new User("messenger", "2398493232", "Juan Carlos 3", "Sastre"));
-//        repository.save(new User("messenger", "2342433", "Messeguer", "Sopar"));
+        FbUserProfile fbUserProfile =  new FbUserProfile();
+        fbUserProfile.setFirstName("Fb User Profile");
 
-        // fetch all customers
+        User user1 = new User("ljfldj");
+        user1.setFbUserProfile(fbUserProfile);
+        repository.save(user1);
+
         System.out.println("Customers found with findAll():");
         System.out.println("-------------------------------");
         for (User user : repository.findAll()) {
             System.out.println(user);
         }
         System.out.println();
-
-        // fetch an individual customer
-        System.out.println("Customer found with findByFirstName('Alice'):");
-        System.out.println("--------------------------------");
-        System.out.println(repository.findByPlatformId("2342433"));
-
 
         return ResponseEntity.ok("Ok");
     }

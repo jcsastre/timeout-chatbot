@@ -1,49 +1,67 @@
 package com.timeout.chatbot.domain;
 
-import com.timeout.chatbot.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Id;
 
 public class User {
     @Id
     public String id;
 
-    public String platform;
-    public String platformId;
+    public String messengerId;
 
-    public String firstName;
-    public String lastName;
+    private FbUserProfile fbUserProfile;
 
-    public UserSuggestionsDone suggestionsDone;
+    public SuggestionsDone suggestionsDone;
 
-    public User() {}
+    public User(String messengerId) {
+        this.messengerId = messengerId;
+        this.suggestionsDone = new SuggestionsDone();
+    }
 
-    public User(
-        String platform,
-        String platformId,
-        String firstName,
-        String lastName
-    ) {
-        this.platform = platform;
-        this.platformId = platformId;
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public String getMessengerId() {
+        return messengerId;
+    }
 
-        this.suggestionsDone = new UserSuggestionsDone();
+    public FbUserProfile getFbUserProfile() {
+        return fbUserProfile;
+    }
+
+    public void setFbUserProfile(FbUserProfile fbUserProfile) {
+        this.fbUserProfile = fbUserProfile;
+    }
+
+    public SuggestionsDone getSuggestionsDone() {
+        return suggestionsDone;
     }
 
     @Override
     public String toString() {
         return String.format(
-            "User[id=%s, platform=%s, platformId=%s, firstName='%s', lastName='%s']",
-            id, platform, platformId, firstName, lastName
+            "UserMessenger[id=%s, suggestionsDone=%s]",
+            id, suggestionsDone.toString()
         );
     }
 
-    @Autowired
-    private UserRepository repository;
+    public class SuggestionsDone {
+        public Boolean restaurantsFineSearch = false;
 
-    public static void main(String[] args) {
+        public SuggestionsDone() {
+            this.restaurantsFineSearch = false;
+        }
 
+        @Override
+        public String toString() {
+            return String.format(
+                "SuggestionsDone[restaurantsFineSearch=%s]",
+                restaurantsFineSearch.toString()
+            );
+        }
+
+        public Boolean getRestaurantsFineSearch() {
+            return restaurantsFineSearch;
+        }
+
+        public void setRestaurantsFineSearch(Boolean restaurantsFineSearch) {
+            this.restaurantsFineSearch = restaurantsFineSearch;
+        }
     }
 }

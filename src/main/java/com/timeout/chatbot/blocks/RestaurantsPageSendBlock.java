@@ -1,8 +1,9 @@
-package com.timeout.chatbot.platforms.messenger.send.blocks;
+package com.timeout.chatbot.blocks;
 
 import com.github.messenger4j.send.QuickReply;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
+import com.timeout.chatbot.domain.User;
 import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
 import com.timeout.chatbot.graffitti.domain.response.categorisation.CategorisationSecondary;
 import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
@@ -17,6 +18,8 @@ import java.util.List;
 public class RestaurantsPageSendBlock {
     private final MessengerSendClientWrapper messengerSendClientWrapper;
 
+    private final static int NUMBER_RESTAURANTS_THRESOLD = 100;
+
     @Autowired
     public RestaurantsPageSendBlock(
         MessengerSendClientWrapper messengerSendClientWrapper
@@ -25,12 +28,20 @@ public class RestaurantsPageSendBlock {
     }
 
     public void send(
-        String recipientId,
+        User user,
         List<PageItem> restaurants,
         Integer totalItems
     ) {
-        sendHorizontalCarroussel(recipientId, restaurants);
-        sendNarrowAlternativesQuickReplies(recipientId, totalItems);
+        sendHorizontalCarroussel(
+            user.getMessengerId(),
+            restaurants
+        );
+
+        sendFeedbackAndQuickReplies(
+            user.getMessengerId(),
+            totalItems,
+            user.getSuggestionsDone().getRestaurantsFineSearch()
+        );
     }
 
     private void sendHorizontalCarroussel(
@@ -76,56 +87,28 @@ public class RestaurantsPageSendBlock {
         messengerSendClientWrapper.sendTemplate(recipientId, genericTemplate);
     }
 
-//    private void sendNarrowAlternativesButtonTemplate(
-//        String recipientId,
-//        Integer totalItems
-//    ) {
-//
-//        String msg =
-//            "There are " + totalItems + " restaurants \uD83D\uDE31. " +
-//            "Maybe you can search restaurants by location or by cuisine.";
-//
-//        final ButtonTemplate yes = ButtonTemplate.newBuilder(
-//            msg,
-//            Button.newListBuilder()
-//                .addPostbackButton(
-//                    "Near me",
-//                    new JSONObject()
-//                        .put("type", "restaurants_set_location")
-//                        .toString()
-//
-//                ).toList()
-//                .addPostbackButton(
-//                    "Show cuisines",
-//                    new JSONObject()
-//                        .put("type", "restaurants_set_cuisine")
-//                        .toString()
-//                ).toList()
-//                .addPostbackButton(
-//                    "No, see more",
-//                    new JSONObject()
-//                        .put("type", "restaurants_see_more")
-//                        .toString()
-//                ).toList()
-//                .build()
-//        ).build();
-//
-//        messengerSendClientWrapper.sendTemplate(recipientId, yes);
-//    }
-
-    private void sendNarrowAlternativesQuickReplies(
+    private void sendFeedbackAndQuickReplies(
         String recipientId,
-        Integer totalItems
+        Integer totalItems,
+        Boolean suggestionRestaurantsFineSearchDone
     ) {
+        String msg = String.format(
+            "There are %s resturants",
+            totalItems
+        );
 
-        String msg =
-            "There are " + totalItems + " restaurants \uD83D\uDE31. " +
-            "Maybe you can search restaurants by location or by cuisine.";
+        if (totalItems>NUMBER_RESTAURANTS_THRESOLD) {
+            msg = msg + " \uD83D\uDE31.";
+
+            if (!suggestionRestaurantsFineSearchDone) {
+                msg = msg + " Maybe you can search restaurants by location or by cuisine.";
+            }
+        }
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
         listBuilder.addTextQuickReply(
-            "No, see more",
+            "See more",
             new JSONObject()
                 .put("type", "restaurants_page_see_more")
                 .toString()
@@ -134,7 +117,7 @@ public class RestaurantsPageSendBlock {
         listBuilder.addTextQuickReply(
             "Set location",
             new JSONObject()
-                .put("type", "restaurants_page_see_more")
+                .put("type", "set_location")
                 .toString()
         ).toList();
 
@@ -172,7 +155,7 @@ public class RestaurantsPageSendBlock {
                 }
             }
         }
-        if (secondaryCategoryFound == false) {
+        if (!secondaryCategoryFound) {
             sb.append("Restaurant");
         }
 

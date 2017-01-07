@@ -8,7 +8,7 @@ import com.timeout.chatbot.config.properties.ApiaiConfiguration;
 import com.timeout.chatbot.config.properties.MessengerConfiguration;
 import com.timeout.chatbot.http.HeaderRequestInterceptor;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
-import com.timeout.chatbot.platforms.messenger.send.blocks.WelcomeMessageSendBlock;
+import com.timeout.chatbot.blocks.WelcomeMessageSendBlock;
 import com.timeout.chatbot.services.GraffittiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

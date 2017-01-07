@@ -1,4 +1,4 @@
-package com.timeout.chatbot.platforms.messenger.send.blocks;
+package com.timeout.chatbot.blocks;
 
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;

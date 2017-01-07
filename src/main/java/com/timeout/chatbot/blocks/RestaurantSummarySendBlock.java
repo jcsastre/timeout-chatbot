@@ -1,10 +1,10 @@
-package com.timeout.chatbot.platforms.messenger.send.blocks;
+package com.timeout.chatbot.blocks;
 
 import com.github.messenger4j.send.QuickReply;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.ButtonTemplate;
 import com.github.messenger4j.send.templates.GenericTemplate;
-import com.timeout.chatbot.graffiti.endpoints.GraffittiEndpoints;
+import com.timeout.chatbot.graffitti.endpoints.GraffittiEndpoints;
 import com.timeout.chatbot.graffitti.domain.response.facets.CategoryPrimary;
 import com.timeout.chatbot.graffitti.domain.Restaurant;
 import com.timeout.chatbot.graffitti.domain.response.images.Image;

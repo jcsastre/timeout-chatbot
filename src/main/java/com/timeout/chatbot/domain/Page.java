@@ -1,4 +1,4 @@
-package com.timeout.chatbot.domain.messenger;
+package com.timeout.chatbot.domain;
 
 /**
  * Page of facebook.
