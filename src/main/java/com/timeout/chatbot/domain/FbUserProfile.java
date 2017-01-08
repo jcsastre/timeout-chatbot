@@ -63,4 +63,12 @@ public class FbUserProfile {
     public void setGender(String gender) {
         this.gender = gender;
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "FbUserProfile[firstName=%s, lastName=%s]",
+            firstName, lastName
+        );
+    }
 }

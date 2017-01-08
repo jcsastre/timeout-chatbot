@@ -1,9 +1,9 @@
-package com.timeout.chatbot.blocks;
+package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.QuickReply;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
-import com.timeout.chatbot.domain.User;
+import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
 import com.timeout.chatbot.graffitti.domain.response.categorisation.CategorisationSecondary;
 import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
@@ -15,32 +15,33 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class RestaurantsPageSendBlock {
+public class RestaurantsPageBlock {
     private final MessengerSendClientWrapper messengerSendClientWrapper;
 
-    private final static int NUMBER_RESTAURANTS_THRESOLD = 100;
-
     @Autowired
-    public RestaurantsPageSendBlock(
+    public RestaurantsPageBlock(
         MessengerSendClientWrapper messengerSendClientWrapper
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
     }
 
     public void send(
-        User user,
+        String userId,
         List<PageItem> restaurants,
-        Integer totalItems
+        Integer totalItems,
+        Boolean tooMuchItems,
+        Boolean suggestionRestaurantsFineSearchRequired
     ) {
         sendHorizontalCarroussel(
-            user.getMessengerId(),
+            userId,
             restaurants
         );
 
         sendFeedbackAndQuickReplies(
-            user.getMessengerId(),
+            userId,
             totalItems,
-            user.getSuggestionsDone().getRestaurantsFineSearch()
+            tooMuchItems,
+            suggestionRestaurantsFineSearchRequired
         );
     }
 
@@ -70,7 +71,7 @@ public class RestaurantsPageSendBlock {
                         .addPostbackButton(
                             "Book",
                             new JSONObject()
-                                .put("type", "restaurant_book")
+                                .put("type", PayloadType.restaurant_book)
                                 .put("restaurant_id", restaurant.getId())
                                 .toString()
                         ).toList()
@@ -90,17 +91,18 @@ public class RestaurantsPageSendBlock {
     private void sendFeedbackAndQuickReplies(
         String recipientId,
         Integer totalItems,
-        Boolean suggestionRestaurantsFineSearchDone
+        Boolean tooMuchItems,
+        Boolean suggestionRestaurantsFineSearchRequired
     ) {
         String msg = String.format(
             "There are %s resturants",
             totalItems
         );
 
-        if (totalItems>NUMBER_RESTAURANTS_THRESOLD) {
+        if (tooMuchItems) {
             msg = msg + " \uD83D\uDE31.";
 
-            if (!suggestionRestaurantsFineSearchDone) {
+            if (suggestionRestaurantsFineSearchRequired) {
                 msg = msg + " Maybe you can search restaurants by location or by cuisine.";
             }
         }

@@ -3,10 +3,6 @@ package com.timeout.chatbot.domain.session;
 import ai.api.AIServiceException;
 import ai.api.model.Result;
 import com.google.gson.JsonElement;
-import com.timeout.chatbot.blocks.MainOptionsSendBlock;
-import com.timeout.chatbot.blocks.RestaurantSummarySendBlock;
-import com.timeout.chatbot.blocks.RestaurantsPageSendBlock;
-import com.timeout.chatbot.blocks.WelcomeMessageSendBlock;
 import com.timeout.chatbot.domain.Page;
 import com.timeout.chatbot.domain.User;
 import com.timeout.chatbot.domain.apiai.ApiaiIntent;
@@ -16,6 +12,7 @@ import com.timeout.chatbot.graffitti.endpoints.GraffittiEndpoints;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.repository.UserRepository;
 import com.timeout.chatbot.services.ApiAiService;
+import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.GraffittiService;
 import org.json.JSONObject;
 import org.springframework.web.client.RestTemplate;
@@ -37,14 +34,13 @@ public class Session {
     private SessionContextState sessionContextState;
     private final SessionContextBag sessionContextBag;
 
-    private final WelcomeMessageSendBlock welcomeMessageSendBlock;
-    private final MainOptionsSendBlock mainOptionsSendBlock;
-    private final RestaurantSummarySendBlock restaurantSummarySendBlock;
-    private final RestaurantsPageSendBlock restaurantsPageSendBlock;
+    private final BlockService blockService;
 
     private final UserRepository userRepository;
 
     private long lastAccessTime;
+
+    private final static int NUMBER_ITEMS_THRESOLD = 100;
 
     public Session(
         RestTemplate restTemplate,
@@ -53,20 +49,14 @@ public class Session {
         MessengerSendClientWrapper messengerSendClientWrapper,
         Page page,
         User user,
-        WelcomeMessageSendBlock welcomeMessageSendBlock,
-        MainOptionsSendBlock mainOptionsSendBlock,
-        RestaurantSummarySendBlock restaurantSummarySendBlock,
-        RestaurantsPageSendBlock restaurantsPageSendBlock,
+        BlockService blockService,
         UserRepository userRepository
     ) {
         this.restTemplate = restTemplate;
         this.graffittiService = graffittiService;
         this.apiAiService = apiAiService;
         this.messengerSendClientWrapper = messengerSendClientWrapper;
-        this.welcomeMessageSendBlock = welcomeMessageSendBlock;
-        this.mainOptionsSendBlock = mainOptionsSendBlock;
-        this.restaurantSummarySendBlock = restaurantSummarySendBlock;
-        this.restaurantsPageSendBlock = restaurantsPageSendBlock;
+        this.blockService = blockService;
         this.userRepository = userRepository;
 
         this.uuid = UUID.randomUUID();
@@ -96,7 +86,7 @@ public class Session {
         Result apiaiResult = getApiaiResult(utterance);
 
         final String apiaiAction = apiaiResult.getAction();
-        final ApiaiIntent apiaiIntent = ApiaiIntent.fromString(apiaiAction);
+        final ApiaiIntent apiaiIntent = ApiaiIntent.fromApiaiAction(apiaiAction);
 
         final Map<String, JsonElement> apiaiParameters = apiaiResult.getParameters();
         if (apiaiParameters != null) {
@@ -109,11 +99,29 @@ public class Session {
             case GREETINGS:
                 onIntentGreetings();
                 break;
+            case FIND_THINGSTODO:
+                onIntentFindThingstodo();
+                break;
             case FIND_RESTAURANTS:
                 onIntentRestaurants();
                 break;
-            case FIND_OFFERS:
-//                fsm.apply(Intent.FIND_OFFERS);
+            case FIND_BARSANDPUBS:
+                onIntentFindBarsandpubs();
+                break;
+            case FIND_ART:
+                onIntentFindArt();
+                break;
+            case FIND_THEATRE:
+                onIntentFindTheatre();
+                break;
+            case FIND_MUSIC:
+                onIntentFindMusic();
+                break;
+            case FIND_NIGHTLIFE:
+                onIntentFindNightlife();
+                break;
+            case FIND_FILM:
+                onIntentFindFilm();
                 break;
             case SET_LOCATION:
 //                fsm.apply(Intent.FIND_CAMPINGS);
@@ -121,6 +129,11 @@ public class Session {
             case UNKOWN:
 //                onIntentUnknown();
                 break;
+            default:
+                messengerSendClientWrapper.sendTextMessage(
+                    user.getMessengerId(),
+                    "Sorry, I don't understand you."
+                );
         }
     }
 
@@ -147,33 +160,39 @@ public class Session {
             PayloadType payloadType = PayloadType.valueOf(payloadAsJson.getString("type"));
             switch (payloadType) {
                 case get_started:
-                    userRepository.deleteAll(); //TODO: delte!!!
+                    // userRepository.deleteAll(); //TODO: delte!!!
                     userRepository.save(user);
-                    welcomeMessageSendBlock.send(user);
-                    mainOptionsSendBlock.send(user);
+                    blockService.sendWelcomeFirstTimeBlock(user);
+                    blockService.sendMainOptionsBlock(user);
                     break;
                 case utterance:
                     final String utterance = payloadAsJson.getString("utterance");
                     applyUtterance(utterance);
                     break;
                 case restaurant_get_a_summary:
-                    restaurantSummarySendBlock.send(
+                    blockService.sendRestaurantSummaryBlock(
                         user.getMessengerId(),
                         payloadAsJson.getString("restaurant_id")
                     );
                     break;
+                case restaurant_book:
+                    sendTextMessage("Sorry, restaurants booking is not yet implemented.");
+                    //TODO: restaurant_book
+                    break;
                 case set_location:
-                    //TODO
+                    sendTextMessage("Sorry, set location is not yet implemented.");
+                    //TODO: set_location
                     break;
                 case restaurants_set_cuisine:
-                    //TODO:
+                    sendTextMessage("Sorry, set cuisine is not yet implemented.");
+                    //TODO: restaurants_set_cuisine
                     break;
                 default:
-                    sendTextMessage("Lo siento ha ocurrido un error.");
+                    sendTextMessage("Sorry, an error occurred.");
                     break;
             }
         } catch(Exception e) {
-            sendTextMessage("Lo siento ha ocurrido un error.");
+            sendTextMessage("Sorry, an error occurred.");
         }
 
 //        try {
@@ -190,10 +209,60 @@ public class Session {
     private void onIntentGreetings() {
         if (sessionContextState == SessionContextState.UNDEFINED) {
             sessionContextState = SessionContextState.GREETINGS;
-            mainOptionsSendBlock.send(user);
+            blockService.sendWelcomeBackBlock(user);
+            blockService.sendMainOptionsBlock(user);
         } else {
             sendTextMessage("¡Hola!");
         }
+    }
+
+    private void onIntentFindThingstodo() {
+        messengerSendClientWrapper.sendTextMessage(
+            user.getMessengerId(),
+            "Sorry, 'Things to do' is not yet implemented."
+        );
+    }
+
+    private void onIntentFindBarsandpubs() {
+        messengerSendClientWrapper.sendTextMessage(
+            user.getMessengerId(),
+            "Sorry, 'Bars anb pubs' is not yet implemented."
+        );
+    }
+
+    private void onIntentFindArt() {
+        messengerSendClientWrapper.sendTextMessage(
+            user.getMessengerId(),
+            "Sorry, 'Art' is not yet implemented."
+        );
+    }
+
+    private void  onIntentFindTheatre() {
+        messengerSendClientWrapper.sendTextMessage(
+            user.getMessengerId(),
+            "Sorry, 'Theatre' is not yet implemented."
+        );
+    }
+
+    private void onIntentFindMusic() {
+        messengerSendClientWrapper.sendTextMessage(
+            user.getMessengerId(),
+            "Sorry, 'Music' is not yet implemented."
+        );
+    }
+
+    private void onIntentFindNightlife() {
+        messengerSendClientWrapper.sendTextMessage(
+            user.getMessengerId(),
+            "Sorry, 'Nightlife' is not yet implemented."
+        );
+    }
+
+    private void onIntentFindFilm() {
+        messengerSendClientWrapper.sendTextMessage(
+            user.getMessengerId(),
+            "Sorry, 'Film' is not yet implemented."
+        );
     }
 
     private void onIntentRestaurants() {
@@ -221,11 +290,27 @@ public class Session {
 
         int totalItems = response.getMeta().getTotalItems();
         if (totalItems>0) {
-            restaurantsPageSendBlock.send(
-                user,
+            Boolean tooMuchItems = Boolean.FALSE;
+            Boolean suggestionRestaurantsFineSearchRequired = false;
+            if (totalItems > NUMBER_ITEMS_THRESOLD) {
+                tooMuchItems = Boolean.TRUE;
+                if (!user.getSuggestionsDone().getRestaurantsFineSearch()) {
+                    suggestionRestaurantsFineSearchRequired = true;
+                }
+            }
+
+            blockService.sendRestaurantsPageBlock(
+                user.getMessengerId(),
                 response.getPageItems(),
-                response.getMeta().getTotalItems()
+                response.getMeta().getTotalItems(),
+                tooMuchItems,
+                suggestionRestaurantsFineSearchRequired
             );
+
+            if (suggestionRestaurantsFineSearchRequired) {
+                user.getSuggestionsDone().setRestaurantsFineSearch(true);
+                userRepository.save(user);
+            }
         } else {
             sendTextMessage("There are not available restaurants for your request.");
         }
@@ -296,5 +381,13 @@ public class Session {
 
     public void setLastAccessTime(long lastAccessTime) {
         this.lastAccessTime = lastAccessTime;
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "Session[uuid=%s, page=%s, user=%s]",
+            uuid, page, user
+        );
     }
 }

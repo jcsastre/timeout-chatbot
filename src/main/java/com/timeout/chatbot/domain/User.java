@@ -36,8 +36,8 @@ public class User {
     @Override
     public String toString() {
         return String.format(
-            "UserMessenger[id=%s, suggestionsDone=%s]",
-            id, suggestionsDone.toString()
+            "User[id=%s, messengerId=%s, fbUserProfile=%s, suggestionsDone=%s]",
+            id, messengerId, fbUserProfile.toString(), suggestionsDone.toString()
         );
     }
 
@@ -51,8 +51,8 @@ public class User {
         @Override
         public String toString() {
             return String.format(
-                "SuggestionsDone[restaurantsFineSearch=%s]",
-                restaurantsFineSearch.toString()
+                "SuggestionsDone[fbUserProfile=%s, restaurantsFineSearch=%s]",
+                fbUserProfile.toString(), restaurantsFineSearch.toString()
             );
         }
 

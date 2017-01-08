@@ -1,4 +1,4 @@
-package com.timeout.chatbot.blocks;
+package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.QuickReply;
 import com.github.messenger4j.send.buttons.Button;
@@ -19,14 +19,14 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Component
-public class RestaurantSummarySendBlock {
+public class RestaurantSummaryBlock {
 
     private final RestTemplate restTemplate;
     private final GraffittiService graffittiService;
     private final MessengerSendClientWrapper messengerSendClientWrapper;
 
     @Autowired
-    public RestaurantSummarySendBlock(
+    public RestaurantSummaryBlock(
         RestTemplate restTemplate, GraffittiService graffittiService,
         MessengerSendClientWrapper messengerSendClientWrapper
     ) {
@@ -108,7 +108,7 @@ public class RestaurantSummarySendBlock {
 //                new JSONObject()
 //                    .put("type", "search-by-primary-category")
 //                    .put("uid", primaryCategoryPrimary.getId())
-//                    .toString()
+//                    .toApiaiAction()
             ).toList();
         }
 

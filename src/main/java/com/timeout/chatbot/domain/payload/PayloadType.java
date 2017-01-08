@@ -5,5 +5,6 @@ public enum PayloadType {
     utterance,
     restaurant_get_a_summary,
     restaurants_set_cuisine,
-    set_location
+    set_location,
+    restaurant_book
 }

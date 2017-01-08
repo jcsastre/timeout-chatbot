@@ -27,8 +27,8 @@ public class ApiAiService {
         if (aiResponse.getStatus().getCode() == 200) {
             return aiResponse.getResult();
 
-//                String response = aiResponse.getResult().getParameters().toString();
-//                response = aiResponse.getResult().toString();
+//                String response = aiResponse.getResult().getParameters().toApiaiAction();
+//                response = aiResponse.getResult().toApiaiAction();
 //                try {
 //                    messengerSendClientWrapper.sendTextMessage(recipientId, "Eco: " + response);
 //                    HashMap<String, JsonElement> parameters = aiResponse.getResult().getParameters();

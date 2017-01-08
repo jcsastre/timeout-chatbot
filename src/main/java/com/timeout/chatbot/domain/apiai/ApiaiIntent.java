@@ -3,36 +3,50 @@ package com.timeout.chatbot.domain.apiai;
 public enum ApiaiIntent {
     UNKOWN(null),
     GREETINGS("greetings"),
+    FIND_THINGSTODO("findThingsToDo"),
     FIND_RESTAURANTS("restaurants"),
-    FIND_CAMPINGS("findCampings"),
-    FIND_OFFERS("findOffers"),
+    FIND_BARSANDPUBS("findBarsAndPubs"),
+    FIND_ART("findArt"),
+    FIND_THEATRE("findTheatre"),
+    FIND_MUSIC("findMusic"),
+    FIND_NIGHTLIFE("findNightlife"),
+    FIND_FILM("findFilm"),
     SET_LOCATION("setLocation");
 
-    private final String text;
+    private final String action;
 
-    ApiaiIntent(final String text) {
-        this.text = text;
+    ApiaiIntent(final String action) {
+        this.action = action;
     }
 
-    @Override
-    public String toString() {
-        return text;
+    public String toApiaiAction() {
+        return action;
     }
 
-    public static ApiaiIntent fromString(String intent) {
-        if (intent == null) {
+    public static ApiaiIntent fromApiaiAction(String action) {
+        if (action == null) {
             return UNKOWN;
         }
 
-        if (intent.equals(GREETINGS.toString())) {
+        if (action.equals(GREETINGS.toApiaiAction())) {
             return GREETINGS;
-        } else if (intent.equals(FIND_RESTAURANTS.toString())) {
+        } else if (action.equals(FIND_THINGSTODO.toApiaiAction())) {
+            return FIND_THINGSTODO;
+        } else if (action.equals(FIND_RESTAURANTS.toApiaiAction())) {
             return FIND_RESTAURANTS;
-        } else if (intent.equals(FIND_CAMPINGS.toString())) {
-            return FIND_CAMPINGS;
-        } else if (intent.equals(FIND_OFFERS.toString())) {
-            return FIND_OFFERS;
-        } else if (intent.equals(SET_LOCATION.toString())) {
+        } else if (action.equals(FIND_BARSANDPUBS.toApiaiAction())) {
+            return FIND_BARSANDPUBS;
+        } else if (action.equals(FIND_ART.toApiaiAction())) {
+            return FIND_ART;
+        } else if (action.equals(FIND_THEATRE.toApiaiAction())) {
+            return FIND_THEATRE;
+        } else if (action.equals(FIND_MUSIC.toApiaiAction())) {
+            return FIND_MUSIC;
+        } else if (action.equals(FIND_NIGHTLIFE.toApiaiAction())) {
+            return FIND_NIGHTLIFE;
+        } else if (action.equals(FIND_FILM.toApiaiAction())) {
+            return FIND_FILM;
+        } else if (action.equals(SET_LOCATION.toApiaiAction())) {
             return SET_LOCATION;
         }
 

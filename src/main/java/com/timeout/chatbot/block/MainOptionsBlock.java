@@ -1,4 +1,4 @@
-package com.timeout.chatbot.blocks;
+package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.domain.User;
@@ -12,21 +12,23 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class MainOptionsSendBlock {
+public class MainOptionsBlock {
 
-    private final GraffittiService graffittiService;
     private final MessengerSendClientWrapper messengerSendClientWrapper;
+    private final GraffittiService graffittiService;
 
     @Autowired
-    public MainOptionsSendBlock(
-        GraffittiService graffittiService,
-        MessengerSendClientWrapper messengerSendClientWrapper
+    public MainOptionsBlock(
+        MessengerSendClientWrapper messengerSendClientWrapper,
+        GraffittiService graffittiService
     ) {
-        this.graffittiService = graffittiService;
         this.messengerSendClientWrapper = messengerSendClientWrapper;
+        this.graffittiService = graffittiService;
     }
 
-    public void send(User user) {
+    public void send(
+        User user
+    ) {
         String msg = "What are you looking for?";
 
         messengerSendClientWrapper.sendTextMessage(

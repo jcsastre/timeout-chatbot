@@ -18,4 +18,12 @@ public class Page implements Comparable<Page> {
     public int compareTo(Page page) {
         return this.uid.compareTo(page.getUid());
     }
+
+    @Override
+    public String toString() {
+        return String.format(
+            "Page[uid=%s]",
+            uid
+        );
+    }
 }

@@ -1,4 +1,4 @@
-package com.timeout.chatbot.blocks;
+package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
@@ -7,12 +7,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class RestaurantsSetCuisineSendBlock {
+public class RestaurantsSetCuisineBlock {
     private final MessengerSendClientWrapper messengerSendClientWrapper;
     private final GraffittiService graffittiService;
 
     @Autowired
-    public RestaurantsSetCuisineSendBlock(
+    public RestaurantsSetCuisineBlock(
         MessengerSendClientWrapper messengerSendClientWrapper,
         GraffittiService graffittiService
     ) {

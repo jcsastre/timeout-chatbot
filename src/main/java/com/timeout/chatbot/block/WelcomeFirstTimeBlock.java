@@ -1,27 +1,25 @@
-package com.timeout.chatbot.blocks;
+package com.timeout.chatbot.block;
 
 import com.timeout.chatbot.domain.User;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
-import com.timeout.chatbot.services.GraffittiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class WelcomeMessageSendBlock {
+public class WelcomeFirstTimeBlock {
 
-    private final GraffittiService graffittiService;
     private final MessengerSendClientWrapper messengerSendClientWrapper;
 
     @Autowired
-    public WelcomeMessageSendBlock(
-        GraffittiService graffittiService,
+    public WelcomeFirstTimeBlock(
         MessengerSendClientWrapper messengerSendClientWrapper
     ) {
-        this.graffittiService = graffittiService;
         this.messengerSendClientWrapper = messengerSendClientWrapper;
     }
 
-    public void send(User user) {
+    public void send(
+        User user
+    ) {
         StringBuilder sbMessage = new StringBuilder();
         if (user.getFbUserProfile().getFirstName() != null) {
             sbMessage.append("Hi " + user.getFbUserProfile().getFirstName() + "!");
