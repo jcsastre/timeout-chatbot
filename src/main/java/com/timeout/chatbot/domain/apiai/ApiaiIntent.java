@@ -12,7 +12,8 @@ public enum ApiaiIntent {
     FIND_MUSIC("findMusic"),
     FIND_NIGHTLIFE("findNightlife"),
     FIND_FILM("findFilm"),
-    SET_LOCATION("setGeolocation");
+    SET_LOCATION("setGeolocation"),
+    DISCOVER("discover");
 
     private final String action;
 
@@ -51,6 +52,8 @@ public enum ApiaiIntent {
             return FIND_FILM;
         } else if (action.equals(SET_LOCATION.toApiaiAction())) {
             return SET_LOCATION;
+        } else if (action.equals(DISCOVER.toApiaiAction())) {
+            return DISCOVER;
         }
 
         return UNKOWN;

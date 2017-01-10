@@ -15,13 +15,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
 @Component
-public class HomeBlock {
+public class DiscoverBlock {
 
     private final MessengerSendClientWrapper messengerSendClientWrapper;
     private final RestTemplate restTemplate;
 
     @Autowired
-    public HomeBlock(
+    public DiscoverBlock(
         MessengerSendClientWrapper messengerSendClientWrapper,
         RestTemplate restTemplate) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
@@ -39,7 +39,7 @@ public class HomeBlock {
                     .buttons(
                         Button.newListBuilder()
                             .addPostbackButton(
-                                "Explore",
+                                "Discover",
                                 new JSONObject()
                                     .put("type", "utterance")
                                     .put("utterance", "Things to do this week")
@@ -54,7 +54,7 @@ public class HomeBlock {
                     .buttons(
                         Button.newListBuilder()
                             .addPostbackButton(
-                                "Explore",
+                                "Discover",
                                 new JSONObject()
                                     .put("type", "utterance")
                                     .put("utterance", "Bars & pubs nearby")

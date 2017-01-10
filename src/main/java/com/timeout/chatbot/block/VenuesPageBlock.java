@@ -3,8 +3,8 @@ package com.timeout.chatbot.block;
 import com.github.messenger4j.send.QuickReply;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
-import com.timeout.chatbot.domain.User;
 import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.domain.session.SessionContextBag;
 import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
 import com.timeout.chatbot.graffitti.domain.response.categorisation.CategorisationSecondary;
 import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
@@ -28,11 +28,12 @@ public class VenuesPageBlock {
 
     public void send(
         String userId,
-        User.Geolocation userGeolocation,
+        SessionContextBag.Geolocation userGeolocation,
         List<PageItem> pageItems,
         Integer totalItems,
         String itemPluralName,
-        Integer nextPageNumber
+        Integer nextPageNumber,
+        Integer remainingItems
     ) {
         sendHorizontalCarroussel(
             userId,
@@ -44,7 +45,8 @@ public class VenuesPageBlock {
             totalItems,
             itemPluralName,
             userGeolocation,
-            nextPageNumber
+            nextPageNumber,
+            remainingItems
         );
     }
 
@@ -95,15 +97,17 @@ public class VenuesPageBlock {
         String recipientId,
         Integer totalItems,
         String itemPluralName,
-        User.Geolocation userGeolocation,
-        Integer nextPageNumber
+        SessionContextBag.Geolocation sessionGeolocation,
+        Integer nextPageNumber,
+        Integer remainingItems
     ) {
-        Integer remainingItems = totalItems - (10 * (nextPageNumber - 1));
-
-        String msg = String.format(
-            "There are %s %s remaining",
-            remainingItems, itemPluralName
-        );
+        String msg = "There are no remaining " + itemPluralName;
+        if (remainingItems != null) {
+            msg = String.format(
+                "There are %s %s remaining",
+                remainingItems, itemPluralName, itemPluralName
+            );
+        }
 
 //        if (tooMuchItems) {
 //            msg = msg + " \uD83D\uDE31.";
@@ -124,7 +128,7 @@ public class VenuesPageBlock {
         ).toList();
 
         listBuilder.addTextQuickReply(
-            userGeolocation == null ? "Set location" : "Change location",
+            sessionGeolocation == null ? "Set location" : "Change location",
             new JSONObject()
                 .put("type", PayloadType.set_location)
                 .toString()

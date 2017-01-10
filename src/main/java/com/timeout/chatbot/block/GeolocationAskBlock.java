@@ -22,7 +22,7 @@ public class GeolocationAskBlock {
     ) {
         messengerSendClientWrapper.sendTextMessage(
             userId,
-            "I need your location please",
+            "I need a location please",
             QuickReply.newListBuilder()
                 .addLocationQuickReply().toList()
                 .build()

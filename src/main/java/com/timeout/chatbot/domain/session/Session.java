@@ -18,6 +18,7 @@ import com.timeout.chatbot.services.GraffittiService;
 import org.json.JSONObject;
 import org.springframework.web.client.RestTemplate;
 
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 import java.util.UUID;
 
@@ -107,7 +108,7 @@ public class Session {
                 onIntentRestaurants();
                 break;
             case FIND_BARSANDPUBS:
-                onIntentFindBars();
+                onIntentFindBars(1);
                 break;
             case FIND_BARSANDPUBS_NEARBY:
                 onIntentFindBarsNearby();
@@ -133,6 +134,9 @@ public class Session {
             case UNKOWN:
 //                onIntentUnknown();
                 break;
+            case DISCOVER:
+                onIntentDiscover();
+                break;
             default:
                 messengerSendClientWrapper.sendTextMessage(
                     user.getMessengerId(),
@@ -142,8 +146,8 @@ public class Session {
     }
 
     public void applyLocation(Double latitude, Double longitude) {
-        sessionContextBag.setLocation(
-            sessionContextBag.new Location(
+        sessionContextBag.setGeolocation(
+            sessionContextBag.new Geolocation(
                 latitude,
                 longitude
             )
@@ -153,7 +157,7 @@ public class Session {
         if(sessionContextState == SessionContextState.EXPLORING_RESTAURANTS) {
             onIntentRestaurants();
         } else if (sessionContextState == SessionContextState.EXPLORING_BARS) {
-            onIntentFindBars();
+            onIntentFindBars(1);
         } else {
             //TODO:
         }
@@ -187,13 +191,19 @@ public class Session {
                         payloadAsJson.getString("restaurant_id")
                     );
                     break;
+                case venues_see_more:
+                    if (sessionContextState==SessionContextState.EXPLORING_BARS) {
+                        onIntentFindBars(
+                            payloadAsJson.getInt("next_page_number")
+                        );
+                    }
+                    break;
                 case venue_book:
                     sendTextMessage("Sorry, restaurants booking is not yet implemented.");
                     //TODO: venue_book
                     break;
                 case set_location:
-                    sendTextMessage("Sorry, set location is not yet implemented.");
-                    //TODO: set_location
+                    blockService.sendGeolocationAskBlock(user.getMessengerId());
                     break;
                 case restaurants_set_cuisine:
                     sendTextMessage("Sorry, set cuisine is not yet implemented.");
@@ -218,6 +228,12 @@ public class Session {
 //        }
     }
 
+    private void onIntentDiscover() {
+        blockService.sendDiscoverBlock(
+            user
+        );
+    }
+
     private void onIntentGreetings() {
         if (sessionContextState == SessionContextState.UNDEFINED) {
             sessionContextState = SessionContextState.GREETINGS;
@@ -229,9 +245,15 @@ public class Session {
 //                    TilesResponse.class
 //                );
 
-            blockService.sendHomeBlock(
+            blockService.sendDiscoverBlock(
                 user
             );
+
+            if (!user.getSuggestionsDone().getDiscover()) {
+                sendTextMessage("If you want to see again this, just type 'discover'");
+                user.getSuggestionsDone().setDiscover(true);
+                userRepository.save(user);
+            }
         } else {
             sendTextMessage("¡Hola!");
         }
@@ -282,33 +304,34 @@ public class Session {
     private void onIntentFindBarsNearby() {
         this.sessionContextState = SessionContextState.EXPLORING_BARS;
 
-        if (user.getGeolocation() == null) {
+        if (sessionContextBag.getGeolocation() == null) {
             blockService.sendGeolocationAskBlock(user.getMessengerId());
         } else {
-            onIntentFindBars();
+            onIntentFindBars(1);
         }
     }
 
-    private void onIntentFindBars() {
-        this.sessionContextState = SessionContextState.EXPLORING_BARS;
-
-        String lookingTxt = "Looking for Bars & Pubs in London";
+    private void onIntentFindBars(@NotNull Integer pageNumber) {
+        sessionContextState = SessionContextState.EXPLORING_BARS;
 
         String what = "node-7067";
-        Integer pageNumber = 1;
 
         String url =
             String.format(
-                GraffittiEndpoints.BARSANDPUBS.toString(),
+                GraffittiEndpoints.SEARCH_UK_LONDON_VENUES.toString(),
                 what, pageNumber
             );
 
-        final SessionContextBag.Location location = sessionContextBag.getLocation();
-        if (location!=null) {
-            final Double latitude = sessionContextBag.getLocation().getLatitude();
-            final Double longitude = sessionContextBag.getLocation().getLongitude();
+        final SessionContextBag.Geolocation geolocation = sessionContextBag.getGeolocation();
+        if (geolocation !=null) {
+            final Double latitude = sessionContextBag.getGeolocation().getLatitude();
+            final Double longitude = sessionContextBag.getGeolocation().getLongitude();
             url = url + "&latitude="+latitude+"&longitude="+longitude+"&radius=0.5";
-            lookingTxt = lookingTxt + " within 500 meters the location you specified";
+        }
+
+        String lookingTxt = "Looking for Bars & Pubs in London";
+        if (geolocation !=null) {
+            lookingTxt = "Looking for Bars & Pubs within 500 meters.";
         }
 
         sendTextMessage(lookingTxt);
@@ -334,11 +357,12 @@ public class Session {
         if (totalItems>0) {
             blockService.sendVenuesPageBlock(
                 user.getMessengerId(),
-                user.getGeolocation(),
+                sessionContextBag.getGeolocation(),
                 searchResponse.getPageItems(),
                 searchResponse.getMeta().getTotalItems(),
                 "Bars & Pubs",
-                nextPageNumber
+                nextPageNumber,
+                remainingItems
             );
 
 //            if (suggestionRestaurantsFineSearchRequired) {
@@ -357,10 +381,10 @@ public class Session {
 //
 //        String url = GraffittiEndpoints.RESTAURANTS.toString();
 //
-//        final SessionContextBag.Location location = sessionContextBag.getLocation();
+//        final SessionContextBag.Geolocation location = sessionContextBag.getGeolocation();
 //        if (location!=null) {
-//            final Double latitude = sessionContextBag.getLocation().getLatitude();
-//            final Double longitude = sessionContextBag.getLocation().getLongitude();
+//            final Double latitude = sessionContextBag.getGeolocation().getLatitude();
+//            final Double longitude = sessionContextBag.getGeolocation().getLongitude();
 //            url = url + "&latitude="+latitude+"&longitude="+longitude+"&radius=0.5";
 //            lookingTxt = lookingTxt + " within 500 meters from you";
 //        }

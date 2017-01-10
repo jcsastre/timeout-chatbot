@@ -2,6 +2,7 @@ package com.timeout.chatbot.services;
 
 import com.timeout.chatbot.block.*;
 import com.timeout.chatbot.domain.User;
+import com.timeout.chatbot.domain.session.SessionContextBag;
 import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,7 +13,7 @@ import java.util.List;
 public class BlockService {
 
     private final WelcomeFirstTimeBlock welcomeFirstTimeBlock;
-    private final HomeBlock homeBlock;
+    private final DiscoverBlock discoverBlock;
     private final WelcomeBackBlock welcomeBackBlock;
     private final MainOptionsBlock mainOptionsBlock;
     private final VenuesPageBlock venuesPageBlock;
@@ -22,7 +23,7 @@ public class BlockService {
     @Autowired
     public BlockService(
         WelcomeFirstTimeBlock welcomeFirstTimeBlock,
-        HomeBlock homeBlock,
+        DiscoverBlock discoverBlock,
         WelcomeBackBlock welcomeBackBlock,
         MainOptionsBlock mainOptionsBlock,
         VenuesPageBlock venuesPageBlock,
@@ -30,7 +31,7 @@ public class BlockService {
         GeolocationAskBlock geolocationAskBlock
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
-        this.homeBlock = homeBlock;
+        this.discoverBlock = discoverBlock;
         this.welcomeBackBlock = welcomeBackBlock;
         this.mainOptionsBlock = mainOptionsBlock;
         this.venuesPageBlock = venuesPageBlock;
@@ -44,10 +45,10 @@ public class BlockService {
         welcomeFirstTimeBlock.send(user);
     }
 
-    public void sendHomeBlock(
+    public void sendDiscoverBlock(
         User user
     ) {
-        homeBlock.send(
+        discoverBlock.send(
             user.getMessengerId()
         );
     }
@@ -66,11 +67,12 @@ public class BlockService {
 
     public void sendVenuesPageBlock(
         String userId,
-        User.Geolocation userGeolocation,
+        SessionContextBag.Geolocation userGeolocation,
         List<PageItem> pageItems,
         Integer totalItems,
         String itemPluralName,
-        Integer nextPageNumber
+        Integer nextPageNumber,
+        Integer remainingItems
     ) {
         venuesPageBlock.send(
             userId,
@@ -78,7 +80,8 @@ public class BlockService {
             pageItems,
             totalItems,
             itemPluralName,
-            nextPageNumber
+            nextPageNumber,
+            remainingItems
         );
     }
 

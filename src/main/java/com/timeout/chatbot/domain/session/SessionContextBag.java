@@ -5,16 +5,16 @@ import com.timeout.chatbot.graffitti.domain.response.facets.CategoryPrimary;
 public class SessionContextBag {
     private CategoryPrimary categoryPrimary;
 
-    private Location location;
+    private Geolocation geolocation;
 
     private Double radius = 0.5D;
 
-    public Location getLocation() {
-        return location;
+    public Geolocation getGeolocation() {
+        return geolocation;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setGeolocation(Geolocation geolocation) {
+        this.geolocation = geolocation;
     }
 
     public Double getRadius() {
@@ -25,11 +25,11 @@ public class SessionContextBag {
         this.radius = radius;
     }
 
-    public class Location {
+    public class Geolocation {
         private Double latitude;
         private Double longitude;
 
-        public Location(Double latitude, Double longitude) {
+        public Geolocation(Double latitude, Double longitude) {
             this.latitude = latitude;
             this.longitude = longitude;
         }

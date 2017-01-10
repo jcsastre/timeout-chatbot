@@ -12,8 +12,6 @@ public class User {
 
     public SuggestionsDone suggestionsDone;
 
-    private Geolocation geolocation;
-
     public User(String messengerId) {
         this.messengerId = messengerId;
         this.suggestionsDone = new SuggestionsDone();
@@ -44,7 +42,9 @@ public class User {
     }
 
     public class SuggestionsDone {
-        public Boolean restaurantsFineSearch = false;
+        private Boolean discover = false;
+
+        private Boolean restaurantsFineSearch = false;
 
         public SuggestionsDone() {
             this.restaurantsFineSearch = false;
@@ -53,8 +53,10 @@ public class User {
         @Override
         public String toString() {
             return String.format(
-                "SuggestionsDone[fbUserProfile=%s, restaurantsFineSearch=%s]",
-                fbUserProfile.toString(), restaurantsFineSearch.toString()
+                "SuggestionsDone[fbUserProfile=%s, discover=%s, restaurantsFineSearch=%s]",
+                fbUserProfile.toString(),
+                discover.toString(),
+                restaurantsFineSearch.toString()
             );
         }
 
@@ -65,31 +67,13 @@ public class User {
         public void setRestaurantsFineSearch(Boolean restaurantsFineSearch) {
             this.restaurantsFineSearch = restaurantsFineSearch;
         }
-    }
 
-    public Geolocation getGeolocation() {
-        return geolocation;
-    }
-
-    public void setGeolocation(Geolocation geolocation) {
-        this.geolocation = geolocation;
-    }
-
-    public class Geolocation {
-        private Double latitude;
-        private Double longitude;
-
-        public Geolocation(Double latitude, Double longitude) {
-            this.latitude = latitude;
-            this.longitude = longitude;
+        public Boolean getDiscover() {
+            return discover;
         }
 
-        public Double getLatitude() {
-            return latitude;
-        }
-
-        public Double getLongitude() {
-            return longitude;
+        public void setDiscover(Boolean discover) {
+            this.discover = discover;
         }
     }
 }
