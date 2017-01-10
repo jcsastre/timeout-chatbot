@@ -12,30 +12,44 @@ import java.util.List;
 public class BlockService {
 
     private final WelcomeFirstTimeBlock welcomeFirstTimeBlock;
+    private final HomeBlock homeBlock;
     private final WelcomeBackBlock welcomeBackBlock;
     private final MainOptionsBlock mainOptionsBlock;
-    private final RestaurantsPageBlock restaurantsPageBlock;
+    private final VenuesPageBlock venuesPageBlock;
     private final RestaurantSummaryBlock restaurantSummaryBlock;
+    private final GeolocationAskBlock geolocationAskBlock;
 
     @Autowired
     public BlockService(
         WelcomeFirstTimeBlock welcomeFirstTimeBlock,
+        HomeBlock homeBlock,
         WelcomeBackBlock welcomeBackBlock,
         MainOptionsBlock mainOptionsBlock,
-        RestaurantsPageBlock restaurantsPageBlock,
-        RestaurantSummaryBlock restaurantSummaryBlock
+        VenuesPageBlock venuesPageBlock,
+        RestaurantSummaryBlock restaurantSummaryBlock,
+        GeolocationAskBlock geolocationAskBlock
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
+        this.homeBlock = homeBlock;
         this.welcomeBackBlock = welcomeBackBlock;
         this.mainOptionsBlock = mainOptionsBlock;
-        this.restaurantsPageBlock = restaurantsPageBlock;
+        this.venuesPageBlock = venuesPageBlock;
         this.restaurantSummaryBlock = restaurantSummaryBlock;
+        this.geolocationAskBlock = geolocationAskBlock;
     }
 
     public void sendWelcomeFirstTimeBlock(
         User user
     ) {
         welcomeFirstTimeBlock.send(user);
+    }
+
+    public void sendHomeBlock(
+        User user
+    ) {
+        homeBlock.send(
+            user.getMessengerId()
+        );
     }
 
     public void sendWelcomeBackBlock(
@@ -50,19 +64,21 @@ public class BlockService {
         mainOptionsBlock.send(user);
     }
 
-    public void sendRestaurantsPageBlock(
+    public void sendVenuesPageBlock(
         String userId,
-        List<PageItem> restaurants,
+        User.Geolocation userGeolocation,
+        List<PageItem> pageItems,
         Integer totalItems,
-        Boolean tooMuchItems,
-        Boolean suggestionRestaurantsFineSearchRequired
+        String itemPluralName,
+        Integer nextPageNumber
     ) {
-        restaurantsPageBlock.send(
+        venuesPageBlock.send(
             userId,
-            restaurants,
+            userGeolocation,
+            pageItems,
             totalItems,
-            tooMuchItems,
-            suggestionRestaurantsFineSearchRequired
+            itemPluralName,
+            nextPageNumber
         );
     }
 
@@ -71,5 +87,11 @@ public class BlockService {
         String restaurantId
     ) {
         restaurantSummaryBlock.send(userId, restaurantId);
+    }
+
+    public void sendGeolocationAskBlock(
+        String userId
+    ) {
+        geolocationAskBlock.send(userId);
     }
 }

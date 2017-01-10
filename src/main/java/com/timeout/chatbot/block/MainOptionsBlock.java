@@ -13,7 +13,6 @@ import java.util.List;
 
 @Component
 public class MainOptionsBlock {
-
     private final MessengerSendClientWrapper messengerSendClientWrapper;
     private final GraffittiService graffittiService;
 

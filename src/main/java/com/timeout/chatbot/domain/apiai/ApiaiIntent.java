@@ -6,12 +6,13 @@ public enum ApiaiIntent {
     FIND_THINGSTODO("findThingsToDo"),
     FIND_RESTAURANTS("restaurants"),
     FIND_BARSANDPUBS("findBarsAndPubs"),
+    FIND_BARSANDPUBS_NEARBY("findBarsAndPubsNearby"),
     FIND_ART("findArt"),
     FIND_THEATRE("findTheatre"),
     FIND_MUSIC("findMusic"),
     FIND_NIGHTLIFE("findNightlife"),
     FIND_FILM("findFilm"),
-    SET_LOCATION("setLocation");
+    SET_LOCATION("setGeolocation");
 
     private final String action;
 
@@ -36,6 +37,8 @@ public enum ApiaiIntent {
             return FIND_RESTAURANTS;
         } else if (action.equals(FIND_BARSANDPUBS.toApiaiAction())) {
             return FIND_BARSANDPUBS;
+        } else if (action.equals(FIND_BARSANDPUBS_NEARBY.toApiaiAction())) {
+            return FIND_BARSANDPUBS_NEARBY;
         } else if (action.equals(FIND_ART.toApiaiAction())) {
             return FIND_ART;
         } else if (action.equals(FIND_THEATRE.toApiaiAction())) {

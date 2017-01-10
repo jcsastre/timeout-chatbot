@@ -24,6 +24,6 @@ public class PostbackEventHandler implements com.github.messenger4j.receive.hand
                 event.getSender().getId()
             );
 
-        session.applyPayloadAsJsonString(event.getPayload());
+        session.applyPayload(event.getPayload());
     }
 }

@@ -24,7 +24,7 @@ public class QuickReplyMessageEventHandler implements com.github.messenger4j.rec
             );
 
         try {
-            session.applyPayloadAsJsonString(event.getQuickReply().getPayload());
+            session.applyPayload(event.getQuickReply().getPayload());
         } catch(Exception e) {
             session.sendTextMessage("Lo siento ha ocurrido un error.");
         }

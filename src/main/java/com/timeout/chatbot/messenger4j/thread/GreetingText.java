@@ -34,7 +34,7 @@ public class GreetingText {
 //            final String jsonBody =
 //                this.gson.toJson(messagingPayload);
 //
-//            final MessengerHttpClient.Response response = httpClient.executePost(requestUrl, jsonBody);
+//            final MessengerHttpClient.TilesResponse response = httpClient.executePost(requestUrl, jsonBody);
 //
 //            final JsonObject responseJsonObject = jsonParser.parse(response.getBody()).getAsJsonObject();
 //

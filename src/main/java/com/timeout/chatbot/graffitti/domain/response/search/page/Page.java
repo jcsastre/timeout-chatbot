@@ -6,24 +6,52 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Page {
 
-    @JsonProperty
     private Integer number;
-
-    @JsonProperty
-    private Integer requested_size;
-
-    @JsonProperty
+    @JsonProperty("requested_size")
+    private Integer requestedSize;
     private Integer size;
+    @JsonProperty("next_url")
+    private String nextUrl;
+    @JsonProperty("previous_url")
+    private String previousUrl;
 
-    @JsonProperty
-    private String next_url;
+    public Integer getNumber() {
+        return number;
+    }
 
-    @Override
-    public String toString() {
-        return
-            "number='" + number + "', " +
-            "requested_size='" + requested_size + "', " +
-            "size='" + size + "', " +
-            "next_url=" + next_url;
+    public void setNumber(Integer number) {
+        this.number = number;
+    }
+
+    public Integer getRequestedSize() {
+        return requestedSize;
+    }
+
+    public void setRequestedSize(Integer requestedSize) {
+        this.requestedSize = requestedSize;
+    }
+
+    public Integer getSize() {
+        return size;
+    }
+
+    public void setSize(Integer size) {
+        this.size = size;
+    }
+
+    public String getNextUrl() {
+        return nextUrl;
+    }
+
+    public void setNextUrl(String nextUrl) {
+        this.nextUrl = nextUrl;
+    }
+
+    public String getPreviousUrl() {
+        return previousUrl;
+    }
+
+    public void setPreviousUrl(String previousUrl) {
+        this.previousUrl = previousUrl;
     }
 }

@@ -12,6 +12,8 @@ public class User {
 
     public SuggestionsDone suggestionsDone;
 
+    private Geolocation geolocation;
+
     public User(String messengerId) {
         this.messengerId = messengerId;
         this.suggestionsDone = new SuggestionsDone();
@@ -62,6 +64,32 @@ public class User {
 
         public void setRestaurantsFineSearch(Boolean restaurantsFineSearch) {
             this.restaurantsFineSearch = restaurantsFineSearch;
+        }
+    }
+
+    public Geolocation getGeolocation() {
+        return geolocation;
+    }
+
+    public void setGeolocation(Geolocation geolocation) {
+        this.geolocation = geolocation;
+    }
+
+    public class Geolocation {
+        private Double latitude;
+        private Double longitude;
+
+        public Geolocation(Double latitude, Double longitude) {
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+
+        public Double getLatitude() {
+            return latitude;
+        }
+
+        public Double getLongitude() {
+            return longitude;
         }
     }
 }

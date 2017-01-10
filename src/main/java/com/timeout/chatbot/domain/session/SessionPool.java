@@ -53,7 +53,7 @@ public class SessionPool {
         if (session != null) {
             final long lastAccessTime = session.getLastAccessTime();
             final long currentTimeMillis = System.currentTimeMillis();
-            if (currentTimeMillis - lastAccessTime < 15000) {
+            if (currentTimeMillis - lastAccessTime < 15*60*1000) {
                 session.setLastAccessTime(currentTimeMillis);
                 return session;
             } else {

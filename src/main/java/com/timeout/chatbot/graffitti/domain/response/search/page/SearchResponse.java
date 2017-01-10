@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Response {
-    private static final Logger log = LoggerFactory.getLogger(Response.class);
+public class SearchResponse {
+    private static final Logger log = LoggerFactory.getLogger(SearchResponse.class);
 
     private Meta meta;
 
@@ -56,15 +56,15 @@ public class Response {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setInterceptors(interceptors);
 
-        Response response =
+        SearchResponse searchResponse =
             restTemplate.getForObject(
                 "http://graffiti.timeout.com/v1/sites/es-barcelona/search?what=node-7083",
-                Response.class
+                SearchResponse.class
             );
 
-        System.out.println("response: " + response);
+        System.out.println("searchResponse: " + searchResponse);
 
-//        final PageItem[] pageItems = response.getPageItems();
+//        final PageItem[] pageItems = searchResponse.getTileItems();
 //        for (PageItem item : pageItems) {
 //            System.out.println(item);
 //        }
