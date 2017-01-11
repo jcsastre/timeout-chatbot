@@ -11,5 +11,7 @@ public enum PayloadType {
     restaurants_set_cuisine,
     set_location,
     bar_get_a_summary,
-    bar_book
+    bar_book,
+    films_more_info,
+    films_find_cinemas;
 }

@@ -5,8 +5,6 @@ import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.domain.session.SessionContextBag;
-import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
-import com.timeout.chatbot.graffitti.domain.response.categorisation.CategorisationSecondary;
 import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.json.JSONObject;
@@ -148,14 +146,7 @@ public class VenuesPageBlock {
     private String buildSubtitle(PageItem pageItem) {
         StringBuilder sb = new StringBuilder();
 
-        final Categorisation categorisation = pageItem.getCategorisation();
-        if (categorisation != null) {
-            sb.append(categorisation.getCategorisationPrimary().getName());
-            final CategorisationSecondary categorisationSecondary = categorisation.getCategorisationSecondary();
-            if (categorisationSecondary != null) {
-                sb.append(", " + categorisationSecondary.getName());
-            }
-        }
+        sb.append(pageItem.getCategorisation().buildName());
 
         if (pageItem.getLocation() != null) {
             sb.append(" ");

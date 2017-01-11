@@ -1,88 +1,112 @@
 package com.timeout.chatbot.block;
 
-import com.github.messenger4j.send.QuickReply;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.domain.session.SessionContextBag;
-import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
-import com.timeout.chatbot.graffitti.domain.response.categorisation.CategorisationSecondary;
+import com.timeout.chatbot.domain.session.Session;
+import com.timeout.chatbot.graffitti.domain.response.films.GraffitiFilm;
 import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
+import com.timeout.chatbot.graffitti.domain.response.search.page.SearchResponse;
+import com.timeout.chatbot.graffitti.endpoints.FilmsEndpoint;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
+import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
 public class FilmsPageBlock {
+    private final RestTemplate restTemplate;
     private final MessengerSendClientWrapper messengerSendClientWrapper;
 
     @Autowired
     public FilmsPageBlock(
+        RestTemplate restTemplate,
         MessengerSendClientWrapper messengerSendClientWrapper
     ) {
+        this.restTemplate = restTemplate;
         this.messengerSendClientWrapper = messengerSendClientWrapper;
     }
 
     public void send(
-        String userId,
-        SessionContextBag.Geolocation userGeolocation,
-        List<PageItem> pageItems,
-        Integer totalItems,
-        String itemPluralName,
-        Integer nextPageNumber,
-        Integer remainingItems
+        Session session,
+        @NotNull Integer pageNumber
     ) {
-        sendHorizontalCarroussel(
-            userId,
-            pageItems
+        messengerSendClientWrapper.sendTextMessage(
+            session.getUser().getMessengerId(),
+            "Looking for Films within 500 meters."
         );
 
-        sendFeedbackAndQuickReplies(
-            userId,
-            totalItems,
-            itemPluralName,
-            userGeolocation,
-            nextPageNumber,
-            remainingItems
+        List<GraffitiFilm> graffitiFilms = new ArrayList<>();
+
+        String url =
+            FilmsEndpoint.getUrl(
+                "node-7073",
+                session.getSessionContextBag().getGeolocation().getLatitude(),
+                session.getSessionContextBag().getGeolocation().getLongitude(),
+                pageNumber
+            );
+
+        final SearchResponse searchResponse =
+            restTemplate.getForObject(
+                url,
+                SearchResponse.class
+            );
+
+        final List<PageItem> pageItems = searchResponse.getPageItems();
+        for (PageItem pageItem : pageItems) {
+            graffitiFilms.add(
+                restTemplate.getForObject(
+                    pageItem.getUrl(),
+                    GraffitiFilm.class
+                )
+            );
+        }
+
+        sendHorizontalCarroussel(
+            session.getUser().getMessengerId(),
+            graffitiFilms
         );
     }
 
     private void sendHorizontalCarroussel(
         String recipientId,
-        List<PageItem> pageItems
+        List<GraffitiFilm> graffitiFilms
     ) {
         final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
         final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
-        for (PageItem pageItem : pageItems) {
-            final GenericTemplate.Element.Builder elementBuilder = listBuilder.addElement(pageItem.getName());
+        for (GraffitiFilm graffitiFilm : graffitiFilms) {
+            final GenericTemplate.Element.Builder elementBuilder =
+                listBuilder.addElement(graffitiFilm.getBody().getName());
 
-            if (pageItem.getImage_url() != null) {
-                elementBuilder.imageUrl(pageItem.getImage_url());
+            if (graffitiFilm.getBody().getImageUrl() != null) {
+                elementBuilder.imageUrl(graffitiFilm.getBody().getImageUrl());
             }
 
-            elementBuilder.subtitle(buildSubtitle(pageItem));
+            elementBuilder.subtitle(graffitiFilm.getBody().getCategorisation().buildNameMax80());
 
             elementBuilder.buttons(
                 Button.newListBuilder()
                     .addPostbackButton(
                         "More info",
                         new JSONObject()
-                            .put("type", PayloadType.venues_get_a_summary)
-                            .put("venue_id", pageItem.getId())
+                            .put("type", PayloadType.films_more_info)
+                            .put("film_id", graffitiFilm.getBody().getId())
                             .toString()
                     ).toList()
-                    .addCallButton(
-                        "Call",
-                        "+34678750727"
+                    .addUrlButton(
+                        "See trailer",
+                        graffitiFilm.getBody().getTrailer().getUrl()
                     ).toList()
                     .addPostbackButton(
-                        "Book",
+                        "Find cinemas",
                         new JSONObject()
-                            .put("type", PayloadType.venue_book)
-                            .put("restaurant_id", pageItem.getId())
+                            .put("type", PayloadType.films_find_cinemas)
+                            .put("film_id", graffitiFilm.getBody().getId())
                             .toString()
                     ).toList()
                 .build()
@@ -91,86 +115,5 @@ public class FilmsPageBlock {
 
         final GenericTemplate genericTemplate = genericTemplateBuilder.build();
         messengerSendClientWrapper.sendTemplate(recipientId, genericTemplate);
-    }
-
-    private void sendFeedbackAndQuickReplies(
-        String recipientId,
-        Integer totalItems,
-        String itemPluralName,
-        SessionContextBag.Geolocation sessionGeolocation,
-        Integer nextPageNumber,
-        Integer remainingItems
-    ) {
-        String msg = "There are no remaining " + itemPluralName;
-        if (remainingItems != null) {
-            msg = String.format(
-                "There are %s %s remaining",
-                remainingItems, itemPluralName, itemPluralName
-            );
-        }
-
-//        if (tooMuchItems) {
-//            msg = msg + " \uD83D\uDE31.";
-//
-//            if (!suggestionRestaurantsFineSearchRequired) {
-//                msg = msg + " Maybe you can search " + itemPluralName + " by location or by cuisine.";
-//            }
-//        }
-
-        final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
-
-        listBuilder.addTextQuickReply(
-            "See more",
-            new JSONObject()
-                .put("type", PayloadType.venues_see_more)
-                .put("next_page_number", nextPageNumber)
-                .toString()
-        ).toList();
-
-        listBuilder.addTextQuickReply(
-            sessionGeolocation == null ? "Set location" : "Change location",
-            new JSONObject()
-                .put("type", PayloadType.set_location)
-                .toString()
-        ).toList();
-
-        listBuilder.addTextQuickReply(
-            "Set cuisine",
-            new JSONObject()
-                .put("type", PayloadType.venues_set_secondary_category)
-                .toString()
-        ).toList();
-
-        messengerSendClientWrapper.sendTextMessage(
-            recipientId,
-            msg,
-            listBuilder.build()
-        );
-    }
-
-    private String buildSubtitle(PageItem pageItem) {
-        StringBuilder sb = new StringBuilder();
-
-        final Categorisation categorisation = pageItem.getCategorisation();
-        if (categorisation != null) {
-            sb.append(categorisation.getCategorisationPrimary().getName());
-            final CategorisationSecondary categorisationSecondary = categorisation.getCategorisationSecondary();
-            if (categorisationSecondary != null) {
-                sb.append(", " + categorisationSecondary.getName());
-            }
-        }
-
-        if (pageItem.getLocation() != null) {
-            sb.append(" ");
-            sb.append("\uD83D\uDCCC");
-            sb.append(" ");
-            sb.append(pageItem.getLocation());
-        }
-
-        if (sb.length() > 80) {
-            sb = sb.delete(80, sb.length());
-        }
-
-        return sb.toString();
     }
 }

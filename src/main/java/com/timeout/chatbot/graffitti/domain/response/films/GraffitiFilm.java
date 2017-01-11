@@ -1,40 +1,26 @@
 package com.timeout.chatbot.graffitti.domain.response.films;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GraffitiFilm {
-    private Categorisation categorisation;
-    private Trailer trailer;
 
-    public Categorisation getCategorisation() {
-        return categorisation;
+    private Meta meta;
+    private Body body;
+
+    public Meta getMeta() {
+        return meta;
     }
 
-    public void setCategorisation(Categorisation categorisation) {
-        this.categorisation = categorisation;
+    public void setMeta(Meta meta) {
+        this.meta = meta;
     }
 
-    public Trailer getTrailer() {
-        return trailer;
+    public Body getBody() {
+        return body;
     }
 
-    public void setTrailer(Trailer trailer) {
-        this.trailer = trailer;
-    }
-
-    public class Trailer {
-        private String html;
-
-        public String getHtml() {
-            return html;
-        }
-
-        public void setHtml(String html) {
-            this.html = html;
-        }
-
-        public String getUrl() { return "https://www.youtube.com/embed/0f1_fbdB6RQ"; }
+    public void setBody(Body body) {
+        this.body = body;
     }
 }

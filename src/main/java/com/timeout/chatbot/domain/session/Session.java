@@ -2,6 +2,8 @@ package com.timeout.chatbot.domain.session;
 
 import ai.api.AIServiceException;
 import ai.api.model.Result;
+import com.github.messenger4j.send.buttons.Button;
+import com.github.messenger4j.send.templates.ButtonTemplate;
 import com.google.gson.JsonElement;
 import com.timeout.chatbot.domain.Page;
 import com.timeout.chatbot.domain.User;
@@ -100,6 +102,9 @@ public class Session {
             case GREETINGS:
                 onIntentGreetings();
                 break;
+            case SUGGESTIONS:
+                onIntentSuggestions();
+                break;
             case FIND_THINGSTODO:
                 onIntentFindThingstodo();
                 break;
@@ -125,13 +130,13 @@ public class Session {
                 onIntentFindNightlife();
                 break;
             case FINDS_FILMS:
-                onIntentFindFilms();
+                onIntentFindFilms(1);
                 break;
             case SET_LOCATION:
-//                fsm.apply(Intent.FIND_CAMPINGS);
+                //                fsm.apply(Intent.FIND_CAMPINGS);
                 break;
             case UNKOWN:
-//                onIntentUnknown();
+                //                onIntentUnknown();
                 break;
             case DISCOVER:
                 onIntentDiscover();
@@ -157,6 +162,8 @@ public class Session {
             onIntentRestaurants();
         } else if (sessionContextState == SessionContextState.EXPLORING_BARS) {
             onIntentFindBars(1);
+        } else if (sessionContextState == SessionContextState.EXPLORING_FILMS) {
+            onIntentFindFilms(1);
         } else {
             //TODO:
         }
@@ -208,6 +215,14 @@ public class Session {
                     sendTextMessage("Sorry, set cuisine is not yet implemented.");
                     //TODO: restaurants_set_cuisine
                     break;
+                case films_more_info:
+                    sendTextMessage("Sorry, 'More info' is not yet implemented.");
+                    //TODO: films_more_info
+                    break;
+                case films_find_cinemas:
+                    sendTextMessage("Sorry, 'Find Cinemas' is not yet implemented.");
+                    //TODO: films_find_cinemas
+                    break;
                 default:
                     sendTextMessage("Sorry, an error occurred.");
                     break;
@@ -235,8 +250,27 @@ public class Session {
 
     private void onIntentGreetings() {
         if (sessionContextState == SessionContextState.UNDEFINED) {
-            sessionContextState = SessionContextState.GREETINGS;
             blockService.sendWelcomeBackBlock(user);
+
+            sessionContextState = SessionContextState.SUGGESTIONS;
+
+            blockService.sendSuggestionsBlock(user);
+
+            messengerSendClientWrapper.sendTemplate(
+                user.getMessengerId(),
+                    ButtonTemplate.newBuilder(
+                        "If my suggestions doesn't meet your needs, just type 'discover'",
+                        Button.newListBuilder()
+                            .addPostbackButton(
+                                "Discover",
+                                new JSONObject()
+                                    .put("type", "utterance")
+                                    .put("utterance", "Discover")
+                                    .toString()
+                            ).toList()
+                            .build()
+                    ).build()
+            );
 
 //            final TilesResponse tilesResponse =
 //                restTemplate.getForObject(
@@ -244,18 +278,24 @@ public class Session {
 //                    TilesResponse.class
 //                );
 
-            blockService.sendDiscoverBlock(
-                user
-            );
-
-            if (!user.getSuggestionsDone().getDiscover()) {
-                sendTextMessage("If you want to see again this, just type 'discover'");
-                user.getSuggestionsDone().setDiscover(true);
-                userRepository.save(user);
-            }
+//            blockService.sendDiscoverBlock(
+//                user
+//            );
+//
+//            if (!user.getSuggestionsDone().getDiscover()) {
+//                sendTextMessage("If you want to see again this, just type 'discover'");
+//                user.getSuggestionsDone().setDiscover(true);
+//                userRepository.save(user);
+//            }
         } else {
             sendTextMessage("¡Hola!");
         }
+    }
+
+    private void onIntentSuggestions() {
+        sessionContextState = SessionContextState.SUGGESTIONS;
+
+        blockService.sendSuggestionsBlock(user);
     }
 
     private void onIntentFindThingstodo() {
@@ -293,30 +333,16 @@ public class Session {
         );
     }
 
-    private void onIntentFindFilms() {
+    private void onIntentFindFilms(@NotNull Integer pageNumber) {
         this.sessionContextState = SessionContextState.EXPLORING_FILMS;
 
         if (sessionContextBag.getGeolocation() == null) {
             blockService.sendGeolocationAskBlock(user.getMessengerId());
         } else {
-            String url =
-                FilmsEndpoint.getUrl(
-                    "node-7073",
-                    sessionContextBag.getGeolocation().getLatitude(),
-                    sessionContextBag.getGeolocation().getLongitude(),
-                    pageNumber
-                );
-
-            String lookingTxt = "Looking for Bars & Pubs within 500 meters.";
-            sendTextMessage(lookingTxt);
-
-            final SearchResponse searchResponse =
-                restTemplate.getForObject(
-                    url,
-                    SearchResponse.class
-                );
-
-            //TODO
+            blockService.sendFilmsPageBlock(
+                this,
+                pageNumber
+            );
         }
     }
 
@@ -498,6 +524,10 @@ public class Session {
 
     public void setLastAccessTime(long lastAccessTime) {
         this.lastAccessTime = lastAccessTime;
+    }
+
+    public SessionContextBag getSessionContextBag() {
+        return sessionContextBag;
     }
 
     @Override

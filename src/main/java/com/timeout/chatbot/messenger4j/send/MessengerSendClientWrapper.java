@@ -85,4 +85,19 @@ public class MessengerSendClientWrapper {
             e.printStackTrace();
         }
     }
+
+    public void sendVideoAttachment(
+        String recipientId,
+        String videoUrl
+    ) {
+        System.out.println(videoUrl);
+        try {
+            messengerSendClient.sendVideoAttachment(
+                recipientId,
+                videoUrl
+            );
+        } catch (MessengerApiException | MessengerIOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -27,4 +27,26 @@ public class Categorisation {
     public void setCategorisationSecondary(CategorisationSecondary categorisationSecondary) {
         this.categorisationSecondary = categorisationSecondary;
     }
+
+    public String buildName() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(getCategorisationPrimary().getName());
+        final CategorisationSecondary categorisationSecondary = getCategorisationSecondary();
+        if (categorisationSecondary != null) {
+            sb.append(", " + categorisationSecondary.getName());
+        }
+
+        return sb.toString();
+    }
+
+    public String buildNameMax80() {
+        final String name = buildName();
+
+        if (name.length() <= 80) {
+            return name;
+        } else {
+            return name.substring(0, 80);
+        }
+    }
 }

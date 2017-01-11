@@ -5,7 +5,7 @@ public class FilmsEndpoint {
     private static final String SEARCH_UK_LONDON_FILMS =
         "http://graffiti.timeout.com/v1/sites/uk-london/search?" +
             "&locale=en-GB" +
-            "sort=published-at" +
+            "&sort=published-at" +
             "&when=today" +
             "&what=%s" +
             "&latitude=%s" +
