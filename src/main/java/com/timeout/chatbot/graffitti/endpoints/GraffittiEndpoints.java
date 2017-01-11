@@ -9,6 +9,18 @@ public enum GraffittiEndpoints {
             "&page_size=10" +
             "&page_number=%s"
     ),
+    SEARCH_UK_LONDON_FILMS(
+        "http://graffiti.timeout.com/v1/sites/uk-london/search?" +
+            "&locale=en-GB" +
+            "sort=published-at" +
+            "&when=today" +
+            "&what=%s" +
+            "&latitude=%s" +
+            "&longitude=%s" +
+            "&type=film" +
+            "&page_size=10" +
+            "&page_number=%s"
+    ),
 //    HOME("http://graffiti.timeout.com/v1/tiles?site=uk-london&locale=en-GB&tile_type=website&tile_type=discover"),
     HOME("http://graffiti.timeout.com/v1/tiles?site=uk-london&locale=en-GB&tile_type=discover"),
     FACETS("http://graffiti.timeout.com/v1/sites/uk-london/facet-groups/browsing-v5?locale=en-GB"),

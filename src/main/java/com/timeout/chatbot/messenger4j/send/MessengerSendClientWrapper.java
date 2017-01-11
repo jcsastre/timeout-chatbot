@@ -2,8 +2,7 @@ package com.timeout.chatbot.messenger4j.send;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
-import com.github.messenger4j.send.MessengerSendClient;
-import com.github.messenger4j.send.QuickReply;
+import com.github.messenger4j.send.*;
 import com.github.messenger4j.send.templates.Template;
 import org.springframework.stereotype.Component;
 
@@ -61,6 +60,26 @@ public class MessengerSendClientWrapper {
             messengerSendClient.sendTemplate(
                 recipientId,
                 template
+            );
+        } catch (MessengerApiException | MessengerIOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void  sendTemplate(
+        Recipient recipient,
+        NotificationType notificationType,
+        Template template,
+        List<QuickReply> quickReplies,
+        String metadata
+    ) {
+        try {
+            messengerSendClient.sendTemplate(
+                recipient,
+                notificationType,
+                template,
+                quickReplies,
+                metadata
             );
         } catch (MessengerApiException | MessengerIOException e) {
             e.printStackTrace();

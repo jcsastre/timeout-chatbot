@@ -7,7 +7,6 @@ import com.timeout.chatbot.domain.Page;
 import com.timeout.chatbot.domain.User;
 import com.timeout.chatbot.domain.apiai.ApiaiIntent;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.graffitti.domain.response.search.page.Meta;
 import com.timeout.chatbot.graffitti.domain.response.search.page.SearchResponse;
 import com.timeout.chatbot.graffitti.endpoints.GraffittiEndpoints;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
@@ -125,8 +124,8 @@ public class Session {
             case FIND_NIGHTLIFE:
                 onIntentFindNightlife();
                 break;
-            case FIND_FILM:
-                onIntentFindFilm();
+            case FINDS_FILMS:
+                onIntentFindFilms();
                 break;
             case SET_LOCATION:
 //                fsm.apply(Intent.FIND_CAMPINGS);
@@ -294,11 +293,31 @@ public class Session {
         );
     }
 
-    private void onIntentFindFilm() {
-        messengerSendClientWrapper.sendTextMessage(
-            user.getMessengerId(),
-            "Sorry, 'Nightlife' is not yet implemented."
-        );
+    private void onIntentFindFilms() {
+        this.sessionContextState = SessionContextState.EXPLORING_FILMS;
+
+        if (sessionContextBag.getGeolocation() == null) {
+            blockService.sendGeolocationAskBlock(user.getMessengerId());
+        } else {
+            String url =
+                FilmsEndpoint.getUrl(
+                    "node-7073",
+                    sessionContextBag.getGeolocation().getLatitude(),
+                    sessionContextBag.getGeolocation().getLongitude(),
+                    pageNumber
+                );
+
+            String lookingTxt = "Looking for Bars & Pubs within 500 meters.";
+            sendTextMessage(lookingTxt);
+
+            final SearchResponse searchResponse =
+                restTemplate.getForObject(
+                    url,
+                    SearchResponse.class
+                );
+
+            //TODO
+        }
     }
 
     private void onIntentFindBarsNearby() {
@@ -342,27 +361,14 @@ public class Session {
                 SearchResponse.class
             );
 
-        final Meta searchResponseMeta = searchResponse.getMeta();
-        final Integer totalItems = searchResponseMeta.getTotalItems();
-        Integer nextPageNumber = null;
-        final String nextUrl = searchResponseMeta.getPage().getNextUrl();
-        if (nextUrl != null) {
-            nextPageNumber = pageNumber + 1;
-        }
-        Integer remainingItems = null;
-        if (nextPageNumber != null) {
-            remainingItems = totalItems - (10 * (nextPageNumber - 1));
-        }
-
-        if (totalItems>0) {
+        if (searchResponse.getMeta().getTotalItems() > 0) {
             blockService.sendVenuesPageBlock(
                 user.getMessengerId(),
                 sessionContextBag.getGeolocation(),
                 searchResponse.getPageItems(),
-                searchResponse.getMeta().getTotalItems(),
                 "Bars & Pubs",
-                nextPageNumber,
-                remainingItems
+                searchResponse.getNextPageNumber(),
+                searchResponse.getReaminingItems()
             );
 
 //            if (suggestionRestaurantsFineSearchRequired) {

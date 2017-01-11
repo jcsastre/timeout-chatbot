@@ -36,6 +36,23 @@ public class SearchResponse {
         this.pageItems = pageItems;
     }
 
+    public Integer getNextPageNumber() {
+        if (meta.getPage().getNextUrl() != null) {
+            return meta.getPage().getNumber() + 1;
+        }
+
+        return null;
+    }
+
+    public Integer getReaminingItems() {
+        final Integer nextPageNumber = getNextPageNumber();
+        if (nextPageNumber != null) {
+            return meta.getTotalItems() - (10 * (nextPageNumber - 1));
+        }
+
+        return 0;
+    }
+
     @Override
     public String toString() {
         return

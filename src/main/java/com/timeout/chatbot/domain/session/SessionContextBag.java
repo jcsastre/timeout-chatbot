@@ -1,13 +1,40 @@
 package com.timeout.chatbot.domain.session;
 
+import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.domain.response.facets.CategoryPrimary;
+import com.timeout.chatbot.graffitti.domain.response.facets.CategorySecondary;
 
 public class SessionContextBag {
+
+    private GraffittiType graffittiType;
     private CategoryPrimary categoryPrimary;
-
+    private CategorySecondary categorySecondary;
     private Geolocation geolocation;
-
     private Double radius = 0.5D;
+
+    public GraffittiType getGraffittiType() {
+        return graffittiType;
+    }
+
+    public void setGraffittiType(GraffittiType graffittiType) {
+        this.graffittiType = graffittiType;
+    }
+
+    public CategoryPrimary getCategoryPrimary() {
+        return categoryPrimary;
+    }
+
+    public void setCategoryPrimary(CategoryPrimary categoryPrimary) {
+        this.categoryPrimary = categoryPrimary;
+    }
+
+    public CategorySecondary getCategorySecondary() {
+        return categorySecondary;
+    }
+
+    public void setCategorySecondary(CategorySecondary categorySecondary) {
+        this.categorySecondary = categorySecondary;
+    }
 
     public Geolocation getGeolocation() {
         return geolocation;

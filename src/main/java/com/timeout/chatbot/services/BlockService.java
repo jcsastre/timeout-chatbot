@@ -69,7 +69,6 @@ public class BlockService {
         String userId,
         SessionContextBag.Geolocation userGeolocation,
         List<PageItem> pageItems,
-        Integer totalItems,
         String itemPluralName,
         Integer nextPageNumber,
         Integer remainingItems
@@ -78,7 +77,6 @@ public class BlockService {
             userId,
             userGeolocation,
             pageItems,
-            totalItems,
             itemPluralName,
             nextPageNumber,
             remainingItems

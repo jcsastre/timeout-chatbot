@@ -16,11 +16,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class VenuesPageBlock {
+public class FilmsPageBlock {
     private final MessengerSendClientWrapper messengerSendClientWrapper;
 
     @Autowired
-    public VenuesPageBlock(
+    public FilmsPageBlock(
         MessengerSendClientWrapper messengerSendClientWrapper
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
@@ -30,6 +30,7 @@ public class VenuesPageBlock {
         String userId,
         SessionContextBag.Geolocation userGeolocation,
         List<PageItem> pageItems,
+        Integer totalItems,
         String itemPluralName,
         Integer nextPageNumber,
         Integer remainingItems
@@ -41,6 +42,7 @@ public class VenuesPageBlock {
 
         sendFeedbackAndQuickReplies(
             userId,
+            totalItems,
             itemPluralName,
             userGeolocation,
             nextPageNumber,
@@ -93,6 +95,7 @@ public class VenuesPageBlock {
 
     private void sendFeedbackAndQuickReplies(
         String recipientId,
+        Integer totalItems,
         String itemPluralName,
         SessionContextBag.Geolocation sessionGeolocation,
         Integer nextPageNumber,
