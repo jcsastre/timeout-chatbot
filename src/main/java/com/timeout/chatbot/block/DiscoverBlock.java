@@ -7,7 +7,6 @@ import com.timeout.chatbot.services.GraffittiService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -15,17 +14,14 @@ import java.util.List;
 public class DiscoverBlock {
 
     private final MessengerSendClientWrapper messengerSendClientWrapper;
-    private final RestTemplate restTemplate;
     private final GraffittiService graffittiService;
 
     @Autowired
     public DiscoverBlock(
         MessengerSendClientWrapper messengerSendClientWrapper,
-        RestTemplate restTemplate,
         GraffittiService graffittiService
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
-        this.restTemplate = restTemplate;
         this.graffittiService = graffittiService;
     }
 

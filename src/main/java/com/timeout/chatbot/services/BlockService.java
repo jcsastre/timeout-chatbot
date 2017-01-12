@@ -20,7 +20,7 @@ public class BlockService {
     private final WelcomeBackBlock welcomeBackBlock;
     private final MainOptionsBlock mainOptionsBlock;
     private final VenuesPageBlock venuesPageBlock;
-    private final RestaurantSummaryBlock restaurantSummaryBlock;
+    private final VenueSummaryBlock venueSummaryBlock;
     private final GeolocationAskBlock geolocationAskBlock;
     private final FilmsPageBlock filmsPageBlock;
 
@@ -32,7 +32,7 @@ public class BlockService {
         WelcomeBackBlock welcomeBackBlock,
         MainOptionsBlock mainOptionsBlock,
         VenuesPageBlock venuesPageBlock,
-        RestaurantSummaryBlock restaurantSummaryBlock,
+        VenueSummaryBlock venueSummaryBlock,
         GeolocationAskBlock geolocationAskBlock,
         FilmsPageBlock filmsPageBlock
     ) {
@@ -42,7 +42,7 @@ public class BlockService {
         this.welcomeBackBlock = welcomeBackBlock;
         this.mainOptionsBlock = mainOptionsBlock;
         this.venuesPageBlock = venuesPageBlock;
-        this.restaurantSummaryBlock = restaurantSummaryBlock;
+        this.venueSummaryBlock = venueSummaryBlock;
         this.geolocationAskBlock = geolocationAskBlock;
         this.filmsPageBlock = filmsPageBlock;
     }
@@ -107,11 +107,11 @@ public class BlockService {
         );
     }
 
-    public void sendRestaurantSummaryBlock(
+    public void sendVenueSummaryBlock(
         String userId,
         String restaurantId
     ) {
-        restaurantSummaryBlock.send(userId, restaurantId);
+        venueSummaryBlock.send(userId, restaurantId);
     }
 
     public void sendGeolocationAskBlock(

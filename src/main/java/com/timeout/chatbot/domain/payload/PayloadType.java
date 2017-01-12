@@ -4,7 +4,7 @@ public enum PayloadType {
     get_started,
     utterance,
     venues_get_a_summary,
-    venue_book,
+    venues_book,
     venues_see_more,
     venues_set_secondary_category,
     restaurant_get_a_summary,

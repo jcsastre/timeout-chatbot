@@ -11,6 +11,7 @@ import com.timeout.chatbot.domain.apiai.ApiaiIntent;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.domain.response.search.page.SearchResponse;
 import com.timeout.chatbot.graffitti.endpoints.GraffittiEndpoints;
+import com.timeout.chatbot.graffitti.endpoints.RestaurantsSearchEndpoint;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.repository.UserRepository;
 import com.timeout.chatbot.services.ApiAiService;
@@ -109,7 +110,10 @@ public class Session {
                 onIntentFindThingstodo();
                 break;
             case FIND_RESTAURANTS:
-                onIntentRestaurants();
+                onIntentFindRestaurants(1);
+                break;
+            case FIND_RESTAURANTS_NEARBY:
+                onIntentRestaurantsNearby();
                 break;
             case FIND_BARSANDPUBS:
                 onIntentFindBars(1);
@@ -159,7 +163,7 @@ public class Session {
 
         //TODO: check context to see if further actions are required
         if(sessionContextState == SessionContextState.EXPLORING_RESTAURANTS) {
-            onIntentRestaurants();
+            onIntentFindRestaurants(1);
         } else if (sessionContextState == SessionContextState.EXPLORING_BARS) {
             onIntentFindBars(1);
         } else if (sessionContextState == SessionContextState.EXPLORING_FILMS) {
@@ -185,16 +189,10 @@ public class Session {
                     final String utterance = payloadAsJson.getString("utterance");
                     applyUtterance(utterance);
                     break;
-                case restaurant_get_a_summary:
-                    blockService.sendRestaurantSummaryBlock(
+                case venues_get_a_summary:
+                    blockService.sendVenueSummaryBlock(
                         user.getMessengerId(),
-                        payloadAsJson.getString("restaurant_id")
-                    );
-                    break;
-                case bar_get_a_summary:
-                    blockService.sendRestaurantSummaryBlock(
-                        user.getMessengerId(),
-                        payloadAsJson.getString("restaurant_id")
+                        payloadAsJson.getString("venue_id")
                     );
                     break;
                 case venues_see_more:
@@ -204,9 +202,9 @@ public class Session {
                         );
                     }
                     break;
-                case venue_book:
+                case venues_book:
                     sendTextMessage("Sorry, restaurants booking is not yet implemented.");
-                    //TODO: venue_book
+                    //TODO: venues_book
                     break;
                 case set_location:
                     blockService.sendGeolocationAskBlock(user.getMessengerId());
@@ -228,6 +226,7 @@ public class Session {
                     break;
             }
         } catch(Exception e) {
+            e.printStackTrace();
             sendTextMessage("Sorry, an error occurred.");
         }
 
@@ -406,57 +405,69 @@ public class Session {
         }
     }
 
-    private void onIntentRestaurants() {
-//        this.sessionContextState = SessionContextState.EXPLORING_RESTAURANTS;
-//
-//        String lookingTxt = "Looking for Restaurants in London";
-//
-//        String url = GraffittiEndpoints.RESTAURANTS.toString();
-//
-//        final SessionContextBag.Geolocation location = sessionContextBag.getGeolocation();
-//        if (location!=null) {
-//            final Double latitude = sessionContextBag.getGeolocation().getLatitude();
-//            final Double longitude = sessionContextBag.getGeolocation().getLongitude();
-//            url = url + "&latitude="+latitude+"&longitude="+longitude+"&radius=0.5";
-//            lookingTxt = lookingTxt + " within 500 meters from you";
-//        }
-//
-//        sendTextMessage(lookingTxt);
-//
-//        final SearchResponse searchResponse =
-//            restTemplate.getForObject(
-//                url,
-//                SearchResponse.class
-//            );
-//
-//        int totalItems = searchResponse.getMeta().getTotalItems();
-//        if (totalItems>0) {
-//            Boolean tooMuchItems = Boolean.FALSE;
-//            Boolean suggestionRestaurantsFineSearchRequired = false;
-//            if (totalItems > NUMBER_ITEMS_THRESOLD) {
-//                tooMuchItems = Boolean.TRUE;
-//                if (!user.getSuggestionsDone().getRestaurantsFineSearch()) {
-//                    suggestionRestaurantsFineSearchRequired = true;
-//                }
-//            }
-//
-//            blockService.sendVenuesPageBlock(
-//                user.getMessengerId(),
-//                user.getGeolocation(),
-//                searchResponse.getPageItems(),
-//                searchResponse.getMeta().getTotalItems(),
-//                tooMuchItems,
-//                suggestionRestaurantsFineSearchRequired,
-//                "Restaurants"
-//            );
-//
+    private void onIntentRestaurantsNearby() {
+        this.sessionContextState = SessionContextState.EXPLORING_RESTAURANTS;
+
+        if (sessionContextBag.getGeolocation() == null) {
+            blockService.sendGeolocationAskBlock(user.getMessengerId());
+        } else {
+            onIntentFindRestaurants(1);
+        }
+
+    }
+
+    private void onIntentFindRestaurants(@NotNull Integer pageNumber) {
+        this.sessionContextState = SessionContextState.EXPLORING_RESTAURANTS;
+
+        String url = null;
+        String lookingTxt = null;
+
+        final SessionContextBag.Geolocation geolocation = sessionContextBag.getGeolocation();
+        if (geolocation == null) {
+            url = RestaurantsSearchEndpoint.getUrl(
+                "en-GB",
+                9,
+                pageNumber
+            );
+
+            lookingTxt = "Looking for Restaurants in London";
+        } else {
+            url = RestaurantsSearchEndpoint.getUrl(
+                "en-GB",
+                9,
+                pageNumber,
+                sessionContextBag.getGeolocation().getLatitude(),
+                sessionContextBag.getGeolocation().getLongitude()
+            );
+
+            lookingTxt = "Looking for Restaurants within 500 meters from the current location.";
+        }
+
+        sendTextMessage(lookingTxt);
+
+        final SearchResponse searchResponse =
+            restTemplate.getForObject(
+                url,
+                SearchResponse.class
+            );
+
+        if (searchResponse.getMeta().getTotalItems() > 0) {
+            blockService.sendVenuesPageBlock(
+                user.getMessengerId(),
+                sessionContextBag.getGeolocation(),
+                searchResponse.getPageItems(),
+                "Restaurants",
+                searchResponse.getNextPageNumber(),
+                searchResponse.getReaminingItems()
+            );
+
 //            if (suggestionRestaurantsFineSearchRequired) {
 //                user.getSuggestionsDone().setRestaurantsFineSearch(true);
 //                userRepository.save(user);
 //            }
-//        } else {
-//            sendTextMessage("There are not available restaurants for your request.");
-//        }
+        } else {
+            sendTextMessage("There are not available Restaurants for your request.");
+        }
     }
 
     private void onIntentUnknown() {

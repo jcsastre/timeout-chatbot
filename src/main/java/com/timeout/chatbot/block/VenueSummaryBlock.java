@@ -1,17 +1,14 @@
 package com.timeout.chatbot.block;
 
-import com.github.messenger4j.send.QuickReply;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.ButtonTemplate;
 import com.github.messenger4j.send.templates.GenericTemplate;
-import com.timeout.chatbot.graffitti.domain.Bar;
-import com.timeout.chatbot.graffitti.domain.response.facets.CategoryPrimary;
 import com.timeout.chatbot.graffitti.domain.response.images.Image;
 import com.timeout.chatbot.graffitti.domain.response.images.ImagesResponse;
+import com.timeout.chatbot.graffitti.domain.response.venues.Venue;
 import com.timeout.chatbot.graffitti.endpoints.GraffittiEndpoints;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.GraffittiService;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -37,10 +34,10 @@ public class VenueSummaryBlock {
 
     public void send(String userId, String venueId) {
 
-        final Bar venue =
+        final Venue venue =
             restTemplate.getForObject(
                 GraffittiEndpoints.VENUE.toString() + venueId,
-                Bar.class
+                Venue.class
             );
 
         sendSummary(userId, venue);
@@ -60,7 +57,7 @@ public class VenueSummaryBlock {
         messengerSendClientWrapper.sendTemplate(userId, yes);
     }
 
-    private void sendImages(String userId, String restaurantId, Bar restaurant) {
+    private void sendImages(String userId, String restaurantId, Venue restaurant) {
         String urlImages = GraffittiEndpoints.VENUE.toString() + restaurantId + "/images";
         final ImagesResponse imagesResponse = restTemplate.getForObject(urlImages, ImagesResponse.class);
 
@@ -87,31 +84,10 @@ public class VenueSummaryBlock {
         messengerSendClientWrapper.sendTemplate(userId, genericTemplate);
     }
 
-    private void sendSummary(String userId, Bar restaurant) {
+    private void sendSummary(String userId, Venue restaurant) {
         messengerSendClientWrapper.sendTextMessage(
             userId,
             restaurant.getBody().getSummary()
         );
-    }
-
-    private List<QuickReply> buildQuickReplies() {
-
-        final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
-
-        for (CategoryPrimary primaryCategoryPrimary : graffittiService.getPrimaryCategories()) {
-            listBuilder.addTextQuickReply(
-                primaryCategoryPrimary.getName(),
-                new JSONObject()
-                    .put("type", "utterance")
-                    .put("utterance", primaryCategoryPrimary.getName())
-                    .toString()
-//                new JSONObject()
-//                    .put("type", "search-by-primary-category")
-//                    .put("uid", primaryCategoryPrimary.getId())
-//                    .toApiaiAction()
-            ).toList();
-        }
-
-        return listBuilder.build();
     }
 }

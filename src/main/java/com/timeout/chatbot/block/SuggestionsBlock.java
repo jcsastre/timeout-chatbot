@@ -44,21 +44,6 @@ public class SuggestionsBlock {
     private GenericTemplate buildGenericTemplate() {
         return
             GenericTemplate.newBuilder().addElements()
-                .addElement("Things to do this week")
-                    .imageUrl("https://media.timeout.com/images/102872844/image.jpg")
-                    .buttons(
-                        Button.newListBuilder()
-                            .addPostbackButton(
-                                "Let's go",
-                                new JSONObject()
-                                    .put("type", "utterance")
-                                    .put("utterance", "Things to do this week")
-                                    .toString()
-                            ).toList()
-                            .build()
-
-                    )
-                    .toList()
                 .addElement("Bars & pubs nearby")
                     .imageUrl("https://media.timeout.com/images/103466376/image.jpg")
                     .buttons(
@@ -71,24 +56,50 @@ public class SuggestionsBlock {
                                     .toString()
                             ).toList()
                             .build()
-
                     )
                     .toList()
                 .addElement("In cinemas now")
-                .imageUrl("https://media.timeout.com/images/103667839/image.jpg")
-                .buttons(
-                    Button.newListBuilder()
-                        .addPostbackButton(
-                            "Let's go",
-                            new JSONObject()
-                                .put("type", "utterance")
-                                .put("utterance", "In cinemas now")
-                                .toString()
-                        ).toList()
-                        .build()
-
-                )
-                .toList()
+                    .imageUrl("https://media.timeout.com/images/103667839/image.jpg")
+                    .buttons(
+                        Button.newListBuilder()
+                            .addPostbackButton(
+                                "Let's go",
+                                new JSONObject()
+                                    .put("type", "utterance")
+                                    .put("utterance", "In cinemas now")
+                                    .toString()
+                            ).toList()
+                            .build()
+                    )
+                    .toList()
+                .addElement("Restaurants nearby")
+                    .imageUrl("https://media.timeout.com/images/102173995/image.jpg")
+                    .buttons(
+                        Button.newListBuilder()
+                            .addPostbackButton(
+                                "Let's go",
+                                new JSONObject()
+                                    .put("type", "utterance")
+                                    .put("utterance", "Restaurants nearby")
+                                    .toString()
+                            ).toList()
+                            .build()
+                    )
+                    .toList()
+                .addElement("Things to do this week")
+                    .imageUrl("https://media.timeout.com/images/102872844/image.jpg")
+                    .buttons(
+                        Button.newListBuilder()
+                            .addPostbackButton(
+                                "Let's go",
+                                new JSONObject()
+                                    .put("type", "utterance")
+                                    .put("utterance", "Things to do this week")
+                                    .toString()
+                            ).toList()
+                            .build()
+                    )
+                    .toList()
                 .done()
                 .build();
     }

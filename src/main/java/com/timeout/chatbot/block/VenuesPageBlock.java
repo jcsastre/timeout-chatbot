@@ -26,7 +26,7 @@ public class VenuesPageBlock {
 
     public void send(
         String userId,
-        SessionContextBag.Geolocation userGeolocation,
+        SessionContextBag.Geolocation geolocation,
         List<PageItem> pageItems,
         String itemPluralName,
         Integer nextPageNumber,
@@ -40,7 +40,7 @@ public class VenuesPageBlock {
         sendFeedbackAndQuickReplies(
             userId,
             itemPluralName,
-            userGeolocation,
+            geolocation,
             nextPageNumber,
             remainingItems
         );
@@ -77,7 +77,7 @@ public class VenuesPageBlock {
                     .addPostbackButton(
                         "Book",
                         new JSONObject()
-                            .put("type", PayloadType.venue_book)
+                            .put("type", PayloadType.venues_book)
                             .put("restaurant_id", pageItem.getId())
                             .toString()
                     ).toList()
@@ -92,7 +92,7 @@ public class VenuesPageBlock {
     private void sendFeedbackAndQuickReplies(
         String recipientId,
         String itemPluralName,
-        SessionContextBag.Geolocation sessionGeolocation,
+        SessionContextBag.Geolocation geolocation,
         Integer nextPageNumber,
         Integer remainingItems
     ) {
@@ -123,7 +123,7 @@ public class VenuesPageBlock {
         ).toList();
 
         listBuilder.addTextQuickReply(
-            sessionGeolocation == null ? "Set location" : "Change location",
+            geolocation == null ? "Set location" : "Change location",
             new JSONObject()
                 .put("type", PayloadType.set_location)
                 .toString()
