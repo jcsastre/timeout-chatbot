@@ -99,11 +99,11 @@ public class BlockService {
     ) {
         venuesPageBlock.send(
             userId,
-            userGeolocation,
             pageItems,
             itemPluralName,
+            remainingItems,
             nextPageNumber,
-            remainingItems
+            userGeolocation
         );
     }
 

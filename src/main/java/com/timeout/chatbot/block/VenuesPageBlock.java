@@ -1,6 +1,5 @@
 package com.timeout.chatbot.block;
 
-import com.github.messenger4j.send.QuickReply;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.domain.payload.PayloadType;
@@ -11,6 +10,8 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @Component
@@ -25,33 +26,39 @@ public class VenuesPageBlock {
     }
 
     public void send(
-        String userId,
-        SessionContextBag.Geolocation geolocation,
-        List<PageItem> pageItems,
-        String itemPluralName,
+        @NotNull String userId,
+        @NotNull @Size(min=1, max=9) List<PageItem> pageItems,
+        @NotNull String itemPluralName,
+        @NotNull Integer remainingItems,
         Integer nextPageNumber,
-        Integer remainingItems
+        SessionContextBag.Geolocation geolocation
     ) {
-        sendHorizontalCarroussel(
-            userId,
+
+        final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
+        final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
+
+        addVenueItems(
+            listBuilder,
             pageItems
         );
 
-        sendFeedbackAndQuickReplies(
-            userId,
-            itemPluralName,
-            geolocation,
+        addLastItem(
+            listBuilder,
+            remainingItems,
             nextPageNumber,
-            remainingItems
+            itemPluralName,
+            geolocation
         );
+
+        final GenericTemplate genericTemplate = genericTemplateBuilder.build();
+
+        messengerSendClientWrapper.sendTemplate(userId, genericTemplate);
     }
 
-    private void sendHorizontalCarroussel(
-        String recipientId,
-        List<PageItem> pageItems
+    private void addVenueItems(
+        @NotNull GenericTemplate.Element.ListBuilder listBuilder,
+        @NotNull @Size(min = 1, max = 9) List<PageItem> pageItems
     ) {
-        final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
-        final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
         for (PageItem pageItem : pageItems) {
             final GenericTemplate.Element.Builder elementBuilder = listBuilder.addElement(pageItem.getName());
 
@@ -59,7 +66,7 @@ public class VenuesPageBlock {
                 elementBuilder.imageUrl(pageItem.getImage_url());
             }
 
-            elementBuilder.subtitle(buildSubtitle(pageItem));
+            elementBuilder.subtitle(buildVenuePageItemSubtitle(pageItem));
 
             elementBuilder.buttons(
                 Button.newListBuilder()
@@ -81,69 +88,56 @@ public class VenuesPageBlock {
                             .put("restaurant_id", pageItem.getId())
                             .toString()
                     ).toList()
-                .build()
+                    .build()
             ).toList().done();
         }
-
-        final GenericTemplate genericTemplate = genericTemplateBuilder.build();
-        messengerSendClientWrapper.sendTemplate(recipientId, genericTemplate);
     }
 
-    private void sendFeedbackAndQuickReplies(
-        String recipientId,
-        String itemPluralName,
-        SessionContextBag.Geolocation geolocation,
+    private void addLastItem(
+        @NotNull GenericTemplate.Element.ListBuilder listBuilder,
+        @NotNull Integer remainingItems,
         Integer nextPageNumber,
-        Integer remainingItems
+        @NotNull String itemPluralName,
+        SessionContextBag.Geolocation geolocation
     ) {
-        String msg = "There are no remaining " + itemPluralName;
-        if (remainingItems != null) {
-            msg = String.format(
+
+        String title = null;
+        if (remainingItems > 0) {
+            title = String.format(
                 "There are %s %s remaining",
-                remainingItems, itemPluralName, itemPluralName
+                remainingItems, itemPluralName
             );
+        } else {
+            title = "There are no remaining " + itemPluralName;
         }
 
-//        if (tooMuchItems) {
-//            msg = msg + " \uD83D\uDE31.";
-//
-//            if (!suggestionRestaurantsFineSearchRequired) {
-//                msg = msg + " Maybe you can search " + itemPluralName + " by location or by cuisine.";
-//            }
-//        }
+        final GenericTemplate.Element.Builder elementBuilder = listBuilder.addElement(title);
 
-        final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
+//        elementBuilder.subtitle(buildVenuePageItemSubtitle(pageItem));
 
-        listBuilder.addTextQuickReply(
-            "See more",
-            new JSONObject()
-                .put("type", PayloadType.venues_see_more)
-                .put("next_page_number", nextPageNumber)
-                .toString()
-        ).toList();
+        final Button.ListBuilder buttonListBuilder = Button.newListBuilder();
 
-        listBuilder.addTextQuickReply(
+        if (remainingItems > 0) {
+            buttonListBuilder.addPostbackButton(
+                "See more",
+                new JSONObject()
+                    .put("type", PayloadType.venues_see_more)
+                    .put("next_page_number", nextPageNumber)
+                    .toString()
+            ).toList();
+        }
+
+        buttonListBuilder.addPostbackButton(
             geolocation == null ? "Set location" : "Change location",
             new JSONObject()
                 .put("type", PayloadType.set_location)
                 .toString()
         ).toList();
 
-        listBuilder.addTextQuickReply(
-            "Set cuisine",
-            new JSONObject()
-                .put("type", PayloadType.venues_set_secondary_category)
-                .toString()
-        ).toList();
-
-        messengerSendClientWrapper.sendTextMessage(
-            recipientId,
-            msg,
-            listBuilder.build()
-        );
+        elementBuilder.buttons(buttonListBuilder.build()).toList().done();
     }
 
-    private String buildSubtitle(PageItem pageItem) {
+    private String buildVenuePageItemSubtitle(PageItem pageItem) {
         StringBuilder sb = new StringBuilder();
 
         sb.append(pageItem.getCategorisation().buildName());

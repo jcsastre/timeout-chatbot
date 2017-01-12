@@ -196,9 +196,14 @@ public class Session {
                     );
                     break;
                 case venues_see_more:
+                    final int nextPageNumber = payloadAsJson.getInt("next_page_number");
                     if (sessionContextState==SessionContextState.EXPLORING_BARS) {
                         onIntentFindBars(
-                            payloadAsJson.getInt("next_page_number")
+                            nextPageNumber
+                        );
+                    } else if (sessionContextState==SessionContextState.EXPLORING_RESTAURANTS) {
+                        onIntentFindRestaurants(
+                            nextPageNumber
                         );
                     }
                     break;
