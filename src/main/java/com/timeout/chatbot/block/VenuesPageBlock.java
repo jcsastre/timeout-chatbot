@@ -9,9 +9,9 @@ import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.Assert;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 @Component
@@ -26,13 +26,18 @@ public class VenuesPageBlock {
     }
 
     public void send(
-        @NotNull String userId,
-        @NotNull @Size(min=1, max=9) List<PageItem> pageItems,
-        @NotNull String itemPluralName,
-        @NotNull Integer remainingItems,
+        String userId,
+        List<PageItem> pageItems,
+        String itemPluralName,
+        Integer remainingItems,
         Integer nextPageNumber,
         SessionContextBag.Geolocation geolocation
     ) {
+        Assert.notNull(userId, "The userId must not be null");
+        Assert.notNull(pageItems, "The pageItems must not be null");
+        Assert.isTrue(pageItems.size() > 0, "The pageItems size must be greater than zero");
+        Assert.isTrue(pageItems.size() < 10, "The pageItems size must be lesser than 10");
+        Assert.notNull(itemPluralName, "The itemPluralName must not be null");
 
         final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
         final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
@@ -56,8 +61,8 @@ public class VenuesPageBlock {
     }
 
     private void addVenueItems(
-        @NotNull GenericTemplate.Element.ListBuilder listBuilder,
-        @NotNull @Size(min = 1, max = 9) List<PageItem> pageItems
+        GenericTemplate.Element.ListBuilder listBuilder,
+        List<PageItem> pageItems
     ) {
         for (PageItem pageItem : pageItems) {
             final GenericTemplate.Element.Builder elementBuilder = listBuilder.addElement(pageItem.getName());

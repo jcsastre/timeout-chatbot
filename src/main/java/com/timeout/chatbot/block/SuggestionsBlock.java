@@ -44,20 +44,6 @@ public class SuggestionsBlock {
     private GenericTemplate buildGenericTemplate() {
         return
             GenericTemplate.newBuilder().addElements()
-                .addElement("Bars & pubs nearby")
-                    .imageUrl("https://media.timeout.com/images/103466376/image.jpg")
-                    .buttons(
-                        Button.newListBuilder()
-                            .addPostbackButton(
-                                "Let's go",
-                                new JSONObject()
-                                    .put("type", "utterance")
-                                    .put("utterance", "Bars & pubs nearby")
-                                    .toString()
-                            ).toList()
-                            .build()
-                    )
-                    .toList()
                 .addElement("In cinemas now")
                     .imageUrl("https://media.timeout.com/images/103667839/image.jpg")
                     .buttons(
@@ -67,6 +53,20 @@ public class SuggestionsBlock {
                                 new JSONObject()
                                     .put("type", "utterance")
                                     .put("utterance", "In cinemas now")
+                                    .toString()
+                            ).toList()
+                            .build()
+                    )
+                    .toList()
+                .addElement("Bars & pubs nearby")
+                    .imageUrl("https://media.timeout.com/images/103466376/image.jpg")
+                    .buttons(
+                        Button.newListBuilder()
+                            .addPostbackButton(
+                                "Let's go",
+                                new JSONObject()
+                                    .put("type", "utterance")
+                                    .put("utterance", "Bars & pubs nearby")
                                     .toString()
                             ).toList()
                             .build()

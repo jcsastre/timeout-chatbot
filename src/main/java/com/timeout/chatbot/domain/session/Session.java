@@ -10,7 +10,7 @@ import com.timeout.chatbot.domain.User;
 import com.timeout.chatbot.domain.apiai.ApiaiIntent;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.domain.response.search.page.SearchResponse;
-import com.timeout.chatbot.graffitti.endpoints.GraffittiEndpoints;
+import com.timeout.chatbot.graffitti.endpoints.BarsSearchEndpoint;
 import com.timeout.chatbot.graffitti.endpoints.RestaurantsSearchEndpoint;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.repository.UserRepository;
@@ -363,24 +363,28 @@ public class Session {
     private void onIntentFindBars(@NotNull Integer pageNumber) {
         sessionContextState = SessionContextState.EXPLORING_BARS;
 
-        String what = "node-7067";
-
-        String url =
-            String.format(
-                GraffittiEndpoints.SEARCH_UK_LONDON_VENUES.toString(),
-                what, pageNumber
-            );
+        String url = null;
+        String lookingTxt = null;
 
         final SessionContextBag.Geolocation geolocation = sessionContextBag.getGeolocation();
-        if (geolocation !=null) {
-            final Double latitude = sessionContextBag.getGeolocation().getLatitude();
-            final Double longitude = sessionContextBag.getGeolocation().getLongitude();
-            url = url + "&latitude="+latitude+"&longitude="+longitude+"&radius=0.5";
-        }
+        if (geolocation == null) {
+            url = BarsSearchEndpoint.getUrl(
+                "en-GB",
+                9,
+                pageNumber
+            );
 
-        String lookingTxt = "Looking for Bars & Pubs in London";
-        if (geolocation !=null) {
-            lookingTxt = "Looking for Bars & Pubs within 500 meters.";
+            lookingTxt = "Looking for Bars & Pubs in London";
+        } else {
+            url = BarsSearchEndpoint.getUrl(
+                "en-GB",
+                9,
+                pageNumber,
+                sessionContextBag.getGeolocation().getLatitude(),
+                sessionContextBag.getGeolocation().getLongitude()
+            );
+
+            lookingTxt = "Looking for Bars & Pubs within 500 meters from the current location.";
         }
 
         sendTextMessage(lookingTxt);
@@ -465,11 +469,6 @@ public class Session {
                 searchResponse.getNextPageNumber(),
                 searchResponse.getReaminingItems()
             );
-
-//            if (suggestionRestaurantsFineSearchRequired) {
-//                user.getSuggestionsDone().setRestaurantsFineSearch(true);
-//                userRepository.save(user);
-//            }
         } else {
             sendTextMessage("There are not available Restaurants for your request.");
         }
