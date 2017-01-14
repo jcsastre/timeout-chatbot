@@ -3,13 +3,9 @@ package com.timeout.chatbot.graffitti.domain.response.tiles;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.timeout.chatbot.graffitti.domain.response.search.page.Meta;
-import com.timeout.chatbot.http.HeaderRequestInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -44,30 +40,30 @@ public class TilesResponse {
                 "meta: " + meta.toString() +
             "}";
     }
-
-    public static void main(String[] args) {
-        List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
-        interceptors.add(
-            new HeaderRequestInterceptor(
-                "Authorization",
-                "Bearer 8EOpBX2cpcZkCf3l7bBh476rzlpRtcKPzZVv4t1TGNMu24OIs1lhDMhUIVAil-9q"
-            )
-        );
-
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.setInterceptors(interceptors);
-
-        TilesResponse tilesResponse =
-            restTemplate.getForObject(
-                "http://graffiti.timeout.com/v1/sites/es-barcelona/search?what=node-7083",
-                TilesResponse.class
-            );
-
-        System.out.println("tilesResponse: " + tilesResponse);
-
-//        final PageItem[] tileItems = tilesResponse.getTileItems();
-//        for (PageItem item : tileItems) {
-//            System.out.println(item);
-//        }
-    }
+//
+//    public static void main(String[] args) {
+//        List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
+//        interceptors.add(
+//            new HeaderRequestInterceptor(
+//                "Authorization",
+//                "Bearer 8EOpBX2cpcZkCf3l7bBh476rzlpRtcKPzZVv4t1TGNMu24OIs1lhDMhUIVAil-9q"
+//            )
+//        );
+//
+//        RestTemplate restTemplate = new RestTemplate();
+//        restTemplate.setInterceptors(interceptors);
+//
+//        TilesResponse tilesResponse =
+//            restTemplate.getForObject(
+//                "http://graffiti.timeout.com/v1/sites/es-barcelona/search?what=node-7083",
+//                TilesResponse.class
+//            );
+//
+//        System.out.println("tilesResponse: " + tilesResponse);
+//
+////        final PageItem[] tileItems = tilesResponse.getTileItems();
+////        for (PageItem item : tileItems) {
+////            System.out.println(item);
+////        }
+//    }
 }

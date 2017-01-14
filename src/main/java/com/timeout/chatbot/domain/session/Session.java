@@ -113,7 +113,7 @@ public class Session {
                 onIntentFindRestaurants(1);
                 break;
             case FIND_RESTAURANTS_NEARBY:
-                onIntentRestaurantsNearby();
+                onIntentFindRestaurantsNearby();
                 break;
             case FIND_BARSANDPUBS:
                 onIntentFindBars(1);
@@ -414,7 +414,7 @@ public class Session {
         }
     }
 
-    private void onIntentRestaurantsNearby() {
+    private void onIntentFindRestaurantsNearby() {
         this.sessionContextState = SessionContextState.EXPLORING_RESTAURANTS;
 
         if (sessionContextBag.getGeolocation() == null) {
@@ -435,21 +435,23 @@ public class Session {
         if (geolocation == null) {
             url = RestaurantsSearchEndpoint.getUrl(
                 "en-GB",
-                9,
+                10,
                 pageNumber
             );
 
-            lookingTxt = "Looking for Restaurants in London";
+            lookingTxt =
+                "Looking for Restaurants in London. Please, give me a moment.";
         } else {
             url = RestaurantsSearchEndpoint.getUrl(
                 "en-GB",
-                9,
+                10,
                 pageNumber,
                 sessionContextBag.getGeolocation().getLatitude(),
                 sessionContextBag.getGeolocation().getLongitude()
             );
 
-            lookingTxt = "Looking for Restaurants within 500 meters from the current location.";
+            lookingTxt =
+                "Looking for Restaurants within 500 meters from the current location. Please, give me a moment.";
         }
 
         sendTextMessage(lookingTxt);

@@ -91,7 +91,7 @@ public class BlockService {
 
     public void sendVenuesPageBlock(
         String userId,
-        SessionContextBag.Geolocation userGeolocation,
+        SessionContextBag.Geolocation sessionGeolocation,
         List<PageItem> pageItems,
         String itemPluralName,
         Integer nextPageNumber,
@@ -103,7 +103,7 @@ public class BlockService {
             itemPluralName,
             remainingItems,
             nextPageNumber,
-            userGeolocation
+            sessionGeolocation
         );
     }
 

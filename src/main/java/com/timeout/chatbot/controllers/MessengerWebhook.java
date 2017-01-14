@@ -3,7 +3,7 @@ package com.timeout.chatbot.controllers;
 import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.exceptions.MessengerVerificationException;
 import com.github.messenger4j.receive.MessengerReceiveClient;
-import com.timeout.chatbot.config.properties.MessengerConfiguration;
+import com.timeout.chatbot.MessengerConfiguration;
 import com.timeout.chatbot.handlers.AttachmentMessageEventHandlerImpl;
 import com.timeout.chatbot.handlers.PostbackEventHandler;
 import com.timeout.chatbot.handlers.QuickReplyMessageEventHandler;

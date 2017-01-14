@@ -1,4 +1,4 @@
-package com.timeout.chatbot.config;
+package com.timeout.chatbot;
 
 import com.mongodb.Mongo;
 import com.mongodb.MongoClient;

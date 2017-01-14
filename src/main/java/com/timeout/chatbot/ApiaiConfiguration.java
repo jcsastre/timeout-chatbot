@@ -1,4 +1,4 @@
-package com.timeout.chatbot.config.properties;
+package com.timeout.chatbot;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

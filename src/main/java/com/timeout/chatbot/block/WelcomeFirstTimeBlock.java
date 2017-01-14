@@ -27,7 +27,7 @@ public class WelcomeFirstTimeBlock {
             sbMessage.append("Hi!");
         }
         sbMessage.append("\n\n");
-        sbMessage.append("I'm Julio, I work as chatbot on Timeout London.");
+        sbMessage.append("I'm Brian, I work as chatbot on Timeout London.");
         sbMessage.append("\n\n");
         sbMessage.append("I know every corner in London, just ask me.");
 

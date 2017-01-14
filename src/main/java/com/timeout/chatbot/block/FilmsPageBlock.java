@@ -89,28 +89,33 @@ public class FilmsPageBlock {
 
             elementBuilder.subtitle(graffitiFilm.getBody().getCategorisation().buildNameMax80());
 
-            elementBuilder.buttons(
-                Button.newListBuilder()
-                    .addPostbackButton(
-                        "More info",
-                        new JSONObject()
-                            .put("type", PayloadType.films_more_info)
-                            .put("film_id", graffitiFilm.getBody().getId())
-                            .toString()
-                    ).toList()
-                    .addUrlButton(
-                        "See trailer",
-                        graffitiFilm.getBody().getTrailer().getUrl()
-                    ).toList()
-                    .addPostbackButton(
-                        "Find cinemas",
-                        new JSONObject()
-                            .put("type", PayloadType.films_find_cinemas)
-                            .put("film_id", graffitiFilm.getBody().getId())
-                            .toString()
-                    ).toList()
-                .build()
-            ).toList().done();
+            final Button.ListBuilder buttonListBuilder = Button.newListBuilder();
+
+            buttonListBuilder.addPostbackButton(
+                "More info",
+                new JSONObject()
+                    .put("type", PayloadType.films_more_info)
+                    .put("film_id", graffitiFilm.getBody().getId())
+                    .toString()
+            ).toList();
+
+            if (graffitiFilm.getBody().getTrailer() != null) {
+                buttonListBuilder.addUrlButton(
+                    "See trailer",
+                    graffitiFilm.getBody().getTrailer().getUrl()
+                ).toList();
+            }
+
+            buttonListBuilder.addPostbackButton(
+                "Find cinemas",
+                new JSONObject()
+                    .put("type", PayloadType.films_find_cinemas)
+                    .put("film_id", graffitiFilm.getBody().getId())
+                    .toString()
+            ).toList().build();
+
+
+            elementBuilder.buttons(buttonListBuilder.build()).toList().done();
         }
 
         final GenericTemplate genericTemplate = genericTemplateBuilder.build();

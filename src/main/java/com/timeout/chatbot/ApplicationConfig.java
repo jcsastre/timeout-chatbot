@@ -1,11 +1,9 @@
-package com.timeout.chatbot.config;
+package com.timeout.chatbot;
 
 import ai.api.AIConfiguration;
 import ai.api.AIDataService;
 import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.timeout.chatbot.config.properties.ApiaiConfiguration;
-import com.timeout.chatbot.config.properties.MessengerConfiguration;
 import com.timeout.chatbot.http.HeaderRequestInterceptor;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.GraffittiService;
