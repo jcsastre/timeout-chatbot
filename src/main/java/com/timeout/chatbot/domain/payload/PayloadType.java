@@ -14,5 +14,8 @@ public enum PayloadType {
     bar_book,
     films_more_info,
     films_find_cinemas,
-    no_fullinfo;
+    no_fullinfo,
+    booking_people_count,
+    booking_date,
+    booking_time
 }

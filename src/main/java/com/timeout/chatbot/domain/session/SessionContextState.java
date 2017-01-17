@@ -7,5 +7,6 @@ public enum SessionContextState {
     EXPLORING_RESTAURANTS,
     EXPLORING_BARS,
     EXPLORING_FILMS,
-    SUGGESTIONS
+    SUGGESTIONS,
+    BOOKING
 }

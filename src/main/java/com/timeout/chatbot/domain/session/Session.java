@@ -21,6 +21,9 @@ import org.json.JSONObject;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.UUID;
 
@@ -203,10 +206,6 @@ public class Session {
                         onIntentFindRestaurants();
                     }
                     break;
-                case venues_book:
-                    sendTextMessage("Sorry, restaurants booking is not yet implemented.");
-                    //TODO: venues_book
-                    break;
                 case set_location:
                     blockService.sendGeolocationAskBlock(user.getMessengerId());
                     break;
@@ -238,6 +237,30 @@ public class Session {
                         );
                     }
                     break;
+                case venues_book:
+                    onIntentVenuesBook();
+                    break;
+                case booking_people_count:
+                    final String count = payloadAsJson.getString("count");
+                    sessionContextBag.getBookingBag().setPeopleCount(new Integer(count));
+                    onIntentVenuesBook();
+                    break;
+                case booking_date:
+                    final String date = payloadAsJson.getString("date");
+                    if (date.equalsIgnoreCase("today")) {
+                        sessionContextBag.getBookingBag().setLocalDate(LocalDate.now());
+                    } else if (date.equalsIgnoreCase("tomorrow")) {
+                        sessionContextBag.getBookingBag().setLocalDate(LocalDate.now().plus(1, ChronoUnit.DAYS));
+                    } else {
+                        //TODO
+                    }
+                    onIntentVenuesBook();
+                    break;
+                case booking_time:
+                    final String time = payloadAsJson.getString("time");
+                    sessionContextBag.getBookingBag().setLocalTime(LocalTime.of(new Integer(time), 0));
+                    onIntentVenuesBook();
+                    break;
                 default:
                     sendTextMessage("Sorry, an error occurred.");
                     break;
@@ -256,6 +279,38 @@ public class Session {
 //        } catch(JSONException exception) {
 //            //TODO
 //        }
+    }
+
+    private void onIntentVenuesBook() {
+        sessionContextState = SessionContextState.BOOKING;
+
+        final SessionContextBag.BookingBag bookingBag = getSessionContextBag().getBookingBag();
+        final Integer peopleCount = bookingBag.getPeopleCount();
+        if (peopleCount == null) {
+            sendTextMessage (
+                "IMPORTANT: Because I'm a chatbot under development, the booking feature is just a simulation. " +
+                "I'm not making a real booking :)"
+            );
+            blockService.sendBookingPeopleCountBlock(user);
+        } else {
+            final LocalDate localDate = bookingBag.getLocalDate();
+            if (localDate == null) {
+                blockService.sendBookingDateBlock(user);
+            } else {
+                final LocalTime localTime = bookingBag.getLocalTime();
+                if (localTime == null) {
+                    blockService.sendBookingTimeBlock(user);
+                } else {
+                    sendTextMessage("To confirm the book I need your first name, last name, email and phone number.");
+                    final String firstName = user.getFbUserProfile().getFirstName();
+                    if (firstName != null) {
+                        // TODO: send first name confirmation block
+                    } else {
+                        //TODO: ask for first name
+                    }
+                }
+            }
+        }
     }
 
     private void onIntentDiscover() {

@@ -1,6 +1,9 @@
 package com.timeout.chatbot.services;
 
 import com.timeout.chatbot.block.*;
+import com.timeout.chatbot.block.booking.BookingDateBlock;
+import com.timeout.chatbot.block.booking.BookingPeopleCountBlock;
+import com.timeout.chatbot.block.booking.BookingTimeBlock;
 import com.timeout.chatbot.domain.User;
 import com.timeout.chatbot.domain.session.Session;
 import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
@@ -23,6 +26,9 @@ public class BlockService {
     private final VenueSummaryBlock venueSummaryBlock;
     private final GeolocationAskBlock geolocationAskBlock;
     private final FilmsPageBlock filmsPageBlock;
+    private final BookingPeopleCountBlock bookingPeopleCountBlock;
+    private final BookingDateBlock bookingDateBlock;
+    private final BookingTimeBlock bookingTimeBlock;
 
     @Autowired
     public BlockService(
@@ -35,7 +41,10 @@ public class BlockService {
         VenuesRemainingBlock venuesRemainingBlock,
         VenueSummaryBlock venueSummaryBlock,
         GeolocationAskBlock geolocationAskBlock,
-        FilmsPageBlock filmsPageBlock
+        FilmsPageBlock filmsPageBlock,
+        BookingPeopleCountBlock bookingPeopleCountBlock,
+        BookingDateBlock bookingDateBlock,
+        BookingTimeBlock bookingTimeBlock
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
         this.suggestionsBlock = suggestionsBlock;
@@ -47,6 +56,9 @@ public class BlockService {
         this.venueSummaryBlock = venueSummaryBlock;
         this.geolocationAskBlock = geolocationAskBlock;
         this.filmsPageBlock = filmsPageBlock;
+        this.bookingPeopleCountBlock = bookingPeopleCountBlock;
+        this.bookingDateBlock = bookingDateBlock;
+        this.bookingTimeBlock = bookingTimeBlock;
     }
 
     public void sendWelcomeFirstTimeBlock(
@@ -124,5 +136,23 @@ public class BlockService {
         String userId
     ) {
         geolocationAskBlock.send(userId);
+    }
+
+    public void sendBookingPeopleCountBlock(
+        User user
+    ) {
+        bookingPeopleCountBlock.send(user.getMessengerId());
+    }
+
+    public void sendBookingDateBlock(
+        User user
+    ) {
+        bookingDateBlock.send(user.getMessengerId());
+    }
+
+    public void sendBookingTimeBlock(
+        User user
+    ) {
+        bookingTimeBlock.send(user.getMessengerId());
     }
 }
