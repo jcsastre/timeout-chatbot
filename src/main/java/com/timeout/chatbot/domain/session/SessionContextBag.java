@@ -11,6 +11,8 @@ public class SessionContextBag {
     private CategorySecondary categorySecondary;
     private Geolocation geolocation;
     private Double radius = 0.5D;
+    private Integer reaminingItems;
+    private Integer pageNumber;
 
     public GraffittiType getGraffittiType() {
         return graffittiType;
@@ -50,6 +52,23 @@ public class SessionContextBag {
 
     public void setRadius(Double radius) {
         this.radius = radius;
+    }
+
+    public Integer getReaminingItems() {
+        return reaminingItems;
+    }
+
+    public void setReaminingItems(Integer reaminingItems) {
+        this.reaminingItems = reaminingItems;
+    }
+
+    public Integer getPageNumber() {
+        return pageNumber;
+    }
+
+
+    public void setPageNumber(Integer pageNumber) {
+        this.pageNumber = pageNumber;
     }
 
     public class Geolocation {

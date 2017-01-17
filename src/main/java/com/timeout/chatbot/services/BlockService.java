@@ -3,7 +3,6 @@ package com.timeout.chatbot.services;
 import com.timeout.chatbot.block.*;
 import com.timeout.chatbot.domain.User;
 import com.timeout.chatbot.domain.session.Session;
-import com.timeout.chatbot.domain.session.SessionContextBag;
 import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -20,6 +19,7 @@ public class BlockService {
     private final WelcomeBackBlock welcomeBackBlock;
     private final MainOptionsBlock mainOptionsBlock;
     private final VenuesPageBlock venuesPageBlock;
+    private final VenuesRemainingBlock venuesRemainingBlock;
     private final VenueSummaryBlock venueSummaryBlock;
     private final GeolocationAskBlock geolocationAskBlock;
     private final FilmsPageBlock filmsPageBlock;
@@ -32,6 +32,7 @@ public class BlockService {
         WelcomeBackBlock welcomeBackBlock,
         MainOptionsBlock mainOptionsBlock,
         VenuesPageBlock venuesPageBlock,
+        VenuesRemainingBlock venuesRemainingBlock,
         VenueSummaryBlock venueSummaryBlock,
         GeolocationAskBlock geolocationAskBlock,
         FilmsPageBlock filmsPageBlock
@@ -42,6 +43,7 @@ public class BlockService {
         this.welcomeBackBlock = welcomeBackBlock;
         this.mainOptionsBlock = mainOptionsBlock;
         this.venuesPageBlock = venuesPageBlock;
+        this.venuesRemainingBlock = venuesRemainingBlock;
         this.venueSummaryBlock = venueSummaryBlock;
         this.geolocationAskBlock = geolocationAskBlock;
         this.filmsPageBlock = filmsPageBlock;
@@ -90,20 +92,24 @@ public class BlockService {
     }
 
     public void sendVenuesPageBlock(
-        String userId,
-        SessionContextBag.Geolocation sessionGeolocation,
+        Session session,
         List<PageItem> pageItems,
-        String itemPluralName,
-        Integer nextPageNumber,
-        Integer remainingItems
+        String itemPluralName
     ) {
         venuesPageBlock.send(
-            userId,
+            session,
             pageItems,
-            itemPluralName,
-            remainingItems,
-            nextPageNumber,
-            sessionGeolocation
+            itemPluralName
+        );
+    }
+
+    public void sendVenuesRemainingBlock(
+        Session session,
+        String itemPluralName
+    ) {
+        venuesRemainingBlock.send(
+            session,
+            itemPluralName
         );
     }
 

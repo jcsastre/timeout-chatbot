@@ -13,5 +13,6 @@ public enum PayloadType {
     bar_get_a_summary,
     bar_book,
     films_more_info,
-    films_find_cinemas;
+    films_find_cinemas,
+    no_fullinfo;
 }

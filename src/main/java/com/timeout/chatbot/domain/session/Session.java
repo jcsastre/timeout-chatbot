@@ -110,13 +110,13 @@ public class Session {
                 onIntentFindThingstodo();
                 break;
             case FIND_RESTAURANTS:
-                onIntentFindRestaurants(1);
+                onIntentFindRestaurants();
                 break;
             case FIND_RESTAURANTS_NEARBY:
                 onIntentFindRestaurantsNearby();
                 break;
             case FIND_BARSANDPUBS:
-                onIntentFindBars(1);
+                onIntentFindBars();
                 break;
             case FIND_BARSANDPUBS_NEARBY:
                 onIntentFindBarsNearby();
@@ -163,9 +163,9 @@ public class Session {
 
         //TODO: check context to see if further actions are required
         if(sessionContextState == SessionContextState.EXPLORING_RESTAURANTS) {
-            onIntentFindRestaurants(1);
+            onIntentFindRestaurants();
         } else if (sessionContextState == SessionContextState.EXPLORING_BARS) {
-            onIntentFindBars(1);
+            onIntentFindBars();
         } else if (sessionContextState == SessionContextState.EXPLORING_FILMS) {
             onIntentFindFilms(1);
         } else {
@@ -183,7 +183,8 @@ public class Session {
                     // userRepository.deleteAll(); //TODO: delte!!!
                     userRepository.save(user);
                     blockService.sendWelcomeFirstTimeBlock(user);
-                    blockService.sendMainOptionsBlock(user);
+                    blockService.sendSuggestionsBlock(user);
+                    sendMySuggestionsDoesnot();
                     break;
                 case utterance:
                     final String utterance = payloadAsJson.getString("utterance");
@@ -196,15 +197,10 @@ public class Session {
                     );
                     break;
                 case venues_see_more:
-                    final int nextPageNumber = payloadAsJson.getInt("next_page_number");
                     if (sessionContextState==SessionContextState.EXPLORING_BARS) {
-                        onIntentFindBars(
-                            nextPageNumber
-                        );
+                        onIntentFindBars();
                     } else if (sessionContextState==SessionContextState.EXPLORING_RESTAURANTS) {
-                        onIntentFindRestaurants(
-                            nextPageNumber
-                        );
+                        onIntentFindRestaurants();
                     }
                     break;
                 case venues_book:
@@ -225,6 +221,22 @@ public class Session {
                 case films_find_cinemas:
                     sendTextMessage("Sorry, 'Find Cinemas' is not yet implemented.");
                     //TODO: films_find_cinemas
+                    break;
+                case no_fullinfo:
+                    if (
+                        sessionContextState==SessionContextState.EXPLORING_BARS ||
+                        sessionContextState==SessionContextState.EXPLORING_RESTAURANTS
+                    ) {
+                        String itemPluralName = "Restaurants";
+                        if (sessionContextState==SessionContextState.EXPLORING_BARS) {
+                            itemPluralName = "Bars & Pubs";
+                        }
+
+                        blockService.sendVenuesRemainingBlock(
+                            this,
+                            itemPluralName
+                        );
+                    }
                     break;
                 default:
                     sendTextMessage("Sorry, an error occurred.");
@@ -260,21 +272,7 @@ public class Session {
 
             blockService.sendSuggestionsBlock(user);
 
-            messengerSendClientWrapper.sendTemplate(
-                user.getMessengerId(),
-                    ButtonTemplate.newBuilder(
-                        "If my suggestions doesn't meet your needs, just type 'discover'",
-                        Button.newListBuilder()
-                            .addPostbackButton(
-                                "Discover",
-                                new JSONObject()
-                                    .put("type", "utterance")
-                                    .put("utterance", "Discover")
-                                    .toString()
-                            ).toList()
-                            .build()
-                    ).build()
-            );
+            sendMySuggestionsDoesnot();
 
 //            final TilesResponse tilesResponse =
 //                restTemplate.getForObject(
@@ -294,6 +292,24 @@ public class Session {
         } else {
             sendTextMessage("¡Hola!");
         }
+    }
+
+    private void sendMySuggestionsDoesnot() {
+        messengerSendClientWrapper.sendTemplate(
+            user.getMessengerId(),
+                ButtonTemplate.newBuilder(
+                    "If my suggestions doesn't meet your needs, just type 'discover'",
+                    Button.newListBuilder()
+                        .addPostbackButton(
+                            "Discover",
+                            new JSONObject()
+                                .put("type", "utterance")
+                                .put("utterance", "Discover")
+                                .toString()
+                        ).toList()
+                        .build()
+                ).build()
+        );
     }
 
     private void onIntentSuggestions() {
@@ -356,38 +372,49 @@ public class Session {
         if (sessionContextBag.getGeolocation() == null) {
             blockService.sendGeolocationAskBlock(user.getMessengerId());
         } else {
-            onIntentFindBars(1);
+            onIntentFindBars();
         }
     }
 
-    private void onIntentFindBars(@NotNull Integer pageNumber) {
-        sessionContextState = SessionContextState.EXPLORING_BARS;
+    private void onIntentFindBars() {
+        if (sessionContextState != SessionContextState.EXPLORING_BARS) {
+            sessionContextState = SessionContextState.EXPLORING_BARS;
+            sessionContextBag.setPageNumber(1);
+        } {
+            Integer pageNumber = sessionContextBag.getPageNumber();
+            if (pageNumber != null) {
+                pageNumber++;
+                sessionContextBag.setPageNumber(pageNumber);;
+            } else {
+                sessionContextBag.setPageNumber(1);
+            }
+        }
 
         String url = null;
-        String lookingTxt = null;
-
         final SessionContextBag.Geolocation geolocation = sessionContextBag.getGeolocation();
         if (geolocation == null) {
             url = BarsSearchEndpoint.getUrl(
                 "en-GB",
-                9,
-                pageNumber
+                10,
+                sessionContextBag.getPageNumber()
             );
 
-            lookingTxt = "Looking for Bars & Pubs in London";
+            sendTextMessage(
+                "Looking for Bars & Pubs in London"
+            );
         } else {
             url = BarsSearchEndpoint.getUrl(
                 "en-GB",
-                9,
-                pageNumber,
-                sessionContextBag.getGeolocation().getLatitude(),
-                sessionContextBag.getGeolocation().getLongitude()
+                10,
+                sessionContextBag.getPageNumber(),
+                geolocation.getLatitude(),
+                geolocation.getLongitude()
             );
 
-            lookingTxt = "Looking for Bars & Pubs within 500 meters from the current location.";
+            sendTextMessage(
+                "Looking for Bars & Pubs within 500 meters from the current location."
+            );
         }
-
-        sendTextMessage(lookingTxt);
 
         final SearchResponse searchResponse =
             restTemplate.getForObject(
@@ -396,19 +423,18 @@ public class Session {
             );
 
         if (searchResponse.getMeta().getTotalItems() > 0) {
+            sessionContextBag.setReaminingItems(searchResponse.getRemainingItems());
+
             blockService.sendVenuesPageBlock(
-                user.getMessengerId(),
-                sessionContextBag.getGeolocation(),
+                this,
                 searchResponse.getPageItems(),
-                "Bars & Pubs",
-                searchResponse.getNextPageNumber(),
-                searchResponse.getReaminingItems()
+                "Bars & Pubs"
             );
 
-//            if (suggestionRestaurantsFineSearchRequired) {
-//                user.getSuggestionsDone().setRestaurantsFineSearch(true);
-//                userRepository.save(user);
-//            }
+            blockService.sendVenuesRemainingBlock(
+                this,
+                "Bars & Pubs"
+            );
         } else {
             sendTextMessage("There are not available Bars or Pubs for your request.");
         }
@@ -420,41 +446,49 @@ public class Session {
         if (sessionContextBag.getGeolocation() == null) {
             blockService.sendGeolocationAskBlock(user.getMessengerId());
         } else {
-            onIntentFindRestaurants(1);
+            onIntentFindRestaurants();
         }
-
     }
 
-    private void onIntentFindRestaurants(@NotNull Integer pageNumber) {
-        this.sessionContextState = SessionContextState.EXPLORING_RESTAURANTS;
+    private void onIntentFindRestaurants() {
+        if (sessionContextState != SessionContextState.EXPLORING_RESTAURANTS) {
+            sessionContextState = SessionContextState.EXPLORING_RESTAURANTS;
+            sessionContextBag.setPageNumber(1);
+        } {
+            Integer pageNumber = sessionContextBag.getPageNumber();
+            if (pageNumber != null) {
+                pageNumber++;
+                sessionContextBag.setPageNumber(pageNumber);;
+            } else {
+                sessionContextBag.setPageNumber(1);
+            }
+        }
 
         String url = null;
-        String lookingTxt = null;
-
         final SessionContextBag.Geolocation geolocation = sessionContextBag.getGeolocation();
         if (geolocation == null) {
             url = RestaurantsSearchEndpoint.getUrl(
                 "en-GB",
                 10,
-                pageNumber
+                sessionContextBag.getPageNumber()
             );
 
-            lookingTxt =
-                "Looking for Restaurants in London. Please, give me a moment.";
+            sendTextMessage(
+                "Looking for Restaurants in London. Please, give me a moment."
+            );
         } else {
             url = RestaurantsSearchEndpoint.getUrl(
                 "en-GB",
                 10,
-                pageNumber,
-                sessionContextBag.getGeolocation().getLatitude(),
-                sessionContextBag.getGeolocation().getLongitude()
+                sessionContextBag.getPageNumber(),
+                geolocation.getLatitude(),
+                geolocation.getLongitude()
             );
 
-            lookingTxt =
-                "Looking for Restaurants within 500 meters from the current location. Please, give me a moment.";
+            sendTextMessage(
+                "Looking for Restaurants within 500 meters from the current location. Please, give me a moment."
+            );
         }
-
-        sendTextMessage(lookingTxt);
 
         final SearchResponse searchResponse =
             restTemplate.getForObject(
@@ -463,13 +497,17 @@ public class Session {
             );
 
         if (searchResponse.getMeta().getTotalItems() > 0) {
+            sessionContextBag.setReaminingItems(searchResponse.getRemainingItems());
+
             blockService.sendVenuesPageBlock(
-                user.getMessengerId(),
-                sessionContextBag.getGeolocation(),
+                this,
                 searchResponse.getPageItems(),
-                "Restaurants",
-                searchResponse.getNextPageNumber(),
-                searchResponse.getReaminingItems()
+                "Restaurants"
+            );
+
+            blockService.sendVenuesRemainingBlock(
+                this,
+                "Restaurants"
             );
         } else {
             sendTextMessage("There are not available Restaurants for your request.");

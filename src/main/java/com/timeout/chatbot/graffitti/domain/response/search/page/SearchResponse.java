@@ -40,7 +40,7 @@ public class SearchResponse {
         return null;
     }
 
-    public Integer getReaminingItems() {
+    public Integer getRemainingItems() {
         final Integer nextPageNumber = getNextPageNumber();
         if (nextPageNumber != null) {
             return meta.getTotalItems() - (10 * (nextPageNumber - 1));

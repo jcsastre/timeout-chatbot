@@ -1,10 +1,9 @@
 package com.timeout.chatbot.block;
 
-import com.github.messenger4j.send.QuickReply;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.domain.session.SessionContextBag;
+import com.timeout.chatbot.domain.session.Session;
 import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.json.JSONObject;
@@ -26,30 +25,19 @@ public class VenuesPageBlock {
     }
 
     public void send(
-        String userId,
+        Session session,
         List<PageItem> pageItems,
-        String itemPluralName,
-        Integer remainingItems,
-        Integer nextPageNumber,
-        SessionContextBag.Geolocation sessionGeolocation
+        String itemPluralName
     ) {
-        Assert.notNull(userId, "The userId must not be null");
+        Assert.notNull(session, "The session must not be null");
         Assert.notNull(pageItems, "The pageItems must not be null");
         Assert.isTrue(pageItems.size() >= 1, "The pageItems size must be greater than zero");
         Assert.isTrue(pageItems.size() <= 10, "The pageItems size must be lesser than 10");
         Assert.notNull(itemPluralName, "The itemPluralName must not be null");
 
         sendHorizontalCarroussel(
-            userId,
+            session.getUser().getMessengerId(),
             pageItems
-        );
-
-        sendFeedbackAndQuickReplies(
-            userId,
-            remainingItems,
-            nextPageNumber,
-            itemPluralName,
-            sessionGeolocation
         );
 
 //        final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
@@ -215,56 +203,5 @@ public class VenuesPageBlock {
         }
 
         return sb.toString();
-    }
-
-    private void sendFeedbackAndQuickReplies(
-        String userId,
-        Integer remainingItems,
-        Integer nextPageNumber,
-        String itemPluralName,
-        SessionContextBag.Geolocation sessionGeolocation
-
-    ) {
-
-        messengerSendClientWrapper.sendTextMessage(
-            userId,
-            String.format(
-                "There are %s %s remaining",
-                remainingItems, itemPluralName
-            ),
-            buildQuickReplies(
-                remainingItems,
-                nextPageNumber,
-                sessionGeolocation
-            )
-        );
-    }
-
-    private List<QuickReply> buildQuickReplies(
-        Integer remainingItems,
-        Integer nextPageNumber,
-        SessionContextBag.Geolocation sessionGeolocation
-    ) {
-
-        final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
-
-        if (remainingItems > 0) {
-            listBuilder.addTextQuickReply(
-                "See more",
-                new JSONObject()
-                    .put("type", PayloadType.venues_see_more)
-                    .put("next_page_number", nextPageNumber)
-                    .toString()
-            ).toList();
-        }
-
-        listBuilder.addTextQuickReply(
-            sessionGeolocation == null ? "Set location" : "Change location",
-            new JSONObject()
-                .put("type", PayloadType.set_location)
-                .toString()
-        ).toList();
-
-        return listBuilder.build();
     }
 }

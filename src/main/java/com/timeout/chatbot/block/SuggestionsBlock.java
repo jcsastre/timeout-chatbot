@@ -100,6 +100,34 @@ public class SuggestionsBlock {
                             .build()
                     )
                     .toList()
+                .addElement("Book a theatre show")
+                    .imageUrl("https://media.timeout.com/images/103646228/image.jpg")
+                    .buttons(
+                        Button.newListBuilder()
+                            .addPostbackButton(
+                                "Let's go",
+                                new JSONObject()
+                                    .put("type", "utterance")
+                                    .put("utterance", "Book a theatre show")
+                                    .toString()
+                            ).toList()
+                            .build()
+                    )
+                    .toList()
+                .addElement("Art this week")
+                    .imageUrl("https://media.timeout.com/images/103659638/image.jpg")
+                    .buttons(
+                        Button.newListBuilder()
+                            .addPostbackButton(
+                                "Let's go",
+                                new JSONObject()
+                                    .put("type", "utterance")
+                                    .put("utterance", "Art this week")
+                                    .toString()
+                            ).toList()
+                            .build()
+                    )
+                    .toList()
                 .done()
                 .build();
     }
