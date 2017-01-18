@@ -88,6 +88,31 @@ public class Session {
         return page;
     }
 
+    public void applyBookingUtterance(
+        String utterance
+    ) {
+
+        if (bookingState == BookingState.FIRST_NAME) {
+            sessionContextBag.getBookingBag().setFirstName(utterance);
+            bookingState = BookingState.LAST_NAME;
+            onIntentVenuesBook();
+        } else if (bookingState == BookingState.LAST_NAME) {
+            sessionContextBag.getBookingBag().setLastName(utterance);
+            bookingState = BookingState.LAST_NAME;
+            onIntentVenuesBook();
+        } else if (bookingState == BookingState.EMAIL) {
+            sessionContextBag.getBookingBag().setEmail(utterance);
+            bookingState = BookingState.EMAIL;
+            onIntentVenuesBook();
+        } else if (bookingState == BookingState.PHONE){
+            sessionContextBag.getBookingBag().setPhone(utterance);
+            //TODO: confirmation message
+            sendTextMessage("Great, the reservation has been made!");
+        } else {
+            sendTextMessage("Sorry, an error occurred.");
+        }
+    }
+
     public void applyUtterance(
         String utterance
     ) {
@@ -154,6 +179,7 @@ public class Session {
                     user.getMessengerId(),
                     "Sorry, I don't understand you."
                 );
+                break;
         }
     }
 
@@ -244,14 +270,17 @@ public class Session {
                 case booking_people_count:
                     final String count = payloadAsJson.getString("count");
                     sessionContextBag.getBookingBag().setPeopleCount(new Integer(count));
+                    bookingState = BookingState.DATE;
                     onIntentVenuesBook();
                     break;
                 case booking_date:
                     final String date = payloadAsJson.getString("date");
                     if (date.equalsIgnoreCase("today")) {
                         sessionContextBag.getBookingBag().setLocalDate(LocalDate.now());
+                        bookingState = BookingState.TIME;
                     } else if (date.equalsIgnoreCase("tomorrow")) {
                         sessionContextBag.getBookingBag().setLocalDate(LocalDate.now().plus(1, ChronoUnit.DAYS));
+                        bookingState = BookingState.TIME;
                     } else {
                         //TODO
                     }
@@ -260,23 +289,26 @@ public class Session {
                 case booking_time:
                     final String time = payloadAsJson.getString("time");
                     sessionContextBag.getBookingBag().setLocalTime(LocalTime.of(new Integer(time), 0));
+                    bookingState = BookingState.FIRST_NAME;
                     onIntentVenuesBook();
                     break;
                 case booking_first_name_fb_ok:
                     sendTextMessage("Great");
                     sessionContextBag.getBookingBag().setFirstName(getUser().getFbUserProfile().getFirstName());
+                    bookingState = BookingState.LAST_NAME;
                     onIntentVenuesBook();
                     break;
                 case booking_first_name_fb_not_ok:
-                    //TODO: ask user to type his first name
+                    sendTextMessage("Please, type your first name?");
                     break;
                 case booking_last_name_fb_ok:
                     sendTextMessage("Great");
                     sessionContextBag.getBookingBag().setLastName(getUser().getFbUserProfile().getLastName());
+                    bookingState = BookingState.EMAIL;
                     onIntentVenuesBook();
                     break;
                 case booking_last_name_fb_not_ok:
-                    //TODO: ask user to type his first name
+                    sendTextMessage("Please, type your last name?");
                     break;
                 default:
                     sendTextMessage("Sorry, an error occurred.");
@@ -314,58 +346,39 @@ public class Session {
             case PEOPLE_COUNT:
                 blockService.sendBookingPeopleCountBlock(user);
                 break;
+            case DATE:
+                blockService.sendBookingDateBlock(user);
+                break;
+            case TIME:
+                blockService.sendBookingTimeBlock(user);
+                break;
+            case FIRST_NAME:
+                final String firstName = user.getFbUserProfile().getFirstName();
+                if (firstName != null) {
+                    blockService.sendBookingFirstnameConfirmationBlock(user);
+                    return;
+                } else {
+                    //TODO: ask for first name
+                }
+                break;
+            case LAST_NAME:
+                final String lastName = user.getFbUserProfile().getLastName();
+                if (lastName != null) {
+                    blockService.sendBookingLastnameConfirmationBlock(user);
+                    return;
+                } else {
+                    //TODO: ask for last name
+                }
+                break;
+            case EMAIL:
+                sendTextMessage("What is your email?");
+                break;
+            case PHONE:
+                sendTextMessage("What is your phone number?");
+                break;
             default:
                 sendTextMessage("Sorry, an error occurred.");
                 break;
-        }
-
-
-
-        final SessionContextBag.BookingBag bookingBag = getSessionContextBag().getBookingBag();
-        final Integer peopleCount = bookingBag.getPeopleCount();
-        if (peopleCount == null) {
-
-            return;
-        }
-
-        final LocalDate localDate = bookingBag.getLocalDate();
-        if (localDate == null) {
-            blockService.sendBookingDateBlock(user);
-            return;
-        }
-
-        final LocalTime localTime = bookingBag.getLocalTime();
-        if (localTime == null) {
-            blockService.sendBookingTimeBlock(user);
-            return;
-        }
-
-        String firstName = bookingBag.getFirstName();
-        if (firstName == null) {
-            firstName = user.getFbUserProfile().getFirstName();
-            if (firstName != null) {
-                blockService.sendBookingFirstnameConfirmationBlock(user);
-                return;
-            } else {
-                //TODO: ask for first name
-            }
-        }
-
-        String las = bookingBag.getLastName();
-        if (las == null) {
-            las = user.getFbUserProfile().getLastName();
-            if (las != null) {
-                blockService.sendBookingLastnameConfirmationBlock(user);
-                return;
-            } else {
-                //TODO: ask for last name
-            }
-        }
-
-        final String email = bookingBag.getEmail();
-        if (email != null) {
-            sendTextMessage("What is your email?");
-            return;
         }
     }
 
@@ -695,6 +708,12 @@ public class Session {
     public SessionContextBag getSessionContextBag() {
         return sessionContextBag;
     }
+
+    public SessionContextState getSessionContextState() {
+        return sessionContextState;
+    }
+
+
 
     @Override
     public String toString() {

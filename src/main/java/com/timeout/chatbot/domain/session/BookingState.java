@@ -6,5 +6,6 @@ public enum BookingState {
     TIME,
     FIRST_NAME,
     LAST_NAME,
-    EMAIL
+    EMAIL,
+    PHONE
 }
