@@ -39,6 +39,7 @@ public class Session {
     private final User user;
 
     private SessionContextState sessionContextState;
+    private BookingState bookingState;
     private final SessionContextBag sessionContextBag;
 
     private final BlockService blockService;
@@ -261,6 +262,22 @@ public class Session {
                     sessionContextBag.getBookingBag().setLocalTime(LocalTime.of(new Integer(time), 0));
                     onIntentVenuesBook();
                     break;
+                case booking_first_name_fb_ok:
+                    sendTextMessage("Great");
+                    sessionContextBag.getBookingBag().setFirstName(getUser().getFbUserProfile().getFirstName());
+                    onIntentVenuesBook();
+                    break;
+                case booking_first_name_fb_not_ok:
+                    //TODO: ask user to type his first name
+                    break;
+                case booking_last_name_fb_ok:
+                    sendTextMessage("Great");
+                    sessionContextBag.getBookingBag().setLastName(getUser().getFbUserProfile().getLastName());
+                    onIntentVenuesBook();
+                    break;
+                case booking_last_name_fb_not_ok:
+                    //TODO: ask user to type his first name
+                    break;
                 default:
                     sendTextMessage("Sorry, an error occurred.");
                     break;
@@ -282,34 +299,73 @@ public class Session {
     }
 
     private void onIntentVenuesBook() {
-        sessionContextState = SessionContextState.BOOKING;
+
+        if (sessionContextState != SessionContextState.BOOKING) {
+            sessionContextState = SessionContextState.BOOKING;
+            bookingState = BookingState.PEOPLE_COUNT;
+
+            sendTextMessage (
+                "IMPORTANT: Because I'm a chatbot under development, the booking feature is just a simulation. " +
+                    "I'm not making a real booking :)"
+            );
+        }
+
+        switch (bookingState) {
+            case PEOPLE_COUNT:
+                blockService.sendBookingPeopleCountBlock(user);
+                break;
+            default:
+                sendTextMessage("Sorry, an error occurred.");
+                break;
+        }
+
+
 
         final SessionContextBag.BookingBag bookingBag = getSessionContextBag().getBookingBag();
         final Integer peopleCount = bookingBag.getPeopleCount();
         if (peopleCount == null) {
-            sendTextMessage (
-                "IMPORTANT: Because I'm a chatbot under development, the booking feature is just a simulation. " +
-                "I'm not making a real booking :)"
-            );
-            blockService.sendBookingPeopleCountBlock(user);
-        } else {
-            final LocalDate localDate = bookingBag.getLocalDate();
-            if (localDate == null) {
-                blockService.sendBookingDateBlock(user);
+
+            return;
+        }
+
+        final LocalDate localDate = bookingBag.getLocalDate();
+        if (localDate == null) {
+            blockService.sendBookingDateBlock(user);
+            return;
+        }
+
+        final LocalTime localTime = bookingBag.getLocalTime();
+        if (localTime == null) {
+            blockService.sendBookingTimeBlock(user);
+            return;
+        }
+
+        String firstName = bookingBag.getFirstName();
+        if (firstName == null) {
+            firstName = user.getFbUserProfile().getFirstName();
+            if (firstName != null) {
+                blockService.sendBookingFirstnameConfirmationBlock(user);
+                return;
             } else {
-                final LocalTime localTime = bookingBag.getLocalTime();
-                if (localTime == null) {
-                    blockService.sendBookingTimeBlock(user);
-                } else {
-                    sendTextMessage("To confirm the book I need your first name, last name, email and phone number.");
-                    final String firstName = user.getFbUserProfile().getFirstName();
-                    if (firstName != null) {
-                        // TODO: send first name confirmation block
-                    } else {
-                        //TODO: ask for first name
-                    }
-                }
+                //TODO: ask for first name
             }
+        }
+
+        String las = bookingBag.getLastName();
+        if (las == null) {
+            las = user.getFbUserProfile().getLastName();
+            if (las != null) {
+                blockService.sendBookingLastnameConfirmationBlock(user);
+                return;
+            } else {
+                //TODO: ask for last name
+            }
+        }
+
+        final String email = bookingBag.getEmail();
+        if (email != null) {
+            sendTextMessage("What is your email?");
+            return;
         }
     }
 

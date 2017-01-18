@@ -117,6 +117,7 @@ public class SessionPool {
                 "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" +
                 messengerConfiguration.getPageAccessToken();
         final FbUserProfile fbUserProfile = restTemplate.getForObject(url, FbUserProfile.class);
+
         user.setFbUserProfile(fbUserProfile);
 
         return user;

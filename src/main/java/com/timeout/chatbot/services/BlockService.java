@@ -1,9 +1,7 @@
 package com.timeout.chatbot.services;
 
 import com.timeout.chatbot.block.*;
-import com.timeout.chatbot.block.booking.BookingDateBlock;
-import com.timeout.chatbot.block.booking.BookingPeopleCountBlock;
-import com.timeout.chatbot.block.booking.BookingTimeBlock;
+import com.timeout.chatbot.block.booking.*;
 import com.timeout.chatbot.domain.User;
 import com.timeout.chatbot.domain.session.Session;
 import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
@@ -29,6 +27,8 @@ public class BlockService {
     private final BookingPeopleCountBlock bookingPeopleCountBlock;
     private final BookingDateBlock bookingDateBlock;
     private final BookingTimeBlock bookingTimeBlock;
+    private final BookingFirstnameConfirmationBlock bookingFirstnameConfirmationBlock;
+    private final BookingLastnameConfirmationBlock bookingLastnameConfirmationBlock;
 
     @Autowired
     public BlockService(
@@ -44,7 +44,9 @@ public class BlockService {
         FilmsPageBlock filmsPageBlock,
         BookingPeopleCountBlock bookingPeopleCountBlock,
         BookingDateBlock bookingDateBlock,
-        BookingTimeBlock bookingTimeBlock
+        BookingTimeBlock bookingTimeBlock,
+        BookingFirstnameConfirmationBlock bookingFirstnameConfirmationBlock,
+        BookingLastnameConfirmationBlock bookingLastnameConfirmationBlock
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
         this.suggestionsBlock = suggestionsBlock;
@@ -59,6 +61,8 @@ public class BlockService {
         this.bookingPeopleCountBlock = bookingPeopleCountBlock;
         this.bookingDateBlock = bookingDateBlock;
         this.bookingTimeBlock = bookingTimeBlock;
+        this.bookingFirstnameConfirmationBlock = bookingFirstnameConfirmationBlock;
+        this.bookingLastnameConfirmationBlock = bookingLastnameConfirmationBlock;
     }
 
     public void sendWelcomeFirstTimeBlock(
@@ -154,5 +158,23 @@ public class BlockService {
         User user
     ) {
         bookingTimeBlock.send(user.getMessengerId());
+    }
+
+    public void sendBookingFirstnameConfirmationBlock(
+        User user
+    ) {
+        bookingFirstnameConfirmationBlock.send(
+            user.getMessengerId(),
+            user.getFbUserProfile().getFirstName()
+        );
+    }
+
+    public void sendBookingLastnameConfirmationBlock(
+        User user
+    ) {
+        bookingLastnameConfirmationBlock.send(
+            user.getMessengerId(),
+            user.getFbUserProfile().getLastName()
+        );
     }
 }

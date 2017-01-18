@@ -17,5 +17,9 @@ public enum PayloadType {
     no_fullinfo,
     booking_people_count,
     booking_date,
-    booking_time
+    booking_time,
+    booking_first_name_fb_ok,
+    booking_first_name_fb_not_ok,
+    booking_last_name_fb_ok,
+    booking_last_name_fb_not_ok
 }

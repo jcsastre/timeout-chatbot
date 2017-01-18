@@ -9,11 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BookingFirstnameConfirmationBlock {
+public class BookingLastnameConfirmationBlock {
     private final MessengerSendClientWrapper messengerSendClientWrapper;
 
     @Autowired
-    public BookingFirstnameConfirmationBlock(
+    public BookingLastnameConfirmationBlock(
         MessengerSendClientWrapper messengerSendClientWrapper
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
@@ -21,24 +21,24 @@ public class BookingFirstnameConfirmationBlock {
 
     public void send(
         String userId,
-        String userFirstName
+        String userLastName
     ) {
 
         messengerSendClientWrapper.sendTemplate(
             userId,
             ButtonTemplate.newBuilder(
-                "Can I use '" + userFirstName + "' as your first name for the booking?",
+                "Can I use '" + userLastName + "' as your last name for the booking?",
                 Button.newListBuilder()
                     .addPostbackButton(
                         "Yes",
                         new JSONObject()
-                            .put("type", PayloadType.booking_first_name_fb_ok)
+                            .put("type", PayloadType.booking_last_name_fb_ok)
                             .toString()
                     ).toList()
                     .addPostbackButton(
                         "No",
                         new JSONObject()
-                            .put("type", PayloadType.booking_first_name_fb_not_ok)
+                            .put("type", PayloadType.booking_last_name_fb_not_ok)
                             .toString()
                     ).toList()
 
