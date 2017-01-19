@@ -1,10 +1,11 @@
-package com.timeout.chatbot.domain.session;
+package com.timeout.chatbot.session;
 
 import ai.api.AIServiceException;
 import ai.api.model.Result;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.ButtonTemplate;
 import com.google.gson.JsonElement;
+import com.timeout.chatbot.block.booking.BookingBlocksHelper;
 import com.timeout.chatbot.domain.Page;
 import com.timeout.chatbot.domain.User;
 import com.timeout.chatbot.domain.apiai.ApiaiIntent;
@@ -17,13 +18,11 @@ import com.timeout.chatbot.repository.UserRepository;
 import com.timeout.chatbot.services.ApiAiService;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.GraffittiService;
+import com.timeout.chatbot.session.booking.BookingManager;
 import org.json.JSONObject;
 import org.springframework.web.client.RestTemplate;
 
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Map;
 import java.util.UUID;
 
@@ -39,7 +38,6 @@ public class Session {
     private final User user;
 
     private SessionContextState sessionContextState;
-    private BookingState bookingState;
     private final SessionContextBag sessionContextBag;
 
     private final BlockService blockService;
@@ -50,6 +48,9 @@ public class Session {
 
     private final static int NUMBER_ITEMS_THRESOLD = 100;
 
+    private final BookingManager bookingManager;
+    private final BookingBlocksHelper bookingBlocksHelper;
+
     public Session(
         RestTemplate restTemplate,
         GraffittiService graffittiService,
@@ -58,7 +59,8 @@ public class Session {
         Page page,
         User user,
         BlockService blockService,
-        UserRepository userRepository
+        UserRepository userRepository,
+        BookingBlocksHelper bookingBlocksHelper
     ) {
         this.restTemplate = restTemplate;
         this.graffittiService = graffittiService;
@@ -66,6 +68,7 @@ public class Session {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
         this.blockService = blockService;
         this.userRepository = userRepository;
+        this.bookingBlocksHelper = bookingBlocksHelper;
 
         this.uuid = UUID.randomUUID();
 
@@ -74,6 +77,8 @@ public class Session {
 
         this.sessionContextState = SessionContextState.UNDEFINED;
         this.sessionContextBag = new SessionContextBag();
+        this.bookingManager =
+            new BookingManager(this, this.user, messengerSendClientWrapper, this.bookingBlocksHelper);
     }
 
     public UUID getUuid() {
@@ -88,98 +93,77 @@ public class Session {
         return page;
     }
 
-    public void applyBookingUtterance(
-        String utterance
-    ) {
-
-        if (bookingState == BookingState.FIRST_NAME) {
-            sessionContextBag.getBookingBag().setFirstName(utterance);
-            bookingState = BookingState.LAST_NAME;
-            onIntentVenuesBook();
-        } else if (bookingState == BookingState.LAST_NAME) {
-            sessionContextBag.getBookingBag().setLastName(utterance);
-            bookingState = BookingState.LAST_NAME;
-            onIntentVenuesBook();
-        } else if (bookingState == BookingState.EMAIL) {
-            sessionContextBag.getBookingBag().setEmail(utterance);
-            bookingState = BookingState.EMAIL;
-            onIntentVenuesBook();
-        } else if (bookingState == BookingState.PHONE){
-            sessionContextBag.getBookingBag().setPhone(utterance);
-            //TODO: confirmation message
-            sendTextMessage("Great, the reservation has been made!");
-        } else {
-            sendTextMessage("Sorry, an error occurred.");
-        }
-    }
-
     public void applyUtterance(
         String utterance
     ) {
-        Result apiaiResult = getApiaiResult(utterance);
+        if (sessionContextState == SessionContextState.BOOKING) {
+            bookingManager.applyUtterance(utterance);
+        } else {
+            Result apiaiResult = getApiaiResult(utterance);
 
-        final String apiaiAction = apiaiResult.getAction();
-        final ApiaiIntent apiaiIntent = ApiaiIntent.fromApiaiAction(apiaiAction);
+            final String apiaiAction = apiaiResult.getAction();
+            final ApiaiIntent apiaiIntent = ApiaiIntent.fromApiaiAction(apiaiAction);
 
-        final Map<String, JsonElement> apiaiParameters = apiaiResult.getParameters();
-        if (apiaiParameters != null) {
-            updateFilterParams(apiaiParameters);
-        }
+            final Map<String, JsonElement> apiaiParameters = apiaiResult.getParameters();
+            if (apiaiParameters != null) {
+                updateFilterParams(apiaiParameters);
+            }
 
-        printConsole(apiaiAction, apiaiParameters);
+            printConsole(apiaiAction, apiaiParameters);
 
-        switch (apiaiIntent) {
-            case GREETINGS:
-                onIntentGreetings();
-                break;
-            case SUGGESTIONS:
-                onIntentSuggestions();
-                break;
-            case FIND_THINGSTODO:
-                onIntentFindThingstodo();
-                break;
-            case FIND_RESTAURANTS:
-                onIntentFindRestaurants();
-                break;
-            case FIND_RESTAURANTS_NEARBY:
-                onIntentFindRestaurantsNearby();
-                break;
-            case FIND_BARSANDPUBS:
-                onIntentFindBars();
-                break;
-            case FIND_BARSANDPUBS_NEARBY:
-                onIntentFindBarsNearby();
-                break;
-            case FIND_ART:
-                onIntentFindArt();
-                break;
-            case FIND_THEATRE:
-                onIntentFindTheatre();
-                break;
-            case FIND_MUSIC:
-                onIntentFindMusic();
-                break;
-            case FIND_NIGHTLIFE:
-                onIntentFindNightlife();
-                break;
-            case FINDS_FILMS:
-                onIntentFindFilms(1);
-                break;
-            case SET_LOCATION:
-                //                fsm.apply(Intent.FIND_CAMPINGS);
-                break;
-            case UNKOWN:
-                //                onIntentUnknown();
-                break;
-            case DISCOVER:
-                onIntentDiscover();
-                break;
-            default:
-                messengerSendClientWrapper.sendTextMessage(
-                    user.getMessengerId(),
-                    "Sorry, I don't understand you."
-                );
-                break;
+            switch (apiaiIntent) {
+                case GREETINGS:
+                    onIntentGreetings();
+                    break;
+                case SUGGESTIONS:
+                    onIntentSuggestions();
+                    break;
+                case FIND_THINGSTODO:
+                    onIntentFindThingstodo();
+                    break;
+                case FIND_RESTAURANTS:
+                    onIntentFindRestaurants();
+                    break;
+                case FIND_RESTAURANTS_NEARBY:
+                    onIntentFindRestaurantsNearby();
+                    break;
+                case FIND_BARSANDPUBS:
+                    onIntentFindBars();
+                    break;
+                case FIND_BARSANDPUBS_NEARBY:
+                    onIntentFindBarsNearby();
+                    break;
+                case FIND_ART:
+                    onIntentFindArt();
+                    break;
+                case FIND_THEATRE:
+                    onIntentFindTheatre();
+                    break;
+                case FIND_MUSIC:
+                    onIntentFindMusic();
+                    break;
+                case FIND_NIGHTLIFE:
+                    onIntentFindNightlife();
+                    break;
+                case FINDS_FILMS:
+                    onIntentFindFilms(1);
+                    break;
+                case SET_LOCATION:
+                    //                fsm.apply(Intent.FIND_CAMPINGS);
+                    break;
+                case UNKOWN:
+                    //                onIntentUnknown();
+                    break;
+                case DISCOVER:
+                    onIntentDiscover();
+                    break;
+                default:
+                    messengerSendClientWrapper.sendTextMessage(
+                        user.getMessengerId(),
+                        "Sorry, I don't understand you."
+                    );
+                    break;
+            }
         }
     }
 
@@ -204,191 +188,104 @@ public class Session {
     }
 
     public void applyPayload(String payloadAsJsonString) {
-        final JSONObject payloadAsJson = new JSONObject(payloadAsJsonString);
 
-        try {
-            PayloadType payloadType = PayloadType.valueOf(payloadAsJson.getString("type"));
-            switch (payloadType) {
-                case get_started:
-                    // userRepository.deleteAll(); //TODO: delte!!!
-                    userRepository.save(user);
-                    blockService.sendWelcomeFirstTimeBlock(user);
-                    blockService.sendSuggestionsBlock(user);
-                    sendMySuggestionsDoesnot();
-                    break;
-                case utterance:
-                    final String utterance = payloadAsJson.getString("utterance");
-                    applyUtterance(utterance);
-                    break;
-                case venues_get_a_summary:
-                    blockService.sendVenueSummaryBlock(
-                        user.getMessengerId(),
-                        payloadAsJson.getString("venue_id")
-                    );
-                    break;
-                case venues_see_more:
-                    if (sessionContextState==SessionContextState.EXPLORING_BARS) {
-                        onIntentFindBars();
-                    } else if (sessionContextState==SessionContextState.EXPLORING_RESTAURANTS) {
-                        onIntentFindRestaurants();
-                    }
-                    break;
-                case set_location:
-                    blockService.sendGeolocationAskBlock(user.getMessengerId());
-                    break;
-                case restaurants_set_cuisine:
-                    sendTextMessage("Sorry, set cuisine is not yet implemented.");
-                    //TODO: restaurants_set_cuisine
-                    break;
-                case films_more_info:
-                    sendTextMessage("Sorry, 'More info' is not yet implemented.");
-                    //TODO: films_more_info
-                    break;
-                case films_find_cinemas:
-                    sendTextMessage("Sorry, 'Find Cinemas' is not yet implemented.");
-                    //TODO: films_find_cinemas
-                    break;
-                case no_fullinfo:
-                    if (
-                        sessionContextState==SessionContextState.EXPLORING_BARS ||
-                        sessionContextState==SessionContextState.EXPLORING_RESTAURANTS
-                    ) {
-                        String itemPluralName = "Restaurants";
-                        if (sessionContextState==SessionContextState.EXPLORING_BARS) {
-                            itemPluralName = "Bars & Pubs";
-                        }
+        if (sessionContextState == SessionContextState.BOOKING) {
+            bookingManager.applyPayload(payloadAsJsonString);
+        } else {
 
-                        blockService.sendVenuesRemainingBlock(
-                            this,
-                            itemPluralName
+            final JSONObject payloadAsJson = new JSONObject(payloadAsJsonString);
+
+            try {
+                PayloadType payloadType = PayloadType.valueOf(payloadAsJson.getString("type"));
+                switch (payloadType) {
+                    case get_started:
+                        // userRepository.deleteAll(); //TODO: delte!!!
+                        userRepository.save(user);
+                        blockService.sendWelcomeFirstTimeBlock(user);
+                        blockService.sendSuggestionsBlock(user);
+                        sendMySuggestionsDoesnot();
+                        break;
+                    case utterance:
+                        final String utterance = payloadAsJson.getString("utterance");
+                        applyUtterance(utterance);
+                        break;
+                    case venues_get_a_summary:
+                        blockService.sendVenueSummaryBlock(
+                            user.getMessengerId(),
+                            payloadAsJson.getString("venue_id")
                         );
-                    }
-                    break;
-                case venues_book:
-                    onIntentVenuesBook();
-                    break;
-                case booking_people_count:
-                    final String count = payloadAsJson.getString("count");
-                    sessionContextBag.getBookingBag().setPeopleCount(new Integer(count));
-                    bookingState = BookingState.DATE;
-                    onIntentVenuesBook();
-                    break;
-                case booking_date:
-                    final String date = payloadAsJson.getString("date");
-                    if (date.equalsIgnoreCase("today")) {
-                        sessionContextBag.getBookingBag().setLocalDate(LocalDate.now());
-                        bookingState = BookingState.TIME;
-                    } else if (date.equalsIgnoreCase("tomorrow")) {
-                        sessionContextBag.getBookingBag().setLocalDate(LocalDate.now().plus(1, ChronoUnit.DAYS));
-                        bookingState = BookingState.TIME;
-                    } else {
-                        //TODO
-                    }
-                    onIntentVenuesBook();
-                    break;
-                case booking_time:
-                    final String time = payloadAsJson.getString("time");
-                    sessionContextBag.getBookingBag().setLocalTime(LocalTime.of(new Integer(time), 0));
-                    bookingState = BookingState.FIRST_NAME;
-                    onIntentVenuesBook();
-                    break;
-                case booking_first_name_fb_ok:
-                    sendTextMessage("Great");
-                    sessionContextBag.getBookingBag().setFirstName(getUser().getFbUserProfile().getFirstName());
-                    bookingState = BookingState.LAST_NAME;
-                    onIntentVenuesBook();
-                    break;
-                case booking_first_name_fb_not_ok:
-                    sendTextMessage("Please, type your first name?");
-                    break;
-                case booking_last_name_fb_ok:
-                    sendTextMessage("Great");
-                    sessionContextBag.getBookingBag().setLastName(getUser().getFbUserProfile().getLastName());
-                    bookingState = BookingState.EMAIL;
-                    onIntentVenuesBook();
-                    break;
-                case booking_last_name_fb_not_ok:
-                    sendTextMessage("Please, type your last name?");
-                    break;
-                default:
-                    sendTextMessage("Sorry, an error occurred.");
-                    break;
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
-            sendTextMessage("Sorry, an error occurred.");
-        }
+                        break;
+                    case venues_see_more:
+                        if (sessionContextState == SessionContextState.EXPLORING_BARS) {
+                            onIntentFindBars();
+                        } else if (sessionContextState == SessionContextState.EXPLORING_RESTAURANTS) {
+                            onIntentFindRestaurants();
+                        }
+                        break;
+                    case set_location:
+                        blockService.sendGeolocationAskBlock(user.getMessengerId());
+                        break;
+                    case restaurants_set_cuisine:
+                        sendTextMessage("Sorry, set cuisine is not yet implemented.");
+                        //TODO: restaurants_set_cuisine
+                        break;
+                    case films_more_info:
+                        sendTextMessage("Sorry, 'More info' is not yet implemented.");
+                        //TODO: films_more_info
+                        break;
+                    case films_find_cinemas:
+                        sendTextMessage("Sorry, 'Find Cinemas' is not yet implemented.");
+                        //TODO: films_find_cinemas
+                        break;
+                    case no_fullinfo:
+                        if (
+                            sessionContextState == SessionContextState.EXPLORING_BARS ||
+                                sessionContextState == SessionContextState.EXPLORING_RESTAURANTS
+                            ) {
+                            String itemPluralName = "Restaurants";
+                            if (sessionContextState == SessionContextState.EXPLORING_BARS) {
+                                itemPluralName = "Bars & Pubs";
+                            }
 
-//        try {
-//            final String type = new JSONObject(event.getPayload()).getString("type");
-//
-//            if (type.equals("restaurants")) {
-//                session.applyUtterance("restaurants");
-//            }
-//        } catch(JSONException exception) {
-//            //TODO
-//        }
-    }
+                            blockService.sendVenuesRemainingBlock(
+                                this,
+                                itemPluralName
+                            );
+                        }
+                        break;
+                    case venues_book:
+                        onIntentVenuesBook();
+                        break;
 
-    private void onIntentVenuesBook() {
-
-        if (sessionContextState != SessionContextState.BOOKING) {
-            sessionContextState = SessionContextState.BOOKING;
-            bookingState = BookingState.PEOPLE_COUNT;
-
-            sendTextMessage (
-                "IMPORTANT: Because I'm a chatbot under development, the booking feature is just a simulation. " +
-                    "I'm not making a real booking :)"
-            );
-        }
-
-        switch (bookingState) {
-            case PEOPLE_COUNT:
-                blockService.sendBookingPeopleCountBlock(user);
-                break;
-            case DATE:
-                blockService.sendBookingDateBlock(user);
-                break;
-            case TIME:
-                blockService.sendBookingTimeBlock(user);
-                break;
-            case FIRST_NAME:
-                final String firstName = user.getFbUserProfile().getFirstName();
-                if (firstName != null) {
-                    blockService.sendBookingFirstnameConfirmationBlock(user);
-                    return;
-                } else {
-                    //TODO: ask for first name
+                    default:
+                        sendTextMessage("Sorry, an error occurred.");
+                        break;
                 }
-                break;
-            case LAST_NAME:
-                final String lastName = user.getFbUserProfile().getLastName();
-                if (lastName != null) {
-                    blockService.sendBookingLastnameConfirmationBlock(user);
-                    return;
-                } else {
-                    //TODO: ask for last name
-                }
-                break;
-            case EMAIL:
-                sendTextMessage("What is your email?");
-                break;
-            case PHONE:
-                sendTextMessage("What is your phone number?");
-                break;
-            default:
+            } catch (Exception e) {
+                e.printStackTrace();
                 sendTextMessage("Sorry, an error occurred.");
-                break;
+            }
         }
     }
 
-    private void onIntentDiscover() {
+    private void onIntentVenuesBook()
+    {
+        if (sessionContextState != SessionContextState.BOOKING)
+        {
+            sessionContextState = SessionContextState.BOOKING;
+            bookingManager.startBooking();
+        }
+    }
+
+    private void onIntentDiscover()
+    {
         blockService.sendDiscoverBlock(
             user
         );
     }
 
-    private void onIntentGreetings() {
+    private void onIntentGreetings()
+    {
         if (sessionContextState == SessionContextState.UNDEFINED) {
             blockService.sendWelcomeBackBlock(user);
 
@@ -642,17 +539,6 @@ public class Session {
         sendTextMessage("Lo siento, no te entiendo");
     }
 
-    public void sendTextMessage(String msg) {
-        if (msg.length() > 320) {
-            msg = msg.substring(0, 320);
-        }
-
-        messengerSendClientWrapper.sendTextMessage(
-            user.getMessengerId(),
-            msg
-        );
-    }
-
     private void updateFilterParams(Map<String, JsonElement> apiaiParameters) {
 //        final FilterParams filterParams = getFilterParams();
 //        for (Map.Entry<String, JsonElement> parameter : apiaiParameters.entrySet()) {
@@ -713,7 +599,16 @@ public class Session {
         return sessionContextState;
     }
 
+    public void sendTextMessage(String msg) {
+        if (msg.length() > 320) {
+            msg = msg.substring(0, 320);
+        }
 
+        messengerSendClientWrapper.sendTextMessage(
+            user.getMessengerId(),
+            msg
+        );
+    }
 
     @Override
     public String toString() {

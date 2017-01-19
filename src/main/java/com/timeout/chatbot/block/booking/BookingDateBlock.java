@@ -7,7 +7,10 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.format.TextStyle;
 import java.util.List;
+import java.util.Locale;
 
 @Component
 public class BookingDateBlock {
@@ -34,22 +37,70 @@ public class BookingDateBlock {
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
-        listBuilder.addTextQuickReply(
+        final LocalDate today = LocalDate.now();
+        addTextQuickReply(
             "Today",
-            new JSONObject()
-                .put("type", PayloadType.booking_date)
-                .put("date", "today")
-                .toString()
-        ).toList();
+            today,
+            listBuilder
+        );
 
-        listBuilder.addTextQuickReply(
+        final LocalDate tomorrow = today.plusDays(1);
+        addTextQuickReply(
             "Tomorrow",
-            new JSONObject()
-                .put("type", PayloadType.booking_date)
-                .put("date", "tomorrow")
-                .toString()
-        ).toList();
+            tomorrow,
+            listBuilder
+        );
+
+        final LocalDate tomorrowPlus1 = tomorrow.plusDays(1);
+        addTextQuickReply(
+            "next " + tomorrowPlus1.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.UK),
+            tomorrowPlus1,
+            listBuilder
+        );
+
+        final LocalDate tomorrowPlus2 = tomorrow.plusDays(2);
+        addTextQuickReply(
+            "next " + tomorrowPlus2.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.UK),
+            tomorrowPlus2,
+            listBuilder
+        );
+
+        final LocalDate tomorrowPlus3 = tomorrow.plusDays(3);
+        addTextQuickReply(
+            "next " + tomorrowPlus3.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.UK),
+            tomorrowPlus3,
+            listBuilder
+        );
+
+        final LocalDate tomorrowPlus4 = tomorrow.plusDays(4);
+        addTextQuickReply(
+            "next " + tomorrowPlus4.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.UK),
+            tomorrowPlus4,
+            listBuilder
+        );
+
+        final LocalDate tomorrowPlus5 = tomorrow.plusDays(5);
+        addTextQuickReply(
+            "next " + tomorrowPlus5.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.UK),
+            tomorrowPlus5,
+            listBuilder
+        );
 
         return listBuilder.build();
+    }
+
+    private void addTextQuickReply(
+        String title,
+        LocalDate localDate,
+        QuickReply.ListBuilder listBuilder
+    ) {
+
+        listBuilder.addTextQuickReply(
+            title,
+            new JSONObject()
+                .put("type", PayloadType.booking_date)
+                .put("date", localDate.toString())
+                .toString()
+        ).toList();
     }
 }

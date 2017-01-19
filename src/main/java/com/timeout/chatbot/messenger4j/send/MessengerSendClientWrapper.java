@@ -18,9 +18,9 @@ public class MessengerSendClientWrapper {
     }
 
     public void sendTextMessage(String recipientId, String text) {
-        if (text.length() > 320) {
-            text = text.substring(0, 320);
-        }
+//        if (text.length() > 320) {
+//            text = text.substring(0, 320);
+//        }
 
         try {
             messengerSendClient.sendTextMessage(

@@ -3,7 +3,7 @@ package com.timeout.chatbot.block;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.domain.session.Session;
+import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.graffitti.domain.response.films.GraffitiFilm;
 import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
 import com.timeout.chatbot.graffitti.domain.response.search.page.SearchResponse;

@@ -1,4 +1,4 @@
-package com.timeout.chatbot.domain.session;
+package com.timeout.chatbot.session;
 
 public enum SessionContextState {
     UNDEFINED,

@@ -1,8 +1,8 @@
 package com.timeout.chatbot.handlers;
 
 import com.github.messenger4j.receive.events.QuickReplyMessageEvent;
-import com.timeout.chatbot.domain.session.Session;
-import com.timeout.chatbot.domain.session.SessionPool;
+import com.timeout.chatbot.session.Session;
+import com.timeout.chatbot.session.SessionPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

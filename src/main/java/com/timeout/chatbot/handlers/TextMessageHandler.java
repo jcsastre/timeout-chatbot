@@ -2,9 +2,8 @@ package com.timeout.chatbot.handlers;
 
 import com.github.messenger4j.receive.events.TextMessageEvent;
 import com.github.messenger4j.receive.handlers.TextMessageEventHandler;
-import com.timeout.chatbot.domain.session.Session;
-import com.timeout.chatbot.domain.session.SessionContextState;
-import com.timeout.chatbot.domain.session.SessionPool;
+import com.timeout.chatbot.session.Session;
+import com.timeout.chatbot.session.SessionPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -26,12 +25,7 @@ public class TextMessageHandler implements TextMessageEventHandler {
                 event.getSender().getId()
             );
 
-        final SessionContextState sessionContextState = session.getSessionContextState();
-        if (sessionContextState == SessionContextState.BOOKING) {
-            session.applyBookingUtterance(event.getText());
-        } else {
-            session.applyUtterance(event.getText());
-        }
+        session.applyUtterance(event.getText());
 
 //        String pageId = event.getSender().getId();
 //        String recipientId = event.getSender().getId();

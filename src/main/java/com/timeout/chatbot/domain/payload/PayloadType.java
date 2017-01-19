@@ -21,5 +21,9 @@ public enum PayloadType {
     booking_first_name_fb_ok,
     booking_first_name_fb_not_ok,
     booking_last_name_fb_ok,
-    booking_last_name_fb_not_ok
+    booking_last_name_fb_not_ok,
+    booking_info_ok,
+    booking_info_not_ok,
+    booking_save_ok,
+    booking_save_not_ok
 }

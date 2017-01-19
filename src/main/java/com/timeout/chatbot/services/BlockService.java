@@ -1,10 +1,9 @@
 package com.timeout.chatbot.services;
 
 import com.timeout.chatbot.block.*;
-import com.timeout.chatbot.block.booking.*;
 import com.timeout.chatbot.domain.User;
-import com.timeout.chatbot.domain.session.Session;
 import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
+import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,11 +23,6 @@ public class BlockService {
     private final VenueSummaryBlock venueSummaryBlock;
     private final GeolocationAskBlock geolocationAskBlock;
     private final FilmsPageBlock filmsPageBlock;
-    private final BookingPeopleCountBlock bookingPeopleCountBlock;
-    private final BookingDateBlock bookingDateBlock;
-    private final BookingTimeBlock bookingTimeBlock;
-    private final BookingFirstnameConfirmationBlock bookingFirstnameConfirmationBlock;
-    private final BookingLastnameConfirmationBlock bookingLastnameConfirmationBlock;
 
     @Autowired
     public BlockService(
@@ -41,12 +35,7 @@ public class BlockService {
         VenuesRemainingBlock venuesRemainingBlock,
         VenueSummaryBlock venueSummaryBlock,
         GeolocationAskBlock geolocationAskBlock,
-        FilmsPageBlock filmsPageBlock,
-        BookingPeopleCountBlock bookingPeopleCountBlock,
-        BookingDateBlock bookingDateBlock,
-        BookingTimeBlock bookingTimeBlock,
-        BookingFirstnameConfirmationBlock bookingFirstnameConfirmationBlock,
-        BookingLastnameConfirmationBlock bookingLastnameConfirmationBlock
+        FilmsPageBlock filmsPageBlock
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
         this.suggestionsBlock = suggestionsBlock;
@@ -58,11 +47,6 @@ public class BlockService {
         this.venueSummaryBlock = venueSummaryBlock;
         this.geolocationAskBlock = geolocationAskBlock;
         this.filmsPageBlock = filmsPageBlock;
-        this.bookingPeopleCountBlock = bookingPeopleCountBlock;
-        this.bookingDateBlock = bookingDateBlock;
-        this.bookingTimeBlock = bookingTimeBlock;
-        this.bookingFirstnameConfirmationBlock = bookingFirstnameConfirmationBlock;
-        this.bookingLastnameConfirmationBlock = bookingLastnameConfirmationBlock;
     }
 
     public void sendWelcomeFirstTimeBlock(
@@ -140,41 +124,5 @@ public class BlockService {
         String userId
     ) {
         geolocationAskBlock.send(userId);
-    }
-
-    public void sendBookingPeopleCountBlock(
-        User user
-    ) {
-        bookingPeopleCountBlock.send(user.getMessengerId());
-    }
-
-    public void sendBookingDateBlock(
-        User user
-    ) {
-        bookingDateBlock.send(user.getMessengerId());
-    }
-
-    public void sendBookingTimeBlock(
-        User user
-    ) {
-        bookingTimeBlock.send(user.getMessengerId());
-    }
-
-    public void sendBookingFirstnameConfirmationBlock(
-        User user
-    ) {
-        bookingFirstnameConfirmationBlock.send(
-            user.getMessengerId(),
-            user.getFbUserProfile().getFirstName()
-        );
-    }
-
-    public void sendBookingLastnameConfirmationBlock(
-        User user
-    ) {
-        bookingLastnameConfirmationBlock.send(
-            user.getMessengerId(),
-            user.getFbUserProfile().getLastName()
-        );
     }
 }

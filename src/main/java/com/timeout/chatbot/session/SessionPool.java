@@ -1,6 +1,7 @@
-package com.timeout.chatbot.domain.session;
+package com.timeout.chatbot.session;
 
 import com.timeout.chatbot.MessengerConfiguration;
+import com.timeout.chatbot.block.booking.BookingBlocksHelper;
 import com.timeout.chatbot.domain.FbUserProfile;
 import com.timeout.chatbot.domain.Page;
 import com.timeout.chatbot.domain.User;
@@ -27,6 +28,7 @@ public class SessionPool {
     private final List<Session> sessions = new ArrayList<>();
     private final BlockService blockService;
     private final UserRepository userRepository;
+    private final BookingBlocksHelper bookingBlocksHelper;
 
     @Autowired
     public SessionPool(
@@ -36,7 +38,8 @@ public class SessionPool {
         ApiAiService apiAiService,
         MessengerSendClientWrapper messengerSendClientWrapper,
         BlockService blockService,
-        UserRepository userRepository
+        UserRepository userRepository,
+        BookingBlocksHelper bookingBlocksHelper
     ) {
         this.messengerConfiguration = messengerConfiguration;
         this.restTemplate = restTemplate;
@@ -45,6 +48,7 @@ public class SessionPool {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
         this.blockService = blockService;
         this.userRepository = userRepository;
+        this.bookingBlocksHelper = bookingBlocksHelper;
     }
 
     public Session getSession(String pageUid, String userId) {
@@ -81,7 +85,8 @@ public class SessionPool {
                 page,
                 user,
                 blockService,
-                userRepository
+                userRepository,
+                bookingBlocksHelper
             );
 
         session.setLastAccessTime(System.currentTimeMillis());
