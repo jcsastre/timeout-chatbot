@@ -180,7 +180,7 @@ public class BookingManager
                     final String time = payloadAsJson.getString("time");
                     setLocalTime(LocalTime.of(new Integer(time), 0));
                     bookingState = BookingState.FIRST_NAME;
-                    askLastName();
+                    askFirstName();
                     break;
                 case booking_first_name_fb_ok:
                     setFirstName(user.getFbUserProfile().getFirstName());
