@@ -5,6 +5,7 @@ public enum BookingState {
     PEOPLE_COUNT,
     DATE,
     TIME,
+    CONFIRMATION_BOOKING_DETAILS,
     FIRST_NAME,
     LAST_NAME,
     EMAIL,

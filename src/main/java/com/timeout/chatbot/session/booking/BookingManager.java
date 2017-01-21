@@ -13,8 +13,8 @@ import org.json.JSONObject;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class BookingManager
-{
+public class BookingManager {
+
     private Session session;
     private User user;
     private BookingState bookingState;
@@ -60,79 +60,130 @@ public class BookingManager
         String utterance
     ) {
 
-        if (bookingState == BookingState.PEOPLE_COUNT) {
-            try {
-                Integer peopleCount = Integer.parseInt(utterance);
-                setPeopleCount(peopleCount);
-                bookingState = BookingState.DATE;
-                bookingBlocksHelper.sendBookingDateBlock(user);
-            } catch (NumberFormatException e) {
-                sendTextMessage("Please, type a number");
-            }
-        } else if (bookingState == BookingState.DATE) {
-            // TODO: submit to Api.ai
-            // TODO: validate
-        } else if (bookingState == BookingState.TIME) {
-            // TODO: submit to Api.ai
-            // TODO: validate
-            bookingState = BookingState.FIRST_NAME;
-            askFirstName();
-        } else if (bookingState == BookingState.FIRST_NAME) {
-            setFirstName(utterance);
-            bookingState = BookingState.LAST_NAME;
-            askLastName();
-        } else if (bookingState == BookingState.LAST_NAME) {
-            setLastName(utterance);
-            bookingState = BookingState.EMAIL;
-            sendTextMessage("Please, type your email");
-        } else if (bookingState == BookingState.EMAIL) {
-            if (EmailValidator.getInstance().isValid(utterance)) {
-                setEmail(utterance);
-                bookingState = BookingState.PHONE;
-                sendTextMessage("Please, type your phone");
-            } else {
-                sendTextMessage("Please, type a valid email");
-            }
-        } else if (bookingState == BookingState.PHONE){
-            setPhone(utterance);
-            bookingState = BookingState.CONFIRMATION;
+        switch (bookingState) {
 
-            String msg =
-                "Information for the reservation:\n" +
-                    "\n" +
-                    "People: " + getPeopleCount() + "\n" +
-                    "Date: " + getLocalDate() + "\n" +
-                    "Time: " + getLocalTime() + "\n" +
-                    "First name: " + getFirstName() + "\n" +
-                    "Last name: " + getLastName() + "\n" +
-                    "Email: " + getEmail() + "\n" +
-                    "Phone number: " + getPhone() + "\n" +
-                    "\n" +
-                    "Is that information correct?";
+            case PEOPLE_COUNT:
+                try {
+                    Integer peopleCount = Integer.parseInt(utterance);
+                    setPeopleCount(peopleCount);
+                    bookingState = BookingState.DATE;
+                    bookingBlocksHelper.sendBookingDateBlock(user);
+                } catch (NumberFormatException e) {
+                    sendTextMessage("Please, type a number");
+                }
+                break;
 
-            final ButtonTemplate yes = ButtonTemplate.newBuilder(
-                msg,
-                Button.newListBuilder()
-                    .addPostbackButton(
-                        "Yes",
-                        new JSONObject()
-                            .put("type", PayloadType.booking_info_ok)
-                            .toString()
-                    ).toList()
-                    .addPostbackButton(
-                        "No",
-                        new JSONObject()
-                            .put("type", PayloadType.booking_info_not_ok)
-                            .toString()
-                    ).toList()
+            case DATE:
+                // TODO: submit to Api.ai
+                // TODO: validate
+                // setLocalDate(date);
+                // bookingState = BookingState.TIME;
+                // bookingBlocksHelper.sendBookingTimeBlock(user);
+                break;
 
-                    .build()
-            ).build();
+            case TIME:
+                // TODO: submit to Api.ai
+                // TODO: validate
+                // setLocalTime(LocalTime.of(new Integer(time), 0));
+                // bookingState = BookingState.CONFIRMATION_BOOKING_DETAILS;
+                // askConfirmationInfo();
+                break;
 
-            messengerSendClientWrapper.sendTemplate(user.getMessengerId(), yes);
-        } else {
-            sendTextMessage("Sorry, an error occurred.");
+            case FIRST_NAME:
+                setFirstName(utterance);
+                bookingState = BookingState.LAST_NAME;
+                askLastName();
+                break;
+
+            case LAST_NAME:
+                setLastName(utterance);
+                bookingState = BookingState.EMAIL;
+                sendTextMessage("Please, type your email");
+                break;
+
+            case EMAIL:
+                if (EmailValidator.getInstance().isValid(utterance)) {
+                    setEmail(utterance);
+                    bookingState = BookingState.PHONE;
+                    sendTextMessage("Please, type your phone");
+                } else {
+                    sendTextMessage("Please, type a valid email");
+                }
+                break;
+
+            case PHONE:
+                setPhone(utterance);
+                bookingState = BookingState.CONFIRMATION;
+                askConfirmationPersonalInfo();
+                break;
+
+            default:
+                sendTextMessage("Sorry, an error occurred.");
+                break;
         }
+    }
+
+    private void askConfirmationPersonalInfo() {
+
+        String msg =
+            "Is that information correct?:\n" +
+                "\n" +
+                "First name: " + getFirstName() + "\n" +
+                "Last name: " + getLastName() + "\n" +
+                "Email: " + getEmail() + "\n" +
+                "Phone number: " + getPhone();
+
+        final ButtonTemplate yes = ButtonTemplate.newBuilder(
+            msg,
+            Button.newListBuilder()
+                .addPostbackButton(
+                    "Yes",
+                    new JSONObject()
+                        .put("type", PayloadType.booking_personal_info_ok)
+                        .toString()
+                ).toList()
+                .addPostbackButton(
+                    "No",
+                    new JSONObject()
+                        .put("type", PayloadType.booking_personal_info_not_ok)
+                        .toString()
+                ).toList()
+
+                .build()
+        ).build();
+
+        messengerSendClientWrapper.sendTemplate(user.getMessengerId(), yes);
+    }
+
+    private void askConfirmationInfo() {
+
+        String msg =
+            "Is that booking information correct?:\n" +
+                "\n" +
+                "People: " + getPeopleCount() + "\n" +
+                "Date: " + getLocalDate() + "\n" +
+                "Time: " + getLocalTime();
+
+        final ButtonTemplate yes = ButtonTemplate.newBuilder(
+            msg,
+            Button.newListBuilder()
+                .addPostbackButton(
+                    "Yes",
+                    new JSONObject()
+                        .put("type", PayloadType.booking_info_ok)
+                        .toString()
+                ).toList()
+                .addPostbackButton(
+                    "No",
+                    new JSONObject()
+                        .put("type", PayloadType.booking_info_not_ok)
+                        .toString()
+                ).toList()
+
+                .build()
+        ).build();
+
+        messengerSendClientWrapper.sendTemplate(user.getMessengerId(), yes);
     }
 
     private void askFirstName() {
@@ -162,11 +213,13 @@ public class BookingManager
         try {
             PayloadType payloadType = PayloadType.valueOf(payloadAsJson.getString("type"));
             switch (payloadType) {
+
                 case booking_people_count:
                     setPeopleCount(Integer.parseInt(payloadAsJson.getString("count")));
                     bookingState = BookingState.DATE;
                     bookingBlocksHelper.sendBookingDateBlock(user);
                     break;
+
                 case booking_date:
                     final LocalDate date =
                         LocalDate.parse(
@@ -176,29 +229,44 @@ public class BookingManager
                     bookingState = BookingState.TIME;
                     bookingBlocksHelper.sendBookingTimeBlock(user);
                     break;
+
                 case booking_time:
                     final String time = payloadAsJson.getString("time");
                     setLocalTime(LocalTime.of(new Integer(time), 0));
+                    bookingState = BookingState.CONFIRMATION_BOOKING_DETAILS;
+                    askConfirmationInfo();
+                    break;
+
+                case booking_info_ok:
                     bookingState = BookingState.FIRST_NAME;
                     askFirstName();
                     break;
+
+                case booking_info_not_ok:
+                    sendTextMessage("Ok, I've cancelled the booking process. You can start the booking again if you like");
+                    break;
+
                 case booking_first_name_fb_ok:
                     setFirstName(user.getFbUserProfile().getFirstName());
                     bookingState = BookingState.LAST_NAME;
                     askLastName();
                     break;
+
                 case booking_first_name_fb_not_ok:
                     sendTextMessage("Please, type your first name?");
                     break;
+
                 case booking_last_name_fb_ok:
                     setLastName(user.getFbUserProfile().getLastName());
                     bookingState = BookingState.EMAIL;
                     sendTextMessage("Please, type your email");
                     break;
+
                 case booking_last_name_fb_not_ok:
                     sendTextMessage("Please, type your last name");
                     break;
-                case booking_info_ok:
+
+                case booking_personal_info_ok:
                     bookingState = BookingState.SAVE_INFO;
                     messengerSendClientWrapper.sendTemplate(
                         user.getMessengerId(),
@@ -221,17 +289,21 @@ public class BookingManager
                         ).build()
                     );
                     break;
-                case booking_info_not_ok:
+
+                case booking_personal_info_not_ok:
                     sendTextMessage("Ok, I've cancelled the booking process. You can start the booking again if you like");
                     break;
+
                 case booking_save_ok:
                     sendTextMessage("Thanks, saved!");
                     //TODO: save info
                     break;
+
                 case booking_save_not_ok:
                     sendTextMessage("No problem");
                     //TODO
                     break;
+
                 default:
                     sendTextMessage("Sorry, an error occurred.");
                     break;
