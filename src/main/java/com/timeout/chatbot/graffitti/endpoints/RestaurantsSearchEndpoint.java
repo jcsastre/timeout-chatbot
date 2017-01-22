@@ -10,7 +10,7 @@ public class RestaurantsSearchEndpoint extends SearchEndpoint {
         @NotNull Integer pageNumber
     ) {
         return
-            SearchEndpoint.getUrl(
+            SearchEndpoint.buildGeolocatedUrl(
                 locale,
                 "node-7083",
                 "venue",
@@ -27,7 +27,7 @@ public class RestaurantsSearchEndpoint extends SearchEndpoint {
         @NotNull Double longitude
     ) {
         return
-            SearchEndpoint.getUrl(
+            SearchEndpoint.buildGeolocatedUrl(
                 locale,
                 "node-7083",
                 "venue",

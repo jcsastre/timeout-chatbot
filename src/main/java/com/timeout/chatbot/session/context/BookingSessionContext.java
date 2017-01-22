@@ -1,4 +1,4 @@
-package com.timeout.chatbot.session.booking;
+package com.timeout.chatbot.session.context;
 
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.ButtonTemplate;
@@ -13,7 +13,7 @@ import org.json.JSONObject;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class BookingManager {
+public class BookingSessionContext implements SessionContext {
 
     private Session session;
     private User user;
@@ -30,7 +30,7 @@ public class BookingManager {
     private String email;
     private String phone;
 
-    public BookingManager(
+    public BookingSessionContext(
         Session session,
         User user,
         MessengerSendClientWrapper messengerSendClientWrapper,

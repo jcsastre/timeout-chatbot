@@ -87,7 +87,7 @@ public class FilmsPageBlock {
                 elementBuilder.imageUrl(graffitiFilm.getBody().getImageUrl());
             }
 
-            elementBuilder.subtitle(graffitiFilm.getBody().getCategorisation().buildNameMax80());
+            elementBuilder.subtitle(graffitiFilm.getBody().getGraffittiCategorisation().buildNameMax80());
 
             final Button.ListBuilder buttonListBuilder = Button.newListBuilder();
 

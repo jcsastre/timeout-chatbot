@@ -4,14 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CategorisationSecondary {
+public class GraffittiCategorisationPrimary {
 
     private String name;
 
     @JsonProperty("tree_node_id")
     private Integer treeNodeId;
 
-    private CategorisationConcept concept;
+    @JsonProperty("concept")
+    private GraffittiCategorisationConcept graffittiCategorisationConcept;
 
     private String colour;
 
@@ -31,12 +32,12 @@ public class CategorisationSecondary {
         this.treeNodeId = treeNodeId;
     }
 
-    public CategorisationConcept getConcept() {
-        return concept;
+    public GraffittiCategorisationConcept getGraffittiCategorisationConcept() {
+        return graffittiCategorisationConcept;
     }
 
-    public void setConcept(CategorisationConcept concept) {
-        this.concept = concept;
+    public void setGraffittiCategorisationConcept(GraffittiCategorisationConcept graffittiCategorisationConcept) {
+        this.graffittiCategorisationConcept = graffittiCategorisationConcept;
     }
 
     public String getColour() {

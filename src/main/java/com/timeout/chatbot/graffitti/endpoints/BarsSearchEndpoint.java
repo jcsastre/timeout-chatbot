@@ -10,7 +10,7 @@ public class BarsSearchEndpoint extends SearchEndpoint {
         @NotNull Integer pageNumber
     ) {
         return
-            SearchEndpoint.getUrl(
+            SearchEndpoint.buildGeolocatedUrl(
                 locale,
                 "node-7067",
                 "venue",
@@ -27,7 +27,7 @@ public class BarsSearchEndpoint extends SearchEndpoint {
         @NotNull Double longitude
     ) {
         return
-            SearchEndpoint.getUrl(
+            SearchEndpoint.buildGeolocatedUrl(
                 locale,
                 "node-7067",
                 "venue",

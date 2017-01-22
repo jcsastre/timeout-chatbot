@@ -1,4 +1,4 @@
-package com.timeout.chatbot.session.booking;
+package com.timeout.chatbot.session.context;
 
 public enum BookingState {
     UNKOWN,

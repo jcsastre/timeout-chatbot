@@ -2,7 +2,7 @@ package com.timeout.chatbot.graffitti.domain.response.search.page;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
+import com.timeout.chatbot.graffitti.domain.response.categorisation.GraffittiCategorisation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 public class PageItem {
     private static final Logger log = LoggerFactory.getLogger(PageItem.class);
 
-    private Categorisation categorisation;
+    private GraffittiCategorisation graffittiCategorisation;
     private String id;
     private String name;
     private String summary;
@@ -20,12 +20,12 @@ public class PageItem {
     @JsonProperty("to_website")
     private String toWebsite;
 
-    public Categorisation getCategorisation() {
-        return categorisation;
+    public GraffittiCategorisation getGraffittiCategorisation() {
+        return graffittiCategorisation;
     }
 
-    public void setCategorisation(Categorisation categorisation) {
-        this.categorisation = categorisation;
+    public void setGraffittiCategorisation(GraffittiCategorisation graffittiCategorisation) {
+        this.graffittiCategorisation = graffittiCategorisation;
     }
 
     public String getId() {

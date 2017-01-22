@@ -189,7 +189,7 @@ public class VenuesPageBlock {
     private String buildVenuePageItemSubtitle(PageItem pageItem) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(pageItem.getCategorisation().buildName());
+        sb.append(pageItem.getGraffittiCategorisation().buildName());
 
         if (pageItem.getLocation() != null) {
             sb.append(" ");

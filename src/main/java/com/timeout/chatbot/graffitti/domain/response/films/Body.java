@@ -2,13 +2,13 @@ package com.timeout.chatbot.graffitti.domain.response.films;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.timeout.chatbot.graffitti.domain.response.categorisation.Categorisation;
+import com.timeout.chatbot.graffitti.domain.response.categorisation.GraffittiCategorisation;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Body {
 
     private String id;
-    private Categorisation categorisation;
+    private GraffittiCategorisation graffittiCategorisation;
     private String name;
     @JsonProperty("image_url")
     private String imageUrl;
@@ -22,12 +22,12 @@ public class Body {
         this.id = id;
     }
 
-    public Categorisation getCategorisation() {
-        return categorisation;
+    public GraffittiCategorisation getGraffittiCategorisation() {
+        return graffittiCategorisation;
     }
 
-    public void setCategorisation(Categorisation categorisation) {
-        this.categorisation = categorisation;
+    public void setGraffittiCategorisation(GraffittiCategorisation graffittiCategorisation) {
+        this.graffittiCategorisation = graffittiCategorisation;
     }
 
     public String getName() {

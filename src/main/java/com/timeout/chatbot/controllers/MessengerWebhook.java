@@ -4,10 +4,7 @@ import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.exceptions.MessengerVerificationException;
 import com.github.messenger4j.receive.MessengerReceiveClient;
 import com.timeout.chatbot.MessengerConfiguration;
-import com.timeout.chatbot.handlers.AttachmentMessageEventHandlerImpl;
-import com.timeout.chatbot.handlers.PostbackEventHandler;
-import com.timeout.chatbot.handlers.QuickReplyMessageEventHandler;
-import com.timeout.chatbot.handlers.TextMessageHandler;
+import com.timeout.chatbot.session.SessionPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,26 +16,16 @@ import static com.github.messenger4j.MessengerPlatform.*;
 
 @RestController
 @RequestMapping("/messengerWebhook")
-public class MessengerWebhook {
+public class
+MessengerWebhook {
     private static final Logger logger = LoggerFactory.getLogger(MessengerWebhook.class);
 
     private final MessengerReceiveClient receiveClient;
 
-    /**
-     * Constructs the {@code MessengerPlatformCallbackHandler} and initializes the {@code MessengerReceiveClient}.
-     *
-     * @param appSecret   the {@code Application Secret}
-     * @param verifyToken the {@code Verification Token} that has been provided by you during the setup of the {@code
-     *                    Webhook}
-     * @param sendClient  the initialized {@code MessengerSendClient}
-     */
     @Autowired
     public MessengerWebhook(
         MessengerConfiguration messengerConfiguration,
-        TextMessageHandler textMessageHandler,
-        QuickReplyMessageEventHandler quickReplyMessageEventHandler,
-        PostbackEventHandler postbackEventHandler,
-        AttachmentMessageEventHandlerImpl attachmentMessageEventHandler
+        SessionPool sessionPool
     ) {
         logger.debug(
             "Initializing MessengerReceiveClient - appSecret: {} | verifyToken: {}",
@@ -51,10 +38,30 @@ public class MessengerWebhook {
                 messengerConfiguration.getSecret(),
                 messengerConfiguration.getWebhookVerificationToken()
             )
-            .onTextMessageEvent(textMessageHandler)
-            .onQuickReplyMessageEvent(quickReplyMessageEventHandler)
-            .onPostbackEvent(postbackEventHandler)
-            .onAttachmentMessageEvent(attachmentMessageEventHandler)
+            .onTextMessageEvent(event ->
+                sessionPool.getSession(
+                    event.getRecipient().getId(),
+                    event.getSender().getId()
+                ).handleTextMessageEvent(event)
+            )
+            .onQuickReplyMessageEvent(event ->
+                sessionPool.getSession(
+                    event.getRecipient().getId(),
+                    event.getSender().getId()
+                ).handleQuickReplyMessageEvent(event)
+            )
+            .onPostbackEvent(event ->
+                sessionPool.getSession(
+                    event.getRecipient().getId(),
+                    event.getSender().getId()
+                ).handlePostbackEvent(event)
+            )
+            .onAttachmentMessageEvent(event ->
+                sessionPool.getSession(
+                    event.getRecipient().getId(),
+                    event.getSender().getId()
+                ).handleAttachmentMessageEvent(event)
+            )
             .build();
     }
 
