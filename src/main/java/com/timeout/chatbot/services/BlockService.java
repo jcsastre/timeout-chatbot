@@ -1,6 +1,10 @@
 package com.timeout.chatbot.services;
 
 import com.timeout.chatbot.block.*;
+import com.timeout.chatbot.block.DiscoverBlock;
+import com.timeout.chatbot.block.SuggestionsBlock;
+import com.timeout.chatbot.block.WelcomeBackBlock;
+import com.timeout.chatbot.block.WelcomeFirstTimeBlock;
 import com.timeout.chatbot.domain.User;
 import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
 import com.timeout.chatbot.session.Session;

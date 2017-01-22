@@ -1,13 +1,16 @@
-package com.timeout.chatbot.graffitti.endpoints;
+package com.timeout.chatbot.graffitti.uri;
 
 public enum GraffittiQueryParameterType {
     LOCALE("locale"),
     WHAT("what"),
+    WHEN("when"),
+    WHERE("where"),
     TYPE("type"),
     PAGE_SIZE("pageSize"),
     PAGE_NUMBER("pageNumber"),
     LATITUDE("latitude"),
-    LONGITUDE("longitude");
+    LONGITUDE("longitude"),
+    SORT("sort");
 
     private final String value;
     GraffittiQueryParameterType(String value) {

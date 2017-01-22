@@ -7,7 +7,7 @@ import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.graffitti.domain.response.films.GraffitiFilm;
 import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
 import com.timeout.chatbot.graffitti.domain.response.search.page.SearchResponse;
-import com.timeout.chatbot.graffitti.endpoints.FilmsEndpoint;
+import com.timeout.chatbot.graffitti.uri.FilmsEndpoint;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,17 +43,13 @@ public class FilmsPageBlock {
 
         List<GraffitiFilm> graffitiFilms = new ArrayList<>();
 
-        String url =
-            FilmsEndpoint.getUrl(
-                "node-7073",
-                session.getSessionContextBag().getGeolocation().getLatitude(),
-                session.getSessionContextBag().getGeolocation().getLongitude(),
-                pageNumber
-            );
-
         final SearchResponse searchResponse =
             restTemplate.getForObject(
-                url,
+                FilmsEndpoint.buildGeolocatedUri(
+                    session.getSessionContextBag().getGeolocation().getLatitude(),
+                    session.getSessionContextBag().getGeolocation().getLongitude(),
+                    pageNumber
+                ),
                 SearchResponse.class
             );
 

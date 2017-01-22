@@ -86,8 +86,8 @@ public class SessionPool {
                 user,
                 blockService,
                 userRepository,
-                bookingBlocksHelper,
-                lookingContext);
+                bookingBlocksHelper
+            );
 
         session.setLastAccessTime(System.currentTimeMillis());
 

@@ -15,15 +15,15 @@ import org.springframework.web.bind.annotation.*;
 import static com.github.messenger4j.MessengerPlatform.*;
 
 @RestController
-@RequestMapping("/messengerWebhook")
+@RequestMapping("/messenger")
 public class
-MessengerWebhook {
-    private static final Logger logger = LoggerFactory.getLogger(MessengerWebhook.class);
+MessengerController {
+    private static final Logger logger = LoggerFactory.getLogger(MessengerController.class);
 
     private final MessengerReceiveClient receiveClient;
 
     @Autowired
-    public MessengerWebhook(
+    public MessengerController(
         MessengerConfiguration messengerConfiguration,
         SessionPool sessionPool
     ) {

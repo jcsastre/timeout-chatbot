@@ -1,21 +1,24 @@
 package com.timeout.chatbot.session.context;
 
+import com.github.messenger4j.receive.events.AttachmentMessageEvent;
+import com.github.messenger4j.receive.events.PostbackEvent;
+import com.github.messenger4j.receive.events.QuickReplyMessageEvent;
+import com.github.messenger4j.receive.events.TextMessageEvent;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.ButtonTemplate;
 import com.timeout.chatbot.block.booking.BookingBlocksHelper;
 import com.timeout.chatbot.domain.User;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
-import com.timeout.chatbot.session.Session;
+import com.timeout.chatbot.services.ApiAiService;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.json.JSONObject;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class BookingSessionContext implements SessionContext {
+public class SessionContextBooking extends SessionContext {
 
-    private Session session;
     private User user;
     private BookingState bookingState;
 
@@ -30,13 +33,14 @@ public class BookingSessionContext implements SessionContext {
     private String email;
     private String phone;
 
-    public BookingSessionContext(
-        Session session,
+    public SessionContextBooking(
         User user,
+        ApiAiService apiAiService,
         MessengerSendClientWrapper messengerSendClientWrapper,
         BookingBlocksHelper bookingBlocksHelper
     ) {
-        this.session = session;
+        super(user, apiAiService, messengerSendClientWrapper);
+
         this.user = user;
         this.messengerSendClientWrapper = messengerSendClientWrapper;
         this.bookingBlocksHelper = bookingBlocksHelper;
@@ -387,5 +391,25 @@ public class BookingSessionContext implements SessionContext {
             session.getUser().getMessengerId(),
             msg
         );
+    }
+
+    @Override
+    public void handleTextMessageEvent(TextMessageEvent event) {
+
+    }
+
+    @Override
+    public void handlePostbackEvent(PostbackEvent event) {
+
+    }
+
+    @Override
+    public void handleQuickReplyMessageEvent(QuickReplyMessageEvent event) {
+
+    }
+
+    @Override
+    public void handleAttachmentMessageEvent(AttachmentMessageEvent event) {
+
     }
 }

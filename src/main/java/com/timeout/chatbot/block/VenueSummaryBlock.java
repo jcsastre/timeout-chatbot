@@ -7,7 +7,7 @@ import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.domain.response.images.Image;
 import com.timeout.chatbot.graffitti.domain.response.images.ImagesResponse;
 import com.timeout.chatbot.graffitti.domain.response.venues.Venue;
-import com.timeout.chatbot.graffitti.endpoints.GraffittiEndpoints;
+import com.timeout.chatbot.graffitti.uri.GraffittiEndpoints;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.GraffittiService;
 import org.json.JSONObject;

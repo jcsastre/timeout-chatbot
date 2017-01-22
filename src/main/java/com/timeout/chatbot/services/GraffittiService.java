@@ -1,6 +1,6 @@
 package com.timeout.chatbot.services;
 
-import com.timeout.chatbot.graffitti.endpoints.GraffittiEndpoints;
+import com.timeout.chatbot.graffitti.uri.GraffittiEndpoints;
 import com.timeout.chatbot.graffitti.domain.response.facets.CategoryPrimary;
 import com.timeout.chatbot.graffitti.domain.response.facets.CategorySecondary;
 import com.timeout.chatbot.graffitti.domain.response.facets.FacetGroup;

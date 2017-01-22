@@ -1,4 +1,4 @@
-package com.timeout.chatbot.graffitti.endpoints;
+package com.timeout.chatbot.graffitti.uri;
 
 public enum GraffittiEndpoints {
     SEARCH_UK_LONDON_VENUES(

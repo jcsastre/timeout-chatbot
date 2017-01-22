@@ -1,6 +1,6 @@
 package com.timeout.chatbot.session.context;
 
-public enum SessionContextTypes {
+public enum SessionState {
     UNDEFINED,
     LOOKING,
     BOOKING
