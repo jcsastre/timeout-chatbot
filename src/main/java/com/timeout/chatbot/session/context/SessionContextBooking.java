@@ -7,7 +7,7 @@ import com.github.messenger4j.receive.events.TextMessageEvent;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.ButtonTemplate;
 import com.timeout.chatbot.block.booking.BookingBlocksHelper;
-import com.timeout.chatbot.domain.User;
+import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.ApiAiService;

@@ -1,7 +1,7 @@
 package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.QuickReply;
-import com.timeout.chatbot.domain.User;
+import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.graffitti.domain.response.facets.CategoryPrimary;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.GraffittiService;

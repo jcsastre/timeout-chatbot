@@ -3,8 +3,9 @@ package com.timeout.chatbot.session;
 import com.timeout.chatbot.MessengerConfiguration;
 import com.timeout.chatbot.block.booking.BookingBlocksHelper;
 import com.timeout.chatbot.domain.FbUserProfile;
-import com.timeout.chatbot.domain.Page;
-import com.timeout.chatbot.domain.User;
+import com.timeout.chatbot.domain.page.Page;
+import com.timeout.chatbot.domain.user.User;
+import com.timeout.chatbot.domain.page.PageUid;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.repository.UserRepository;
 import com.timeout.chatbot.services.ApiAiService;
@@ -51,7 +52,10 @@ public class SessionPool {
         this.bookingBlocksHelper = bookingBlocksHelper;
     }
 
-    public Session getSession(String pageUid, String userId) {
+    public Session getSession(
+        PageUid pageUid,
+        String userId
+    ) {
         Session session = findSession(pageUid, userId);
 
         if (session != null) {
@@ -72,7 +76,7 @@ public class SessionPool {
         return session;
     }
 
-    private Session buildSession(String pageUid, String userId) {
+    private Session buildSession(PageUid pageUid, String userId) {
         final User user = buildUser(userId);
         final Page page = new Page(pageUid);
 
@@ -94,7 +98,7 @@ public class SessionPool {
         return session;
     }
 
-    private Session findSession(String pageUid, String userId) {
+    private Session findSession(PageUid pageUid, String userId) {
         synchronized (sessions) {
             for (Session session : sessions) {
                 if (

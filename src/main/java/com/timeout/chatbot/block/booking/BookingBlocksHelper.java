@@ -1,6 +1,6 @@
 package com.timeout.chatbot.block.booking;
 
-import com.timeout.chatbot.domain.User;
+import com.timeout.chatbot.domain.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

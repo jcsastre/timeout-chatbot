@@ -1,25 +1,23 @@
 package com.timeout.chatbot.session;
 
-import ai.api.AIServiceException;
 import ai.api.model.Result;
 import com.github.messenger4j.receive.events.AttachmentMessageEvent;
 import com.github.messenger4j.receive.events.PostbackEvent;
 import com.github.messenger4j.receive.events.QuickReplyMessageEvent;
-import com.github.messenger4j.receive.events.TextMessageEvent;
-import com.google.gson.JsonElement;
 import com.timeout.chatbot.block.booking.BookingBlocksHelper;
-import com.timeout.chatbot.domain.Page;
-import com.timeout.chatbot.domain.User;
-import com.timeout.chatbot.domain.apiai.ApiaiIntent;
+import com.timeout.chatbot.domain.page.Page;
+import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.repository.UserRepository;
 import com.timeout.chatbot.services.ApiAiService;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.GraffittiService;
-import com.timeout.chatbot.session.context.*;
+import com.timeout.chatbot.session.context.SessionContext;
+import com.timeout.chatbot.session.context.SessionContextBooking;
+import com.timeout.chatbot.session.context.SessionContextLooking;
+import com.timeout.chatbot.session.context.SessionState;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Map;
 import java.util.UUID;
 
 public class Session {
@@ -27,8 +25,7 @@ public class Session {
     private final Page page;
     private final User user;
 
-    private final SessionState sessionState;
-    private final SessionContextUndefined sessionContextUndefined;
+    private SessionState sessionState;
     private final SessionContextLooking sessionContextLooking;
     private final SessionContextBooking sessionContextBooking;
 
@@ -37,6 +34,7 @@ public class Session {
     private final ApiAiService apiAiService;
     private final MessengerSendClientWrapper messengerSendClientWrapper;
 
+    private final SessionStateLookingBag sessionStateLookingBag;
     private final SessionContextBag sessionContextBag;
 
     private final BlockService blockService;
@@ -88,39 +86,9 @@ public class Session {
             this.bookingBlocksHelper
         );
 
-        this.sessionContextUndefined = new SessionContextUndefined(
-            this.user,
-            this.apiAiService,
-            this.messengerSendClientWrapper,
-            this.blockService
-        );
+        this.sessionStateLookingBag = new SessionStateLookingBag();
 
         this.sessionState = SessionState.UNDEFINED;
-    }
-
-    public void handleTextMessageEvent(
-        TextMessageEvent event
-    ) {
-        String text = event.getText();
-
-        switch (sessionState) {
-
-            case UNDEFINED:
-                handleTextOnStateUndefined(text);
-                break;
-
-            case LOOKING:
-                handleTextOnStateLooking(text);
-                break;
-
-            case BOOKING:
-                //TODO;
-                break;
-
-            default:
-                sendTextMessage("Sorry, an error occurred");
-                break;
-        }
     }
 
     public void handleQuickReplyMessageEvent(
@@ -139,20 +107,6 @@ public class Session {
         AttachmentMessageEvent event
     ) {
         sessionContext.handleAttachmentMessageEvent(event);
-    }
-
-    private void handleTextOnStateUndefined(
-        String text
-    ) {
-        blockService.sendWelcomeBackBlock(user);
-
-        final Result apiaiResult = getApiaiResult(text);
-        if (apiaiResult != null) {
-            handleApiResult(apiaiResult);
-        } else {
-            blockService.sendSuggestionsBlock(user);
-            blockService.sendDiscoverBlock(user);
-        }
     }
 
     private void handleTextOnStateLooking(
@@ -180,84 +134,79 @@ public class Session {
         }
     }
 
-    private Result getApiaiResult(
-        String text
-    ) {
-        try {
-            return apiAiService.processText(text);
-        } catch (AIServiceException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
-    private void handleApiResult(
-        Result apiaiResult
-    ) {
-        final String apiaiAction = apiaiResult.getAction();
-        final ApiaiIntent apiaiIntent = ApiaiIntent.fromApiaiAction(apiaiAction);
-
-        final Map<String, JsonElement> apiaiParameters = apiaiResult.getParameters();
-//        if (apiaiParameters != null) {
-//            updateFilterParams(apiaiParameters);
+//    private void handleApiResult(
+//        Result apiaiResult
+//    ) {
+//        final String apiaiAction = apiaiResult.getAction();
+//        final ApiaiIntent apiaiIntent = ApiaiIntent.fromApiaiAction(apiaiAction);
+//
+//        final Map<String, JsonElement> apiaiParameters = apiaiResult.getParameters();
+////        if (apiaiParameters != null) {
+////            updateFilterParams(apiaiParameters);
+////        }
+//
+//        SessionUtils.printConsole(apiaiAction, apiaiParameters);
+//
+//        switch (apiaiIntent) {
+//            case GREETINGS:
+//                switch (sessionState) {
+//                    case LOOKING:
+//                        sendTextMessage("Hi!");
+//                        break;
+//                }
+//                onIntentGreetings();
+//                break;
+//            case SUGGESTIONS:
+//                onIntentSuggestions();
+//                break;
+//            case FIND_THINGSTODO:
+//                onIntentFindThingstodo();
+//                break;
+//            case FIND_RESTAURANTS:
+//                onIntentFindRestaurants();
+//                break;
+//            case FIND_RESTAURANTS_NEARBY:
+//                onIntentFindRestaurantsNearby();
+//                break;
+//            case FIND_BARSANDPUBS:
+//                onIntentFindBars();
+//                break;
+//            case FIND_BARSANDPUBS_NEARBY:
+//                onIntentFindBarsNearby();
+//                break;
+//            case FIND_ART:
+//                onIntentFindArt();
+//                break;
+//            case FIND_THEATRE:
+//                onIntentFindTheatre();
+//                break;
+//            case FIND_MUSIC:
+//                onIntentFindMusic();
+//                break;
+//            case FIND_NIGHTLIFE:
+//                onIntentFindNightlife();
+//                break;
+//            case FINDS_FILMS:
+//                onIntentFindFilms(1);
+//                break;
+//            case SET_LOCATION:
+//                //                fsm.apply(Intent.FIND_CAMPINGS);
+//                break;
+//            case UNKOWN:
+//                //                onIntentUnknown();
+//                break;
+//            case DISCOVER:
+//                onIntentDiscover();
+//                break;
+//            default:
+//                messengerSendClientWrapper.sendTextMessage(
+//                    user.getMessengerId(),
+//                    "Sorry, I don't understand you."
+//                );
+//                break;
 //        }
-
-        SessionUtils.printConsole(apiaiAction, apiaiParameters);
-
-        switch (apiaiIntent) {
-            case GREETINGS:
-                onIntentGreetings();
-                break;
-            case SUGGESTIONS:
-                onIntentSuggestions();
-                break;
-            case FIND_THINGSTODO:
-                onIntentFindThingstodo();
-                break;
-            case FIND_RESTAURANTS:
-                onIntentFindRestaurants();
-                break;
-            case FIND_RESTAURANTS_NEARBY:
-                onIntentFindRestaurantsNearby();
-                break;
-            case FIND_BARSANDPUBS:
-                onIntentFindBars();
-                break;
-            case FIND_BARSANDPUBS_NEARBY:
-                onIntentFindBarsNearby();
-                break;
-            case FIND_ART:
-                onIntentFindArt();
-                break;
-            case FIND_THEATRE:
-                onIntentFindTheatre();
-                break;
-            case FIND_MUSIC:
-                onIntentFindMusic();
-                break;
-            case FIND_NIGHTLIFE:
-                onIntentFindNightlife();
-                break;
-            case FINDS_FILMS:
-                onIntentFindFilms(1);
-                break;
-            case SET_LOCATION:
-                //                fsm.apply(Intent.FIND_CAMPINGS);
-                break;
-            case UNKOWN:
-                //                onIntentUnknown();
-                break;
-            case DISCOVER:
-                onIntentDiscover();
-                break;
-            default:
-                messengerSendClientWrapper.sendTextMessage(
-                    user.getMessengerId(),
-                    "Sorry, I don't understand you."
-                );
-                break;
-        }
-    }
+//    }
 
 //    private void updateFilterParams(Map<String, JsonElement> apiaiParameters) {
 //        final FilterParams filterParams = getFilterParams();
@@ -304,6 +253,18 @@ public class Session {
 
     public Page getPage() {
         return page;
+    }
+
+    public SessionState getSessionState() {
+        return sessionState;
+    }
+
+    public void setSessionState(SessionState sessionState) {
+        this.sessionState = sessionState;
+    }
+
+    public SessionStateLookingBag getSessionStateLookingBag() {
+        return sessionStateLookingBag;
     }
 
     @Override

@@ -43,4 +43,16 @@ public class ApiAiService {
             return null;
         }
     }
+
+
+    public Result getApiaiResult(
+        String text
+    ) {
+        try {
+            return processText(text);
+        } catch (AIServiceException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

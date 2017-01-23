@@ -13,7 +13,7 @@ public class SearchUri {
     protected static final String LOCALE ="en-GB";
     protected static final String PAGE_SIZE = "10";
 
-    public static URI buildBaseNonGeolocatedUri(
+    protected static URI buildBaseNonGeolocatedUri(
         String locale,
         String what,
         String type,
@@ -30,7 +30,7 @@ public class SearchUri {
                 .toUri();
     }
 
-    public static URI buildBaseGeolocatedUri(
+    protected static URI buildBaseGeolocatedUri(
         String locale,
         String what,
         String type,

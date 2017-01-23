@@ -8,13 +8,12 @@ import com.github.messenger4j.receive.events.TextMessageEvent;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.ButtonTemplate;
 import com.google.gson.JsonElement;
-import com.timeout.chatbot.domain.User;
+import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.domain.apiai.ApiaiIntent;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.ApiAiService;
-import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionContextBag;
 import org.json.JSONObject;
 
@@ -327,12 +326,7 @@ public class SessionContextLooking extends SessionContext {
         blockService.sendSuggestionsBlock(user);
     }
 
-    private void onIntentFindThingstodo() {
-        messengerSendClientWrapper.sendTextMessage(
-            user.getMessengerId(),
-            "Sorry, 'Things to do' is not yet implemented."
-        );
-    }
+
 
     private void onIntentFindArt() {
         messengerSendClientWrapper.sendTextMessage(
@@ -456,70 +450,6 @@ public class SessionContextLooking extends SessionContext {
             blockService.sendGeolocationAskBlock(user.getMessengerId());
         } else {
             onIntentFindRestaurants();
-        }
-    }
-
-    private void onIntentFindRestaurants() {
-        if (sessionContext != SessionContext.EXPLORING_RESTAURANTS) {
-            sessionContext = SessionContext.EXPLORING_RESTAURANTS;
-            sessionContextBag.setPageNumber(1);
-        } {
-            Integer pageNumber = sessionContextBag.getPageNumber();
-            if (pageNumber != null) {
-                pageNumber++;
-                sessionContextBag.setPageNumber(pageNumber);;
-            } else {
-                sessionContextBag.setPageNumber(1);
-            }
-        }
-
-        String url = null;
-        final SessionContextBag.Geolocation geolocation = sessionContextBag.getGeolocation();
-        if (geolocation == null) {
-            url = RestaurantsSearchEndpoint.getUrl(
-                "en-GB",
-                10,
-                sessionContextBag.getPageNumber()
-            );
-
-            sendTextMessage(
-                "Looking for Restaurants in London. Please, give me a moment."
-            );
-        } else {
-            url = RestaurantsSearchEndpoint.getUrl(
-                "en-GB",
-                10,
-                sessionContextBag.getPageNumber(),
-                geolocation.getLatitude(),
-                geolocation.getLongitude()
-            );
-
-            sendTextMessage(
-                "Looking for Restaurants within 500 meters from the current location. Please, give me a moment."
-            );
-        }
-
-        final SearchResponse searchResponse =
-            restTemplate.getForObject(
-                url,
-                SearchResponse.class
-            );
-
-        if (searchResponse.getMeta().getTotalItems() > 0) {
-            sessionContextBag.setReaminingItems(searchResponse.getRemainingItems());
-
-            blockService.sendVenuesPageBlock(
-                this,
-                searchResponse.getPageItems(),
-                "Restaurants"
-            );
-
-            blockService.sendVenuesRemainingBlock(
-                this,
-                "Restaurants"
-            );
-        } else {
-            sendTextMessage("There are not available Restaurants for your request.");
         }
     }
 

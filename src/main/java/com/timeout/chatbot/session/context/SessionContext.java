@@ -6,7 +6,7 @@ import com.github.messenger4j.receive.events.AttachmentMessageEvent;
 import com.github.messenger4j.receive.events.PostbackEvent;
 import com.github.messenger4j.receive.events.QuickReplyMessageEvent;
 import com.github.messenger4j.receive.events.TextMessageEvent;
-import com.timeout.chatbot.domain.User;
+import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.ApiAiService;
 

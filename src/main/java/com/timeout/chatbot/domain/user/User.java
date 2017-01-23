@@ -1,5 +1,6 @@
-package com.timeout.chatbot.domain;
+package com.timeout.chatbot.domain.user;
 
+import com.timeout.chatbot.domain.FbUserProfile;
 import org.springframework.data.annotation.Id;
 
 public class User {

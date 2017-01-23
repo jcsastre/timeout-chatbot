@@ -1,6 +1,6 @@
 package com.timeout.chatbot.block;
 
-import com.timeout.chatbot.domain.User;
+import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

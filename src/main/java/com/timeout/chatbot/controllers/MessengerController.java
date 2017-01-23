@@ -4,6 +4,10 @@ import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.exceptions.MessengerVerificationException;
 import com.github.messenger4j.receive.MessengerReceiveClient;
 import com.timeout.chatbot.MessengerConfiguration;
+import com.timeout.chatbot.handler.AttachmentMessageEventHandlerImpl;
+import com.timeout.chatbot.handler.PostbackEventHandlerImpl;
+import com.timeout.chatbot.handler.QuickReplyMessageEventHandlerImpl;
+import com.timeout.chatbot.handler.textmessage.TextMessageEventHandlerImpl;
 import com.timeout.chatbot.session.SessionPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +29,11 @@ MessengerController {
     @Autowired
     public MessengerController(
         MessengerConfiguration messengerConfiguration,
-        SessionPool sessionPool
+        SessionPool sessionPool,
+        TextMessageEventHandlerImpl textMessageEventHandlerImpl,
+        QuickReplyMessageEventHandlerImpl quickReplyMessageEventHandlerImpl,
+        PostbackEventHandlerImpl postbackEventHandlerImpl,
+        AttachmentMessageEventHandlerImpl attachmentMessageEventHandlerImpl
     ) {
         logger.debug(
             "Initializing MessengerReceiveClient - appSecret: {} | verifyToken: {}",
@@ -38,29 +46,17 @@ MessengerController {
                 messengerConfiguration.getSecret(),
                 messengerConfiguration.getWebhookVerificationToken()
             )
-            .onTextMessageEvent(event ->
-                sessionPool.getSession(
-                    event.getRecipient().getId(),
-                    event.getSender().getId()
-                ).handleTextMessageEvent(event)
+            .onTextMessageEvent(
+                textMessageEventHandlerImpl
             )
-            .onQuickReplyMessageEvent(event ->
-                sessionPool.getSession(
-                    event.getRecipient().getId(),
-                    event.getSender().getId()
-                ).handleQuickReplyMessageEvent(event)
+            .onQuickReplyMessageEvent(
+                quickReplyMessageEventHandlerImpl
             )
-            .onPostbackEvent(event ->
-                sessionPool.getSession(
-                    event.getRecipient().getId(),
-                    event.getSender().getId()
-                ).handlePostbackEvent(event)
+            .onPostbackEvent(
+                postbackEventHandlerImpl
             )
-            .onAttachmentMessageEvent(event ->
-                sessionPool.getSession(
-                    event.getRecipient().getId(),
-                    event.getSender().getId()
-                ).handleAttachmentMessageEvent(event)
+            .onAttachmentMessageEvent(
+                attachmentMessageEventHandlerImpl
             )
             .build();
     }

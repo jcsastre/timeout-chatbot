@@ -1,7 +1,7 @@
 package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.QuickReply;
-import com.timeout.chatbot.domain.User;
+import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionContextBag;
