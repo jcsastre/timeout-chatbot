@@ -1,6 +1,6 @@
-package com.timeout.chatbot.domain.nlu;
+package com.timeout.chatbot.domain.nlu.intent;
 
-public enum NluIntent {
+public enum NluIntentType {
     UNKOWN(null),
     GREETINGS("greetings"),
     FIND_THINGSTODO("findThingsToDo"),
@@ -19,7 +19,7 @@ public enum NluIntent {
 
     private final String action;
 
-    NluIntent(final String action) {
+    NluIntentType(final String action) {
         this.action = action;
     }
 
@@ -27,7 +27,7 @@ public enum NluIntent {
         return action;
     }
 
-    public static NluIntent fromApiaiAction(String action) {
+    public static NluIntentType fromApiaiAction(String action) {
         if (action == null) {
             return UNKOWN;
         }

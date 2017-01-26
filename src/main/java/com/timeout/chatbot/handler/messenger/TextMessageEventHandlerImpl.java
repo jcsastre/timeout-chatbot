@@ -66,7 +66,7 @@ public class TextMessageEventHandlerImpl implements TextMessageEventHandler {
         Session session,
         NluResult nluResult
     ) {
-        switch (nluResult.getNluIntent()) {
+        switch (nluResult.getNluIntentType()) {
 
             case GREETINGS:
                 intentService.handleGreetings(session);

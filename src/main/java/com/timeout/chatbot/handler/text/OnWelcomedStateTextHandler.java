@@ -2,7 +2,7 @@ package com.timeout.chatbot.handler.text;
 
 import ai.api.model.Result;
 import com.google.gson.JsonElement;
-import com.timeout.chatbot.domain.nlu.NluIntent;
+import com.timeout.chatbot.domain.nlu.intent.NluIntentType;
 import com.timeout.chatbot.handler.intent.IntentFindRestaurantsHandler;
 import com.timeout.chatbot.handler.intent.IntentFindThingsToDoHandler;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
@@ -55,12 +55,12 @@ public class OnWelcomedStateTextHandler {
         Session session
     ) {
         final String apiaiAction = apiaiResult.getAction();
-        final NluIntent nluIntent = NluIntent.fromApiaiAction(apiaiAction);
+        final NluIntentType nluIntentType = NluIntentType.fromApiaiAction(apiaiAction);
 
         final Map<String, JsonElement> apiaiParameters = apiaiResult.getParameters();
         SessionUtils.printConsole(apiaiAction, apiaiParameters);
 
-        switch (nluIntent) {
+        switch (nluIntentType) {
 
             case FIND_RESTAURANTS:
                 session.setSessionState(SessionState.LOOKING);

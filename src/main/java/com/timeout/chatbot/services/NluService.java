@@ -4,7 +4,7 @@ import ai.api.AIServiceException;
 import ai.api.model.Result;
 import com.google.gson.JsonElement;
 import com.timeout.chatbot.domain.nlu.NluException;
-import com.timeout.chatbot.domain.nlu.NluIntent;
+import com.timeout.chatbot.domain.nlu.intent.NluIntentType;
 import com.timeout.chatbot.domain.nlu.NluResult;
 import com.timeout.chatbot.session.SessionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class NluService {
 
         return
             new NluResult(
-                NluIntent.fromApiaiAction(apiaiAction),
+                NluIntentType.fromApiaiAction(apiaiAction),
                 apiaiParameters
             );
     }

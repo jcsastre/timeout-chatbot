@@ -22,6 +22,7 @@ public class ApiAiService {
 
     public Result processText(String text) throws AIServiceException {
         AIRequest aiRequest = new AIRequest(text);
+
         AIResponse aiResponse = this.aiDataService.request(aiRequest);
 
         if (aiResponse.getStatus().getCode() == 200) {

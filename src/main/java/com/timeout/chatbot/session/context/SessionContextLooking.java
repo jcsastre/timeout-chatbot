@@ -85,7 +85,7 @@ public class SessionContextLooking extends SessionContext {
         Result apiaiResult
     ) {
 //        final String apiaiAction = apiaiResult.getAction();
-//        final NluIntent apiaiIntent = NluIntent.fromApiaiAction(apiaiAction);
+//        final NluIntentType apiaiIntent = NluIntentType.fromApiaiAction(apiaiAction);
 //
 //        final Map<String, JsonElement> apiaiParameters = apiaiResult.getParameters();
 ////        if (apiaiParameters != null) {
