@@ -1,6 +1,6 @@
-package com.timeout.chatbot.domain.apiai;
+package com.timeout.chatbot.domain.nlu;
 
-public enum ApiaiIntent {
+public enum NluIntent {
     UNKOWN(null),
     GREETINGS("greetings"),
     FIND_THINGSTODO("findThingsToDo"),
@@ -19,7 +19,7 @@ public enum ApiaiIntent {
 
     private final String action;
 
-    ApiaiIntent(final String action) {
+    NluIntent(final String action) {
         this.action = action;
     }
 
@@ -27,7 +27,7 @@ public enum ApiaiIntent {
         return action;
     }
 
-    public static ApiaiIntent fromApiaiAction(String action) {
+    public static NluIntent fromApiaiAction(String action) {
         if (action == null) {
             return UNKOWN;
         }

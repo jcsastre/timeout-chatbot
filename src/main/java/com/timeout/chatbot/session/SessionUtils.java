@@ -13,7 +13,7 @@ public class SessionUtils {
         System.out.println("▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼");
 
         if (action != null) {
-            System.out.println("ApiaiIntent: " + action);
+            System.out.println("NluIntent: " + action);
         }
 
         if (apiaiParameters != null) {

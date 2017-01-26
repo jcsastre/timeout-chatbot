@@ -9,31 +9,63 @@ import org.springframework.stereotype.Component;
 public class WelcomeFirstTimeBlock {
 
     private final MessengerSendClientWrapper messengerSendClientWrapper;
+    private final SuggestionsBlock suggestionsBlock;
 
     @Autowired
     public WelcomeFirstTimeBlock(
-        MessengerSendClientWrapper messengerSendClientWrapper
+        MessengerSendClientWrapper messengerSendClientWrapper,
+        SuggestionsBlock suggestionsBlock
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
+        this.suggestionsBlock = suggestionsBlock;
     }
 
     public void send(
         User user
     ) {
+        String msg = null;
         StringBuilder sbMessage = new StringBuilder();
         if (user.getFbUserProfile().getFirstName() != null) {
-            sbMessage.append("Hi " + user.getFbUserProfile().getFirstName() + "!");
+            msg = "Hi " + user.getFbUserProfile().getFirstName() + "!";
         } else {
-            sbMessage.append("Hi!");
+            msg = "Hi!";
         }
-        sbMessage.append("\n\n");
-        sbMessage.append("I'm Brian, I work as chatbot on Timeout London.");
-        sbMessage.append("\n\n");
-        sbMessage.append("I know every corner in London, just ask me.");
+        messengerSendClientWrapper.sendTextMessage(
+            user.getMessengerId(),
+            msg
+        );
+
+//        messengerSendClientWrapper.sendImageAttachment(
+//            user.getMessengerId(),
+//            "https://media.giphy.com/media/pxwlYSM8PfY5y/giphy.gif"
+//        );
 
         messengerSendClientWrapper.sendTextMessage(
             user.getMessengerId(),
-            sbMessage.toString()
+            "I'm Brian, I work as chatbot for Timeout London"
         );
+
+        messengerSendClientWrapper.sendImageAttachment(
+            user.getMessengerId(),
+            "https://media.giphy.com/media/QGMiTNBw8hB72/giphy.gif"
+        );
+
+//        messengerSendClientWrapper.sendTextMessage(
+//            user.getMessengerId(),
+//            "Let's start!"
+//        );
+
+//        messengerSendClientWrapper.sendTextMessage(
+//            user.getMessengerId(),
+//            "First, some examples of questions you can ask me"
+//        );
+
+//        suggestionsBlock.send(user.getMessengerId());
+
+//        messengerSendClientWrapper.sendTextMessage(
+//            user.getMessengerId(),
+//            "If the options above doesn't fit your needs, just ask me. " +
+//                "And if you don't know what to ask type 'help'"
+//        );
     }
 }

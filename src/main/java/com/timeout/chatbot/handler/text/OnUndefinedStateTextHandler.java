@@ -1,8 +1,8 @@
-package com.timeout.chatbot.handler.textmessage;
+package com.timeout.chatbot.handler.text;
 
 import ai.api.model.Result;
 import com.google.gson.JsonElement;
-import com.timeout.chatbot.domain.apiai.ApiaiIntent;
+import com.timeout.chatbot.domain.nlu.NluIntent;
 import com.timeout.chatbot.handler.intent.IntentFindRestaurantsHandler;
 import com.timeout.chatbot.handler.intent.IntentFindThingsToDoHandler;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
-public class TextMessageEventOnUndefinedStateHandler {
+public class OnUndefinedStateTextHandler {
 
     private final ApiAiService apiAiService;
     private final BlockService blockService;
@@ -26,7 +26,7 @@ public class TextMessageEventOnUndefinedStateHandler {
     private final IntentFindRestaurantsHandler intentFindRestaurantsHandler;
 
     @Autowired
-    public TextMessageEventOnUndefinedStateHandler(
+    public OnUndefinedStateTextHandler(
         ApiAiService apiAiService,
         BlockService blockService,
         MessengerSendClientWrapper messengerSendClientWrapper, IntentFindThingsToDoHandler intentFindThingsToDoHandler, IntentFindRestaurantsHandler intentFindRestaurantsHandler) {
@@ -57,34 +57,12 @@ public class TextMessageEventOnUndefinedStateHandler {
         Session session
     ) {
         final String apiaiAction = apiaiResult.getAction();
-        final ApiaiIntent apiaiIntent = ApiaiIntent.fromApiaiAction(apiaiAction);
+        final NluIntent nluIntent = NluIntent.fromApiaiAction(apiaiAction);
 
         final Map<String, JsonElement> apiaiParameters = apiaiResult.getParameters();
-//        if (apiaiParameters != null) {
-//            updateFilterParams(apiaiParameters);
-//        }
-
         SessionUtils.printConsole(apiaiAction, apiaiParameters);
 
-        switch (apiaiIntent) {
-
-            case GREETINGS:
-                blockService.sendSuggestionsBlock(session.getUser());
-                blockService.sendDiscoverBlock(session.getUser());
-                break;
-
-            case SUGGESTIONS:
-                blockService.sendSuggestionsBlock(session.getUser());
-                break;
-
-            case DISCOVER:
-                blockService.sendDiscoverBlock(session.getUser());
-                break;
-
-            case FIND_THINGSTODO:
-                session.setSessionState(SessionState.LOOKING);
-                intentFindThingsToDoHandler.handle(session.getUser().getMessengerId());
-                break;
+        switch (nluIntent) {
 
             case FIND_RESTAURANTS:
                 session.setSessionState(SessionState.LOOKING);
@@ -92,48 +70,29 @@ public class TextMessageEventOnUndefinedStateHandler {
                 break;
 
             case FIND_RESTAURANTS_NEARBY:
-                onIntentFindRestaurantsNearby();
+                session.setSessionState(SessionState.LOOKING);
+                intentFindRestaurantsHandler.handleNearby(session);
                 break;
 
-            case FIND_BARSANDPUBS:
-                onIntentFindBars();
-                break;
+//            case FIND_BARSANDPUBS:
+//                onIntentFindBars();
+//                break;
+//
+//            case FIND_BARSANDPUBS_NEARBY:
+//                onIntentFindBarsNearby();
+//                break;
 
-            case FIND_BARSANDPUBS_NEARBY:
-                onIntentFindBarsNearby();
-                break;
-
-            case FIND_ART:
-                onIntentFindArt();
-                break;
-
-            case FIND_THEATRE:
-                onIntentFindTheatre();
-                break;
-
-            case FIND_MUSIC:
-                onIntentFindMusic();
-                break;
-
-            case FIND_NIGHTLIFE:
-                onIntentFindNightlife();
-                break;
-
-            case FINDS_FILMS:
-                onIntentFindFilms(1);
-                break;
-
-            case SET_LOCATION:
-                //                fsm.apply(Intent.FIND_CAMPINGS);
-                break;
+//            case SET_LOCATION:
+//                //TODO
+//                break;
 
             case UNKOWN:
-                //                onIntentUnknown();
+                //TODO: onIntentUnknown();
                 break;
 
             default:
                 messengerSendClientWrapper.sendTextMessage(
-                    user.getMessengerId(),
+                    session.getUser().getMessengerId(),
                     "Sorry, I don't understand you."
                 );
                 break;

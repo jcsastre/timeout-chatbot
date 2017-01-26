@@ -30,11 +30,6 @@ public class SuggestionsBlock {
     public void send(
         String userId
     ) {
-        messengerSendClientWrapper.sendTextMessage(
-            userId,
-            "These are my suggestions for you today. If you want to see them again just type 'suggestions'"
-        );
-
         messengerSendClientWrapper.sendTemplate(
             userId,
             buildGenericTemplate()

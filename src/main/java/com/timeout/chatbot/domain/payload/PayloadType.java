@@ -2,7 +2,15 @@ package com.timeout.chatbot.domain.payload;
 
 public enum PayloadType {
     get_started,
-    utterance,
+
+    help,
+    suggestions,
+    discover,
+    whats_new,
+    start_over,
+
+//    utterance,
+
     venues_get_a_summary,
     venues_book,
     venues_see_more,

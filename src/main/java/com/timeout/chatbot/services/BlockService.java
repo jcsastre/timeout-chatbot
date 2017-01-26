@@ -27,6 +27,7 @@ public class BlockService {
     private final VenueSummaryBlock venueSummaryBlock;
     private final GeolocationAskBlock geolocationAskBlock;
     private final FilmsPageBlock filmsPageBlock;
+    private final ErrorBlock errorBlock;
 
     @Autowired
     public BlockService(
@@ -39,7 +40,8 @@ public class BlockService {
         VenuesRemainingBlock venuesRemainingBlock,
         VenueSummaryBlock venueSummaryBlock,
         GeolocationAskBlock geolocationAskBlock,
-        FilmsPageBlock filmsPageBlock
+        FilmsPageBlock filmsPageBlock,
+        ErrorBlock errorBlock
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
         this.suggestionsBlock = suggestionsBlock;
@@ -51,6 +53,7 @@ public class BlockService {
         this.venueSummaryBlock = venueSummaryBlock;
         this.geolocationAskBlock = geolocationAskBlock;
         this.filmsPageBlock = filmsPageBlock;
+        this.errorBlock = errorBlock;
     }
 
     public void sendWelcomeFirstTimeBlock(
@@ -108,11 +111,15 @@ public class BlockService {
     }
 
     public void sendVenuesRemainingBlock(
-        Session session,
+        String userMessengerId,
+        Integer remainingItems,
+        Boolean isGeolocationSet,
         String itemPluralName
     ) {
         venuesRemainingBlock.send(
-            session,
+            userMessengerId,
+            remainingItems,
+            isGeolocationSet,
             itemPluralName
         );
     }
@@ -128,5 +135,11 @@ public class BlockService {
         String userId
     ) {
         geolocationAskBlock.send(userId);
+    }
+
+    public void sendErrorBlock(
+        User user
+    ) {
+        errorBlock.send(user);
     }
 }

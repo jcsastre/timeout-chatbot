@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 public class PageItem {
     private static final Logger log = LoggerFactory.getLogger(PageItem.class);
 
+    @JsonProperty("categorisation")
     private GraffittiCategorisation graffittiCategorisation;
     private String id;
     private String name;

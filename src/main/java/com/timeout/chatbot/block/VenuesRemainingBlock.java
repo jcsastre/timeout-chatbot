@@ -1,15 +1,11 @@
 package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.QuickReply;
-import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.SessionContextBag;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -25,36 +21,27 @@ public class VenuesRemainingBlock {
     }
 
     public void send(
-        Session session,
+        String userMessengerId,
+        Integer remainingItems,
+        Boolean isGeolocationSet,
         String itemPluralName
     ) {
-        Assert.notNull(session, "The session must not be null");
-        Assert.notNull(itemPluralName, "The itemPluralName must not be null");
-
-        final User user = session.getUser();
-        final SessionContextBag sessionContextBag = session.getSessionContextBag();
-        final Integer remainingItems = sessionContextBag.getReaminingItems();
-        final Integer nextPageNumber = sessionContextBag.getPageNumber();
-        final SessionContextBag.Geolocation geolocation = sessionContextBag.getGeolocation();
-
         messengerSendClientWrapper.sendTextMessage(
-            user.getMessengerId(),
+            userMessengerId,
             String.format(
                 "There are %s %s remaining",
                 remainingItems, itemPluralName
             ),
             buildQuickReplies(
                 remainingItems,
-                nextPageNumber,
-                geolocation
+                isGeolocationSet
             )
         );
     }
 
     private List<QuickReply> buildQuickReplies(
         Integer remainingItems,
-        Integer nextPageNumber,
-        SessionContextBag.Geolocation sessionGeolocation
+        Boolean isGeolocationSet
     ) {
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
@@ -69,7 +56,7 @@ public class VenuesRemainingBlock {
         }
 
         listBuilder.addTextQuickReply(
-            sessionGeolocation == null ? "Set location" : "Change location",
+            isGeolocationSet ? "Change location" : "Set location",
             new JSONObject()
                 .put("type", PayloadType.set_location)
                 .toString()

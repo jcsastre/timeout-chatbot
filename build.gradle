@@ -32,7 +32,6 @@ repositories {
 
 dependencies {
 	compile("io.mikael:urlbuilder:2.0.8")
-    compile("org.squirrelframework:squirrel-foundation:0.3.8")
 	compile group: 'commons-validator', name: 'commons-validator', version: '1.5.1'
     compile("org.springframework.boot:spring-boot-starter-data-mongodb")
 	compile "redis.clients:jedis:2.7.0"

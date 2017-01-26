@@ -82,15 +82,9 @@ public class SessionPool {
 
         final Session session =
             new Session(
-                restTemplate,
-                campingpongAPIService,
-                apiAiService,
                 messengerSendClientWrapper,
                 page,
-                user,
-                blockService,
-                userRepository,
-                bookingBlocksHelper
+                user
             );
 
         session.setLastAccessTime(System.currentTimeMillis());

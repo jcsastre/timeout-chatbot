@@ -35,10 +35,34 @@ public class IntentFindRestaurantsHandler {
     public void handle(
         Session session
     ) {
-        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
-        final GraffittiWhat graffittiWhat = bag.getGraffittiWhat();
 
-        if (graffittiWhat != GraffittiWhat.RESTAURANT) {
+        switch (session.getSessionState()) {
+
+            case UNDEFINED:
+                break;
+
+            case WELCOMED:
+                break;
+
+            case LOOKING:
+                break;
+
+            case BOOKING:
+                break;
+
+            default:
+                blockService.sendErrorBlock(session.getUser());
+                break;
+        }
+    }
+
+    public void handle(
+        Session session
+    ) {
+        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+        final GraffittiWhat what = bag.getGraffittiWhat();
+
+        if (what != GraffittiWhat.RESTAURANT) {
             bag.setGraffittiWhat(GraffittiWhat.RESTAURANT);
             bag.setGraffittiPageNumber(1);
         } else {
@@ -51,9 +75,11 @@ public class IntentFindRestaurantsHandler {
             }
         }
 
+        final URI uri = buildUri(session, bag);
+
         final SearchResponse searchResponse =
             restTemplate.getForObject(
-                buildUri(session, bag),
+                uri,
                 SearchResponse.class
             );
 
@@ -67,7 +93,9 @@ public class IntentFindRestaurantsHandler {
             );
 
             blockService.sendVenuesRemainingBlock(
-                session,
+                session.getUser().getMessengerId(),
+                bag.getReaminingItems(),
+                bag.getGeolocation() != null,
                 "Restaurants"
             );
         } else {
@@ -75,6 +103,18 @@ public class IntentFindRestaurantsHandler {
                 session.getUser().getMessengerId(),
                 "There are not available Restaurants for your request."
             );
+        }
+    }
+
+    public void handleNearby(
+        Session session
+    ) {
+        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+
+        if (bag.getGeolocation() == null) {
+            blockService.sendGeolocationAskBlock(session.getUser().getMessengerId());
+        } else {
+            handle(session);
         }
     }
 

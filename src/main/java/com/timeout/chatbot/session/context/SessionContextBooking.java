@@ -387,10 +387,10 @@ public class SessionContextBooking extends SessionContext {
 
     public void sendTextMessage(String msg)
     {
-        messengerSendClientWrapper.sendTextMessage(
-            session.getUser().getMessengerId(),
-            msg
-        );
+//        messengerSendClientWrapper.sendTextMessage(
+//            session.getUser().getMessengerId(),
+//            msg
+//        );
     }
 
     @Override

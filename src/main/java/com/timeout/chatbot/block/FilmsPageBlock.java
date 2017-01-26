@@ -46,8 +46,8 @@ public class FilmsPageBlock {
         final SearchResponse searchResponse =
             restTemplate.getForObject(
                 FilmsEndpoint.buildGeolocatedUri(
-                    session.getSessionContextBag().getGeolocation().getLatitude(),
-                    session.getSessionContextBag().getGeolocation().getLongitude(),
+                    session.getSessionStateLookingBag().getGeolocation().getLatitude(),
+                    session.getSessionStateLookingBag().getGeolocation().getLongitude(),
                     pageNumber
                 ),
                 SearchResponse.class

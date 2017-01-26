@@ -6,21 +6,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class IntentFindThingsToDoHandler {
+public class IntentHelpHandler {
 
     private final MessengerSendClientWrapper messengerSendClientWrapper;
 
     @Autowired
-    public IntentFindThingsToDoHandler(MessengerSendClientWrapper messengerSendClientWrapper) {
+    public IntentHelpHandler(MessengerSendClientWrapper messengerSendClientWrapper) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
     }
 
-    public void handle(
-        Session session
-    ) {
+    public void handle(Session session) {
         messengerSendClientWrapper.sendTextMessage(
             session.getUser().getMessengerId(),
-            "Sorry, 'Things to do' is not yet implemented."
+            "Sorry, 'Help' is not implemented"
         );
     }
 }
