@@ -50,7 +50,7 @@ public class VenuesRemainingBlock {
             listBuilder.addTextQuickReply(
                 "See more",
                 new JSONObject()
-                    .put("type", PayloadType.venues_see_more)
+                    .put("type", PayloadType.see_more)
                     .toString()
             ).toList();
         }

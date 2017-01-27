@@ -2,6 +2,7 @@ package com.timeout.chatbot.handler.messenger;
 
 import com.github.messenger4j.receive.events.TextMessageEvent;
 import com.github.messenger4j.receive.handlers.TextMessageEventHandler;
+import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.nlu.NluResult;
 import com.timeout.chatbot.domain.page.PageUid;
@@ -86,7 +87,9 @@ public class TextMessageEventHandlerImpl implements TextMessageEventHandler {
 
             case FIND_RESTAURANTS:
                 session.setSessionState(SessionState.LOOKING);
-                intentFindRestaurantsHandler.handle(session);
+                session.getSessionStateLookingBag().setWhat(What.RESTAURANT);
+                session.getSessionStateLookingBag().setGraffittiPageNumber(1);
+                intentService.handleFindRestaurants(session, nluResult.getParameters());
                 break;
 
             // find restaurants
@@ -94,10 +97,10 @@ public class TextMessageEventHandlerImpl implements TextMessageEventHandler {
             // find restaurants nearby
             // find restaurants candem
 
-            case FIND_RESTAURANTS_NEARBY:
-                session.setSessionState(SessionState.LOOKING);
-                intentFindRestaurantsHandler.handleNearby(session);
-                break;
+//            case FIND_RESTAURANTS_NEARBY:
+//                session.setSessionState(SessionState.LOOKING);
+//                intentFindRestaurantsHandler.handleNearby(session);
+//                break;
 
 //            case FIND_BARSANDPUBS:
 //                onIntentFindBars();

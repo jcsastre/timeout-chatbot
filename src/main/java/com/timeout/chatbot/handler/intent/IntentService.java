@@ -1,8 +1,11 @@
 package com.timeout.chatbot.handler.intent;
 
+import com.google.gson.JsonElement;
 import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
 
 @Component
 public class IntentService {
@@ -12,16 +15,20 @@ public class IntentService {
     private final IntentSuggestionsHandler suggestionsHandler;
     private final IntentDiscoverHandler discoverHandler;
     private final IntentWhatsnewHandler whatsnewHandler;
+    private final IntentSeemoreHandler seemoreHandler;
     private final IntentFindThingsToDoHandler findThingsToDoHandler;
+    private final IntentFindRestaurantsHandler findRestaurantsHandler;
 
     @Autowired
-    public IntentService(IntentHelpHandler helpHandler, IntentGreetingsHandler greetingsHandler, IntentSuggestionsHandler suggestionsHandler, IntentDiscoverHandler discoverHandler, IntentWhatsnewHandler whatsnewHandler, IntentFindThingsToDoHandler findThingsToDoHandler) {
+    public IntentService(IntentHelpHandler helpHandler, IntentGreetingsHandler greetingsHandler, IntentSuggestionsHandler suggestionsHandler, IntentDiscoverHandler discoverHandler, IntentWhatsnewHandler whatsnewHandler, IntentSeemoreHandler seemoreHandler, IntentFindThingsToDoHandler findThingsToDoHandler, IntentFindRestaurantsHandler findRestaurantsHandler) {
         this.helpHandler = helpHandler;
         this.greetingsHandler = greetingsHandler;
         this.suggestionsHandler = suggestionsHandler;
         this.discoverHandler = discoverHandler;
         this.whatsnewHandler = whatsnewHandler;
+        this.seemoreHandler = seemoreHandler;
         this.findThingsToDoHandler = findThingsToDoHandler;
+        this.findRestaurantsHandler = findRestaurantsHandler;
     }
 
     public void handleHelp(Session session) {
@@ -45,4 +52,17 @@ public class IntentService {
     }
 
     public void handleFindThingsToDo(Session session) { findThingsToDoHandler.handle(session); }
+
+    public void handleFindRestaurants(
+        Session session,
+        HashMap<String, JsonElement> nluParameters
+    ) {
+        findRestaurantsHandler.handle(session, nluParameters);
+    }
+
+    public void  handleSeemore(
+        Session session
+    ) {
+        seemoreHandler.handle(session);
+    }
 }

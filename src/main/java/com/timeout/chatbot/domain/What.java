@@ -1,6 +1,6 @@
-package com.timeout.chatbot.graffitti.domain;
+package com.timeout.chatbot.domain;
 
-public enum GraffittiWhat {
+public enum What {
     RESTAURANT("Restaurant", "Restaurants"),
     BAR("Bars & Pubs", "Bars & Pubs"),
     HOTEL("Hotel", "Hotels"),
@@ -8,7 +8,7 @@ public enum GraffittiWhat {
 
     private String singularName;
     private String pluralName;
-    GraffittiWhat(String singularName, String pluralName) {
+    What(String singularName, String pluralName) {
         this.singularName = singularName;
         this.pluralName = pluralName;
     }

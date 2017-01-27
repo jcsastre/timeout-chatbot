@@ -1,11 +1,14 @@
 package com.timeout.chatbot.session;
 
+import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
-import com.timeout.chatbot.graffitti.domain.GraffittiWhat;
+import com.timeout.chatbot.graffitti.domain.response.facets.v5.GraffittiFacetV5Node;
 
 public class SessionStateLookingBag {
 
-    private GraffittiWhat graffittiWhat;
+    private What what;
+    private GraffittiFacetV5Node graffittiFacetV5WhatV5Node;
+
     private String graffittiWhen;
     private String graffittiWhere;
     private GraffittiType graffittiType;
@@ -15,19 +18,27 @@ public class SessionStateLookingBag {
     private Double radius = 0.5D;
 
     public SessionStateLookingBag() {
-        this.graffittiWhat = null;
+        this.what = null;
         this.graffittiWhen = null;
         this.graffittiWhere = null;
         this.graffittiType = null;
         this.graffittiPageNumber = null;
     }
 
-    public GraffittiWhat getGraffittiWhat() {
-        return graffittiWhat;
+    public What getWhat() {
+        return what;
     }
 
-    public void setGraffittiWhat(GraffittiWhat graffittiWhat) {
-        this.graffittiWhat = graffittiWhat;
+    public void setWhat(What what) {
+        this.what = what;
+    }
+
+    public GraffittiFacetV5Node getGraffittiFacetV5WhatV5Node() {
+        return graffittiFacetV5WhatV5Node;
+    }
+
+    public void setGraffittiFacetV5WhatV5Node(GraffittiFacetV5Node graffittiFacetV5WhatV5Node) {
+        this.graffittiFacetV5WhatV5Node = graffittiFacetV5WhatV5Node;
     }
 
     public String getGraffittiWhen() {

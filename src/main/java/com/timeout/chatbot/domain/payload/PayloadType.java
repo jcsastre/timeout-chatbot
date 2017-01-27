@@ -9,6 +9,8 @@ public enum PayloadType {
     whats_new,
     start_over,
 
+    see_more,
+
 //    utterance,
 
     venues_get_a_summary,

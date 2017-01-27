@@ -1,5 +1,7 @@
 package com.timeout.chatbot.services;
 
+import com.timeout.chatbot.graffitti.domain.response.facets.v5.GraffittiFacetV5Node;
+import com.timeout.chatbot.graffitti.domain.response.facets.v5.GraffittiFacetV5Response;
 import com.timeout.chatbot.graffitti.uri.GraffittiEndpoints;
 import com.timeout.chatbot.graffitti.domain.response.facets.CategoryPrimary;
 import com.timeout.chatbot.graffitti.domain.response.facets.CategorySecondary;
@@ -14,14 +16,18 @@ public class GraffittiService {
     private final RestTemplate restTemplate;
 
     private final FacetGroup facetGroup;
-//    private final List<CategoryPrimary> categories;
+    private final GraffittiFacetV5Response graffittiFacetV5Response;
 
     public GraffittiService(
         RestTemplate restTemplate
     ) {
         this.restTemplate = restTemplate;
 
-        facetGroup = this.restTemplate.getForObject(GraffittiEndpoints.FACETS.toString(), FacetGroup.class);
+        facetGroup =
+            this.restTemplate.getForObject(GraffittiEndpoints.FACETS.toString(), FacetGroup.class);
+
+        graffittiFacetV5Response =
+            this.restTemplate.getForObject(GraffittiEndpoints.FACETS_V5.toString(), GraffittiFacetV5Response.class);
     }
 
     public List<CategoryPrimary> getPrimaryCategories() {
@@ -54,6 +60,22 @@ public class GraffittiService {
                 return categoryPrimary.getSecondaryCategories();
             }
 
+        }
+
+        return null;
+    }
+
+    public GraffittiFacetV5Response getGraffittiFacetV5Response() {
+        return graffittiFacetV5Response;
+    }
+
+    public GraffittiFacetV5Node getGraffittiFacetV5NodeById(String id) {
+        for (GraffittiFacetV5Node parentNode : graffittiFacetV5Response.getBody().getFacets().getWhat().getChildren()) {
+            for (GraffittiFacetV5Node childNode : parentNode.getChildren()) {
+                if (childNode.getId().equalsIgnoreCase(id)) {
+                    return childNode;
+                }
+            }
         }
 
         return null;

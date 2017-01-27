@@ -6,8 +6,8 @@ public enum GraffittiQueryParameterType {
     WHEN("when"),
     WHERE("where"),
     TYPE("type"),
-    PAGE_SIZE("pageSize"),
-    PAGE_NUMBER("pageNumber"),
+    PAGE_SIZE("page_size"),
+    PAGE_NUMBER("page_number"),
     LATITUDE("latitude"),
     LONGITUDE("longitude"),
     SORT("sort");
