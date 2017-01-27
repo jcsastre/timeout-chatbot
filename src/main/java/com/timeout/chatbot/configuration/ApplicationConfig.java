@@ -1,12 +1,12 @@
-package com.timeout.chatbot;
+package com.timeout.chatbot.configuration;
 
 import ai.api.AIConfiguration;
 import ai.api.AIDataService;
 import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.send.MessengerSendClient;
+import com.timeout.chatbot.ApiaiConfiguration;
 import com.timeout.chatbot.http.HeaderRequestInterceptor;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
-import com.timeout.chatbot.services.GraffittiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,11 +29,6 @@ public class ApplicationConfig {
     ) {
         this.messengerConfiguration = messengerConfiguration;
         this.apiaiConfiguration = apiaiConfiguration;
-    }
-
-    @Bean
-    public GraffittiService graffittiService() {
-        return new GraffittiService(restTemplate());
     }
 
     @Bean

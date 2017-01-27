@@ -20,6 +20,7 @@ public class PageItem {
     private String location;
     @JsonProperty("to_website")
     private String toWebsite;
+    private Double distance;
 
     public GraffittiCategorisation getGraffittiCategorisation() {
         return graffittiCategorisation;
@@ -83,6 +84,18 @@ public class PageItem {
 
     public void setToWebsite(String toWebsite) {
         this.toWebsite = toWebsite;
+    }
+
+    public Double getDistance() {
+        return distance;
+    }
+
+    public Integer getDistanceInMeters() {
+        return new Double(distance * 1000).intValue();
+    }
+
+    public void setDistance(Double distance) {
+        this.distance = distance;
     }
 
     @Override

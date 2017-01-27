@@ -58,7 +58,7 @@ public class VenuesRemainingBlock {
         listBuilder.addTextQuickReply(
             isGeolocationSet ? "Change location" : "Set location",
             new JSONObject()
-                .put("type", PayloadType.set_location)
+                .put("type", PayloadType.set_geolocation)
                 .toString()
         ).toList();
 

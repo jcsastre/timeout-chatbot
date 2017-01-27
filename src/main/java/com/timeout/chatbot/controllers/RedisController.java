@@ -1,6 +1,6 @@
 package com.timeout.chatbot.controllers;
 
-import com.timeout.chatbot.ApplicationConfig;
+import com.timeout.chatbot.configuration.ApplicationConfig;
 import com.timeout.chatbot.redis.Person;
 import com.timeout.chatbot.redis.PersonRepo;
 import org.slf4j.Logger;

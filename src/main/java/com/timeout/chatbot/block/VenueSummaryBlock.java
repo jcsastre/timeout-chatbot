@@ -23,22 +23,25 @@ public class VenueSummaryBlock {
     private final RestTemplate restTemplate;
     private final GraffittiService graffittiService;
     private final MessengerSendClientWrapper messengerSendClientWrapper;
+    private final GraffittiEndpoints graffittiEndpoints;
 
     @Autowired
     public VenueSummaryBlock(
         RestTemplate restTemplate, GraffittiService graffittiService,
-        MessengerSendClientWrapper messengerSendClientWrapper
+        MessengerSendClientWrapper messengerSendClientWrapper,
+        GraffittiEndpoints graffittiEndpoints
     ) {
         this.restTemplate = restTemplate;
         this.graffittiService = graffittiService;
         this.messengerSendClientWrapper = messengerSendClientWrapper;
+        this.graffittiEndpoints = graffittiEndpoints;
     }
 
     public void send(String userId, String venueId) {
 
         final Venue venue =
             restTemplate.getForObject(
-                GraffittiEndpoints.VENUE.toString() + venueId,
+                graffittiEndpoints.getVenues() + venueId,
                 Venue.class
             );
 
@@ -67,7 +70,7 @@ public class VenueSummaryBlock {
     }
 
     private void sendImages(String userId, String restaurantId, Venue restaurant) {
-        String urlImages = GraffittiEndpoints.VENUE.toString() + restaurantId + "/images";
+        String urlImages = graffittiEndpoints.getVenues() + restaurantId + "/images";
         final ImagesResponse imagesResponse = restTemplate.getForObject(urlImages, ImagesResponse.class);
 
         List<Image> images = imagesResponse.getImages();

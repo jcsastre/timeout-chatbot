@@ -10,6 +10,7 @@ public enum GraffittiQueryParameterType {
     PAGE_NUMBER("page_number"),
     LATITUDE("latitude"),
     LONGITUDE("longitude"),
+    RADIUS("radius"),
     SORT("sort");
 
     private final String value;

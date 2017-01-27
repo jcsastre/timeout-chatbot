@@ -1,10 +1,12 @@
 package com.timeout.chatbot.handler.intent;
 
 import com.google.gson.JsonElement;
+import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.domain.response.facets.v5.GraffittiFacetV5Node;
 import com.timeout.chatbot.graffitti.domain.response.search.page.SearchResponse;
+import com.timeout.chatbot.graffitti.uri.GraffittiQueryParameterType;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.BlockService;
@@ -26,6 +28,7 @@ public class IntentFindRestaurantsHandler {
     private final BlockService blockService;
     private final MessengerSendClientWrapper messengerSendClientWrapper;
     private final GraffittiService graffittiService;
+    private final SearchUrlBuilder searchUrlBuilder;
 
     private static final String WHAT_RESTAURANTS ="node-7083";
 
@@ -34,12 +37,14 @@ public class IntentFindRestaurantsHandler {
         RestTemplate restTemplate,
         BlockService blockService,
         MessengerSendClientWrapper messengerSendClientWrapper,
-        GraffittiService graffittiService
+        GraffittiService graffittiService,
+        SearchUrlBuilder searchUrlBuilder
     ) {
         this.restTemplate = restTemplate;
         this.blockService = blockService;
         this.messengerSendClientWrapper = messengerSendClientWrapper;
         this.graffittiService = graffittiService;
+        this.searchUrlBuilder = searchUrlBuilder;
     }
 
     public void handle(
@@ -90,7 +95,7 @@ public class IntentFindRestaurantsHandler {
         HashMap<String, JsonElement> nluParameters
     ) {
         if (
-            nluParameters.containsKey("whatRestaurantsUkLondon")
+            nluParameters.containsKey("whereUkLondon")
         ) {
             final SessionStateLookingBag bag = session.getSessionStateLookingBag();
 
@@ -100,11 +105,9 @@ public class IntentFindRestaurantsHandler {
                 where.equalsIgnoreCase("near me") ||
                 where.equalsIgnoreCase("near of me")
             ) {
-
                 if (bag.getGeolocation() == null) {
                     blockService.sendGeolocationAskBlock(session.getUser().getMessengerId());
-                } else {
-                    //TODO: update bag based on geo-location
+                    return;
                 }
             } else {
                 bag.setGraffittiWhere(where);
@@ -135,10 +138,43 @@ public class IntentFindRestaurantsHandler {
 
         bag.setWhat(What.RESTAURANT);
 
-        final UrlBuilder urlBuilder = urlBuilderBase(
+        UrlBuilder urlBuilder = urlBuilderBase(
             bag.getGraffittiFacetV5WhatV5Node(),
             bag.getGraffittiPageNumber()
         );
+
+        final Geolocation geolocation = bag.getGeolocation();
+        if (geolocation != null) {
+            urlBuilder =
+                urlBuilder
+                    .addParameter(
+                        GraffittiQueryParameterType.LATITUDE.getValue(),
+                        geolocation.getLatitude().toString()
+                    )
+                    .addParameter(
+                        GraffittiQueryParameterType.LONGITUDE.getValue(),
+                        geolocation.getLongitude().toString()
+                    )
+                    .addParameter(
+                        GraffittiQueryParameterType.RADIUS.getValue(),
+                        "1"
+                    )
+                    .addParameter(
+                        GraffittiQueryParameterType.SORT.getValue(),
+                        "distance"
+                    );
+        } else {
+            final String where = bag.getGraffittiWhere();
+
+            urlBuilder =
+                urlBuilder
+                    .addParameter(
+                        GraffittiQueryParameterType.WHERE.getValue(),
+                        where
+                    );
+        }
+
+        System.out.println(urlBuilder.toUrl().toString());
 
 //        ///
 //        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
@@ -196,13 +232,13 @@ public class IntentFindRestaurantsHandler {
         Integer pageNumber
     ) {
         if (graffittiFacetV5Node == null) {
-            return SearchUrlBuilder.buildBase(
+            return searchUrlBuilder.buildBase(
                 WHAT_RESTAURANTS,
                 GraffittiType.VENUE.getValue(),
                 pageNumber
             );
         } else {
-            return SearchUrlBuilder.buildBase(
+            return searchUrlBuilder.buildBase(
                 graffittiFacetV5Node.getId(),
                 GraffittiType.VENUE.getValue(),
                 pageNumber

@@ -19,7 +19,7 @@ public enum PayloadType {
     venues_set_secondary_category,
     restaurant_get_a_summary,
     restaurants_set_cuisine,
-    set_location,
+    set_geolocation,
     bar_get_a_summary,
     bar_book,
     films_more_info,

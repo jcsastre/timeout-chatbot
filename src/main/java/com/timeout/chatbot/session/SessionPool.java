@@ -1,6 +1,6 @@
 package com.timeout.chatbot.session;
 
-import com.timeout.chatbot.MessengerConfiguration;
+import com.timeout.chatbot.configuration.MessengerConfiguration;
 import com.timeout.chatbot.block.booking.BookingBlocksHelper;
 import com.timeout.chatbot.domain.FbUserProfile;
 import com.timeout.chatbot.domain.page.Page;

@@ -1,5 +1,6 @@
 package com.timeout.chatbot.session;
 
+import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.domain.response.facets.v5.GraffittiFacetV5Node;
@@ -14,7 +15,7 @@ public class SessionStateLookingBag {
     private GraffittiType graffittiType;
     private Integer graffittiPageNumber;
     private Integer reaminingItems;
-    private SessionContextBag.Geolocation geolocation;
+    private Geolocation geolocation;
     private Double radius = 0.5D;
 
     public SessionStateLookingBag() {
@@ -54,6 +55,7 @@ public class SessionStateLookingBag {
     }
 
     public void setGraffittiWhere(String graffittiWhere) {
+        this.geolocation = null;
         this.graffittiWhere = graffittiWhere;
     }
 
@@ -81,11 +83,12 @@ public class SessionStateLookingBag {
         this.reaminingItems = reaminingItems;
     }
 
-    public SessionContextBag.Geolocation getGeolocation() {
+    public Geolocation getGeolocation() {
         return geolocation;
     }
 
-    public void setGeolocation(SessionContextBag.Geolocation geolocation) {
+    public void setGeolocation(Geolocation geolocation) {
+        this.graffittiWhere = null;
         this.geolocation = geolocation;
     }
 
@@ -95,31 +98,5 @@ public class SessionStateLookingBag {
 
     public void setRadius(Double radius) {
         this.radius = radius;
-    }
-
-    public class Geolocation {
-        private Double latitude;
-        private Double longitude;
-
-        public Geolocation(Double latitude, Double longitude) {
-            this.latitude = latitude;
-            this.longitude = longitude;
-        }
-
-        public Double getLatitude() {
-            return latitude;
-        }
-
-        public void setLatitude(Double latitude) {
-            this.latitude = latitude;
-        }
-
-        public Double getLongitude() {
-            return longitude;
-        }
-
-        public void setLongitude(Double longitude) {
-            this.longitude = longitude;
-        }
     }
 }

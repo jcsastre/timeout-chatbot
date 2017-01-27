@@ -1,4 +1,4 @@
-package com.timeout.chatbot;
+package com.timeout.chatbot.configuration;
 
 import com.timeout.chatbot.redis.PersonRepo;
 import com.timeout.chatbot.redis.PersonRepoImpl;

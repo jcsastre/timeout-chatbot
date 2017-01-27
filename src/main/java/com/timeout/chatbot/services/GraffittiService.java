@@ -6,6 +6,7 @@ import com.timeout.chatbot.graffitti.uri.GraffittiEndpoints;
 import com.timeout.chatbot.graffitti.domain.response.facets.CategoryPrimary;
 import com.timeout.chatbot.graffitti.domain.response.facets.CategorySecondary;
 import com.timeout.chatbot.graffitti.domain.response.facets.FacetGroup;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,21 +14,20 @@ import java.util.List;
 
 @Component
 public class GraffittiService {
-    private final RestTemplate restTemplate;
 
     private final FacetGroup facetGroup;
     private final GraffittiFacetV5Response graffittiFacetV5Response;
 
+    @Autowired
     public GraffittiService(
-        RestTemplate restTemplate
+        RestTemplate restTemplate,
+        GraffittiEndpoints graffittiEndpoints
     ) {
-        this.restTemplate = restTemplate;
-
         facetGroup =
-            this.restTemplate.getForObject(GraffittiEndpoints.FACETS.toString(), FacetGroup.class);
+            restTemplate.getForObject(graffittiEndpoints.getFacetsV5(), FacetGroup.class);
 
         graffittiFacetV5Response =
-            this.restTemplate.getForObject(GraffittiEndpoints.FACETS_V5.toString(), GraffittiFacetV5Response.class);
+            restTemplate.getForObject(graffittiEndpoints.getFacetsV5(), GraffittiFacetV5Response.class);
     }
 
     public List<CategoryPrimary> getPrimaryCategories() {

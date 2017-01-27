@@ -67,6 +67,10 @@ public class PayloadHandler {
                 intentService.handleSeemore(session);
                 break;
 
+            case set_geolocation:
+                blockService.sendGeolocationAskBlock(session.getUser().getMessengerId());
+                break;
+
 //            case utterance:
 //                final String utterance = payload.getString("utterance");
 //                //TODO:
