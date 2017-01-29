@@ -71,6 +71,10 @@ public class PayloadHandler {
                 blockService.sendGeolocationAskBlock(session.getUser().getMessengerId());
                 break;
 
+            case set_graffitti_category:
+                //TODO
+                break;
+
             case venues_more_info:
                 blockService.sendVenueSummaryBlock(
                     session.getUser().getMessengerId(),
@@ -83,9 +87,7 @@ public class PayloadHandler {
                     session.getUser().getMessengerId(),
                     "Sorry, booking is not implemented yet"
                 );
-                blockService.sendVenuesRemainingBlock(
-
-                );
+                blockService.sendVenuesRemainingBlock(session);
                 break;
 
             case no_see_at_timeout:

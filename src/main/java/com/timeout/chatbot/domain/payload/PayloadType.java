@@ -11,6 +11,8 @@ public enum PayloadType {
 
     see_more,
 
+    set_graffitti_category,
+
 //    utterance,
 
     venues_more_info,

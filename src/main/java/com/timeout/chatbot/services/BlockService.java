@@ -111,20 +111,22 @@ public class BlockService {
     }
 
     public void sendVenuesRemainingBlock(
-        String userMessengerId,
-        Integer remainingItems,
-        Boolean isWhereSet,
-        String itemPluralName,
-        Boolean isCategorySet,
-        String categorySingularName
+        Session session
+//        String userMessengerId,
+//        Integer remainingItems,
+//        Boolean isWhereSet,
+//        String itemPluralName,
+//        Boolean isCategorySet,
+//        String categorySingularName
     ) {
         venuesRemainingBlock.send(
-            userMessengerId,
-            remainingItems,
-            isWhereSet,
-            itemPluralName,
-            isCategorySet,
-            categorySingularName
+            session
+//            userMessengerId,
+//            remainingItems,
+//            isWhereSet,
+//            itemPluralName,
+//            isCategorySet,
+//            categorySingularName
         );
     }
 

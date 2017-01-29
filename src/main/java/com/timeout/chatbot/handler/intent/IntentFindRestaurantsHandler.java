@@ -123,7 +123,7 @@ public class IntentFindRestaurantsHandler {
 
             final String nodeId = nluParameters.get("cuisinesRestaurants").getAsString();
             final GraffittiFacetV5Node graffittiFacetV5Node = graffittiService.getGraffittiFacetV5NodeById(nodeId);
-            bag.setGraffittiWhatCategory(graffittiFacetV5Node);
+            bag.setGraffittiWhatNode(graffittiFacetV5Node);
         }
 
         handleOtherThanBooking(session);
@@ -141,7 +141,7 @@ public class IntentFindRestaurantsHandler {
         bag.setWhat(What.RESTAURANT);
 
         UrlBuilder urlBuilder = urlBuilderBase(
-            bag.getGraffittiWhatCategory(),
+            bag.getGraffittiWhatNode(),
             bag.getGraffittiPageNumber()
         );
 
@@ -227,12 +227,13 @@ public class IntentFindRestaurantsHandler {
             );
 
             blockService.sendVenuesRemainingBlock(
-                session.getUser().getMessengerId(),
-                bag.getReaminingItems(),
-                bag.getGraffittiWhere() != null,
-                "Restaurants",
-                bag.getGraffittiWhatCategory() != null,
-                "Cuisine"
+                session
+//                session.getUser().getMessengerId(),
+//                bag.getReaminingItems(),
+//                bag.getGraffittiWhere() != null,
+//                "Restaurants",
+//                bag.getGraffittiWhatNode() != null,
+//                "Cuisine"
             );
         } else {
             messengerSendClientWrapper.sendTextMessage(

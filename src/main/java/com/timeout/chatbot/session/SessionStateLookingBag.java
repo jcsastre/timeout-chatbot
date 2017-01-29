@@ -9,7 +9,8 @@ import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
 public class SessionStateLookingBag {
 
     private What what;
-    private GraffittiFacetV5Node graffittiWhatCategory;
+    private GraffittiFacetV5Node graffittiCategory;
+    private GraffittiFacetV5Node graffittiWhatNode;
 
     private String graffittiWhen;
     private GraffittiFacetV4FacetChild graffittiWhere;
@@ -35,12 +36,12 @@ public class SessionStateLookingBag {
         this.what = what;
     }
 
-    public GraffittiFacetV5Node getGraffittiWhatCategory() {
-        return graffittiWhatCategory;
+    public GraffittiFacetV5Node getGraffittiWhatNode() {
+        return graffittiWhatNode;
     }
 
-    public void setGraffittiWhatCategory(GraffittiFacetV5Node graffittiWhatCategory) {
-        this.graffittiWhatCategory = graffittiWhatCategory;
+    public void setGraffittiWhatNode(GraffittiFacetV5Node graffittiWhatNode) {
+        this.graffittiWhatNode = graffittiWhatNode;
     }
 
     public String getGraffittiWhen() {

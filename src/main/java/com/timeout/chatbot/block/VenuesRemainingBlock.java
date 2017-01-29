@@ -1,9 +1,11 @@
 package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.QuickReply;
+import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.session.Session;
+import com.timeout.chatbot.session.SessionStateLookingBag;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -30,31 +32,40 @@ public class VenuesRemainingBlock {
 //        Boolean isCategorySet,
 //        String categorySingularName
     ) {
+        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+
+        String itemPluralName = "Restaurants";
+        if (bag.getWhat() == What.BAR) {
+            itemPluralName = "Bars & Pubs";
+        }
+
         messengerSendClientWrapper.sendTextMessage(
-            userMessengerId,
+            session.getUser().getMessengerId(),
             String.format(
                 "There are %s %s remaining",
-                remainingItems, itemPluralName
+                bag.getReaminingItems(), itemPluralName
             ),
             buildQuickReplies(
-                remainingItems,
-                isWhereSet,
-                isCategorySet,
-                categorySingularName
+                bag
+//                bag.getReaminingItems(),
+//                isWhereSet,
+//                isCategorySet,
+//                categorySingularName
             )
         );
     }
 
     private List<QuickReply> buildQuickReplies(
-        Integer remainingItems,
-        Boolean isWhereSet,
-        Boolean isCategorySet,
-        String categorySingularName
+        SessionStateLookingBag bag
+//        Integer remainingItems,
+//        Boolean isWhereSet,
+//        Boolean isCategorySet,
+//        String categorySingularName
     ) {
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
-        if (remainingItems > 0) {
+        if (bag.getReaminingItems() > 0) {
             listBuilder.addTextQuickReply(
                 "See more",
                 new JSONObject()
@@ -66,16 +77,21 @@ public class VenuesRemainingBlock {
         listBuilder.addLocationQuickReply().toList();
 
         listBuilder.addTextQuickReply(
-            isWhereSet ? "Change neighbourhood" : "Set neighbourhood",
+            bag.getGraffittiWhere() != null ? "Change neighborhood" : "Set neighborhood",
             new JSONObject()
                 .put("type", PayloadType.set_geolocation)
                 .toString()
         ).toList();
 
+        String categorySingularName = "Cuisine";
+        if (bag.getWhat() == What.BAR) {
+            categorySingularName = "Style";
+        }
+
         listBuilder.addTextQuickReply(
-            isCategorySet ? "Change " + categorySingularName : "Set " + categorySingularName,
+            bag.getGraffittiWhatNode() != null ? "Change " + categorySingularName : "Set " + categorySingularName,
             new JSONObject()
-                .put("type", PayloadType.set_geolocation)
+                .put("type", PayloadType.set_graffitti_category)
                 .toString()
         ).toList();
 

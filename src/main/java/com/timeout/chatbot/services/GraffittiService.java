@@ -94,6 +94,32 @@ public class GraffittiService {
         return null;
     }
 
+    public GraffittiFacetV5Node getGraffittiFacetV5NodeByIdByName(String name) {
+        for (GraffittiFacetV5Node parentNode : graffittiFacetV5Response.getBody().getFacets().getWhat().getChildren()) {
+            for (GraffittiFacetV5Node childNode : parentNode.getChildren()) {
+                if (childNode.getName().equalsIgnoreCase(name)) {
+                    return childNode;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public List<GraffittiFacetV5Node> getWhatSubcategories(
+        GraffittiFacetV5Node parentWhat
+    ) {
+        List<GraffittiFacetV5Node> subcategories = new ArrayList<>();
+
+        if (parentWhat.getChildren() != null) {
+            for (GraffittiFacetV5Node subcategory : parentWhat.getChildren()) {
+                subcategories.add(subcategory);
+            }
+        }
+
+        return subcategories;
+    }
+
     public List<GraffittiFacetV4FacetChild> getWhereItems() {
         return whereItems;
     }
