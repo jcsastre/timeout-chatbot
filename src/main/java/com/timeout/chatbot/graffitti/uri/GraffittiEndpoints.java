@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GraffittiEndpoints {
 
+    private String facetsV4;
     private String facetsV5;
     private String venues;
 
@@ -14,6 +15,12 @@ public class GraffittiEndpoints {
     public GraffittiEndpoints(
         TimeoutConfiguration timeoutConfiguration
     ) {
+        facetsV4 =
+            "http://graffiti.timeout.com/v1/sites/" +
+                timeoutConfiguration.getSite() +
+                "/facet-groups/browsing-v4?" +
+                "locale=" + timeoutConfiguration.getLocale();
+
         facetsV5 =
             "http://graffiti.timeout.com/v1/sites/" +
             timeoutConfiguration.getSite() +
@@ -28,6 +35,10 @@ public class GraffittiEndpoints {
 
     public String getFacetsV5() {
         return facetsV5;
+    }
+
+    public String getFacetsV4() {
+        return facetsV4;
     }
 
     public String getVenues() {

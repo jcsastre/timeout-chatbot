@@ -2,10 +2,13 @@ package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
+import com.timeout.chatbot.configuration.TimeoutConfiguration;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
+import com.timeout.chatbot.graffitti.response.categorisation.GraffittiCategorisation;
+import com.timeout.chatbot.graffitti.response.categorisation.GraffittiCategorisationSecondary;
+import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
+import com.timeout.chatbot.session.Session;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -16,12 +19,15 @@ import java.util.List;
 @Component
 public class VenuesPageBlock {
     private final MessengerSendClientWrapper messengerSendClientWrapper;
+    private final TimeoutConfiguration timeoutConfiguration;
 
     @Autowired
     public VenuesPageBlock(
-        MessengerSendClientWrapper messengerSendClientWrapper
+        MessengerSendClientWrapper messengerSendClientWrapper,
+        TimeoutConfiguration timeoutConfiguration
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
+        this.timeoutConfiguration = timeoutConfiguration;
     }
 
     public void send(
@@ -76,30 +82,44 @@ public class VenuesPageBlock {
                 elementBuilder.imageUrl("https://s3-eu-west-1.amazonaws.com/maps.timeout.com/cache/thumb_144_100/default/default.jpg");
             }
 
-            elementBuilder.subtitle(buildVenuePageItemSubtitle(pageItem));
+            String subtitle = buildVenuePageItemSubtitle(pageItem);
+            if (!subtitle.isEmpty()) {
+                elementBuilder.subtitle(subtitle);
+            }
 
-            elementBuilder.buttons(
-                Button.newListBuilder()
-                    .addPostbackButton(
-                        "More info",
-                        new JSONObject()
-                            .put("type", PayloadType.venues_get_a_summary)
-                            .put("venue_id", pageItem.getId())
-                            .toString()
-                    ).toList()
-                    .addCallButton(
-                        "Call",
-                        "+34678750727"
-                    ).toList()
-                    .addPostbackButton(
-                        "Book",
-                        new JSONObject()
-                            .put("type", PayloadType.venues_book)
-                            .put("restaurant_id", pageItem.getId())
-                            .toString()
-                    ).toList()
-                    .build()
-            ).toList().done();
+            final Button.ListBuilder buttonsBuilder = Button.newListBuilder();
+
+//            buttonsBuilder.addPostbackButton(
+//                "Get a summary",
+//                new JSONObject()
+//                    .put("type", PayloadType.venues_more_info)
+//                    .put("venue_id", pageItem.getId())
+//                    .toString()
+//            ).toList();
+
+            final String phone = pageItem.getPhone();
+            if (phone != null) {
+                final String curatedPhone = "+34" + phone.replaceAll(" ","");
+                buttonsBuilder.addCallButton(
+                    "Call (" + curatedPhone +")",
+                    curatedPhone
+                ).toList();
+            }
+
+            buttonsBuilder.addPostbackButton(
+                "Book",
+                new JSONObject()
+                    .put("type", PayloadType.venues_book)
+                    .put("restaurant_id", pageItem.getId())
+                    .toString()
+            ).toList();
+
+            buttonsBuilder.addUrlButton(
+                "See at Timeout",
+                pageItem.getToWebsite()
+            ).toList();
+
+            elementBuilder.buttons(buttonsBuilder.build()).toList().done();
         }
 
         final GenericTemplate genericTemplate = genericTemplateBuilder.build();
@@ -124,7 +144,7 @@ public class VenuesPageBlock {
 //                    .addPostbackButton(
 //                        "More info",
 //                        new JSONObject()
-//                            .put("type", PayloadType.venues_get_a_summary)
+//                            .put("type", PayloadType.venues_more_info)
 //                            .put("venue_id", pageItem.getId())
 //                            .toString()
 //                    ).toList()
@@ -191,7 +211,18 @@ public class VenuesPageBlock {
     private String buildVenuePageItemSubtitle(PageItem pageItem) {
         StringBuilder sb = new StringBuilder();
 
-        sb.append(pageItem.getGraffittiCategorisation().buildName());
+        final GraffittiCategorisation categorisation = pageItem.getGraffittiCategorisation();
+        if (categorisation != null) {
+            final GraffittiCategorisationSecondary categorisationSecondary =
+                categorisation.getGraffittiCategorisationSecondary();
+            if (categorisationSecondary != null) {
+                sb.append("\ud83c\udf74");
+                sb.append(" ");
+                sb.append(categorisationSecondary.getName());
+            }
+        }
+
+//        sb.append(pageItem.getGraffittiCategorisation().buildName());
 
         if (pageItem.getDistance() != null) {
             sb.append(" ");

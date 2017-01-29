@@ -1,7 +1,7 @@
 package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.QuickReply;
-import com.timeout.chatbot.graffitti.domain.response.facets.CategoryPrimary;
+import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.GraffittiService;
 import org.json.JSONObject;
@@ -31,7 +31,7 @@ public class DiscoverBlock {
 
         messengerSendClientWrapper.sendTextMessage(
             userId,
-            "What you want to discover?",
+            "GraffittiFacetV4Where you want to discover?",
             buildQuickReplies()
         );
     }
@@ -40,7 +40,7 @@ public class DiscoverBlock {
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
-        for (CategoryPrimary primaryCategoryPrimary : graffittiService.getPrimaryCategories()) {
+        for (GraffittiFacetV5Node primaryCategoryPrimary : graffittiService.getPrimaryCategories()) {
             listBuilder.addTextQuickReply(
                 primaryCategoryPrimary.getName(),
                 new JSONObject()

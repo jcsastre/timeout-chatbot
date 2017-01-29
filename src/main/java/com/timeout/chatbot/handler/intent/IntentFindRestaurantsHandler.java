@@ -4,8 +4,9 @@ import com.google.gson.JsonElement;
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
-import com.timeout.chatbot.graffitti.domain.response.facets.v5.GraffittiFacetV5Node;
-import com.timeout.chatbot.graffitti.domain.response.search.page.SearchResponse;
+import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetChild;
+import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
+import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
 import com.timeout.chatbot.graffitti.uri.GraffittiQueryParameterType;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
@@ -90,7 +91,7 @@ public class IntentFindRestaurantsHandler {
         }
     }
 
-    public void handleOtherThanBooking(
+    private void handleOtherThanBooking(
         Session session,
         HashMap<String, JsonElement> nluParameters
     ) {
@@ -110,24 +111,25 @@ public class IntentFindRestaurantsHandler {
                     return;
                 }
             } else {
-                bag.setGraffittiWhere(where);
+                //TODO: map text to valid where
+                //bag.setGraffittiWhere(where);
             }
         }
 
         if (
-            nluParameters.containsKey("whatRestaurantsUkLondon")
+            nluParameters.containsKey("cuisinesRestaurants")
         ) {
             final SessionStateLookingBag bag = session.getSessionStateLookingBag();
 
-            final String whatId = nluParameters.get("whatRestaurantsUkLondon").getAsString();
-            final GraffittiFacetV5Node graffittiFacetV5Node = graffittiService.getGraffittiFacetV5NodeById(whatId);
-            bag.setGraffittiFacetV5WhatV5Node(graffittiFacetV5Node);
+            final String nodeId = nluParameters.get("cuisinesRestaurants").getAsString();
+            final GraffittiFacetV5Node graffittiFacetV5Node = graffittiService.getGraffittiFacetV5NodeById(nodeId);
+            bag.setGraffittiWhatCategory(graffittiFacetV5Node);
         }
 
         handleOtherThanBooking(session);
     }
 
-    public void handleBooking() {
+    private void handleBooking() {
         //TODO: handleBooking
     }
 
@@ -139,9 +141,11 @@ public class IntentFindRestaurantsHandler {
         bag.setWhat(What.RESTAURANT);
 
         UrlBuilder urlBuilder = urlBuilderBase(
-            bag.getGraffittiFacetV5WhatV5Node(),
+            bag.getGraffittiWhatCategory(),
             bag.getGraffittiPageNumber()
         );
+
+        String msg = "Looking for Restaurants";
 
         final Geolocation geolocation = bag.getGeolocation();
         if (geolocation != null) {
@@ -163,25 +167,36 @@ public class IntentFindRestaurantsHandler {
                         GraffittiQueryParameterType.SORT.getValue(),
                         "distance"
                     );
-        } else {
-            final String where = bag.getGraffittiWhere();
 
-            urlBuilder =
-                urlBuilder
-                    .addParameter(
-                        GraffittiQueryParameterType.WHERE.getValue(),
-                        where
-                    );
+            msg = "Looking for Restaurants around the location you specified";
+        } else {
+            final GraffittiFacetV4FacetChild where = bag.getGraffittiWhere();
+
+            if (where != null) {
+                urlBuilder =
+                    urlBuilder
+                        .addParameter(
+                            GraffittiQueryParameterType.WHERE.getValue(),
+                            where.getId()
+                        );
+
+                msg = "Looking for Restaurants around the location you specified";
+            }
         }
+
+        messengerSendClientWrapper.sendTextMessage(
+            session.getUser().getMessengerId(),
+            msg
+        );
 
         System.out.println(urlBuilder.toUrl().toString());
 
 //        ///
 //        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
-//        final What what = bag.getWhat();
+//        final GraffittiFacetV4Where what = bag.getWhat();
 //
-//        if (what != What.RESTAURANT) {
-//            bag.setWhat(What.RESTAURANT);
+//        if (what != GraffittiFacetV4Where.RESTAURANT) {
+//            bag.setWhat(GraffittiFacetV4Where.RESTAURANT);
 //            bag.setGraffittiPageNumber(1);
 //        } else {
 //            Integer pageNumber = bag.getGraffittiPageNumber();
@@ -214,8 +229,10 @@ public class IntentFindRestaurantsHandler {
             blockService.sendVenuesRemainingBlock(
                 session.getUser().getMessengerId(),
                 bag.getReaminingItems(),
-                bag.getGeolocation() != null,
-                "Restaurants"
+                bag.getGraffittiWhere() != null,
+                "Restaurants",
+                bag.getGraffittiWhatCategory() != null,
+                "Cuisine"
             );
         } else {
             messengerSendClientWrapper.sendTextMessage(

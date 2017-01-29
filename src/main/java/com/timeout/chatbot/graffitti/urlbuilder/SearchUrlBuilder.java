@@ -36,7 +36,8 @@ public class SearchUrlBuilder {
                 .addParameter(GraffittiQueryParameterType.WHAT.getValue(), what)
                 .addParameter(GraffittiQueryParameterType.TYPE.getValue(), type)
                 .addParameter(GraffittiQueryParameterType.PAGE_SIZE.getValue(), PAGE_SIZE)
-                .addParameter(GraffittiQueryParameterType.PAGE_NUMBER.getValue(), pageNumber.toString());
+                .addParameter(GraffittiQueryParameterType.PAGE_NUMBER.getValue(), pageNumber.toString())
+                .addParameter(GraffittiQueryParameterType.VIEW.getValue(), "complete");
     }
 
 //    public UrlBuilder buildWithGeolocation(

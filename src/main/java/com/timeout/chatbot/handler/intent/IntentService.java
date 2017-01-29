@@ -60,6 +60,12 @@ public class IntentService {
         findRestaurantsHandler.handle(session, nluParameters);
     }
 
+    public void handleFindRestaurants(
+        Session session
+    ) {
+        findRestaurantsHandler.handle(session);
+    }
+
     public void  handleSeemore(
         Session session
     ) {

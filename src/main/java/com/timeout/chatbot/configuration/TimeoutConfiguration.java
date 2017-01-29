@@ -9,6 +9,7 @@ public class TimeoutConfiguration {
 
     private String site;
     private String locale;
+    private String cityName;
 
     public String getSite() {
         return site;
@@ -24,5 +25,13 @@ public class TimeoutConfiguration {
 
     public void setLocale(String locale) {
         this.locale = locale;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
     }
 }

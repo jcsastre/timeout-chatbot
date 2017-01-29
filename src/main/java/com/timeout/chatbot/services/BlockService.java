@@ -6,7 +6,7 @@ import com.timeout.chatbot.block.SuggestionsBlock;
 import com.timeout.chatbot.block.WelcomeBackBlock;
 import com.timeout.chatbot.block.WelcomeFirstTimeBlock;
 import com.timeout.chatbot.domain.user.User;
-import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
+import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -113,14 +113,18 @@ public class BlockService {
     public void sendVenuesRemainingBlock(
         String userMessengerId,
         Integer remainingItems,
-        Boolean isGeolocationSet,
-        String itemPluralName
+        Boolean isWhereSet,
+        String itemPluralName,
+        Boolean isCategorySet,
+        String categorySingularName
     ) {
         venuesRemainingBlock.send(
             userMessengerId,
             remainingItems,
-            isGeolocationSet,
-            itemPluralName
+            isWhereSet,
+            itemPluralName,
+            isCategorySet,
+            categorySingularName
         );
     }
 

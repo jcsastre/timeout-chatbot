@@ -71,6 +71,31 @@ public class PayloadHandler {
                 blockService.sendGeolocationAskBlock(session.getUser().getMessengerId());
                 break;
 
+            case venues_more_info:
+                blockService.sendVenueSummaryBlock(
+                    session.getUser().getMessengerId(),
+                    payload.getString("venue_id")
+                );
+                break;
+
+            case venues_book:
+                messengerSendClientWrapper.sendTextMessage(
+                    session.getUser().getMessengerId(),
+                    "Sorry, booking is not implemented yet"
+                );
+                blockService.sendVenuesRemainingBlock(
+
+                );
+                break;
+
+            case no_see_at_timeout:
+                messengerSendClientWrapper.sendTextMessage(
+                    session.getUser().getMessengerId(),
+                    "Ok, back to the list of restaurants"
+                );
+                intentService.handleFindRestaurants(session);
+                break;
+
 //            case utterance:
 //                final String utterance = payload.getString("utterance");
 //                //TODO:

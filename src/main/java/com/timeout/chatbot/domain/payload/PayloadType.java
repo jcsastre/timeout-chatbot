@@ -13,7 +13,7 @@ public enum PayloadType {
 
 //    utterance,
 
-    venues_get_a_summary,
+    venues_more_info,
     venues_book,
     venues_see_more,
     venues_set_secondary_category,
@@ -24,7 +24,7 @@ public enum PayloadType {
     bar_book,
     films_more_info,
     films_find_cinemas,
-    no_fullinfo,
+    no_see_at_timeout,
     booking_people_count,
     booking_date,
     booking_time,

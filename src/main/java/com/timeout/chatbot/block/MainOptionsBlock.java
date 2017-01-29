@@ -2,7 +2,7 @@ package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.domain.user.User;
-import com.timeout.chatbot.graffitti.domain.response.facets.CategoryPrimary;
+import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.GraffittiService;
 import org.json.JSONObject;
@@ -28,7 +28,7 @@ public class MainOptionsBlock {
     public void send(
         User user
     ) {
-        String msg = "What are you looking for?";
+        String msg = "GraffittiFacetV4Where are you looking for?";
 
         messengerSendClientWrapper.sendTextMessage(
             user.getMessengerId(),
@@ -41,7 +41,7 @@ public class MainOptionsBlock {
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
-        for (CategoryPrimary primaryCategoryPrimary : graffittiService.getPrimaryCategories()) {
+        for (GraffittiFacetV5Node primaryCategoryPrimary : graffittiService.getPrimaryCategories()) {
             listBuilder.addTextQuickReply(
                 primaryCategoryPrimary.getName(),
                 new JSONObject()

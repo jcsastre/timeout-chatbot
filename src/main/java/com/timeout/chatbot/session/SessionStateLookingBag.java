@@ -3,15 +3,16 @@ package com.timeout.chatbot.session;
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
-import com.timeout.chatbot.graffitti.domain.response.facets.v5.GraffittiFacetV5Node;
+import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetChild;
+import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
 
 public class SessionStateLookingBag {
 
     private What what;
-    private GraffittiFacetV5Node graffittiFacetV5WhatV5Node;
+    private GraffittiFacetV5Node graffittiWhatCategory;
 
     private String graffittiWhen;
-    private String graffittiWhere;
+    private GraffittiFacetV4FacetChild graffittiWhere;
     private GraffittiType graffittiType;
     private Integer graffittiPageNumber;
     private Integer reaminingItems;
@@ -34,12 +35,12 @@ public class SessionStateLookingBag {
         this.what = what;
     }
 
-    public GraffittiFacetV5Node getGraffittiFacetV5WhatV5Node() {
-        return graffittiFacetV5WhatV5Node;
+    public GraffittiFacetV5Node getGraffittiWhatCategory() {
+        return graffittiWhatCategory;
     }
 
-    public void setGraffittiFacetV5WhatV5Node(GraffittiFacetV5Node graffittiFacetV5WhatV5Node) {
-        this.graffittiFacetV5WhatV5Node = graffittiFacetV5WhatV5Node;
+    public void setGraffittiWhatCategory(GraffittiFacetV5Node graffittiWhatCategory) {
+        this.graffittiWhatCategory = graffittiWhatCategory;
     }
 
     public String getGraffittiWhen() {
@@ -50,11 +51,11 @@ public class SessionStateLookingBag {
         this.graffittiWhen = graffittiWhen;
     }
 
-    public String getGraffittiWhere() {
+    public GraffittiFacetV4FacetChild getGraffittiWhere() {
         return graffittiWhere;
     }
 
-    public void setGraffittiWhere(String graffittiWhere) {
+    public void setGraffittiWhere(GraffittiFacetV4FacetChild graffittiWhere) {
         this.geolocation = null;
         this.graffittiWhere = graffittiWhere;
     }
@@ -88,6 +89,7 @@ public class SessionStateLookingBag {
     }
 
     public void setGeolocation(Geolocation geolocation) {
+        this.graffittiPageNumber = 1;
         this.graffittiWhere = null;
         this.geolocation = geolocation;
     }

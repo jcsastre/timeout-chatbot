@@ -3,6 +3,7 @@ package com.timeout.chatbot.block;
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
+import com.timeout.chatbot.session.Session;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,10 +22,13 @@ public class VenuesRemainingBlock {
     }
 
     public void send(
-        String userMessengerId,
-        Integer remainingItems,
-        Boolean isGeolocationSet,
-        String itemPluralName
+        Session session
+//        String userMessengerId,
+//        Integer remainingItems,
+//        Boolean isWhereSet,
+//        String itemPluralName,
+//        Boolean isCategorySet,
+//        String categorySingularName
     ) {
         messengerSendClientWrapper.sendTextMessage(
             userMessengerId,
@@ -34,14 +38,18 @@ public class VenuesRemainingBlock {
             ),
             buildQuickReplies(
                 remainingItems,
-                isGeolocationSet
+                isWhereSet,
+                isCategorySet,
+                categorySingularName
             )
         );
     }
 
     private List<QuickReply> buildQuickReplies(
         Integer remainingItems,
-        Boolean isGeolocationSet
+        Boolean isWhereSet,
+        Boolean isCategorySet,
+        String categorySingularName
     ) {
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
@@ -55,8 +63,17 @@ public class VenuesRemainingBlock {
             ).toList();
         }
 
+        listBuilder.addLocationQuickReply().toList();
+
         listBuilder.addTextQuickReply(
-            isGeolocationSet ? "Change location" : "Set location",
+            isWhereSet ? "Change neighbourhood" : "Set neighbourhood",
+            new JSONObject()
+                .put("type", PayloadType.set_geolocation)
+                .toString()
+        ).toList();
+
+        listBuilder.addTextQuickReply(
+            isCategorySet ? "Change " + categorySingularName : "Set " + categorySingularName,
             new JSONObject()
                 .put("type", PayloadType.set_geolocation)
                 .toString()

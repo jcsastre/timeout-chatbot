@@ -11,7 +11,8 @@ public enum GraffittiQueryParameterType {
     LATITUDE("latitude"),
     LONGITUDE("longitude"),
     RADIUS("radius"),
-    SORT("sort");
+    SORT("sort"),
+    VIEW("view");
 
     private final String value;
     GraffittiQueryParameterType(String value) {

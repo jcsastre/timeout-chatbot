@@ -9,6 +9,7 @@ import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.ButtonTemplate;
 import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
+import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetChild;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.ApiAiService;
 import org.json.JSONObject;
@@ -20,7 +21,7 @@ public class SessionContextLooking extends SessionContext {
 
     private final String graffittiWhat;
     private final String graffittiWhen;
-    private final String graffittiWhere;
+    private final GraffittiFacetV4FacetChild graffittiWhere;
     private final GraffittiType graffittiType;
     private final Integer graffittiPage;
 
@@ -168,7 +169,7 @@ public class SessionContextLooking extends SessionContext {
 //                    final String utterance = payloadAsJson.getString("utterance");
 //                    applyUtterance(utterance);
 //                    break;
-//                case venues_get_a_summary:
+//                case venues_more_info:
 //                    blockService.sendVenueSummaryBlock(
 //                        user.getMessengerId(),
 //                        payloadAsJson.getString("venue_id")
@@ -196,7 +197,7 @@ public class SessionContextLooking extends SessionContext {
 //                    sendTextMessage("Sorry, 'Find Cinemas' is not yet implemented.");
 //                    //TODO: films_find_cinemas
 //                    break;
-//                case no_fullinfo:
+//                case no_see_at_timeout:
 //                    if (
 //                        sessionContext == SessionContext.EXPLORING_BARS ||
 //                            sessionContext == SessionContext.EXPLORING_RESTAURANTS

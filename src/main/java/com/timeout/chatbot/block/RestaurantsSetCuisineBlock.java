@@ -24,7 +24,7 @@ public class RestaurantsSetCuisineBlock {
         String recipientId
     ) {
         String msg =
-            "What kind of cuisine are you looking for? \uD83D\uDE0B";
+            "GraffittiFacetV4Where kind of cuisine are you looking for? \uD83D\uDE0B";
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
