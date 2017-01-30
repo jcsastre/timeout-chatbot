@@ -4,7 +4,7 @@ import com.google.gson.JsonElement;
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
-import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetChild;
+import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
 import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
 import com.timeout.chatbot.graffitti.uri.GraffittiQueryParameterType;
@@ -170,7 +170,7 @@ public class IntentFindRestaurantsHandler {
 
             msg = "Looking for Restaurants around the location you specified";
         } else {
-            final GraffittiFacetV4FacetChild where = bag.getGraffittiWhere();
+            final GraffittiFacetV4FacetNode where = bag.getGraffittiWhere();
 
             if (where != null) {
                 urlBuilder =

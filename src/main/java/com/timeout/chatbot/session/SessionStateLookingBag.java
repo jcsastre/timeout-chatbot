@@ -3,7 +3,7 @@ package com.timeout.chatbot.session;
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
-import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetChild;
+import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
 
 public class SessionStateLookingBag {
@@ -13,7 +13,7 @@ public class SessionStateLookingBag {
     private GraffittiFacetV5Node graffittiWhatNode;
 
     private String graffittiWhen;
-    private GraffittiFacetV4FacetChild graffittiWhere;
+    private GraffittiFacetV4FacetNode graffittiWhere;
     private GraffittiType graffittiType;
     private Integer graffittiPageNumber;
     private Integer reaminingItems;
@@ -52,11 +52,11 @@ public class SessionStateLookingBag {
         this.graffittiWhen = graffittiWhen;
     }
 
-    public GraffittiFacetV4FacetChild getGraffittiWhere() {
+    public GraffittiFacetV4FacetNode getGraffittiWhere() {
         return graffittiWhere;
     }
 
-    public void setGraffittiWhere(GraffittiFacetV4FacetChild graffittiWhere) {
+    public void setGraffittiWhere(GraffittiFacetV4FacetNode graffittiWhere) {
         this.geolocation = null;
         this.graffittiWhere = graffittiWhere;
     }

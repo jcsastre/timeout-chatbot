@@ -89,7 +89,8 @@ public class VenuesRemainingBlock {
         }
 
         listBuilder.addTextQuickReply(
-            bag.getGraffittiWhatNode() != null ? "Change " + categorySingularName : "Set " + categorySingularName,
+            bag.getGraffittiWhatNode().getChildren() != null ?
+                "Change " + categorySingularName : "Set " + categorySingularName,
             new JSONObject()
                 .put("type", PayloadType.set_graffitti_category)
                 .toString()

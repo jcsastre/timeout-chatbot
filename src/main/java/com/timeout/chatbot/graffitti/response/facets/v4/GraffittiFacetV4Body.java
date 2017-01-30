@@ -7,13 +7,13 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GraffittiFacetV4Body {
 
-    private List<GraffittiFacetV4Facet> facets;
+    private List<GraffittiFacetV4FacetNode> facets;
 
-    public List<GraffittiFacetV4Facet> getFacets() {
+    public List<GraffittiFacetV4FacetNode> getFacets() {
         return facets;
     }
 
-    public void setFacets(List<GraffittiFacetV4Facet> facets) {
+    public void setFacets(List<GraffittiFacetV4FacetNode> facets) {
         this.facets = facets;
     }
 }
