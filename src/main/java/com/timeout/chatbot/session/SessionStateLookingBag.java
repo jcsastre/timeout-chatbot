@@ -4,29 +4,24 @@ import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
-import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
 
 public class SessionStateLookingBag {
 
+    private GraffittiType graffittiType;
+
+//    private Category category;
+//    private Subcategory subcategory;
     private What what;
-    private GraffittiFacetV5Node graffittiCategory;
-    private GraffittiFacetV5Node graffittiWhatNode;
+    private GraffittiFacetV4FacetNode graffittiWhatCategoryNode;
 
     private String graffittiWhen;
+
     private GraffittiFacetV4FacetNode graffittiWhere;
-    private GraffittiType graffittiType;
+
     private Integer graffittiPageNumber;
     private Integer reaminingItems;
     private Geolocation geolocation;
     private Double radius = 0.5D;
-
-    public SessionStateLookingBag() {
-        this.what = null;
-        this.graffittiWhen = null;
-        this.graffittiWhere = null;
-        this.graffittiType = null;
-        this.graffittiPageNumber = null;
-    }
 
     public What getWhat() {
         return what;
@@ -36,12 +31,12 @@ public class SessionStateLookingBag {
         this.what = what;
     }
 
-    public GraffittiFacetV5Node getGraffittiWhatNode() {
-        return graffittiWhatNode;
+    public GraffittiFacetV4FacetNode getGraffittiWhatCategoryNode() {
+        return graffittiWhatCategoryNode;
     }
 
-    public void setGraffittiWhatNode(GraffittiFacetV5Node graffittiWhatNode) {
-        this.graffittiWhatNode = graffittiWhatNode;
+    public void setGraffittiWhatCategoryNode(GraffittiFacetV4FacetNode graffittiWhatCategoryNode) {
+        this.graffittiWhatCategoryNode = graffittiWhatCategoryNode;
     }
 
     public String getGraffittiWhen() {
@@ -102,4 +97,20 @@ public class SessionStateLookingBag {
     public void setRadius(Double radius) {
         this.radius = radius;
     }
+
+//    public Category getCategory() {
+//        return category;
+//    }
+//
+//    public void setCategory(Category category) {
+//        this.category = category;
+//    }
+//
+//    public Subcategory getSubcategory() {
+//        return subcategory;
+//    }
+//
+//    public void setSubcategory(Subcategory subcategory) {
+//        this.subcategory = subcategory;
+//    }
 }

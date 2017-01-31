@@ -2,6 +2,7 @@ package com.timeout.chatbot.handler.messenger;
 
 import com.github.messenger4j.receive.events.QuickReplyMessageEvent;
 import com.github.messenger4j.receive.handlers.QuickReplyMessageEventHandler;
+import com.timeout.chatbot.block.ErrorBlock;
 import com.timeout.chatbot.domain.page.PageUid;
 import com.timeout.chatbot.handler.payload.PayloadHandler;
 import com.timeout.chatbot.session.Session;
@@ -14,14 +15,17 @@ public class QuickReplyMessageEventHandlerImpl implements QuickReplyMessageEvent
 
     private final SessionPool sessionPool;
     private final PayloadHandler payloadHandler;
+    private final ErrorBlock errorBlock;
 
     @Autowired
     public QuickReplyMessageEventHandlerImpl(
         SessionPool sessionPool,
-        PayloadHandler payloadHandler
+        PayloadHandler payloadHandler,
+        ErrorBlock errorBlock
     ) {
         this.sessionPool = sessionPool;
         this.payloadHandler = payloadHandler;
+        this.errorBlock = errorBlock;
     }
 
     @Override
@@ -34,6 +38,11 @@ public class QuickReplyMessageEventHandlerImpl implements QuickReplyMessageEvent
             event.getSender().getId()
         );
 
-        payloadHandler.handle(payload, session);
+        try {
+            payloadHandler.handle(payload, session);
+        } catch (Exception e) {
+            e.printStackTrace();
+            errorBlock.send(session.getUser());
+        }
     }
 }

@@ -5,7 +5,6 @@ import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
-import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
 import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
 import com.timeout.chatbot.graffitti.uri.GraffittiQueryParameterType;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
@@ -116,15 +115,15 @@ public class IntentFindRestaurantsHandler {
             }
         }
 
-        if (
-            nluParameters.containsKey("cuisinesRestaurants")
-        ) {
-            final SessionStateLookingBag bag = session.getSessionStateLookingBag();
-
-            final String nodeId = nluParameters.get("cuisinesRestaurants").getAsString();
-            final GraffittiFacetV5Node graffittiFacetV5Node = graffittiService.getGraffittiFacetV5NodeById(nodeId);
-            bag.setGraffittiWhatNode(graffittiFacetV5Node);
-        }
+//        if (
+//            nluParameters.containsKey("cuisinesRestaurants")
+//        ) {
+//            final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+//
+//            final String nodeId = nluParameters.get("cuisinesRestaurants").getAsString();
+//            final GraffittiFacetV5Node graffittiFacetV5Node = graffittiService.getGraffittiFacetV5NodeById(nodeId);
+//            bag.setGraffittiWhatCategoryNode(graffittiFacetV5Node);
+//        }
 
         handleOtherThanBooking(session);
     }
@@ -138,10 +137,16 @@ public class IntentFindRestaurantsHandler {
     ) {
         final SessionStateLookingBag bag = session.getSessionStateLookingBag();
 
+        bag.setGraffittiType(GraffittiType.VENUE);
         bag.setWhat(What.RESTAURANT);
+        bag.setGraffittiWhatCategoryNode(
+            graffittiService.findWhatCategoryNodeByConceptName(
+                "restaurants (category)"
+            )
+        );
 
         UrlBuilder urlBuilder = urlBuilderBase(
-            bag.getGraffittiWhatNode(),
+            bag.getGraffittiWhatCategoryNode(),
             bag.getGraffittiPageNumber()
         );
 
@@ -232,7 +237,7 @@ public class IntentFindRestaurantsHandler {
 //                bag.getReaminingItems(),
 //                bag.getGraffittiWhere() != null,
 //                "Restaurants",
-//                bag.getGraffittiWhatNode() != null,
+//                bag.getGraffittiWhatCategoryNode() != null,
 //                "Cuisine"
             );
         } else {
@@ -246,10 +251,10 @@ public class IntentFindRestaurantsHandler {
     }
 
     private UrlBuilder urlBuilderBase(
-        GraffittiFacetV5Node graffittiFacetV5Node,
+        GraffittiFacetV4FacetNode graffittiFacetV4Node,
         Integer pageNumber
     ) {
-        if (graffittiFacetV5Node == null) {
+        if (graffittiFacetV4Node == null) {
             return searchUrlBuilder.buildBase(
                 WHAT_RESTAURANTS,
                 GraffittiType.VENUE.getValue(),
@@ -257,7 +262,7 @@ public class IntentFindRestaurantsHandler {
             );
         } else {
             return searchUrlBuilder.buildBase(
-                graffittiFacetV5Node.getId(),
+                graffittiFacetV4Node.getId(),
                 GraffittiType.VENUE.getValue(),
                 pageNumber
             );

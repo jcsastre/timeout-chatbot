@@ -10,7 +10,7 @@ public class Session {
     private final Page page;
     private final User user;
     private SessionState sessionState;
-    private final SessionStateLookingBag sessionStateLookingBag;
+    private SessionStateLookingBag sessionStateLookingBag;
     private long lastAccessTime;
 
     private final MessengerSendClientWrapper messengerSendClientWrapper;
@@ -24,6 +24,10 @@ public class Session {
         this.page = page;
         this.user = user;
 
+        reset();
+    }
+
+    public void reset() {
         this.sessionState = SessionState.UNDEFINED;
         this.sessionStateLookingBag = new SessionStateLookingBag();
     }

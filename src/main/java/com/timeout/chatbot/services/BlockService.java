@@ -24,6 +24,7 @@ public class BlockService {
     private final MainOptionsBlock mainOptionsBlock;
     private final VenuesPageBlock venuesPageBlock;
     private final VenuesRemainingBlock venuesRemainingBlock;
+    private final SubcategoriesQuickrepliesBlock subcategoriesQuickrepliesBlock;
     private final VenueSummaryBlock venueSummaryBlock;
     private final GeolocationAskBlock geolocationAskBlock;
     private final FilmsPageBlock filmsPageBlock;
@@ -38,6 +39,7 @@ public class BlockService {
         MainOptionsBlock mainOptionsBlock,
         VenuesPageBlock venuesPageBlock,
         VenuesRemainingBlock venuesRemainingBlock,
+        SubcategoriesQuickrepliesBlock subcategoriesQuickrepliesBlock,
         VenueSummaryBlock venueSummaryBlock,
         GeolocationAskBlock geolocationAskBlock,
         FilmsPageBlock filmsPageBlock,
@@ -50,6 +52,7 @@ public class BlockService {
         this.mainOptionsBlock = mainOptionsBlock;
         this.venuesPageBlock = venuesPageBlock;
         this.venuesRemainingBlock = venuesRemainingBlock;
+        this.subcategoriesQuickrepliesBlock = subcategoriesQuickrepliesBlock;
         this.venueSummaryBlock = venueSummaryBlock;
         this.geolocationAskBlock = geolocationAskBlock;
         this.filmsPageBlock = filmsPageBlock;
@@ -135,6 +138,13 @@ public class BlockService {
         String restaurantId
     ) {
         venueSummaryBlock.send(userId, restaurantId);
+    }
+
+    public void sendSubcategoriesQuickrepliesBlock(
+        Session session,
+        Integer pageNumber
+    ) throws Exception {
+        subcategoriesQuickrepliesBlock.send(session, pageNumber);
     }
 
     public void sendGeolocationAskBlock(

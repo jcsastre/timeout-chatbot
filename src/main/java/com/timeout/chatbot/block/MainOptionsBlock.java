@@ -41,7 +41,7 @@ public class MainOptionsBlock {
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
-        for (GraffittiFacetV5Node primaryCategoryPrimary : graffittiService.getPrimaryCategories()) {
+        for (GraffittiFacetV5Node primaryCategoryPrimary : graffittiService.getFacetsV5PrimaryCategories()) {
             listBuilder.addTextQuickReply(
                 primaryCategoryPrimary.getName(),
                 new JSONObject()

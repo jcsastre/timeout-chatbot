@@ -31,7 +31,7 @@ public class PayloadHandler {
     public void handle(
         String payloadAsString,
         Session session
-    ) {
+    ) throws Exception {
         final JSONObject payload = new JSONObject(payloadAsString);
         final PayloadType payloadType = PayloadType.valueOf(payload.getString("type"));
 
@@ -59,6 +59,7 @@ public class PayloadHandler {
                 break;
 
             case start_over:
+                session.reset();
                 blockService.sendWelcomeBackBlock(session.getUser());
                 session.setSessionState(SessionState.WELCOMED);
                 break;
@@ -71,7 +72,11 @@ public class PayloadHandler {
                 blockService.sendGeolocationAskBlock(session.getUser().getMessengerId());
                 break;
 
-            case set_graffitti_category:
+            case show_subcategories:
+                blockService.sendSubcategoriesQuickrepliesBlock(session, 1);
+                break;
+
+            case set_subcategory:
                 //TODO
                 break;
 

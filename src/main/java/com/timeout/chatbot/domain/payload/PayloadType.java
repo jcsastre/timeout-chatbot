@@ -11,7 +11,9 @@ public enum PayloadType {
 
     see_more,
 
-    set_graffitti_category,
+    cancel,
+    show_subcategories,
+    set_subcategory,
 
 //    utterance,
 
