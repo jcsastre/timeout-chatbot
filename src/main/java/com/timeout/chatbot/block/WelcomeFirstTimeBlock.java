@@ -45,10 +45,10 @@ public class WelcomeFirstTimeBlock {
             "I'm Brian, I work as chatbot for Timeout London"
         );
 
-        messengerSendClientWrapper.sendImageAttachment(
-            user.getMessengerId(),
-            "https://media.giphy.com/media/QGMiTNBw8hB72/giphy.gif"
-        );
+//        messengerSendClientWrapper.sendImageAttachment(
+//            user.getMessengerId(),
+//            "https://media.giphy.com/media/QGMiTNBw8hB72/giphy.gif"
+//        );
 
 //        messengerSendClientWrapper.sendTextMessage(
 //            user.getMessengerId(),

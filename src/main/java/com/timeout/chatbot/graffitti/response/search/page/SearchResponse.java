@@ -2,6 +2,7 @@ package com.timeout.chatbot.graffitti.response.search.page;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +16,8 @@ public class SearchResponse {
 
     @JsonProperty("body")
     private List<PageItem> pageItems;
+
+    private List<GraffittiFacetV4FacetNode> facets;
 
     public Meta getMeta() {
         return meta;

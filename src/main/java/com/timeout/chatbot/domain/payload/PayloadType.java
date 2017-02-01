@@ -15,7 +15,7 @@ public enum PayloadType {
     show_subcategories,
     set_subcategory,
 
-//    utterance,
+    utterance,
 
     venues_more_info,
     venues_book,

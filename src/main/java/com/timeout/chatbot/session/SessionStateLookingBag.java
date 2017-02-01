@@ -36,6 +36,7 @@ public class SessionStateLookingBag {
     }
 
     public void setGraffittiWhatCategoryNode(GraffittiFacetV4FacetNode graffittiWhatCategoryNode) {
+        this.graffittiPageNumber = 1;
         this.graffittiWhatCategoryNode = graffittiWhatCategoryNode;
     }
 

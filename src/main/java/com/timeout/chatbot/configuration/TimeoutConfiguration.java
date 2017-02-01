@@ -10,6 +10,9 @@ public class TimeoutConfiguration {
     private String site;
     private String locale;
     private String cityName;
+    private String latitude;
+    private String longitude;
+    private String imageUrlPlacholder;
 
     public String getSite() {
         return site;
@@ -33,5 +36,29 @@ public class TimeoutConfiguration {
 
     public void setCityName(String cityName) {
         this.cityName = cityName;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getImageUrlPlacholder() {
+        return imageUrlPlacholder;
+    }
+
+    public void setImageUrlPlacholder(String imageUrlPlacholder) {
+        this.imageUrlPlacholder = imageUrlPlacholder;
     }
 }

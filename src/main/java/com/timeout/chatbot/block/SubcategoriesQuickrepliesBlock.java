@@ -40,7 +40,6 @@ public class SubcategoriesQuickrepliesBlock {
         } else {
             discoverBlock.send(session.getUser().getMessengerId());
         }
-
     }
 
     public void buildAndSendMessage(

@@ -2,6 +2,7 @@ package com.timeout.chatbot.graffitti.uri;
 
 public enum GraffittiQueryParameterType {
     LOCALE("locale"),
+    SITE("site"),
     WHAT("what"),
     WHEN("when"),
     WHERE("where"),
@@ -12,7 +13,8 @@ public enum GraffittiQueryParameterType {
     LONGITUDE("longitude"),
     RADIUS("radius"),
     SORT("sort"),
-    VIEW("view");
+    VIEW("view"),
+    TILE_TYPE("tile_type");
 
     private final String value;
     GraffittiQueryParameterType(String value) {

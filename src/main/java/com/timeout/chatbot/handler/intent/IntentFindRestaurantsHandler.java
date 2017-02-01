@@ -2,7 +2,6 @@ package com.timeout.chatbot.handler.intent;
 
 import com.google.gson.JsonElement;
 import com.timeout.chatbot.domain.Geolocation;
-import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
@@ -136,14 +135,6 @@ public class IntentFindRestaurantsHandler {
         Session session
     ) {
         final SessionStateLookingBag bag = session.getSessionStateLookingBag();
-
-        bag.setGraffittiType(GraffittiType.VENUE);
-        bag.setWhat(What.RESTAURANT);
-        bag.setGraffittiWhatCategoryNode(
-            graffittiService.findWhatCategoryNodeByConceptName(
-                "restaurants (category)"
-            )
-        );
 
         UrlBuilder urlBuilder = urlBuilderBase(
             bag.getGraffittiWhatCategoryNode(),

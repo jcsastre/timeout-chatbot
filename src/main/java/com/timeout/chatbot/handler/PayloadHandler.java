@@ -1,4 +1,4 @@
-package com.timeout.chatbot.handler.payload;
+package com.timeout.chatbot.handler;
 
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.handler.intent.IntentService;
@@ -77,6 +77,8 @@ public class PayloadHandler {
                 break;
 
             case set_subcategory:
+                final String subcategoryId = payload.getString("id");
+                intentService.handleSetSubcategory(session, subcategoryId);
                 //TODO
                 break;
 

@@ -18,9 +18,20 @@ public class IntentService {
     private final IntentSeemoreHandler seemoreHandler;
     private final IntentFindThingsToDoHandler findThingsToDoHandler;
     private final IntentFindRestaurantsHandler findRestaurantsHandler;
+    private final IntentSetSubcategoryHandler setSubcategoryHandler;
 
     @Autowired
-    public IntentService(IntentHelpHandler helpHandler, IntentGreetingsHandler greetingsHandler, IntentSuggestionsHandler suggestionsHandler, IntentDiscoverHandler discoverHandler, IntentWhatsnewHandler whatsnewHandler, IntentSeemoreHandler seemoreHandler, IntentFindThingsToDoHandler findThingsToDoHandler, IntentFindRestaurantsHandler findRestaurantsHandler) {
+    public IntentService(
+        IntentHelpHandler helpHandler,
+        IntentGreetingsHandler greetingsHandler,
+        IntentSuggestionsHandler suggestionsHandler,
+        IntentDiscoverHandler discoverHandler,
+        IntentWhatsnewHandler whatsnewHandler,
+        IntentSeemoreHandler seemoreHandler,
+        IntentFindThingsToDoHandler findThingsToDoHandler,
+        IntentFindRestaurantsHandler findRestaurantsHandler,
+        IntentSetSubcategoryHandler setSubcategoryHandler
+    ) {
         this.helpHandler = helpHandler;
         this.greetingsHandler = greetingsHandler;
         this.suggestionsHandler = suggestionsHandler;
@@ -29,6 +40,7 @@ public class IntentService {
         this.seemoreHandler = seemoreHandler;
         this.findThingsToDoHandler = findThingsToDoHandler;
         this.findRestaurantsHandler = findRestaurantsHandler;
+        this.setSubcategoryHandler = setSubcategoryHandler;
     }
 
     public void handleHelp(Session session) {
@@ -70,5 +82,12 @@ public class IntentService {
         Session session
     ) {
         seemoreHandler.handle(session);
+    }
+
+    public void  handleSetSubcategory(
+        Session session,
+        String subcategoryId
+    ) {
+        setSubcategoryHandler.handle(session, subcategoryId);
     }
 }

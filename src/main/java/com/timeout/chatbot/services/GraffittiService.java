@@ -20,7 +20,7 @@ public class GraffittiService {
 //    private final List<Category> categories;
 
     final GraffittiFacetV4FacetNode facetWhatTree;
-    final GraffittiFacetV4FacetNode facetWhatCategoriesTree;
+    final GraffittiFacetV4FacetNode facetWhatCategoriesRootNode;
 
     @Autowired
     public GraffittiService(
@@ -38,7 +38,7 @@ public class GraffittiService {
 //        this.cuisines = populateCuisines(facetV4Response);
 
         facetWhatTree = getFacetWhatTree(facetV4Response);
-        facetWhatCategoriesTree = getNodeCategoriesFromFaceWhatTree(facetWhatTree);
+        facetWhatCategoriesRootNode = getNodeCategoriesFromFaceWhatTree(facetWhatTree);
     }
 
     public List<GraffittiFacetV5Node> getFacetsV5PrimaryCategories() {
@@ -123,7 +123,7 @@ public class GraffittiService {
 //    private List<Cuisine> populateCuisines(GraffittiFacetV4Response v4Response) {
 //        List<Cuisine> cuisines = new ArrayList<>();
 //
-//        final GraffittiFacetV4FacetNode restaurantsTree = getNodeRestaurantsOnNodeCategories(facetWhatCategoriesTree);
+//        final GraffittiFacetV4FacetNode restaurantsTree = getNodeRestaurantsOnNodeCategories(facetWhatCategoriesRootNode);
 //
 //        for (GraffittiFacetV4FacetNode child : restaurantsTree.getChildren()) {
 //            if (child.getCount()>0) {
@@ -200,8 +200,37 @@ public class GraffittiService {
 //        return categories;
 //    }
 
+    public GraffittiFacetV4FacetNode findNodeInfacetWhatCategoriesRootNode(String id) {
+        return
+            findRecursiveInWhatCategoryNodeById(
+                id,
+                facetWhatCategoriesRootNode
+            );
+    }
+
+    private GraffittiFacetV4FacetNode findRecursiveInWhatCategoryNodeById(
+        String id,
+        GraffittiFacetV4FacetNode node
+    ) {
+        if (node.getId().equalsIgnoreCase(id)) {
+            return node;
+        }
+
+        GraffittiFacetV4FacetNode foundNode = null;
+        final List<GraffittiFacetV4FacetNode> children = node.getChildren();
+        if (children!=null) {
+            final int size = children.size();
+            if (size>0) {
+                for (int i = 0; foundNode == null && i < size; i++) {
+                    foundNode = findRecursiveInWhatCategoryNodeById(id, children.get(i));
+                }
+            }
+        }
+        return foundNode;
+    }
+
     public GraffittiFacetV4FacetNode findWhatCategoryNodeByConceptName(String conceptName) {
-        for (GraffittiFacetV4FacetNode node : this.facetWhatCategoriesTree.getChildren()) {
+        for (GraffittiFacetV4FacetNode node : this.facetWhatCategoriesRootNode.getChildren()) {
             if (node.getConcept().getName().equalsIgnoreCase(conceptName)) {
                 return node;
             }
