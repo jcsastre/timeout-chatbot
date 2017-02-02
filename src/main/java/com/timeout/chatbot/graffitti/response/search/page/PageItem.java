@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 public class PageItem {
     private static final Logger log = LoggerFactory.getLogger(PageItem.class);
 
+    private String type;
     @JsonProperty("categorisation")
     private GraffittiCategorisation graffittiCategorisation;
     private String id;
@@ -22,6 +23,15 @@ public class PageItem {
     private String toWebsite;
     private Double distance;
     private String phone;
+    private Image image;
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public GraffittiCategorisation getGraffittiCategorisation() {
         return graffittiCategorisation;
@@ -105,6 +115,26 @@ public class PageItem {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
+    public class Image {
+        private String id;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
     }
 
     @Override

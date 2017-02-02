@@ -64,8 +64,8 @@ public class VenueSummaryBlock {
 //                        .toString()
 //                ).toList()
 //
-//                .build()
-//        ).build();
+//                .buildButtonsList()
+//        ).buildButtonsList();
 
 //        messengerSendClientWrapper.sendTemplate(userId, yes);
     }
@@ -158,6 +158,6 @@ public class VenueSummaryBlock {
 //                .toString()
 //        ).toList();
 //
-//        return builder.build();
+//        return builder.buildButtonsList();
 //    }
 }

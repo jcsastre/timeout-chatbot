@@ -246,15 +246,15 @@ public class IntentFindRestaurantsHandler {
         Integer pageNumber
     ) {
         if (graffittiFacetV4Node == null) {
-            return searchUrlBuilder.buildBase(
+            return searchUrlBuilder.build(
                 WHAT_RESTAURANTS,
-                GraffittiType.VENUE.getValue(),
+                GraffittiType.VENUE.toString(),
                 pageNumber
             );
         } else {
-            return searchUrlBuilder.buildBase(
+            return searchUrlBuilder.build(
                 graffittiFacetV4Node.getId(),
-                GraffittiType.VENUE.getValue(),
+                GraffittiType.VENUE.toString(),
                 pageNumber
             );
         }

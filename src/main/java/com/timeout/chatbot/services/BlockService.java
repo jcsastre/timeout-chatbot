@@ -20,6 +20,7 @@ public class BlockService {
     private final WelcomeFirstTimeBlock welcomeFirstTimeBlock;
     private final SuggestionsBlock suggestionsBlock;
     private final DiscoverBlock discoverBlock;
+    private final MostLovedBlock mostLovedBlock;
     private final WelcomeBackBlock welcomeBackBlock;
     private final MainOptionsBlock mainOptionsBlock;
     private final VenuesPageBlock venuesPageBlock;
@@ -28,6 +29,7 @@ public class BlockService {
     private final VenueSummaryBlock venueSummaryBlock;
     private final GeolocationAskBlock geolocationAskBlock;
     private final FilmsPageBlock filmsPageBlock;
+
     private final ErrorBlock errorBlock;
 
     @Autowired
@@ -35,7 +37,7 @@ public class BlockService {
         WelcomeFirstTimeBlock welcomeFirstTimeBlock,
         SuggestionsBlock suggestionsBlock,
         DiscoverBlock discoverBlock,
-        WelcomeBackBlock welcomeBackBlock,
+        MostLovedBlock mostLovedBlock, WelcomeBackBlock welcomeBackBlock,
         MainOptionsBlock mainOptionsBlock,
         VenuesPageBlock venuesPageBlock,
         VenuesRemainingBlock venuesRemainingBlock,
@@ -48,6 +50,7 @@ public class BlockService {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
         this.suggestionsBlock = suggestionsBlock;
         this.discoverBlock = discoverBlock;
+        this.mostLovedBlock = mostLovedBlock;
         this.welcomeBackBlock = welcomeBackBlock;
         this.mainOptionsBlock = mainOptionsBlock;
         this.venuesPageBlock = venuesPageBlock;
@@ -84,6 +87,15 @@ public class BlockService {
             user.getMessengerId()
         );
     }
+
+    public void sendMostLovedBlock(
+        User user
+    ) {
+        mostLovedBlock.send(
+            user.getMessengerId()
+        );
+    }
+
 
     public void sendFilmsPageBlock(
         Session session,

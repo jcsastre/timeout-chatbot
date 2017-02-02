@@ -25,7 +25,7 @@ public class SearchUrlBuilder {
         locale = timeoutConfiguration.getLocale();
     }
 
-    public UrlBuilder buildBase(
+    public UrlBuilder build(
         String what,
         String type,
         Integer pageNumber
@@ -40,6 +40,15 @@ public class SearchUrlBuilder {
                 .addParameter(GraffittiQueryParameterType.VIEW.getValue(), "complete");
     }
 
+    public UrlBuilder buildForMostLovedBlock() {
+        return
+            UrlBuilder.empty().withScheme(SCHEMA).withHost(HOST).withPath(path)
+                .addParameter(GraffittiQueryParameterType.LOCALE.getValue(), locale)
+                .addParameter(GraffittiQueryParameterType.PAGE_SIZE.getValue(), PAGE_SIZE)
+                .addParameter(GraffittiQueryParameterType.SORT.getValue(), "most-loved-weekly")
+                .addParameter(GraffittiQueryParameterType.VIEW.getValue(), "complete");
+    }
+
 //    public UrlBuilder buildWithGeolocation(
 //        String what,
 //        String type,
@@ -48,13 +57,13 @@ public class SearchUrlBuilder {
 //        Double longitude
 //    ) {
 //        return
-//            buildBase(what, type, pageNumber)
+//            buildButtonsList(what, type, pageNumber)
 //                .addParameter(
-//                    GraffittiQueryParameterType.LATITUDE.getValue(),
+//                    GraffittiQueryParameterType.LATITUDE.toString(),
 //                    latitude.toString()
 //                )
 //                .addParameter(
-//                    GraffittiQueryParameterType.LONGITUDE.getValue(),
+//                    GraffittiQueryParameterType.LONGITUDE.toString(),
 //                    longitude.toString()
 //                );
 //    }
@@ -66,9 +75,9 @@ public class SearchUrlBuilder {
 //        String where
 //    ) {
 //        return
-//            buildBase(what, type, pageNumber)
+//            buildButtonsList(what, type, pageNumber)
 //                .addParameter(
-//                    GraffittiQueryParameterType.WHERE.getValue(),
+//                    GraffittiQueryParameterType.WHERE.toString(),
 //                    where
 //                );
 //    }

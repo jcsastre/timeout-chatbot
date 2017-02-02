@@ -1,15 +1,11 @@
 package com.timeout.chatbot.block;
 
-import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
+import com.timeout.chatbot.block.types.BlockTypeVenueHelper;
 import com.timeout.chatbot.configuration.TimeoutConfiguration;
-import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.graffitti.response.categorisation.GraffittiCategorisation;
-import com.timeout.chatbot.graffitti.response.categorisation.GraffittiCategorisationSecondary;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.session.Session;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -20,14 +16,17 @@ import java.util.List;
 public class VenuesPageBlock {
     private final MessengerSendClientWrapper messengerSendClientWrapper;
     private final TimeoutConfiguration timeoutConfiguration;
+    private final BlockTypeVenueHelper blockTypeVenueHelper;
 
     @Autowired
     public VenuesPageBlock(
         MessengerSendClientWrapper messengerSendClientWrapper,
-        TimeoutConfiguration timeoutConfiguration
+        TimeoutConfiguration timeoutConfiguration,
+        BlockTypeVenueHelper blockTypeVenueHelper
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
         this.timeoutConfiguration = timeoutConfiguration;
+        this.blockTypeVenueHelper = blockTypeVenueHelper;
     }
 
     public void send(
@@ -62,7 +61,7 @@ public class VenuesPageBlock {
 //            geolocation
 //        );
 //
-//        final GenericTemplate genericTemplate = genericTemplateBuilder.build();
+//        final GenericTemplate genericTemplate = genericTemplateBuilder.buildButtonsList();
 //
 //        messengerSendClientWrapper.sendTemplate(userId, genericTemplate);
     }
@@ -82,44 +81,12 @@ public class VenuesPageBlock {
                 elementBuilder.imageUrl("https://s3-eu-west-1.amazonaws.com/maps.timeout.com/cache/thumb_144_100/default/default.jpg");
             }
 
-            String subtitle = buildVenuePageItemSubtitle(pageItem);
+            String subtitle = blockTypeVenueHelper.buildGenericTemplateElementSubtitle(pageItem);
             if (!subtitle.isEmpty()) {
                 elementBuilder.subtitle(subtitle);
             }
 
-            final Button.ListBuilder buttonsBuilder = Button.newListBuilder();
-
-//            buttonsBuilder.addPostbackButton(
-//                "Get a summary",
-//                new JSONObject()
-//                    .put("type", PayloadType.venues_more_info)
-//                    .put("venue_id", pageItem.getId())
-//                    .toString()
-//            ).toList();
-
-            final String phone = pageItem.getPhone();
-            if (phone != null) {
-                final String curatedPhone = "+34" + phone.replaceAll(" ","");
-                buttonsBuilder.addCallButton(
-                    "Call (" + curatedPhone +")",
-                    curatedPhone
-                ).toList();
-            }
-
-            buttonsBuilder.addPostbackButton(
-                "Book",
-                new JSONObject()
-                    .put("type", PayloadType.venues_book)
-                    .put("restaurant_id", pageItem.getId())
-                    .toString()
-            ).toList();
-
-            buttonsBuilder.addUrlButton(
-                "See at Timeout",
-                pageItem.getToWebsite()
-            ).toList();
-
-            elementBuilder.buttons(buttonsBuilder.build()).toList().done();
+            elementBuilder.buttons(blockTypeVenueHelper.buildButtonsList(pageItem)).toList().done();
         }
 
         final GenericTemplate genericTemplate = genericTemplateBuilder.build();
@@ -159,7 +126,7 @@ public class VenuesPageBlock {
 //                            .put("restaurant_id", pageItem.getId())
 //                            .toString()
 //                    ).toList()
-//                    .build()
+//                    .buildButtonsList()
 //            ).toList().done();
 //        }
 //    }
@@ -205,41 +172,6 @@ public class VenuesPageBlock {
 //                .toString()
 //        ).toList();
 //
-//        elementBuilder.buttons(buttonListBuilder.build()).toList().done();
+//        elementBuilder.buttons(buttonListBuilder.buildButtonsList()).toList().done();
 //    }
-
-    private String buildVenuePageItemSubtitle(PageItem pageItem) {
-        StringBuilder sb = new StringBuilder();
-
-        final GraffittiCategorisation categorisation = pageItem.getGraffittiCategorisation();
-        if (categorisation != null) {
-            final GraffittiCategorisationSecondary categorisationSecondary =
-                categorisation.getGraffittiCategorisationSecondary();
-            if (categorisationSecondary != null) {
-                sb.append("\ud83c\udf74");
-                sb.append(" ");
-                sb.append(categorisationSecondary.getName());
-            }
-        }
-
-//        sb.append(pageItem.getGraffittiCategorisation().buildName());
-
-        if (pageItem.getDistance() != null) {
-            sb.append(" ");
-            sb.append("\uD83D\uDCCC");
-            sb.append(pageItem.getDistanceInMeters().toString());
-            sb.append(" m");
-        } else if (pageItem.getLocation() != null) {
-            sb.append(" ");
-            sb.append("\uD83D\uDCCC");
-            sb.append(" ");
-            sb.append(pageItem.getLocation());
-        }
-
-        if (sb.length() > 80) {
-            sb = sb.delete(80, sb.length());
-        }
-
-        return sb.toString();
-    }
 }

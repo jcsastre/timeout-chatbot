@@ -54,8 +54,8 @@ public class PayloadHandler {
                 intentService.handleDiscover(session);
                 break;
 
-            case whats_new:
-                intentService.handleWhatsnew(session);
+            case most_loved:
+                blockService.sendMostLovedBlock(session.getUser());
                 break;
 
             case start_over:
@@ -79,7 +79,6 @@ public class PayloadHandler {
             case set_subcategory:
                 final String subcategoryId = payload.getString("id");
                 intentService.handleSetSubcategory(session, subcategoryId);
-                //TODO
                 break;
 
             case venues_more_info:
