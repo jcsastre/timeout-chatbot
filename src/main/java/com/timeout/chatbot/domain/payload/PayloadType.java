@@ -17,6 +17,7 @@ public enum PayloadType {
 
     utterance,
 
+    venue_more_options,
     venues_more_info,
     venues_book,
     venues_see_more,

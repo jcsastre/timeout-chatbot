@@ -49,6 +49,14 @@ public class ApplicationConfig {
     }
 
     @Bean
+    public MessengerSendClient messengerSendClient() {
+        return
+            MessengerPlatform.newSendClientBuilder(
+                messengerConfiguration.getPageAccessToken()
+            ).build();
+    }
+
+    @Bean
     public MessengerSendClientWrapper messengerSendClientWrapper() {
         final MessengerSendClient messengerSendClient = MessengerPlatform.newSendClientBuilder(
             messengerConfiguration.getPageAccessToken()

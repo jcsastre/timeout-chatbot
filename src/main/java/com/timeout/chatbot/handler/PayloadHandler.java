@@ -110,6 +110,13 @@ public class PayloadHandler {
 //                //onUndefinedStateTextHandler.handle(utterance, session);
 //                break;
 
+            case films_find_cinemas:
+                messengerSendClientWrapper.sendTextMessage(
+                    session.getUser().getMessengerId(),
+                    "Sorry, 'Find a cinema' is not implemented yet"
+                );
+                break;
+
             default:
                 messengerSendClientWrapper.sendTextMessage(
                     session.getUser().getMessengerId(),

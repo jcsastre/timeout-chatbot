@@ -1,5 +1,7 @@
 package com.timeout.chatbot.services;
 
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
 import com.timeout.chatbot.block.*;
 import com.timeout.chatbot.block.DiscoverBlock;
 import com.timeout.chatbot.block.SuggestionsBlock;
@@ -90,7 +92,7 @@ public class BlockService {
 
     public void sendMostLovedBlock(
         User user
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
         mostLovedBlock.send(
             user.getMessengerId()
         );

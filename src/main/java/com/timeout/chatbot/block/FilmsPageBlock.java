@@ -4,7 +4,7 @@ import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.graffitti.response.films.GraffitiFilm;
+import com.timeout.chatbot.graffitti.response.films.GraffitiFilmResponse;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
 import com.timeout.chatbot.graffitti.uri.FilmsEndpoint;
@@ -41,7 +41,7 @@ public class FilmsPageBlock {
             "Looking for Films within 500 meters."
         );
 
-        List<GraffitiFilm> graffitiFilms = new ArrayList<>();
+        List<GraffitiFilmResponse> graffitiFilmResponses = new ArrayList<>();
 
         final SearchResponse searchResponse =
             restTemplate.getForObject(
@@ -55,35 +55,35 @@ public class FilmsPageBlock {
 
         final List<PageItem> pageItems = searchResponse.getPageItems();
         for (PageItem pageItem : pageItems) {
-            graffitiFilms.add(
+            graffitiFilmResponses.add(
                 restTemplate.getForObject(
                     pageItem.getUrl(),
-                    GraffitiFilm.class
+                    GraffitiFilmResponse.class
                 )
             );
         }
 
         sendHorizontalCarroussel(
             session.getUser().getMessengerId(),
-            graffitiFilms
+            graffitiFilmResponses
         );
     }
 
     private void sendHorizontalCarroussel(
         String recipientId,
-        List<GraffitiFilm> graffitiFilms
+        List<GraffitiFilmResponse> graffitiFilmResponses
     ) {
         final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
         final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
-        for (GraffitiFilm graffitiFilm : graffitiFilms) {
+        for (GraffitiFilmResponse graffitiFilmResponse : graffitiFilmResponses) {
             final GenericTemplate.Element.Builder elementBuilder =
-                listBuilder.addElement(graffitiFilm.getBody().getName());
+                listBuilder.addElement(graffitiFilmResponse.getBody().getName());
 
-            if (graffitiFilm.getBody().getImageUrl() != null) {
-                elementBuilder.imageUrl(graffitiFilm.getBody().getImageUrl());
+            if (graffitiFilmResponse.getBody().getImageUrl() != null) {
+                elementBuilder.imageUrl(graffitiFilmResponse.getBody().getImageUrl());
             }
 
-            elementBuilder.subtitle(graffitiFilm.getBody().getGraffittiCategorisation().buildNameMax80());
+            elementBuilder.subtitle(graffitiFilmResponse.getBody().getGraffittiCategorisation().buildNameMax80());
 
             final Button.ListBuilder buttonListBuilder = Button.newListBuilder();
 
@@ -91,14 +91,14 @@ public class FilmsPageBlock {
                 "More info",
                 new JSONObject()
                     .put("type", PayloadType.films_more_info)
-                    .put("film_id", graffitiFilm.getBody().getId())
+                    .put("film_id", graffitiFilmResponse.getBody().getId())
                     .toString()
             ).toList();
 
-            if (graffitiFilm.getBody().getTrailer() != null) {
+            if (graffitiFilmResponse.getBody().getTrailer() != null) {
                 buttonListBuilder.addUrlButton(
                     "See trailer",
-                    graffitiFilm.getBody().getTrailer().getUrl()
+                    graffitiFilmResponse.getBody().getTrailer().getUrl()
                 ).toList();
             }
 
@@ -106,7 +106,7 @@ public class FilmsPageBlock {
                 "Find cinemas",
                 new JSONObject()
                     .put("type", PayloadType.films_find_cinemas)
-                    .put("film_id", graffitiFilm.getBody().getId())
+                    .put("film_id", graffitiFilmResponse.getBody().getId())
                     .toString()
             ).toList().build();
 

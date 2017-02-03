@@ -81,7 +81,7 @@ public class VenuesPageBlock {
                 elementBuilder.imageUrl("https://s3-eu-west-1.amazonaws.com/maps.timeout.com/cache/thumb_144_100/default/default.jpg");
             }
 
-            String subtitle = blockTypeVenueHelper.buildGenericTemplateElementSubtitle(pageItem);
+            String subtitle = blockTypeVenueHelper.buildSubtitleForGenericTemplateElement(pageItem);
             if (!subtitle.isEmpty()) {
                 elementBuilder.subtitle(subtitle);
             }

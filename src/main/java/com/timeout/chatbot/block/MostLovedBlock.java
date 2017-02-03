@@ -1,25 +1,29 @@
 package com.timeout.chatbot.block;
 
-import com.cloudinary.Cloudinary;
-import com.cloudinary.Transformation;
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
+import com.github.messenger4j.send.MessengerSendClient;
+import com.github.messenger4j.send.NotificationType;
+import com.github.messenger4j.send.QuickReply;
+import com.github.messenger4j.send.Recipient;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
+import com.timeout.chatbot.block.types.BlockTypeFilmHelper;
 import com.timeout.chatbot.block.types.BlockTypeVenueHelper;
 import com.timeout.chatbot.block.types.EventListButtonsBuilder;
+import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
+import com.timeout.chatbot.graffitti.response.films.GraffitiFilmResponse;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Component
 public class MostLovedBlock {
@@ -29,7 +33,8 @@ public class MostLovedBlock {
     private final SearchUrlBuilder searchUrlBuilder;
     private final BlockTypeVenueHelper blockTypeVenueHelper;
     private final EventListButtonsBuilder eventListButtonsBuilder;
-    private final Cloudinary cloudinary;
+    private final BlockTypeFilmHelper blockTypeFilmHelper;
+    private final MessengerSendClient messengerSendClient;
 
     @Autowired
     public MostLovedBlock(
@@ -37,28 +42,32 @@ public class MostLovedBlock {
         RestTemplate restTemplate,
         SearchUrlBuilder searchUrlBuilder,
         BlockTypeVenueHelper blockTypeVenueHelper,
-        EventListButtonsBuilder eventListButtonsBuilder
+        EventListButtonsBuilder eventListButtonsBuilder,
+        BlockTypeFilmHelper blockTypeFilmHelper,
+        MessengerSendClient messengerSendClient
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
         this.restTemplate = restTemplate;
         this.searchUrlBuilder = searchUrlBuilder;
         this.blockTypeVenueHelper = blockTypeVenueHelper;
         this.eventListButtonsBuilder = eventListButtonsBuilder;
-
-        Map config = new HashMap();
-        config.put("cloud_name", "drdyx3lpb");
-        config.put("api_key", "414418524479882");
-        config.put("api_secret", "iY0YAPSOo-xztbHp-42UO2BS_t4");
-        cloudinary = new Cloudinary(config);
+        this.blockTypeFilmHelper = blockTypeFilmHelper;
+        this.messengerSendClient = messengerSendClient;
     }
 
     public void send(
         String userId
-    ) {
-        messengerSendClientWrapper.sendTemplate(
-            userId,
-            buildGenericTemplate()
+    ) throws MessengerApiException, MessengerIOException {
+        messengerSendClient.sendTemplate(
+            Recipient.newBuilder().recipientId(userId).build(),
+            NotificationType.REGULAR,
+            buildGenericTemplate(),
+            buildQuickReplies()
         );
+//        messengerSendClientWrapper.sendTemplate(
+//            userId,
+//            buildGenericTemplate()
+//        );
     }
 
     private GenericTemplate buildGenericTemplate() {
@@ -86,20 +95,6 @@ public class MostLovedBlock {
         }
     }
 
-    // https://media.timeout.com/images/103669506/320/210/image.jpg
-    // editorial_rating: 4
-    // 1. blend
-    // 2. put s3
-    // 3. persist db
-    //   3.1. key
-    //     3.1.1 original image url
-    //     3.1.2 title text
-    //     3.1.3 timeout rating
-    //     3.1.4 users rating
-    //     3.1.2 location text
-    //     3.1.2 xxx
-    //   3.2. s3 url
-
     private void addElement(
         GenericTemplate.Element.ListBuilder listBuilder,
         PageItem pageItem
@@ -109,11 +104,10 @@ public class MostLovedBlock {
 
 //        builder.itemUrl(pageItem.getToWebsite());
 
-//        final String subtitle = buildSubtitle(pageItem);
-//        if (subtitle != null && !subtitle.isEmpty()) {
-//            builder.subtitle(subtitle);
-//        }
-//        builder.subtitle("subtitle");
+        final String subtitle = buildSubtitle(pageItem);
+        if (subtitle != null && !subtitle.isEmpty()) {
+            builder.subtitle(subtitle);
+        }
 
         final String imageUrl = buildImageUrl(pageItem);
         if (imageUrl != null) {
@@ -134,13 +128,12 @@ public class MostLovedBlock {
         final GraffittiType type = GraffittiType.fromString(pageItem.getType());
 
         if (type == GraffittiType.VENUE) {
-            return blockTypeVenueHelper.buildGenericTemplateElementSubtitle(pageItem);
+            return blockTypeVenueHelper.buildSubtitleForGenericTemplateElement(pageItem);
         } else if (type == GraffittiType.EVENT) {
             //TODO
             return null;
         } else if (type == GraffittiType.FILM) {
-            //TODO
-            return null;
+            return blockTypeFilmHelper.buildSubtitleForGenericTemplateElement(pageItem);
         } else {
             //TODO
             return null;
@@ -150,52 +143,17 @@ public class MostLovedBlock {
     private String buildImageUrl(
         PageItem pageItem
     ) {
-        String name = pageItem.getName();
-        try {
-            name =
-                URLEncoder.encode(
-                    name,
-                    java.nio.charset.StandardCharsets.UTF_8.toString()
-                );
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+        final GraffittiType type = GraffittiType.fromString(pageItem.getType());
+
+        if (type == GraffittiType.VENUE) {
+            return blockTypeFilmHelper.buildImageUrlForGenericTemplateElement(pageItem);
+        } else if (type == GraffittiType.EVENT) {
+            return blockTypeFilmHelper.buildImageUrlForGenericTemplateElement(pageItem);
+        } else if (type == GraffittiType.FILM) {
+            return blockTypeFilmHelper.buildImageUrlForGenericTemplateElement(pageItem);
+        } else {
             return null;
         }
-
-        final PageItem.Image image = pageItem.getImage();
-        if (image != null) {
-            final String imageId = image.getId();
-            if (imageId != null) {
-//                String url = "http://res.cloudinary.com/drdyx3lpb/image/fetch/https://media.timeout.com/images/103669506/320/210/image.jpg";
-
-                String url = "http://media.timeout.com/images/" + imageId + "/320/210/image.jpg";
-//
-                url =
-                    cloudinary.url()
-                        .transformation(
-                            new Transformation()
-                                .overlay("text:Arial_15_bold_left:" + name)
-                                .gravity("south_west")
-                                .x(0.04)
-                                .y(0.30)
-                        )
-                        .type("fetch")
-                        .generate(url);
-
-                System.out.println(url);
-                return url;
-
-//                String url =
-//                    "http://res.cloudinary.com/demo/image/fetch/l_text:Arial_15_bold_left:" +
-//                    pageItem.getName() +
-//                    ",g_south_west,x_0.04,y_0.30,co_rgb:FFFFFF/" +
-//                    ;
-//
-//                return cloudinary.url();
-            }
-        }
-
-        return null;
     }
 
     private List<Button> buildButtons(
@@ -208,10 +166,31 @@ public class MostLovedBlock {
         } else if (type == GraffittiType.EVENT) {
             return eventListButtonsBuilder.build(pageItem);
         } else if (type == GraffittiType.FILM) {
-            //TODO
-            return eventListButtonsBuilder.build(pageItem);
+            final String url = pageItem.getUrl();
+            final GraffitiFilmResponse graffitiFilmResponse =
+                restTemplate.getForObject(
+                    url,
+                    GraffitiFilmResponse.class
+                );
+            return blockTypeFilmHelper.buildButtonsList(graffitiFilmResponse);
         } else {
             return null;
         }
+    }
+
+    private List<QuickReply> buildQuickReplies(
+    ) {
+        final QuickReply.ListBuilder builder = QuickReply.newListBuilder();
+
+        builder.addTextQuickReply(
+            "See more",
+            new JSONObject()
+                .put("type", PayloadType.see_more)
+                .toString()
+        ).toList();
+
+        builder.addLocationQuickReply().toList();
+
+        return builder.build();
     }
 }

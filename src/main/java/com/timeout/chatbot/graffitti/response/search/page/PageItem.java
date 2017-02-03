@@ -16,6 +16,8 @@ public class PageItem {
     private String id;
     private String name;
     private String summary;
+    private String description;
+    private String annotation;
     private String url;
     private String image_url;
     private String location;
@@ -24,6 +26,8 @@ public class PageItem {
     private Double distance;
     private String phone;
     private Image image;
+    @JsonProperty("editorial_rating")
+    private Integer editorialRating;
 
     public String getType() {
         return type;
@@ -59,6 +63,22 @@ public class PageItem {
 
     public String getSummary() {
         return summary;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getAnnotation() {
+        return annotation;
+    }
+
+    public void setAnnotation(String annotation) {
+        this.annotation = annotation;
     }
 
     public void setSummary(String summary) {
@@ -123,6 +143,14 @@ public class PageItem {
 
     public void setImage(Image image) {
         this.image = image;
+    }
+
+    public Integer getEditorialRating() {
+        return editorialRating;
+    }
+
+    public void setEditorialRating(Integer editorialRating) {
+        this.editorialRating = editorialRating;
     }
 
     public class Image {
