@@ -166,14 +166,14 @@ public class IntentFindRestaurantsHandler {
 
             msg = "Looking for Restaurants around the location you specified";
         } else {
-            final GraffittiFacetV4FacetNode where = bag.getGraffittiWhere();
+            final String whereId = bag.getGraffittiWhereId();
 
-            if (where != null) {
+            if (whereId != null) {
                 urlBuilder =
                     urlBuilder
                         .addParameter(
                             GraffittiQueryParameterType.WHERE.getValue(),
-                            where.getId()
+                            whereId
                         );
 
                 msg = "Looking for Restaurants around the location you specified";

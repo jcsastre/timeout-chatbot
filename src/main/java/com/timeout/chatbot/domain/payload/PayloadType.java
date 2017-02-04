@@ -10,6 +10,7 @@ public enum PayloadType {
     start_over,
 
     see_more,
+    item_more_options,
 
     cancel,
     show_subcategories,
@@ -17,6 +18,8 @@ public enum PayloadType {
 
     utterance,
 
+    venues_show_neighborhoods,
+    venues_set_neighborhood,
     venue_more_options,
     venues_more_info,
     venues_book,

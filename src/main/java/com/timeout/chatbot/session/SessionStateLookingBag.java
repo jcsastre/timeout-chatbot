@@ -16,6 +16,7 @@ public class SessionStateLookingBag {
 
     private String graffittiWhen;
 
+    private String graffittiWhereId;
     private GraffittiFacetV4FacetNode graffittiWhere;
 
     private Integer graffittiPageNumber;
@@ -88,7 +89,18 @@ public class SessionStateLookingBag {
     public void setGeolocation(Geolocation geolocation) {
         this.graffittiPageNumber = 1;
         this.graffittiWhere = null;
+        this.graffittiWhereId = null;
         this.geolocation = geolocation;
+    }
+
+    public String getGraffittiWhereId() {
+        return graffittiWhereId;
+    }
+
+    public void setGraffittiWhereId(String graffittiWhereId) {
+        this.graffittiPageNumber = 1;
+        this.geolocation = null;
+        this.graffittiWhereId = graffittiWhereId;
     }
 
     public Double getRadius() {

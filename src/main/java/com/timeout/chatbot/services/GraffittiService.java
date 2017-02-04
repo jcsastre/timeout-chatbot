@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -21,6 +22,7 @@ public class GraffittiService {
 
     final GraffittiFacetV4FacetNode facetWhatTree;
     final GraffittiFacetV4FacetNode facetWhatCategoriesRootNode;
+    final List<GraffittiFacetV4FacetNode> facetNeighborhoodsNodes;
 
     @Autowired
     public GraffittiService(
@@ -38,6 +40,7 @@ public class GraffittiService {
 //        this.cuisines = populateCuisines(facetV4Response);
 
         facetWhatTree = getFacetWhatTree(facetV4Response);
+        facetNeighborhoodsNodes = getFacetNeighborhoodsNodes(facetV4Response);
         facetWhatCategoriesRootNode = getNodeCategoriesFromFaceWhatTree(facetWhatTree);
     }
 
@@ -46,7 +49,11 @@ public class GraffittiService {
             graffittiFacetV5Response.getBody().getFacets().getWhat().getChildren();
     }
 
-//    public GraffittiFacetV5Node getCategoryPrimaryByName(String name) {
+    public List<GraffittiFacetV4FacetNode> getFacetNeighborhoodsNodes() {
+        return facetNeighborhoodsNodes;
+    }
+
+    //    public GraffittiFacetV5Node getCategoryPrimaryByName(String name) {
 //        for (GraffittiFacetV5Node categoryPrimary : getFacetsV5PrimaryCategories()) {
 //            if (categoryPrimary.getName().equals(name)) {
 //                return categoryPrimary;
@@ -246,6 +253,20 @@ public class GraffittiService {
             }
         }
         return null;
+    }
+
+    private List<GraffittiFacetV4FacetNode> getFacetNeighborhoodsNodes(GraffittiFacetV4Response v4Response) {
+        List<GraffittiFacetV4FacetNode> facetWhereChildren = new ArrayList<>();
+        for (GraffittiFacetV4FacetNode facet : v4Response.getBody().getFacets()) {
+            if (facet.getId().equalsIgnoreCase("where")) {
+                for (GraffittiFacetV4FacetNode facetWhereChild : facet.getChildren()) {
+                    if(!facetWhereChild.getId().equalsIgnoreCase("canned-near_here")) {
+                        facetWhereChildren.add(facetWhereChild);
+                    }
+                }
+            }
+        }
+        return facetWhereChildren;
     }
 
     private GraffittiFacetV4FacetNode getNodeCategoriesFromFaceWhatTree(GraffittiFacetV4FacetNode facetWhat) {

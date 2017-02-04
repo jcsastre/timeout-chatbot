@@ -19,6 +19,13 @@ public class NluResult {
         this.parameters = parameters;
     }
 
+    public NluResult(
+        NluIntentType nluIntentType
+    ) {
+        this.nluIntentType = nluIntentType;
+        this.parameters = null;
+    }
+
     public NluIntentType getNluIntentType() {
         return nluIntentType;
     }

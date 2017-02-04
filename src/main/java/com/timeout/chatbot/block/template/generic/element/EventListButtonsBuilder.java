@@ -1,4 +1,4 @@
-package com.timeout.chatbot.block.types;
+package com.timeout.chatbot.block.template.generic.element;
 
 import com.github.messenger4j.send.buttons.Button;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;

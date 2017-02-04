@@ -1,11 +1,14 @@
 package com.timeout.chatbot.handler;
 
-import com.timeout.chatbot.block.ErrorBlock;
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
+import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.domain.What;
+import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.nlu.NluResult;
+import com.timeout.chatbot.domain.nlu.intent.NluIntentType;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentService;
-import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.services.NluService;
 import com.timeout.chatbot.session.Session;
@@ -18,44 +21,62 @@ public class TextHandler {
 
     private final IntentService intentService;
     private final NluService nluService;
-    private final MessengerSendClientWrapper messengerSendClientWrapper;
+    private final MessengerSendClient messengerSendClient;
     private final GraffittiService graffittiService;
-    private final ErrorBlock errorBlock;
 
     @Autowired
     public TextHandler(
         IntentService intentService,
         NluService nluService,
-        MessengerSendClientWrapper messengerSendClientWrapper,
-        GraffittiService graffittiService,
-        ErrorBlock errorBlock
+        MessengerSendClient messengerSendClient,
+        GraffittiService graffittiService
     ) {
         this.intentService = intentService;
         this.nluService = nluService;
-        this.messengerSendClientWrapper = messengerSendClientWrapper;
+        this.messengerSendClient = messengerSendClient;
         this.graffittiService = graffittiService;
-        this.errorBlock = errorBlock;
     }
 
     public void handle(
         String text,
         Session session
-    ) {
-        try {
+    ) throws NluException, MessengerApiException, MessengerIOException {
+        NluResult nluResult = handleInternal(text);
+
+        if (nluResult == null) {
+            nluResult = nluService.processText(text);
+        }
+
+        if (nluResult != null) {
             processNluResult(
                 session,
                 nluService.processText(text)
             );
-        } catch (Exception e) {
-            e.printStackTrace();
-            errorBlock.send(session.getUser());
+        } else {
+            messengerSendClient.sendTextMessage(
+                session.getUser().getMessengerId(),
+                "Sorry, I don't understand"
+            );
         }
+    }
+
+    private NluResult handleInternal(
+        String text
+    ) {
+        if (text.equalsIgnoreCase("restaurants")) {
+            return
+                new NluResult(
+                    NluIntentType.FIND_RESTAURANTS
+                );
+        }
+
+        return null;
     }
 
     private void processNluResult(
         Session session,
         NluResult nluResult
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
         switch (nluResult.getNluIntentType()) {
 
             case GREETINGS:
@@ -112,7 +133,7 @@ public class TextHandler {
                 break;
 
             default:
-                messengerSendClientWrapper.sendTextMessage(
+                messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, I don't understand you."
                 );

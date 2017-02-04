@@ -1,6 +1,7 @@
 package com.timeout.chatbot.graffitti.response.facets.v4;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
@@ -13,6 +14,8 @@ public class GraffittiFacetV4FacetNode {
     private Concept concept;
     private Integer count;
     private List<GraffittiFacetV4FacetNode> children;
+    @JsonProperty("geolocation_required")
+    private Boolean geolocationRequired;
 
     public String getId() {
         return id;
@@ -60,6 +63,14 @@ public class GraffittiFacetV4FacetNode {
 
     public void setChildren(List<GraffittiFacetV4FacetNode> children) {
         this.children = children;
+    }
+
+    public Boolean getGeolocationRequired() {
+        return geolocationRequired;
+    }
+
+    public void setGeolocationRequired(Boolean geolocationRequired) {
+        this.geolocationRequired = geolocationRequired;
     }
 
     public class Concept {

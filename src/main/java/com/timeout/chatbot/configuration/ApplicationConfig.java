@@ -2,6 +2,7 @@ package com.timeout.chatbot.configuration;
 
 import ai.api.AIConfiguration;
 import ai.api.AIDataService;
+import com.cloudinary.Cloudinary;
 import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.ApiaiConfiguration;
@@ -14,7 +15,9 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 public class ApplicationConfig {
@@ -29,6 +32,17 @@ public class ApplicationConfig {
     ) {
         this.messengerConfiguration = messengerConfiguration;
         this.apiaiConfiguration = apiaiConfiguration;
+    }
+
+    @Bean
+    public Cloudinary cloudinary() {
+        Map config = new HashMap();
+        config.put("cloud_name", "drdyx3lpb");
+        config.put("api_key", "414418524479882");
+        config.put("api_secret", "iY0YAPSOo-xztbHp-42UO2BS_t4");
+
+        return
+            new Cloudinary(config);
     }
 
     @Bean

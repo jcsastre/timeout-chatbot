@@ -16,16 +16,19 @@ public class PayloadHandler {
     private final IntentService intentService;
     private final BlockService blockService;
     private final MessengerSendClientWrapper messengerSendClientWrapper;
+    private final TextHandler textHandler;
 
     @Autowired
     public PayloadHandler(
         IntentService intentService,
         BlockService blockService,
-        MessengerSendClientWrapper messengerSendClientWrapper
+        MessengerSendClientWrapper messengerSendClientWrapper,
+        TextHandler textHandler
     ) {
         this.intentService = intentService;
         this.blockService = blockService;
         this.messengerSendClientWrapper = messengerSendClientWrapper;
+        this.textHandler = textHandler;
     }
 
     public void handle(
@@ -40,6 +43,11 @@ public class PayloadHandler {
             case get_started:
                 blockService.sendWelcomeFirstTimeBlock(session.getUser());
                 session.setSessionState(SessionState.WELCOMED);
+                break;
+
+            case utterance:
+                final String utterance = payload.getString("utterance");
+                textHandler.handle(utterance, session);
                 break;
 
             case help:
@@ -88,6 +96,18 @@ public class PayloadHandler {
                 );
                 break;
 
+            case venues_show_neighborhoods:
+                final Integer pageNumber = payload.getInt("pageNumber");
+                blockService.sendNeighborhoodsQuickrepliesBlock(session, pageNumber);
+                break;
+
+            case venues_set_neighborhood:
+                final String neighborhoodId = payload.getString("neighborhood_id");
+                session.getSessionStateLookingBag().setGraffittiPageNumber(1);
+                session.getSessionStateLookingBag().setGraffittiWhereId(neighborhoodId);
+                intentService.handleFindRestaurants(session);
+                break;
+
             case venues_book:
                 messengerSendClientWrapper.sendTextMessage(
                     session.getUser().getMessengerId(),
@@ -115,6 +135,10 @@ public class PayloadHandler {
                     session.getUser().getMessengerId(),
                     "Sorry, 'Find a cinema' is not implemented yet"
                 );
+                break;
+
+            case cancel:
+                intentService.handleCancel(session);
                 break;
 
             default:

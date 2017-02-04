@@ -28,6 +28,7 @@ public class BlockService {
     private final VenuesPageBlock venuesPageBlock;
     private final VenuesRemainingBlock venuesRemainingBlock;
     private final SubcategoriesQuickrepliesBlock subcategoriesQuickrepliesBlock;
+    private final NeighborhoodsQuickrepliesBlock neighborhoodsQuickrepliesBlock;
     private final VenueSummaryBlock venueSummaryBlock;
     private final GeolocationAskBlock geolocationAskBlock;
     private final FilmsPageBlock filmsPageBlock;
@@ -44,7 +45,7 @@ public class BlockService {
         VenuesPageBlock venuesPageBlock,
         VenuesRemainingBlock venuesRemainingBlock,
         SubcategoriesQuickrepliesBlock subcategoriesQuickrepliesBlock,
-        VenueSummaryBlock venueSummaryBlock,
+        NeighborhoodsQuickrepliesBlock neighborhoodsQuickrepliesBlock, VenueSummaryBlock venueSummaryBlock,
         GeolocationAskBlock geolocationAskBlock,
         FilmsPageBlock filmsPageBlock,
         ErrorBlock errorBlock
@@ -58,6 +59,7 @@ public class BlockService {
         this.venuesPageBlock = venuesPageBlock;
         this.venuesRemainingBlock = venuesRemainingBlock;
         this.subcategoriesQuickrepliesBlock = subcategoriesQuickrepliesBlock;
+        this.neighborhoodsQuickrepliesBlock = neighborhoodsQuickrepliesBlock;
         this.venueSummaryBlock = venueSummaryBlock;
         this.geolocationAskBlock = geolocationAskBlock;
         this.filmsPageBlock = filmsPageBlock;
@@ -159,6 +161,13 @@ public class BlockService {
         Integer pageNumber
     ) throws Exception {
         subcategoriesQuickrepliesBlock.send(session, pageNumber);
+    }
+
+    public void sendNeighborhoodsQuickrepliesBlock(
+        Session session,
+        Integer pageNumber
+    ) throws Exception {
+        neighborhoodsQuickrepliesBlock.send(session, pageNumber);
     }
 
     public void sendGeolocationAskBlock(

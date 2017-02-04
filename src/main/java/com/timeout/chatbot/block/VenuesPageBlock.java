@@ -1,7 +1,7 @@
 package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.templates.GenericTemplate;
-import com.timeout.chatbot.block.types.BlockTypeVenueHelper;
+import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementVenueHelper;
 import com.timeout.chatbot.configuration.TimeoutConfiguration;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
@@ -16,17 +16,17 @@ import java.util.List;
 public class VenuesPageBlock {
     private final MessengerSendClientWrapper messengerSendClientWrapper;
     private final TimeoutConfiguration timeoutConfiguration;
-    private final BlockTypeVenueHelper blockTypeVenueHelper;
+    private final GenericTemplateElementVenueHelper genericTemplateElementVenueHelper;
 
     @Autowired
     public VenuesPageBlock(
         MessengerSendClientWrapper messengerSendClientWrapper,
         TimeoutConfiguration timeoutConfiguration,
-        BlockTypeVenueHelper blockTypeVenueHelper
+        GenericTemplateElementVenueHelper genericTemplateElementVenueHelper
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
         this.timeoutConfiguration = timeoutConfiguration;
-        this.blockTypeVenueHelper = blockTypeVenueHelper;
+        this.genericTemplateElementVenueHelper = genericTemplateElementVenueHelper;
     }
 
     public void send(
@@ -73,20 +73,21 @@ public class VenuesPageBlock {
         final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
         final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
         for (PageItem pageItem : pageItems) {
-            final GenericTemplate.Element.Builder elementBuilder = listBuilder.addElement(pageItem.getName());
-
-            if (pageItem.getImage_url() != null) {
-                elementBuilder.imageUrl(pageItem.getImage_url());
-            } else {
-                elementBuilder.imageUrl("https://s3-eu-west-1.amazonaws.com/maps.timeout.com/cache/thumb_144_100/default/default.jpg");
-            }
-
-            String subtitle = blockTypeVenueHelper.buildSubtitleForGenericTemplateElement(pageItem);
-            if (!subtitle.isEmpty()) {
-                elementBuilder.subtitle(subtitle);
-            }
-
-            elementBuilder.buttons(blockTypeVenueHelper.buildButtonsList(pageItem)).toList().done();
+            genericTemplateElementVenueHelper.addElement(listBuilder, pageItem);
+//            final GenericTemplate.Element.Builder elementBuilder = listBuilder.addElement(pageItem.getName());
+//
+//            if (pageItem.getImage_url() != null) {
+//                elementBuilder.imageUrl(pageItem.getImage_url());
+//            } else {
+//                elementBuilder.imageUrl("https://s3-eu-west-1.amazonaws.com/maps.timeout.com/cache/thumb_144_100/default/default.jpg");
+//            }
+//
+//            String subtitle = genericTemplateElementVenueHelper.buildSubtitleForGenericTemplateElement(pageItem);
+//            if (!subtitle.isEmpty()) {
+//                elementBuilder.subtitle(subtitle);
+//            }
+//
+//            elementBuilder.buttons(genericTemplateElementVenueHelper.buildButtonsList(pageItem)).toList().done();
         }
 
         final GenericTemplate genericTemplate = genericTemplateBuilder.build();

@@ -42,7 +42,7 @@ public class VenuesRemainingBlock {
         messengerSendClientWrapper.sendTextMessage(
             session.getUser().getMessengerId(),
             String.format(
-                "There are %s %s remaining",
+                "There are %s %s more",
                 bag.getReaminingItems(), itemPluralName
             ),
             buildQuickReplies(
@@ -79,7 +79,8 @@ public class VenuesRemainingBlock {
         listBuilder.addTextQuickReply(
             bag.getGraffittiWhere() != null ? "Change neighborhood" : "Set neighborhood",
             new JSONObject()
-                .put("type", PayloadType.set_geolocation)
+                .put("type", PayloadType.venues_show_neighborhoods)
+                .put("pageNumber", 1)
                 .toString()
         ).toList();
 
