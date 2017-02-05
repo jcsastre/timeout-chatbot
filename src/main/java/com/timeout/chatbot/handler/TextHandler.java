@@ -106,11 +106,6 @@ public class TextHandler {
                 intentService.handleFindRestaurants(session, nluResult.getParameters());
                 break;
 
-            // find restaurants
-            // find restaurants near me
-            // find restaurants nearby
-            // find restaurants candem
-
 //            case FIND_RESTAURANTS_NEARBY:
 //                session.setSessionState(SessionState.LOOKING);
 //                intentFindRestaurantsHandler.handleNearby(session);

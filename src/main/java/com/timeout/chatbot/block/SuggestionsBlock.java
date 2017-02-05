@@ -116,7 +116,7 @@ public class SuggestionsBlock {
 //                            .buildButtonsList()
 //                    )
 //                    .toList()
-//                .addElement("Restaurants nearby")
+//                .addElement("RestaurantsManager nearby")
 //                    .imageUrl("https://media.timeout.com/images/102173995/image.jpg")
 //                    .buttons(
 //                        Button.newListBuilder()
@@ -124,7 +124,7 @@ public class SuggestionsBlock {
 //                                "Let's go",
 //                                new JSONObject()
 //                                    .put("type", "utterance")
-//                                    .put("utterance", "Restaurants nearby")
+//                                    .put("utterance", "RestaurantsManager nearby")
 //                                    .toString()
 //                            ).toList()
 //                            .buildButtonsList()

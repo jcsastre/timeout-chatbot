@@ -1,6 +1,7 @@
 package com.timeout.chatbot.session;
 
 import com.timeout.chatbot.domain.Geolocation;
+import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
@@ -16,11 +17,12 @@ public class SessionStateLookingBag {
 
     private String graffittiWhen;
 
-    private String graffittiWhereId;
     private GraffittiFacetV4FacetNode graffittiWhere;
 
     private Integer graffittiPageNumber;
     private Integer reaminingItems;
+
+    private Neighborhood neighborhood;
     private Geolocation geolocation;
     private Double radius = 0.5D;
 
@@ -87,31 +89,25 @@ public class SessionStateLookingBag {
     }
 
     public void setGeolocation(Geolocation geolocation) {
-        this.graffittiPageNumber = 1;
-        this.graffittiWhere = null;
-        this.graffittiWhereId = null;
         this.geolocation = geolocation;
-    }
-
-    public String getGraffittiWhereId() {
-        return graffittiWhereId;
     }
 
     public void setGraffittiWhereId(String graffittiWhereId) {
         this.graffittiPageNumber = 1;
         this.geolocation = null;
-        this.graffittiWhereId = graffittiWhereId;
     }
 
-    public Double getRadius() {
-        return radius;
+    public Neighborhood getNeighborhood() {
+        return neighborhood;
     }
 
-    public void setRadius(Double radius) {
-        this.radius = radius;
+    public void setNeighborhood(Neighborhood neighborhood) {
+        this.graffittiPageNumber = 1;
+        this.geolocation = null;
+        this.neighborhood = neighborhood;
     }
 
-//    public Category getCategory() {
+    //    public Category getCategory() {
 //        return category;
 //    }
 //

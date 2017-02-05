@@ -19,8 +19,8 @@ import java.util.List;
 public abstract class GenericTemplateElementHelper {
 
     final Cloudinary cloudinary;
-    protected final RestTemplate restTemplate;
-    private TimeoutConfiguration timeoutConfiguration;
+    final RestTemplate restTemplate;
+    final TimeoutConfiguration timeoutConfiguration;
 
     @Autowired
     public GenericTemplateElementHelper(

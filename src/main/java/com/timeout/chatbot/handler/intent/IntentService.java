@@ -1,5 +1,7 @@
 package com.timeout.chatbot.handler.intent;
 
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
 import com.google.gson.JsonElement;
 import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,26 +73,26 @@ public class IntentService {
     public void handleFindRestaurants(
         Session session,
         HashMap<String, JsonElement> nluParameters
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
         findRestaurantsHandler.handle(session, nluParameters);
     }
 
     public void handleFindRestaurants(
         Session session
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
         findRestaurantsHandler.handle(session);
     }
 
     public void handleSeemore(
         Session session
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
         seemoreHandler.handle(session);
     }
 
     public void handleSetSubcategory(
         Session session,
         String subcategoryId
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
         setSubcategoryHandler.handle(session, subcategoryId);
     }
 

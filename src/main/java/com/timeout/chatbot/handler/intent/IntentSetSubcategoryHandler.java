@@ -1,5 +1,7 @@
 package com.timeout.chatbot.handler.intent;
 
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.BlockService;
@@ -33,7 +35,7 @@ public class IntentSetSubcategoryHandler {
     public void handle(
         Session session,
         String subcategoryId
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
         switch (session.getSessionState()) {
 
             case LOOKING:
@@ -52,13 +54,13 @@ public class IntentSetSubcategoryHandler {
     public void handleLooking(
         Session session,
         String subcategoryId
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
 
         final SessionStateLookingBag bag = session.getSessionStateLookingBag();
         final GraffittiFacetV4FacetNode categoryNode = graffittiService.findNodeInfacetWhatCategoriesRootNode(subcategoryId);
         bag.setGraffittiWhatCategoryNode(categoryNode);
 
-        findRestaurantsHandler.handleOtherThanBooking(session);
+        findRestaurantsHandler.fetchAndSend(session);
 
 //        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
 //        final What what = bag.getWhat();
@@ -66,13 +68,13 @@ public class IntentSetSubcategoryHandler {
 //        if (bag.getReaminingItems() > 0) {
 //            bag.setGraffittiPageNumber(bag.getGraffittiPageNumber() +1);
 //            if (what == What.RESTAURANT) {
-//                findRestaurantsHandler.handleOtherThanBooking(session);
+//                findRestaurantsHandler.applyNluParameters(session);
 //            }
 //        } else {
 //            if (what == What.RESTAURANT) {
 //                messengerSendClientWrapper.sendTextMessage(
 //                    session.getUser().getMessengerId(),
-//                    "There are no remaining Restaurants"
+//                    "There are no remaining RestaurantsManager"
 //                );
 //            }
 //        }

@@ -28,11 +28,10 @@ public class BlockService {
     private final VenuesPageBlock venuesPageBlock;
     private final VenuesRemainingBlock venuesRemainingBlock;
     private final SubcategoriesQuickrepliesBlock subcategoriesQuickrepliesBlock;
-    private final NeighborhoodsQuickrepliesBlock neighborhoodsQuickrepliesBlock;
+    private final AreasQuickrepliesBlock areasQuickrepliesBlock;
     private final VenueSummaryBlock venueSummaryBlock;
     private final GeolocationAskBlock geolocationAskBlock;
     private final FilmsPageBlock filmsPageBlock;
-
     private final ErrorBlock errorBlock;
 
     @Autowired
@@ -45,7 +44,7 @@ public class BlockService {
         VenuesPageBlock venuesPageBlock,
         VenuesRemainingBlock venuesRemainingBlock,
         SubcategoriesQuickrepliesBlock subcategoriesQuickrepliesBlock,
-        NeighborhoodsQuickrepliesBlock neighborhoodsQuickrepliesBlock, VenueSummaryBlock venueSummaryBlock,
+        AreasQuickrepliesBlock areasQuickrepliesBlock, VenueSummaryBlock venueSummaryBlock,
         GeolocationAskBlock geolocationAskBlock,
         FilmsPageBlock filmsPageBlock,
         ErrorBlock errorBlock
@@ -59,7 +58,7 @@ public class BlockService {
         this.venuesPageBlock = venuesPageBlock;
         this.venuesRemainingBlock = venuesRemainingBlock;
         this.subcategoriesQuickrepliesBlock = subcategoriesQuickrepliesBlock;
-        this.neighborhoodsQuickrepliesBlock = neighborhoodsQuickrepliesBlock;
+        this.areasQuickrepliesBlock = areasQuickrepliesBlock;
         this.venueSummaryBlock = venueSummaryBlock;
         this.geolocationAskBlock = geolocationAskBlock;
         this.filmsPageBlock = filmsPageBlock;
@@ -100,7 +99,6 @@ public class BlockService {
         );
     }
 
-
     public void sendFilmsPageBlock(
         Session session,
         @NotNull Integer pageNumber
@@ -121,7 +119,8 @@ public class BlockService {
         Session session,
         List<PageItem> pageItems,
         String itemPluralName
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
+
         venuesPageBlock.send(
             session,
             pageItems,
@@ -159,15 +158,15 @@ public class BlockService {
     public void sendSubcategoriesQuickrepliesBlock(
         Session session,
         Integer pageNumber
-    ) throws Exception {
+    ) {
         subcategoriesQuickrepliesBlock.send(session, pageNumber);
     }
 
     public void sendNeighborhoodsQuickrepliesBlock(
         Session session,
         Integer pageNumber
-    ) throws Exception {
-        neighborhoodsQuickrepliesBlock.send(session, pageNumber);
+    ) throws MessengerApiException, MessengerIOException {
+        areasQuickrepliesBlock.send(session, pageNumber);
     }
 
     public void sendGeolocationAskBlock(

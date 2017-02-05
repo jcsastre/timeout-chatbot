@@ -1,5 +1,6 @@
 package com.timeout.chatbot.services;
 
+import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4Response;
 import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
@@ -22,7 +23,9 @@ public class GraffittiService {
 
     final GraffittiFacetV4FacetNode facetWhatTree;
     final GraffittiFacetV4FacetNode facetWhatCategoriesRootNode;
-    final List<GraffittiFacetV4FacetNode> facetNeighborhoodsNodes;
+
+    private final List<Neighborhood> neighborhoods;
+
 
     @Autowired
     public GraffittiService(
@@ -40,17 +43,46 @@ public class GraffittiService {
 //        this.cuisines = populateCuisines(facetV4Response);
 
         facetWhatTree = getFacetWhatTree(facetV4Response);
-        facetNeighborhoodsNodes = getFacetNeighborhoodsNodes(facetV4Response);
         facetWhatCategoriesRootNode = getNodeCategoriesFromFaceWhatTree(facetWhatTree);
+        neighborhoods = buildNeighborhoodList(facetV4Response);
+    }
+
+    public List<Neighborhood> buildNeighborhoodList(
+        GraffittiFacetV4Response v4Response
+    ) {
+        List<Neighborhood> neighborhoods = new ArrayList<>();
+
+        for (GraffittiFacetV4FacetNode facet : v4Response.getBody().getFacets()) {
+            if (facet.getId().equalsIgnoreCase("where")) {
+                for (GraffittiFacetV4FacetNode facetWhereChild : facet.getChildren()) {
+                    if(!facetWhereChild.getId().equalsIgnoreCase("canned-near_here")) {
+                        neighborhoods.add(
+                            new Neighborhood(
+                                facetWhereChild.getId(),
+                                facetWhereChild.getName()
+                            )
+                        );
+                    }
+                }
+            }
+        }
+
+        return neighborhoods;
+    }
+
+    public Neighborhood getNeighborhoodByGraffittiId(String graffittiId) {
+        for (Neighborhood neighborhood : neighborhoods) {
+            if (neighborhood.getGraffitiId().equalsIgnoreCase(graffittiId)) {
+                return neighborhood;
+            }
+        }
+
+        return null;
     }
 
     public List<GraffittiFacetV5Node> getFacetsV5PrimaryCategories() {
         return
             graffittiFacetV5Response.getBody().getFacets().getWhat().getChildren();
-    }
-
-    public List<GraffittiFacetV4FacetNode> getFacetNeighborhoodsNodes() {
-        return facetNeighborhoodsNodes;
     }
 
     //    public GraffittiFacetV5Node getCategoryPrimaryByName(String name) {
@@ -255,20 +287,6 @@ public class GraffittiService {
         return null;
     }
 
-    private List<GraffittiFacetV4FacetNode> getFacetNeighborhoodsNodes(GraffittiFacetV4Response v4Response) {
-        List<GraffittiFacetV4FacetNode> facetWhereChildren = new ArrayList<>();
-        for (GraffittiFacetV4FacetNode facet : v4Response.getBody().getFacets()) {
-            if (facet.getId().equalsIgnoreCase("where")) {
-                for (GraffittiFacetV4FacetNode facetWhereChild : facet.getChildren()) {
-                    if(!facetWhereChild.getId().equalsIgnoreCase("canned-near_here")) {
-                        facetWhereChildren.add(facetWhereChild);
-                    }
-                }
-            }
-        }
-        return facetWhereChildren;
-    }
-
     private GraffittiFacetV4FacetNode getNodeCategoriesFromFaceWhatTree(GraffittiFacetV4FacetNode facetWhat) {
         for (GraffittiFacetV4FacetNode facetWhatChild : facetWhat.getChildren()) {
             if (facetWhatChild.getConcept().getName().equalsIgnoreCase("categories")) {
@@ -294,6 +312,11 @@ public class GraffittiService {
 //    public List<Category> getCategories() {
 //        return categories;
 //    }
+
+
+    public List<Neighborhood> getNeighborhoods() {
+        return neighborhoods;
+    }
 
     public class WhatChildrenPage {
         private Integer remainingItems;

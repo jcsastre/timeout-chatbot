@@ -1,7 +1,9 @@
 package com.timeout.chatbot.block.template.generic.element;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.Transformation;
 import com.timeout.chatbot.configuration.TimeoutConfiguration;
+import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -17,6 +19,46 @@ public class GenericTemplateElementVenueHelper extends GenericTemplateElementHel
     ) {
         super(cloudinary, restTemplate, timeoutConfiguration);
     }
+
+    public String buildImageUrl(PageItem pageItem) {
+
+        String url = timeoutConfiguration.getImageUrlPlacholder();
+
+        final PageItem.Image image = pageItem.getImage();
+        if (image != null) {
+            final String imageId = image.getId();
+            if (imageId != null) {
+                url = "http://media.timeout.com/images/" + imageId + "/320/210/image.jpg";
+            }
+        }
+
+        Transformation transformation = new Transformation();
+        transformation =
+            transformation.width(320).height(180).gravity("center").crop("crop").chain();
+
+        final Integer editorialRating = pageItem.getEditorialRating();
+        if (editorialRating != null) {
+            transformation =
+                transformation.overlay("rs" + editorialRating + "5").gravity("south_west").x(0.02).y(0.08);
+        }
+
+        final String location = pageItem.getLocation();
+        if (location != null) {
+            transformation =
+                transformation.overlay("location").gravity("north_west").x(0.02).y(0.08);
+        }
+
+        url =
+            cloudinary.url()
+                .transformation(transformation)
+                .format("png")
+                .type("fetch")
+                .generate(url);
+
+        return url;
+    }
+
+
 
 //    public String buildSubtitleForGenericTemplateElement(PageItem pageItem) {
 //        String subtitle = pageItem.getSummary();

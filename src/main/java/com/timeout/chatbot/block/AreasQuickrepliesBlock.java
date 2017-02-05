@@ -1,9 +1,11 @@
 package com.timeout.chatbot.block;
 
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.QuickReply;
+import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
 import org.json.JSONObject;
@@ -13,13 +15,13 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class NeighborhoodsQuickrepliesBlock {
+public class AreasQuickrepliesBlock {
 
     private final MessengerSendClient messengerSendClient;
     private final GraffittiService graffittiService;
 
     @Autowired
-    public NeighborhoodsQuickrepliesBlock(
+    public AreasQuickrepliesBlock(
         MessengerSendClient messengerSendClient,
         GraffittiService graffittiService
     ) {
@@ -30,7 +32,7 @@ public class NeighborhoodsQuickrepliesBlock {
     public void send(
         Session session,
         Integer pageNumber
-    ) throws Exception {
+    ) throws MessengerApiException, MessengerIOException {
 
         messengerSendClient.sendTextMessage(
             session.getUser().getMessengerId(),
@@ -44,7 +46,7 @@ public class NeighborhoodsQuickrepliesBlock {
     private List<QuickReply> buildQuickReplies(
         Integer pageNumber
     ) {
-        final List<GraffittiFacetV4FacetNode> neighborhoodsNodes = graffittiService.getFacetNeighborhoodsNodes();
+        final List<Neighborhood> neighborhoods = graffittiService.getNeighborhoods();
 
         final QuickReply.ListBuilder builder = QuickReply.newListBuilder();
 
@@ -55,12 +57,23 @@ public class NeighborhoodsQuickrepliesBlock {
                     .toString()
         ).toList();
 
-        final int neighborhoodsCount = neighborhoodsNodes.size();
+        if (pageNumber == 1) {
+            builder.addTextQuickReply(
+                "Everywhere",
+                new JSONObject()
+                    .put("type", PayloadType.where_everywhere)
+                    .toString()
+            ).toList();
+
+            builder.addLocationQuickReply().toList();
+        }
+
+        final int neighborhoodsCount = neighborhoods.size();
 
         int initPos = (pageNumber - 1) * PAGE_SIZE;
         for (int i=initPos; i<initPos+PAGE_SIZE && i<neighborhoodsCount; i++) {
-            final GraffittiFacetV4FacetNode neighborhoodsNode = neighborhoodsNodes.get(i);
-            String name = neighborhoodsNode.getName();
+            final Neighborhood neighborhood = neighborhoods.get(i);
+            String name = neighborhood.getName();
             if (name.length()>20) {
                 name = name.substring(0, 20);
             }
@@ -69,7 +82,7 @@ public class NeighborhoodsQuickrepliesBlock {
                 name,
                 new JSONObject()
                     .put("type", PayloadType.venues_set_neighborhood)
-                    .put("neighborhood_id", neighborhoodsNode.getId())
+                    .put("neighborhood_id", neighborhood.getGraffitiId())
                     .toString()
             ).toList();
         }
@@ -78,7 +91,7 @@ public class NeighborhoodsQuickrepliesBlock {
             builder.addTextQuickReply(
                 "More neighborhoods",
                 new JSONObject()
-                    .put("type", PayloadType.venues_show_neighborhoods)
+                    .put("type", PayloadType.venues_show_areas)
                     .put("pageNumber", pageNumber+1)
                     .toString()
             ).toList();
@@ -87,5 +100,5 @@ public class NeighborhoodsQuickrepliesBlock {
         return builder.build();
     }
 
-    private static final int PAGE_SIZE = 8;
+    private static final int PAGE_SIZE = 7;
 }

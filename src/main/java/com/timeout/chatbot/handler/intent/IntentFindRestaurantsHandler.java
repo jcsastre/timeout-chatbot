@@ -1,15 +1,17 @@
 package com.timeout.chatbot.handler.intent;
 
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
+import com.github.messenger4j.send.MessengerSendClient;
 import com.google.gson.JsonElement;
 import com.timeout.chatbot.domain.Geolocation;
+import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
 import com.timeout.chatbot.graffitti.uri.GraffittiQueryParameterType;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
-import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.BlockService;
-import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionStateLookingBag;
 import com.timeout.chatbot.session.context.SessionState;
@@ -25,8 +27,7 @@ public class IntentFindRestaurantsHandler {
 
     private final RestTemplate restTemplate;
     private final BlockService blockService;
-    private final MessengerSendClientWrapper messengerSendClientWrapper;
-    private final GraffittiService graffittiService;
+    private final MessengerSendClient messengerSendClient;
     private final SearchUrlBuilder searchUrlBuilder;
 
     private static final String WHAT_RESTAURANTS ="node-7083";
@@ -35,27 +36,26 @@ public class IntentFindRestaurantsHandler {
     public IntentFindRestaurantsHandler(
         RestTemplate restTemplate,
         BlockService blockService,
-        MessengerSendClientWrapper messengerSendClientWrapper,
-        GraffittiService graffittiService,
+        MessengerSendClient messengerSendClient,
         SearchUrlBuilder searchUrlBuilder
     ) {
         this.restTemplate = restTemplate;
         this.blockService = blockService;
-        this.messengerSendClientWrapper = messengerSendClientWrapper;
-        this.graffittiService = graffittiService;
+        this.messengerSendClient = messengerSendClient;
         this.searchUrlBuilder = searchUrlBuilder;
     }
 
     public void handle(
         Session session,
         HashMap<String, JsonElement> nluParameters
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
         switch (session.getSessionState()) {
 
             case UNDEFINED:
             case WELCOMED:
             case LOOKING:
-                handleOtherThanBooking(session, nluParameters);
+                applyNluParameters(session, nluParameters);
+                handle(session);
                 break;
 
             case BOOKING:
@@ -70,13 +70,13 @@ public class IntentFindRestaurantsHandler {
 
     public void handle(
         Session session
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
         switch (session.getSessionState()) {
 
             case UNDEFINED:
             case WELCOMED:
             case LOOKING:
-                handleOtherThanBooking(session);
+                fetchAndSend(session);
                 break;
 
             case BOOKING:
@@ -89,10 +89,11 @@ public class IntentFindRestaurantsHandler {
         }
     }
 
-    private void handleOtherThanBooking(
+    private void applyNluParameters(
         Session session,
         HashMap<String, JsonElement> nluParameters
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
+
         if (
             nluParameters.containsKey("whereUkLondon")
         ) {
@@ -113,27 +114,16 @@ public class IntentFindRestaurantsHandler {
                 //bag.setGraffittiWhere(where);
             }
         }
-
-//        if (
-//            nluParameters.containsKey("cuisinesRestaurants")
-//        ) {
-//            final SessionStateLookingBag bag = session.getSessionStateLookingBag();
-//
-//            final String nodeId = nluParameters.get("cuisinesRestaurants").getAsString();
-//            final GraffittiFacetV5Node graffittiFacetV5Node = graffittiService.getGraffittiFacetV5NodeById(nodeId);
-//            bag.setGraffittiWhatCategoryNode(graffittiFacetV5Node);
-//        }
-
-        handleOtherThanBooking(session);
     }
 
     private void handleBooking() {
         //TODO: handleBooking
     }
 
-    public void handleOtherThanBooking(
+    public void fetchAndSend(
         Session session
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
+
         final SessionStateLookingBag bag = session.getSessionStateLookingBag();
 
         UrlBuilder urlBuilder = urlBuilderBase(
@@ -141,7 +131,7 @@ public class IntentFindRestaurantsHandler {
             bag.getGraffittiPageNumber()
         );
 
-        String msg = "Looking for Restaurants";
+        String msg = "Looking for restaurants";
 
         final Geolocation geolocation = bag.getGeolocation();
         if (geolocation != null) {
@@ -164,47 +154,28 @@ public class IntentFindRestaurantsHandler {
                         "distance"
                     );
 
-            msg = "Looking for Restaurants around the location you specified";
+            msg = "Looking for restaurants near the location you specified";
         } else {
-            final String whereId = bag.getGraffittiWhereId();
+            final Neighborhood neighborhood = bag.getNeighborhood();
 
-            if (whereId != null) {
+            if (neighborhood != null) {
                 urlBuilder =
                     urlBuilder
                         .addParameter(
                             GraffittiQueryParameterType.WHERE.getValue(),
-                            whereId
+                            neighborhood.getGraffitiId()
                         );
 
-                msg = "Looking for Restaurants around the location you specified";
+                msg = "Looking for restaurants at "+ neighborhood.getName();
             }
         }
 
-        messengerSendClientWrapper.sendTextMessage(
+        messengerSendClient.sendTextMessage(
             session.getUser().getMessengerId(),
             msg
         );
 
         System.out.println(urlBuilder.toUrl().toString());
-
-//        ///
-//        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
-//        final GraffittiFacetV4Where what = bag.getWhat();
-//
-//        if (what != GraffittiFacetV4Where.RESTAURANT) {
-//            bag.setWhat(GraffittiFacetV4Where.RESTAURANT);
-//            bag.setGraffittiPageNumber(1);
-//        } else {
-//            Integer pageNumber = bag.getGraffittiPageNumber();
-//            if (pageNumber != null) {
-//                pageNumber++;
-//                bag.setGraffittiPageNumber(pageNumber);;
-//            } else {
-//                bag.setGraffittiPageNumber(1);
-//            }
-//        }
-//
-//        final URI uri = buildUri(session, bag);
 
         final SearchResponse searchResponse =
             restTemplate.getForObject(
@@ -219,22 +190,16 @@ public class IntentFindRestaurantsHandler {
             blockService.sendVenuesPageBlock(
                 session,
                 searchResponse.getPageItems(),
-                "Restaurants"
+                "RestaurantsManager"
             );
 
             blockService.sendVenuesRemainingBlock(
                 session
-//                session.getUser().getMessengerId(),
-//                bag.getReaminingItems(),
-//                bag.getGraffittiWhere() != null,
-//                "Restaurants",
-//                bag.getGraffittiWhatCategoryNode() != null,
-//                "Cuisine"
             );
         } else {
-            messengerSendClientWrapper.sendTextMessage(
+            messengerSendClient.sendTextMessage(
                 session.getUser().getMessengerId(),
-                "There are not available Restaurants for your request."
+                "There are not available restaurants for your request."
             );
         }
 
@@ -259,31 +224,4 @@ public class IntentFindRestaurantsHandler {
             );
         }
     }
-
-//    private URI buildUri(Session session, SessionStateLookingBag bag) {
-//        URI uri = null;
-//
-//        final SessionContextBag.Geolocation geolocation = bag.getGeolocation();
-//
-//        if (geolocation == null) {
-//            uri =
-//                RestaurantsSearchUri.buildNonGeolocatedUri(
-//                    bag.getGraffittiPageNumber()
-//                );
-//        } else {
-//            uri =
-//                RestaurantsSearchUri.buildGeolocatedUri(
-//                    geolocation.getLatitude(),
-//                    geolocation.getLongitude(),
-//                    bag.getGraffittiPageNumber()
-//                );
-//
-//            messengerSendClientWrapper.sendTextMessage(
-//                session.getUser().getMessengerId(),
-//                "Looking for Restaurants within 500 meters from the current location. Please, give me a moment."
-//            );
-//        }
-//
-//        return uri;
-//    }
 }

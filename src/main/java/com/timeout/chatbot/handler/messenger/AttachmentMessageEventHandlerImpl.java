@@ -2,6 +2,7 @@ package com.timeout.chatbot.handler.messenger;
 
 import com.github.messenger4j.receive.events.AttachmentMessageEvent;
 import com.github.messenger4j.receive.handlers.AttachmentMessageEventHandler;
+import com.timeout.chatbot.block.ErrorBlock;
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.domain.page.PageUid;
@@ -18,14 +19,17 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
 
     private final SessionPool sessionPool;
     private final IntentFindRestaurantsHandler findRestaurantsHandler;
+    private final ErrorBlock errorBlock;
 
     @Autowired
     public AttachmentMessageEventHandlerImpl(
         SessionPool sessionPool,
-        IntentFindRestaurantsHandler findRestaurantsHandler
+        IntentFindRestaurantsHandler findRestaurantsHandler,
+        ErrorBlock errorBlock
     ) {
         this.sessionPool = sessionPool;
         this.findRestaurantsHandler = findRestaurantsHandler;
+        this.errorBlock = errorBlock;
     }
 
     @Override
@@ -39,27 +43,34 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
                 event.getSender().getId()
             );
 
-        for (AttachmentMessageEvent.Attachment attachment : event.getAttachments()) {
-            if (attachment.getType() == AttachmentMessageEvent.AttachmentType.LOCATION) {
-                final AttachmentMessageEvent.LocationPayload locationPayload =
-                    attachment.getPayload().asLocationPayload();
+        try {
+            for (AttachmentMessageEvent.Attachment attachment : event.getAttachments()) {
+                if (attachment.getType() == AttachmentMessageEvent.AttachmentType.LOCATION) {
+                    final AttachmentMessageEvent.LocationPayload locationPayload =
+                        attachment.getPayload().asLocationPayload();
 
-                final Geolocation geolocation =
-                    new Geolocation(
-                        locationPayload.getCoordinates().getLatitude(),
-                        locationPayload.getCoordinates().getLongitude()
-                    );
+                    final Geolocation geolocation =
+                        new Geolocation(
+                            locationPayload.getCoordinates().getLatitude(),
+                            locationPayload.getCoordinates().getLongitude()
+                        );
 
-                final SessionStateLookingBag lookingBag = session.getSessionStateLookingBag();
-                lookingBag.setGeolocation(geolocation);
+                    final SessionStateLookingBag lookingBag = session.getSessionStateLookingBag();
+                    lookingBag.setGraffittiPageNumber(1);
+                    lookingBag.setNeighborhood(null);
+                    lookingBag.setGeolocation(geolocation);
 
-                if (session.getSessionState() == SessionState.LOOKING) {
-                    final What what = lookingBag.getWhat();
-                    if (what == What.RESTAURANT) {
-                        findRestaurantsHandler.handleOtherThanBooking(session);
+                    if (session.getSessionState() == SessionState.LOOKING) {
+                        final What what = lookingBag.getWhat();
+                        if (what == What.RESTAURANT) {
+                            findRestaurantsHandler.fetchAndSend(session);
+                        }
                     }
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            errorBlock.send(session.getUser());
         }
     }
 }

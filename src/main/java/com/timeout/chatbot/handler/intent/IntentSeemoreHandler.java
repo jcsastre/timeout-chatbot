@@ -1,7 +1,9 @@
 package com.timeout.chatbot.handler.intent;
 
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
+import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.domain.What;
-import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionStateLookingBag;
@@ -12,23 +14,24 @@ import org.springframework.stereotype.Component;
 public class IntentSeemoreHandler {
 
     private final BlockService blockService;
-    private final MessengerSendClientWrapper messengerSendClientWrapper;
+    private final MessengerSendClient messengerSendClient;
     private final IntentFindRestaurantsHandler findRestaurantsHandler;
 
     @Autowired
     public IntentSeemoreHandler(
         BlockService blockService,
-        MessengerSendClientWrapper messengerSendClientWrapper,
+        MessengerSendClient messengerSendClient,
         IntentFindRestaurantsHandler findRestaurantsHandler
     ) {
         this.blockService = blockService;
-        this.messengerSendClientWrapper = messengerSendClientWrapper;
+        this.messengerSendClient = messengerSendClient;
         this.findRestaurantsHandler = findRestaurantsHandler;
     }
 
     public void handle(
         Session session
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
+
         switch (session.getSessionState()) {
 
             case LOOKING:
@@ -36,9 +39,6 @@ public class IntentSeemoreHandler {
                 break;
 
             case BOOKING:
-                handleBooking();
-                break;
-
             case UNDEFINED:
             case WELCOMED:
             default:
@@ -47,29 +47,27 @@ public class IntentSeemoreHandler {
         }
     }
 
-    public void handleLooking(
+    private void handleLooking(
         Session session
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
+
         final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+
         final What what = bag.getWhat();
 
         if (bag.getReaminingItems() > 0) {
             bag.setGraffittiPageNumber(bag.getGraffittiPageNumber() +1);
+
             if (what == What.RESTAURANT) {
-                findRestaurantsHandler.handleOtherThanBooking(session);
+                findRestaurantsHandler.fetchAndSend(session);
             }
         } else {
             if (what == What.RESTAURANT) {
-                messengerSendClientWrapper.sendTextMessage(
+                messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "There are no remaining Restaurants"
                 );
             }
         }
     }
-
-    public void handleBooking() {
-        //TODO: handleBooking
-    }
-
 }

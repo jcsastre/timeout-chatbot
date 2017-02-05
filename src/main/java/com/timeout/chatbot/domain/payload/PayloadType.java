@@ -18,7 +18,9 @@ public enum PayloadType {
 
     utterance,
 
-    venues_show_neighborhoods,
+    where_everywhere,
+
+    venues_show_areas,
     venues_set_neighborhood,
     venue_more_options,
     venues_more_info,

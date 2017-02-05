@@ -25,12 +25,6 @@ public class VenuesRemainingBlock {
 
     public void send(
         Session session
-//        String userMessengerId,
-//        Integer remainingItems,
-//        Boolean isWhereSet,
-//        String itemPluralName,
-//        Boolean isCategorySet,
-//        String categorySingularName
     ) {
         final SessionStateLookingBag bag = session.getSessionStateLookingBag();
 
@@ -47,20 +41,12 @@ public class VenuesRemainingBlock {
             ),
             buildQuickReplies(
                 bag
-//                bag.getReaminingItems(),
-//                isWhereSet,
-//                isCategorySet,
-//                categorySingularName
             )
         );
     }
 
     private List<QuickReply> buildQuickReplies(
         SessionStateLookingBag bag
-//        Integer remainingItems,
-//        Boolean isWhereSet,
-//        Boolean isCategorySet,
-//        String categorySingularName
     ) {
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
@@ -74,12 +60,10 @@ public class VenuesRemainingBlock {
             ).toList();
         }
 
-        listBuilder.addLocationQuickReply().toList();
-
         listBuilder.addTextQuickReply(
-            bag.getGraffittiWhere() != null ? "Change neighborhood" : "Set neighborhood",
+            "Area",
             new JSONObject()
-                .put("type", PayloadType.venues_show_neighborhoods)
+                .put("type", PayloadType.venues_show_areas)
                 .put("pageNumber", 1)
                 .toString()
         ).toList();

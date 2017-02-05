@@ -1,7 +1,7 @@
 package com.timeout.chatbot.domain;
 
 public enum What {
-    RESTAURANT("Restaurant", "Restaurants"),
+    RESTAURANT("Restaurant", "RestaurantsManager"),
     BAR("Bars & Pubs", "Bars & Pubs"),
     HOTEL("Hotel", "Hotels"),
     FILM("Film", "Films");

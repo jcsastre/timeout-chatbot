@@ -2,7 +2,6 @@ package com.timeout.chatbot.session;
 
 import com.timeout.chatbot.domain.page.Page;
 import com.timeout.chatbot.domain.user.User;
-import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.session.context.SessionState;
 
 public class Session {
@@ -11,16 +10,13 @@ public class Session {
     private final User user;
     private SessionState sessionState;
     private SessionStateLookingBag sessionStateLookingBag;
+    private SessionStateItemBag sessionStateItemBag;
     private long lastAccessTime;
 
-    private final MessengerSendClientWrapper messengerSendClientWrapper;
-
     public Session(
-        MessengerSendClientWrapper messengerSendClientWrapper,
         Page page,
         User user
     ) {
-        this.messengerSendClientWrapper = messengerSendClientWrapper;
         this.page = page;
         this.user = user;
 
@@ -30,6 +26,7 @@ public class Session {
     public void reset() {
         this.sessionState = SessionState.UNDEFINED;
         this.sessionStateLookingBag = new SessionStateLookingBag();
+        this.sessionStateItemBag = new SessionStateItemBag();
     }
 
     public long getLastAccessTime() {
@@ -38,17 +35,6 @@ public class Session {
 
     public void setLastAccessTime(long lastAccessTime) {
         this.lastAccessTime = lastAccessTime;
-    }
-
-    public void sendTextMessage(String msg) {
-        if (msg.length() > 320) {
-            msg = msg.substring(0, 320);
-        }
-
-        messengerSendClientWrapper.sendTextMessage(
-            user.getMessengerId(),
-            msg
-        );
     }
 
     public User getUser() {
@@ -69,6 +55,10 @@ public class Session {
 
     public SessionStateLookingBag getSessionStateLookingBag() {
         return sessionStateLookingBag;
+    }
+
+    public SessionStateItemBag getSessionStateItemBag() {
+        return sessionStateItemBag;
     }
 
     @Override

@@ -30,7 +30,7 @@ public class SubcategoriesQuickrepliesBlock {
     public void send(
         Session session,
         Integer pageNumber
-    ) throws Exception {
+    ) {
         final SessionStateLookingBag bag = session.getSessionStateLookingBag();
 
         final GraffittiFacetV4FacetNode categoryNode = bag.getGraffittiWhatCategoryNode();

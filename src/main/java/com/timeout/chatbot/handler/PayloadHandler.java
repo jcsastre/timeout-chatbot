@@ -1,10 +1,18 @@
 package com.timeout.chatbot.handler;
 
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
+import com.github.messenger4j.send.MessengerSendClient;
+import com.timeout.chatbot.domain.Neighborhood;
+import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentService;
-import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.BlockService;
+import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
+import com.timeout.chatbot.session.SessionStateItemBag;
+import com.timeout.chatbot.session.SessionStateLookingBag;
 import com.timeout.chatbot.session.context.SessionState;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,26 +23,30 @@ public class PayloadHandler {
 
     private final IntentService intentService;
     private final BlockService blockService;
-    private final MessengerSendClientWrapper messengerSendClientWrapper;
+    private final MessengerSendClient messengerSendClient;
     private final TextHandler textHandler;
+    private final GraffittiService graffittiService;
 
     @Autowired
     public PayloadHandler(
         IntentService intentService,
         BlockService blockService,
-        MessengerSendClientWrapper messengerSendClientWrapper,
-        TextHandler textHandler
+        MessengerSendClient messengerSendClient,
+        TextHandler textHandler,
+        GraffittiService graffittiService
     ) {
         this.intentService = intentService;
         this.blockService = blockService;
-        this.messengerSendClientWrapper = messengerSendClientWrapper;
+        this.messengerSendClient = messengerSendClient;
         this.textHandler = textHandler;
+        this.graffittiService = graffittiService;
     }
 
     public void handle(
         String payloadAsString,
         Session session
-    ) throws Exception {
+    ) throws NluException, MessengerIOException, MessengerApiException {
+
         final JSONObject payload = new JSONObject(payloadAsString);
         final PayloadType payloadType = PayloadType.valueOf(payload.getString("type"));
 
@@ -76,6 +88,10 @@ public class PayloadHandler {
                 intentService.handleSeemore(session);
                 break;
 
+            case item_more_options:
+                handleItemMoreOptions(session, payload);
+                break;
+
             case set_geolocation:
                 blockService.sendGeolocationAskBlock(session.getUser().getMessengerId());
                 break;
@@ -96,20 +112,35 @@ public class PayloadHandler {
                 );
                 break;
 
-            case venues_show_neighborhoods:
+            case venues_show_areas:
                 final Integer pageNumber = payload.getInt("pageNumber");
                 blockService.sendNeighborhoodsQuickrepliesBlock(session, pageNumber);
                 break;
 
             case venues_set_neighborhood:
                 final String neighborhoodId = payload.getString("neighborhood_id");
-                session.getSessionStateLookingBag().setGraffittiPageNumber(1);
-                session.getSessionStateLookingBag().setGraffittiWhereId(neighborhoodId);
+                final Neighborhood neighborhood = graffittiService.getNeighborhoodByGraffittiId(neighborhoodId);
+                if (neighborhood!=null) {
+                    final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+                    bag.setGraffittiPageNumber(1);
+                    bag.setGeolocation(null);
+                    bag.setNeighborhood(neighborhood);
+                    intentService.handleFindRestaurants(session);
+                } else {
+                    blockService.sendErrorBlock(session.getUser());
+                }
+                break;
+
+            case where_everywhere:
+                final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+                bag.setGraffittiPageNumber(1);
+                bag.setGeolocation(null);
+                bag.setNeighborhood(null);
                 intentService.handleFindRestaurants(session);
                 break;
 
             case venues_book:
-                messengerSendClientWrapper.sendTextMessage(
+                messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, booking is not implemented yet"
                 );
@@ -117,7 +148,7 @@ public class PayloadHandler {
                 break;
 
             case no_see_at_timeout:
-                messengerSendClientWrapper.sendTextMessage(
+                messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Ok, back to the list of restaurants"
                 );
@@ -131,7 +162,7 @@ public class PayloadHandler {
 //                break;
 
             case films_find_cinemas:
-                messengerSendClientWrapper.sendTextMessage(
+                messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, 'Find a cinema' is not implemented yet"
                 );
@@ -142,11 +173,26 @@ public class PayloadHandler {
                 break;
 
             default:
-                messengerSendClientWrapper.sendTextMessage(
+                messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, I don't understand you."
                 );
                 break;
         }
+    }
+
+    private void handleItemMoreOptions(
+        Session session,
+        JSONObject payload
+    ) throws MessengerApiException, MessengerIOException {
+
+        final SessionStateItemBag bag = session.getSessionStateItemBag();
+
+        bag.setGraffittiType(GraffittiType.fromString(payload.getString("item_type")));
+        bag.setItemId(payload.getString("item_id"));
+
+        session.setSessionState(SessionState.ITEM);
+
+        intentService.handleFindRestaurants(session);
     }
 }

@@ -1,16 +1,11 @@
 package com.timeout.chatbot.session;
 
 import com.timeout.chatbot.configuration.MessengerConfiguration;
-import com.timeout.chatbot.block.booking.BookingBlocksHelper;
 import com.timeout.chatbot.domain.FbUserProfile;
 import com.timeout.chatbot.domain.page.Page;
-import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.domain.page.PageUid;
-import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
+import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.repository.UserRepository;
-import com.timeout.chatbot.services.ApiAiService;
-import com.timeout.chatbot.services.BlockService;
-import com.timeout.chatbot.services.GraffittiService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -23,33 +18,18 @@ public class SessionPool {
 
     private final MessengerConfiguration messengerConfiguration;
     private final RestTemplate restTemplate;
-    private final GraffittiService campingpongAPIService;
-    private final ApiAiService apiAiService;
-    private final MessengerSendClientWrapper messengerSendClientWrapper;
     private final List<Session> sessions = new ArrayList<>();
-    private final BlockService blockService;
     private final UserRepository userRepository;
-    private final BookingBlocksHelper bookingBlocksHelper;
 
     @Autowired
     public SessionPool(
         MessengerConfiguration messengerConfiguration,
         RestTemplate restTemplate,
-        GraffittiService campingpongAPIService,
-        ApiAiService apiAiService,
-        MessengerSendClientWrapper messengerSendClientWrapper,
-        BlockService blockService,
-        UserRepository userRepository,
-        BookingBlocksHelper bookingBlocksHelper
+        UserRepository userRepository
     ) {
         this.messengerConfiguration = messengerConfiguration;
         this.restTemplate = restTemplate;
-        this.campingpongAPIService = campingpongAPIService;
-        this.apiAiService = apiAiService;
-        this.messengerSendClientWrapper = messengerSendClientWrapper;
-        this.blockService = blockService;
         this.userRepository = userRepository;
-        this.bookingBlocksHelper = bookingBlocksHelper;
     }
 
     public Session getSession(
@@ -82,7 +62,6 @@ public class SessionPool {
 
         final Session session =
             new Session(
-                messengerSendClientWrapper,
                 page,
                 user
             );
