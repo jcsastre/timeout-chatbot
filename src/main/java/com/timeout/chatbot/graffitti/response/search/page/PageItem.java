@@ -28,6 +28,8 @@ public class PageItem {
     private Image image;
     @JsonProperty("editorial_rating")
     private Integer editorialRating;
+    @JsonProperty("user_ratings_summary")
+    private UserRatingsSummary userRatingsSummary;
 
     public String getType() {
         return type;
@@ -153,6 +155,14 @@ public class PageItem {
         this.editorialRating = editorialRating;
     }
 
+    public UserRatingsSummary getUserRatingsSummary() {
+        return userRatingsSummary;
+    }
+
+    public void setUserRatingsSummary(UserRatingsSummary userRatingsSummary) {
+        this.userRatingsSummary = userRatingsSummary;
+    }
+
     public class Image {
         private String id;
 
@@ -162,6 +172,27 @@ public class PageItem {
 
         public void setId(String id) {
             this.id = id;
+        }
+    }
+
+    public class UserRatingsSummary {
+        private Integer count;
+        private Integer average;
+
+        public Integer getCount() {
+            return count;
+        }
+
+        public void setCount(Integer count) {
+            this.count = count;
+        }
+
+        public Integer getAverage() {
+            return average;
+        }
+
+        public void setAverage(Integer average) {
+            this.average = average;
         }
     }
 

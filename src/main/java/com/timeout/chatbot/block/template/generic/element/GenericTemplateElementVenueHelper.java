@@ -28,25 +28,60 @@ public class GenericTemplateElementVenueHelper extends GenericTemplateElementHel
         if (image != null) {
             final String imageId = image.getId();
             if (imageId != null) {
-                url = "http://media.timeout.com/images/" + imageId + "/320/210/image.jpg";
+                url = "http://media.timeout.com/images/" + imageId + "/image.jpg";
             }
         }
 
-        Transformation transformation = new Transformation();
-        transformation =
-            transformation.width(320).height(180).gravity("center").crop("crop").chain();
+        Transformation transformation =
+            new Transformation()
+                .aspectRatio("191:100").crop("crop").chain()
+                .width(764).crop("scale").chain()
+                .overlay("overlay_black_bottom_gradient_loq19q").gravity("south").chain();
 
-        final Integer editorialRating = pageItem.getEditorialRating();
-        if (editorialRating != null) {
-            transformation =
-                transformation.overlay("rs" + editorialRating + "5").gravity("south_west").x(0.02).y(0.08);
-        }
-
-        final String location = pageItem.getLocation();
+        // Location
+        String location = pageItem.getLocation();
         if (location != null) {
+            location = location.replace(" ", "%20");
+            double yText = 0.07;
+            if (location.contains("j")) {
+                yText = 0.06;
+            }
             transformation =
-                transformation.overlay("location").gravity("north_west").x(0.02).y(0.08);
+                transformation
+                    .overlay("location_vg9fjx").gravity("south_west").x(0.020).y(0.04).chain()
+                    .overlay("text:Arial_32:"+location).color("#B1B1B1").gravity("south_west").x(0.08).y(yText).chain();
         }
+
+        // Editorial rating
+        //        final Integer editorialRating = pageItem.getEditorialRating();
+//        if (editorialRating != null) {
+        transformation =
+            transformation.overlay("rs35v1").gravity("south_west").x(0.020).y(0.2).chain();
+//            transformation =
+//                transformation.overlay("rs" + editorialRating + "5").gravity("center").x(0.02).y(0.08).chain();
+//        }
+
+
+        // User ratings
+//        final PageItem.UserRatingsSummary userRatingsSummary = pageItem.getUserRatingsSummary();
+//        if (userRatingsSummary != null) {
+//            final Integer average = userRatingsSummary.getAverage();
+//            if (average != null) {
+                transformation =
+                    transformation.overlay("bs45v1").gravity("south_west").x(0.35).y(0.2).chain();
+                transformation =
+                    transformation.overlay("text:Arial_36_bold:(23)").color("#FFFFFF").gravity("south_west").x(0.6).y(0.25).chain();
+
+//            }
+//        }
+
+
+//        transformation =
+//            transformation.width(320).height(180).gravity("center").crop("crop").chain();
+
+
+
+
 
         url =
             cloudinary.url()
@@ -54,6 +89,8 @@ public class GenericTemplateElementVenueHelper extends GenericTemplateElementHel
                 .format("png")
                 .type("fetch")
                 .generate(url);
+
+        System.out.println(url);
 
         return url;
     }

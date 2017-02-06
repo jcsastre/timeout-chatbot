@@ -93,6 +93,7 @@ public abstract class GenericTemplateElementHelper {
         Transformation transformation = new Transformation();
         transformation =
             transformation.width(320).height(180).gravity("center").crop("crop").chain();
+
 //        transformation =
 //            transformation.overlay("see_at_timeout").gravity("north_east").x(0.02).y(0.08).chain();
 
