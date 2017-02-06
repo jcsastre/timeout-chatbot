@@ -22,6 +22,8 @@ public class IntentService {
     private final IntentFindRestaurantsHandler findRestaurantsHandler;
     private final IntentSetSubcategoryHandler setSubcategoryHandler;
     private final IntentCancelHandler cancelHandler;
+    private final IntentSeeItem seeItem;
+    private final IntentGetasummaryHandler getasummaryHandler;
 
     @Autowired
     public IntentService(
@@ -34,7 +36,9 @@ public class IntentService {
         IntentFindThingsToDoHandler findThingsToDoHandler,
         IntentFindRestaurantsHandler findRestaurantsHandler,
         IntentSetSubcategoryHandler setSubcategoryHandler,
-        IntentCancelHandler cancelHandler
+        IntentCancelHandler cancelHandler,
+        IntentSeeItem seeItem,
+        IntentGetasummaryHandler getasummaryHandler
     ) {
         this.helpHandler = helpHandler;
         this.greetingsHandler = greetingsHandler;
@@ -46,6 +50,8 @@ public class IntentService {
         this.findRestaurantsHandler = findRestaurantsHandler;
         this.setSubcategoryHandler = setSubcategoryHandler;
         this.cancelHandler = cancelHandler;
+        this.seeItem = seeItem;
+        this.getasummaryHandler = getasummaryHandler;
     }
 
     public void handleHelp(Session session) {
@@ -100,5 +106,17 @@ public class IntentService {
         Session session
     ) {
         cancelHandler.handle(session);
+    }
+
+    public void handleSeeItem(
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+        seeItem.handle(session);
+    }
+
+    public void handleGetasummary(
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+        getasummaryHandler.handle(session);
     }
 }

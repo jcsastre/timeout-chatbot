@@ -1,17 +1,18 @@
-package com.timeout.chatbot.graffitti.response.categorisation;
+package com.timeout.chatbot.graffitti.response.common.categorisation;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GraffittiCategorisationSecondary {
+public class GraffittiCategorisationPrimary {
 
     private String name;
 
     @JsonProperty("tree_node_id")
     private Integer treeNodeId;
 
-    private GraffittiCategorisationConcept concept;
+    @JsonProperty("concept")
+    private GraffittiCategorisationConcept graffittiCategorisationConcept;
 
     private String colour;
 
@@ -31,12 +32,12 @@ public class GraffittiCategorisationSecondary {
         this.treeNodeId = treeNodeId;
     }
 
-    public GraffittiCategorisationConcept getConcept() {
-        return concept;
+    public GraffittiCategorisationConcept getGraffittiCategorisationConcept() {
+        return graffittiCategorisationConcept;
     }
 
-    public void setConcept(GraffittiCategorisationConcept concept) {
-        this.concept = concept;
+    public void setGraffittiCategorisationConcept(GraffittiCategorisationConcept graffittiCategorisationConcept) {
+        this.graffittiCategorisationConcept = graffittiCategorisationConcept;
     }
 
     public String getColour() {

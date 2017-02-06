@@ -35,6 +35,7 @@ public class IntentSeemoreHandler {
         switch (session.getSessionState()) {
 
             case LOOKING:
+            case ITEM:
                 handleLooking(session);
                 break;
 

@@ -105,6 +105,10 @@ public class PayloadHandler {
                 intentService.handleSetSubcategory(session, subcategoryId);
                 break;
 
+            case get_a_summary:
+                intentService.handleGetasummary(session);
+                break;
+
             case venues_more_info:
                 blockService.sendVenueSummaryBlock(
                     session.getUser().getMessengerId(),
@@ -187,12 +191,10 @@ public class PayloadHandler {
     ) throws MessengerApiException, MessengerIOException {
 
         final SessionStateItemBag bag = session.getSessionStateItemBag();
-
         bag.setGraffittiType(GraffittiType.fromString(payload.getString("item_type")));
         bag.setItemId(payload.getString("item_id"));
-
         session.setSessionState(SessionState.ITEM);
 
-        intentService.handleFindRestaurants(session);
+        intentService.handleSeeItem(session);
     }
 }

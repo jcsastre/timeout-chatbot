@@ -2,29 +2,114 @@ package com.timeout.chatbot.block.template.generic.element;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
+import com.github.messenger4j.send.buttons.Button;
+import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.configuration.TimeoutConfiguration;
+import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.graffitti.response.common.UserRatingsSummary;
+import com.timeout.chatbot.graffitti.response.images.Image;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
+import com.timeout.chatbot.graffitti.response.venues.GraffittiVenueResponse;
+import org.cloudinary.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.HtmlUtils;
+
+import java.util.List;
 
 @Component
-public class GenericTemplateElementVenueHelper extends GenericTemplateElementHelper {
+public class GenericTemplateElementVenueHelper {
+
+    private final Cloudinary cloudinary;
+    private final TimeoutConfiguration timeoutConfiguration;
 
     @Autowired
     public GenericTemplateElementVenueHelper(
         Cloudinary cloudinary,
-        RestTemplate restTemplate,
         TimeoutConfiguration timeoutConfiguration
     ) {
-        super(cloudinary, restTemplate, timeoutConfiguration);
+        this.cloudinary = cloudinary;
+        this.timeoutConfiguration = timeoutConfiguration;
     }
 
-    public String buildImageUrl(PageItem pageItem) {
+    public void addElement(
+        GenericTemplate.Element.ListBuilder listBuilder,
+        PageItem pageItem
+    ) {
+        final GenericTemplate.Element.Builder builder = listBuilder.addElement(pageItem.getName());
+
+        final String subtitle = buildSubtitle(pageItem);
+        if (subtitle != null && !subtitle.isEmpty()) {
+            builder.subtitle(subtitle);
+        }
+
+        final String imageUrl = buildImageUrl(
+            pageItem.getImage(),
+            pageItem.getLocation(),
+            pageItem.getEditorialRating(),
+            pageItem.getUserRatingsSummary()
+        );
+        if (imageUrl != null) {
+            builder.imageUrl(imageUrl);
+        }
+
+        final List<Button> buttons = buildButtons(pageItem);
+        if (buttons != null) {
+            builder.buttons(buttons);
+        }
+
+        builder.toList().done();
+    }
+
+    public void addElementLite(
+        GenericTemplate.Element.ListBuilder listBuilder,
+        GraffittiVenueResponse graffittiVenueResponse
+    ) {
+        final GenericTemplate.Element.Builder builder =
+            listBuilder.addElement(
+                graffittiVenueResponse.getBody().getName()
+            );
+
+        final String imageUrl = buildImageUrl(
+            graffittiVenueResponse.getBody().getImage(),
+            graffittiVenueResponse.getBody().getLocation(),
+            graffittiVenueResponse.getBody().getEditorialRating(),
+            graffittiVenueResponse.getBody().getUserRatingsSummary()
+        );
+        if (imageUrl != null) {
+            builder.imageUrl(imageUrl);
+        }
+
+        builder.toList().done();
+    }
+
+    public String buildSubtitle(PageItem pageItem) {
+        String subtitle = pageItem.getSummary();
+        if (subtitle == null) {
+            subtitle = pageItem.getDescription();
+            if (subtitle == null) {
+                subtitle = pageItem.getAnnotation();
+            }
+        }
+
+        subtitle = HtmlUtils.htmlUnescape(subtitle);
+
+        if (subtitle != null && subtitle.length() > 80) {
+            subtitle = subtitle.substring(0, 77);
+            subtitle = subtitle + "...";
+        }
+
+        return subtitle;
+    }
+
+    public String buildImageUrl(
+        Image image,
+        String location,
+        Integer editorialRating,
+        UserRatingsSummary userRatingsSummary
+    ) {
 
         String url = timeoutConfiguration.getImageUrlPlacholder();
-
-        final PageItem.Image image = pageItem.getImage();
         if (image != null) {
             final String imageId = image.getId();
             if (imageId != null) {
@@ -39,49 +124,45 @@ public class GenericTemplateElementVenueHelper extends GenericTemplateElementHel
                 .overlay("overlay_black_bottom_gradient_loq19q").gravity("south").chain();
 
         // Location
-        String location = pageItem.getLocation();
         if (location != null) {
             location = location.replace(" ", "%20");
-            double yText = 0.07;
+            double y = 0.07;
             if (location.contains("j")) {
-                yText = 0.06;
+                y = 0.06;
             }
             transformation =
                 transformation
                     .overlay("location_vg9fjx").gravity("south_west").x(0.020).y(0.04).chain()
-                    .overlay("text:Arial_32:"+location).color("#B1B1B1").gravity("south_west").x(0.08).y(yText).chain();
+                    .overlay("text:Arial_32:"+location).color("#B1B1B1").gravity("south_west").x(0.08).y(y).chain();
         }
 
         // Editorial rating
-        //        final Integer editorialRating = pageItem.getEditorialRating();
-//        if (editorialRating != null) {
-        transformation =
-            transformation.overlay("rs35v1").gravity("south_west").x(0.020).y(0.2).chain();
-//            transformation =
-//                transformation.overlay("rs" + editorialRating + "5").gravity("center").x(0.02).y(0.08).chain();
-//        }
-
+        if (editorialRating != null) {
+            transformation =
+                transformation.overlay("rs"+editorialRating+"5v1").gravity("south_west").x(0.020).y(0.2).chain();
+        }
 
         // User ratings
-//        final PageItem.UserRatingsSummary userRatingsSummary = pageItem.getUserRatingsSummary();
-//        if (userRatingsSummary != null) {
-//            final Integer average = userRatingsSummary.getAverage();
-//            if (average != null) {
+        if (userRatingsSummary != null) {
+            final Integer average = userRatingsSummary.getAverage();
+            if (average != null) {
+                double x = 0.35;
+                if (editorialRating == null) {
+                    x =0.020;
+                }
                 transformation =
-                    transformation.overlay("bs45v1").gravity("south_west").x(0.35).y(0.2).chain();
-                transformation =
-                    transformation.overlay("text:Arial_36_bold:(23)").color("#FFFFFF").gravity("south_west").x(0.6).y(0.25).chain();
-
-//            }
-//        }
-
-
-//        transformation =
-//            transformation.width(320).height(180).gravity("center").crop("crop").chain();
-
-
-
-
+                    transformation.overlay("bs45v1").gravity("south_west").x(x).y(0.2).chain();
+                final Integer count = userRatingsSummary.getCount();
+                if (count != null) {
+                    x = 0.625;
+                    if (editorialRating == null) {
+                        x = 0.295;
+                    }
+                    transformation =
+                        transformation.overlay("text:Arial_34_bold:(23)").color("#FFFFFF").gravity("south_west").x(x).y(0.197).chain();
+                }
+            }
+        }
 
         url =
             cloudinary.url()
@@ -90,9 +171,34 @@ public class GenericTemplateElementVenueHelper extends GenericTemplateElementHel
                 .type("fetch")
                 .generate(url);
 
-        System.out.println(url);
+//        System.out.println(url);
 
         return url;
+    }
+
+    public List<Button> buildButtons(
+        PageItem pageItem
+    ) {
+        final Button.ListBuilder buttonsBuilder = Button.newListBuilder();
+
+        buttonsBuilder.addPostbackButton(
+            "More options",
+            new JSONObject()
+                .put("type", PayloadType.item_more_options)
+                .put("item_type", pageItem.getType())
+                .put("item_id", pageItem.getId())
+                .toString()
+        ).toList();
+
+        buttonsBuilder.addUrlButton(
+            "See at Timeout",
+            pageItem.getToWebsite()
+        ).toList();
+
+        buttonsBuilder.addShareButton().toList();
+
+        return
+            buttonsBuilder.build();
     }
 
 

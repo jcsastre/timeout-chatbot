@@ -2,7 +2,9 @@ package com.timeout.chatbot.graffitti.response.search.page;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.timeout.chatbot.graffitti.response.categorisation.GraffittiCategorisation;
+import com.timeout.chatbot.graffitti.response.common.UserRatingsSummary;
+import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCategorisation;
+import com.timeout.chatbot.graffitti.response.images.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,39 +163,6 @@ public class PageItem {
 
     public void setUserRatingsSummary(UserRatingsSummary userRatingsSummary) {
         this.userRatingsSummary = userRatingsSummary;
-    }
-
-    public class Image {
-        private String id;
-
-        public String getId() {
-            return id;
-        }
-
-        public void setId(String id) {
-            this.id = id;
-        }
-    }
-
-    public class UserRatingsSummary {
-        private Integer count;
-        private Integer average;
-
-        public Integer getCount() {
-            return count;
-        }
-
-        public void setCount(Integer count) {
-            this.count = count;
-        }
-
-        public Integer getAverage() {
-            return average;
-        }
-
-        public void setAverage(Integer average) {
-            this.average = average;
-        }
     }
 
     @Override

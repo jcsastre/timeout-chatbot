@@ -59,42 +59,4 @@ public class VenuesPageBlock {
         final GenericTemplate genericTemplate = genericTemplateBuilder.build();
         messengerSendClient.sendTemplate(recipientId, genericTemplate);
     }
-
-//    private void addVenueItems(
-//        GenericTemplate.Element.ListBuilder listBuilder,
-//        List<PageItem> pageItems
-//    ) {
-//        for (PageItem pageItem : pageItems) {
-//            final GenericTemplate.Element.Builder elementBuilder = listBuilder.addElement(pageItem.getName());
-//
-//            if (pageItem.getImage_url() != null) {
-//                elementBuilder.imageUrl(pageItem.getImage_url());
-//            }
-//
-//            elementBuilder.subtitle(buildVenuePageItemSubtitle(pageItem));
-//
-//            elementBuilder.buttons(
-//                Button.newListBuilder()
-//                    .addPostbackButton(
-//                        "More info",
-//                        new JSONObject()
-//                            .put("type", PayloadType.venues_more_info)
-//                            .put("venue_id", pageItem.getId())
-//                            .toString()
-//                    ).toList()
-//                    .addCallButton(
-//                        "Call",
-//                        "+34678750727"
-//                    ).toList()
-//                    .addPostbackButton(
-//                        "Book",
-//                        new JSONObject()
-//                            .put("type", PayloadType.venues_book)
-//                            .put("restaurant_id", pageItem.getId())
-//                            .toString()
-//                    ).toList()
-//                    .buildButtonsList()
-//            ).toList().done();
-//        }
-//    }
 }

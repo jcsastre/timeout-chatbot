@@ -2,7 +2,7 @@ package com.timeout.chatbot.graffitti.response.films;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.timeout.chatbot.graffitti.response.categorisation.GraffittiCategorisation;
+import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCategorisation;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GraffitiFilmResponse {

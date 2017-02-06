@@ -1,4 +1,4 @@
-package com.timeout.chatbot.graffitti.response.categorisation;
+package com.timeout.chatbot.graffitti.response.common.categorisation;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

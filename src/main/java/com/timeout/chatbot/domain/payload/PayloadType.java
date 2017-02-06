@@ -18,6 +18,8 @@ public enum PayloadType {
 
     utterance,
 
+    get_a_summary,
+
     where_everywhere,
 
     venues_show_areas,

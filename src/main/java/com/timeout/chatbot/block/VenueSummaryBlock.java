@@ -3,7 +3,7 @@ package com.timeout.chatbot.block;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.graffitti.response.images.Image;
 import com.timeout.chatbot.graffitti.response.images.ImagesResponse;
-import com.timeout.chatbot.graffitti.response.venues.Venue;
+import com.timeout.chatbot.graffitti.response.venues.GraffittiVenueResponse;
 import com.timeout.chatbot.graffitti.uri.GraffittiEndpoints;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.GraffittiService;
@@ -38,24 +38,24 @@ public class VenueSummaryBlock {
         String venueId
     ) {
 
-        final Venue venue =
+        final GraffittiVenueResponse graffittiVenueResponse =
             restTemplate.getForObject(
                 graffittiEndpoints.getVenues() + venueId,
-                Venue.class
+                GraffittiVenueResponse.class
             );
 
-        sendSummaryIfAvailable(userId, venue);
+        sendSummaryIfAvailable(userId, graffittiVenueResponse);
 
-        sendImagesIfAvailable(userId, venueId, venue);
+        sendImagesIfAvailable(userId, venueId, graffittiVenueResponse);
 
-//        sendNowWhatAndQuickReplies(userId, venue);
+//        sendNowWhatAndQuickReplies(userId, graffittiVenueResponse);
 
 //        final ButtonTemplate yes = ButtonTemplate.newBuilder(
 //            "Do you want to see full info at Timeout website?",
 //            Button.newListBuilder()
 //                .addUrlButton(
 //                    "Yes",
-//                    venue.getBody().getToWebsite()
+//                    graffittiVenueResponse.getBody().getToWebsite()
 //                ).toList()
 //                .addPostbackButton(
 //                    "No",
@@ -70,7 +70,7 @@ public class VenueSummaryBlock {
 //        messengerSendClientWrapper.sendTemplate(userId, yes);
     }
 
-    private void sendImagesIfAvailable(String userId, String restaurantId, Venue restaurant) {
+    private void sendImagesIfAvailable(String userId, String restaurantId, GraffittiVenueResponse restaurant) {
         String urlImages = graffittiEndpoints.getVenues() + restaurantId + "/images";
         final ImagesResponse imagesResponse = restTemplate.getForObject(urlImages, ImagesResponse.class);
 
@@ -99,7 +99,7 @@ public class VenueSummaryBlock {
         }
     }
 
-    private void sendSummaryIfAvailable(String userId, Venue restaurant) {
+    private void sendSummaryIfAvailable(String userId, GraffittiVenueResponse restaurant) {
         final String summary = restaurant.getBody().getSummary();
         if (summary!=null && !summary.isEmpty()) {
             messengerSendClientWrapper.sendTextMessage(
@@ -109,7 +109,7 @@ public class VenueSummaryBlock {
         }
     }
 
-//    private void sendNowWhatAndQuickReplies(String userId, Venue venue) {
+//    private void sendNowWhatAndQuickReplies(String userId, GraffittiVenueResponse venue) {
 //        // Now what?
 //        // See at timeout
 //        // See at map
@@ -124,7 +124,7 @@ public class VenueSummaryBlock {
 
 
 //    private List<QuickReply> buildQuickReplies(
-//        Venue venue
+//        GraffittiVenueResponse venue
 //    ) {
 //
 //        final QuickReply.ListBuilder builder = QuickReply.newListBuilder();
