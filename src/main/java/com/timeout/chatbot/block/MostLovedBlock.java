@@ -84,7 +84,7 @@ public class MostLovedBlock {
         for (PageItem pageItem : pageItems) {
             final GraffittiType type = GraffittiType.fromString(pageItem.getType());
             if (type == GraffittiType.VENUE) {
-                genericTemplateElementVenueHelper.addElement(listBuilder, pageItem);
+                genericTemplateElementVenueHelper.addNotSingleElementInList(listBuilder, pageItem);
             } else if (type == GraffittiType.EVENT) {
                 //TODO
             } else if (type == GraffittiType.FILM) {

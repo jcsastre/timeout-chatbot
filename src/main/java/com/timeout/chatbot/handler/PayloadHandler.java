@@ -159,12 +159,6 @@ public class PayloadHandler {
                 intentService.handleFindRestaurants(session);
                 break;
 
-//            case utterance:
-//                final String utterance = payload.getString("utterance");
-//                //TODO:
-//                //onUndefinedStateTextHandler.handle(utterance, session);
-//                break;
-
             case films_find_cinemas:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
@@ -174,6 +168,34 @@ public class PayloadHandler {
 
             case cancel:
                 intentService.handleCancel(session);
+                break;
+
+            case back:
+                intentService.handleBack(session);
+                break;
+
+            case phone_call:
+                final String phoneNumber = payload.getString("phone_number");
+                final String venueName = payload.getString("venue_name");
+                blockService.sendPhoneCallBlock(
+                    session.getUser().getMessengerId(),
+                    phoneNumber,
+                    venueName
+                );
+                break;
+
+            case submit_photo:
+                messengerSendClient.sendTextMessage(
+                    session.getUser().getMessengerId(),
+                    "Sorry, 'Submit a photo' is not implemented yet"
+                );
+                break;
+
+            case submit_review:
+                messengerSendClient.sendTextMessage(
+                    session.getUser().getMessengerId(),
+                    "Sorry, 'Submit a review' is not implemented yet"
+                );
                 break;
 
             default:

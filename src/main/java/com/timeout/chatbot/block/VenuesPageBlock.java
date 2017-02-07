@@ -53,7 +53,7 @@ public class VenuesPageBlock {
         final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
         final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
         for (PageItem pageItem : pageItems) {
-            genericTemplateElementVenueHelper.addElement(listBuilder, pageItem);
+            genericTemplateElementVenueHelper.addNotSingleElementInList(listBuilder, pageItem);
         }
 
         final GenericTemplate genericTemplate = genericTemplateBuilder.build();

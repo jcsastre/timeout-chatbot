@@ -11,14 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class IntentSeemoreHandler {
+public class IntentBackHandler {
 
     private final BlockService blockService;
     private final MessengerSendClient messengerSendClient;
     private final IntentFindRestaurantsHandler findRestaurantsHandler;
 
     @Autowired
-    public IntentSeemoreHandler(
+    public IntentBackHandler(
         BlockService blockService,
         MessengerSendClient messengerSendClient,
         IntentFindRestaurantsHandler findRestaurantsHandler
@@ -34,20 +34,27 @@ public class IntentSeemoreHandler {
 
         switch (session.getSessionState()) {
 
+            case ITEM:
+                handleItem(session);
+                break;
+
             case LOOKING:
-                handleLooking(session);
+            case UNDEFINED:
+            case WELCOMED:
+                messengerSendClient.sendTextMessage(
+                    session.getUser().getMessengerId(),
+                    "I can't go 'back'"
+                );
                 break;
 
             case BOOKING:
-            case UNDEFINED:
-            case WELCOMED:
             default:
                 blockService.sendErrorBlock(session.getUser());
                 break;
         }
     }
 
-    private void handleLooking(
+    private void handleItem(
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
@@ -55,20 +62,8 @@ public class IntentSeemoreHandler {
 
         final What what = bag.getWhat();
 
-        if (bag.getReaminingItems() > 0) {
-            bag.setGraffittiPageNumber(bag.getGraffittiPageNumber() +1);
-
-            if (what == What.RESTAURANT) {
-                findRestaurantsHandler.fetchAndSend(session);
-            }
-        } else {
-            if (what == What.RESTAURANT) {
-                messengerSendClient.sendTextMessage(
-                    session.getUser().getMessengerId(),
-                    "There are no remaining RestaurantsManager"
-                );
-            }
+        if (what == What.RESTAURANT) {
+            findRestaurantsHandler.fetchAndSend(session);
         }
-
     }
 }

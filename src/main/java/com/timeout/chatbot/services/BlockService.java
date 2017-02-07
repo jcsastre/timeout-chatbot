@@ -33,6 +33,7 @@ public class BlockService {
     private final GeolocationAskBlock geolocationAskBlock;
     private final FilmsPageBlock filmsPageBlock;
     private final SeeVenueItemBlock seeVenueItemBlock;
+    private final PhoneCallBlock phoneCallBlock;
     private final ErrorBlock errorBlock;
 
     @Autowired
@@ -51,6 +52,7 @@ public class BlockService {
         GeolocationAskBlock geolocationAskBlock,
         FilmsPageBlock filmsPageBlock,
         SeeVenueItemBlock seeVenueItemBlock,
+        PhoneCallBlock phoneCallBlock,
         ErrorBlock errorBlock
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
@@ -67,6 +69,7 @@ public class BlockService {
         this.geolocationAskBlock = geolocationAskBlock;
         this.filmsPageBlock = filmsPageBlock;
         this.seeVenueItemBlock = seeVenueItemBlock;
+        this.phoneCallBlock = phoneCallBlock;
         this.errorBlock = errorBlock;
     }
 
@@ -185,6 +188,19 @@ public class BlockService {
     ) throws MessengerApiException, MessengerIOException {
 
         seeVenueItemBlock.send(session);
+    }
+
+    public void sendPhoneCallBlock(
+        String userId,
+        String phoneNumber,
+        String venueName
+    ) throws MessengerApiException, MessengerIOException {
+
+        phoneCallBlock.send(
+            userId,
+            phoneNumber,
+            venueName
+        );
     }
 
     public void sendErrorBlock(

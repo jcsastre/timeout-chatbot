@@ -32,7 +32,7 @@ public class GenericTemplateElementVenueHelper {
         this.timeoutConfiguration = timeoutConfiguration;
     }
 
-    public void addElement(
+    public void addNotSingleElementInList(
         GenericTemplate.Element.ListBuilder listBuilder,
         PageItem pageItem
     ) {
@@ -53,7 +53,7 @@ public class GenericTemplateElementVenueHelper {
             builder.imageUrl(imageUrl);
         }
 
-        final List<Button> buttons = buildButtons(pageItem);
+        final List<Button> buttons = buildButtonsForNotSingleElementInList(pageItem);
         if (buttons != null) {
             builder.buttons(buttons);
         }
@@ -61,7 +61,7 @@ public class GenericTemplateElementVenueHelper {
         builder.toList().done();
     }
 
-    public void addElementLite(
+    public void addSingleElementInList(
         GenericTemplate.Element.ListBuilder listBuilder,
         GraffittiVenueResponse graffittiVenueResponse
     ) {
@@ -78,6 +78,11 @@ public class GenericTemplateElementVenueHelper {
         );
         if (imageUrl != null) {
             builder.imageUrl(imageUrl);
+        }
+
+        final List<Button> buttons = buildButtonsForSingleElementInList(graffittiVenueResponse);
+        if (buttons != null) {
+            builder.buttons(buttons);
         }
 
         builder.toList().done();
@@ -126,6 +131,7 @@ public class GenericTemplateElementVenueHelper {
         // Location
         if (location != null) {
             location = location.replace(" ", "%20");
+            location = location.replace(",", ".");
             double y = 0.07;
             if (location.contains("j")) {
                 y = 0.06;
@@ -159,7 +165,7 @@ public class GenericTemplateElementVenueHelper {
                         x = 0.295;
                     }
                     transformation =
-                        transformation.overlay("text:Arial_34_bold:(23)").color("#FFFFFF").gravity("south_west").x(x).y(0.197).chain();
+                        transformation.overlay("text:Arial_34_bold:("+count+")").color("#FFFFFF").gravity("south_west").x(x).y(0.197).chain();
                 }
             }
         }
@@ -171,12 +177,26 @@ public class GenericTemplateElementVenueHelper {
                 .type("fetch")
                 .generate(url);
 
-//        System.out.println(url);
+        System.out.println(url);
 
         return url;
     }
 
-    public List<Button> buildButtons(
+    public void addCommonButtonsToButtonsListBuilder(
+        Button.ListBuilder buttonsListBuilder,
+        String toWebsite
+    ) {
+        if (toWebsite != null) {
+            buttonsListBuilder.addUrlButton(
+                "See at Timeout",
+                toWebsite
+            ).toList();
+        }
+
+        buttonsListBuilder.addShareButton().toList();
+    }
+
+    public List<Button> buildButtonsForNotSingleElementInList(
         PageItem pageItem
     ) {
         final Button.ListBuilder buttonsBuilder = Button.newListBuilder();
@@ -190,18 +210,29 @@ public class GenericTemplateElementVenueHelper {
                 .toString()
         ).toList();
 
-        buttonsBuilder.addUrlButton(
-            "See at Timeout",
-            pageItem.getToWebsite()
-        ).toList();
+        addCommonButtonsToButtonsListBuilder(buttonsBuilder, pageItem.getToWebsite());
 
-        buttonsBuilder.addShareButton().toList();
-
-        return
-            buttonsBuilder.build();
+        return buttonsBuilder.build();
     }
 
+    public List<Button> buildButtonsForSingleElementInList(
+        GraffittiVenueResponse graffittiVenueResponse
+    ) {
+        final Button.ListBuilder buttonsBuilder = Button.newListBuilder();
 
+        final String phone = graffittiVenueResponse.getBody().getPhone();
+        if (phone != null) {
+            final String phoneNumber = "+34" + phone.replaceAll(" ","");
+            buttonsBuilder.addCallButton(
+                "Call " + phoneNumber,
+                phoneNumber
+            ).toList();
+        }
+
+        addCommonButtonsToButtonsListBuilder(buttonsBuilder, graffittiVenueResponse.getBody().getToWebsite());
+
+        return buttonsBuilder.build();
+    }
 
 //    public String buildSubtitleForGenericTemplateElement(PageItem pageItem) {
 //        String subtitle = pageItem.getSummary();
@@ -266,19 +297,12 @@ public class GenericTemplateElementVenueHelper {
 //        return sb.toString();
 //    }
 
-//    public List<Button> buildButtons(
+//    public List<Button> buildButtonsForNotSingleElementInList(
 //        PageItem pageItem
 //    ) {
 //        final Button.ListBuilder buttonsBuilder = Button.newListBuilder();
 //
-////        final String phone = pageItem.getPhone();
-////        if (phone != null) {
-////            final String curatedPhone = "+34" + phone.replaceAll(" ","");
-////            buttonsBuilder.addCallButton(
-////                "Call (" + curatedPhone +")",
-////                curatedPhone
-////            ).toList();
-////        }
+
 ////
 ////        buttonsBuilder.addPostbackButton(
 ////            "Book",

@@ -82,7 +82,7 @@ public class IntentGetasummaryHandler {
             messengerSendClient.sendTextMessage(
                 session.getUser().getMessengerId(),
                 summary,
-                quickReplyBuilderHelper.buildForSeeVenueItem()
+                quickReplyBuilderHelper.buildForSeeVenueItem(graffittiVenueResponse)
             );
         } else {
             messengerSendClient.sendTextMessage(

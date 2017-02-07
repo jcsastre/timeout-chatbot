@@ -136,7 +136,7 @@ public class GenericTemplateElementFilmHelper {
     }
 
 
-//    public List<Button> buildButtons(
+//    public List<Button> buildButtonsForNotSingleElementInList(
 //        PageItem pageItem
 //    ) {
 //        final GraffitiFilmResponse graffitiFilmResponse =

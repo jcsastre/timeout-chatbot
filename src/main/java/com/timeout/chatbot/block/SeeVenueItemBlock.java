@@ -54,13 +54,13 @@ public class SeeVenueItemBlock {
         final GenericTemplate.Builder builder = GenericTemplate.newBuilder();
         final GenericTemplate.Element.ListBuilder listBuilder = builder.addElements();
 
-        genericTemplateElementVenueHelper.addElementLite(listBuilder, graffittiVenueResponse);
+        genericTemplateElementVenueHelper.addSingleElementInList(listBuilder, graffittiVenueResponse);
 
         messengerSendClient.sendTemplate(
             Recipient.newBuilder().recipientId(session.getUser().getMessengerId()).build(),
             NotificationType.REGULAR,
             builder.build(),
-            quickReplyBuilderHelper.buildForSeeVenueItem()
+            quickReplyBuilderHelper.buildForSeeVenueItem(graffittiVenueResponse)
         );
     }
 }

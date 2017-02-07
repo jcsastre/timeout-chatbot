@@ -74,7 +74,7 @@ public class SuggestionsBlock {
 
 //        return
 //            GenericTemplate.newBuilder().addElements()
-//                .addElement("Discover " + timeoutConfiguration.getCityName())
+//                .addNotSingleElementInList("Discover " + timeoutConfiguration.getCityName())
 //                .imageUrl(imageUrlCity)
 //                .buttons(
 //                    Button.newListBuilder()
@@ -88,7 +88,7 @@ public class SuggestionsBlock {
 //                        .buildButtonsList()
 //                )
 //                .toList()
-//                .addElement("In cinemas now")
+//                .addNotSingleElementInList("In cinemas now")
 //                    .imageUrl("https://media.timeout.com/images/103667839/image.jpg")
 //                    .buttons(
 //                        Button.newListBuilder()
@@ -102,7 +102,7 @@ public class SuggestionsBlock {
 //                            .buildButtonsList()
 //                    )
 //                    .toList()
-//                .addElement("Bars & pubs nearby")
+//                .addNotSingleElementInList("Bars & pubs nearby")
 //                    .imageUrl("https://media.timeout.com/images/103466376/image.jpg")
 //                    .buttons(
 //                        Button.newListBuilder()
@@ -116,7 +116,7 @@ public class SuggestionsBlock {
 //                            .buildButtonsList()
 //                    )
 //                    .toList()
-//                .addElement("RestaurantsManager nearby")
+//                .addNotSingleElementInList("RestaurantsManager nearby")
 //                    .imageUrl("https://media.timeout.com/images/102173995/image.jpg")
 //                    .buttons(
 //                        Button.newListBuilder()
@@ -130,7 +130,7 @@ public class SuggestionsBlock {
 //                            .buildButtonsList()
 //                    )
 //                    .toList()
-//                .addElement("Things to do this week")
+//                .addNotSingleElementInList("Things to do this week")
 //                    .imageUrl("https://media.timeout.com/images/102872844/image.jpg")
 //                    .buttons(
 //                        Button.newListBuilder()
@@ -144,7 +144,7 @@ public class SuggestionsBlock {
 //                            .buildButtonsList()
 //                    )
 //                    .toList()
-//                .addElement("Book a theatre show")
+//                .addNotSingleElementInList("Book a theatre show")
 //                    .imageUrl("https://media.timeout.com/images/103646228/image.jpg")
 //                    .buttons(
 //                        Button.newListBuilder()
@@ -158,7 +158,7 @@ public class SuggestionsBlock {
 //                            .buildButtonsList()
 //                    )
 //                    .toList()
-//                .addElement("Art this week")
+//                .addNotSingleElementInList("Art this week")
 //                    .imageUrl("https://media.timeout.com/images/103659638/image.jpg")
 //                    .buttons(
 //                        Button.newListBuilder()

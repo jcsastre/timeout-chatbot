@@ -10,6 +10,7 @@ public enum PayloadType {
     start_over,
 
     see_more,
+    back,
     item_more_options,
 
     cancel,
@@ -21,6 +22,8 @@ public enum PayloadType {
     get_a_summary,
 
     where_everywhere,
+
+    phone_call,
 
     venues_show_areas,
     venues_set_neighborhood,
@@ -49,5 +52,8 @@ public enum PayloadType {
     booking_personal_info_ok,
     booking_personal_info_not_ok,
     booking_save_ok,
-    booking_save_not_ok
+    booking_save_not_ok,
+
+    submit_review,
+    submit_photo
 }
