@@ -49,7 +49,6 @@ public class IntentBookHandler {
 
             case UNDEFINED:
             case LOOKING:
-            case WELCOMED:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, I don't know what you want to book"

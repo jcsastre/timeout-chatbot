@@ -6,6 +6,7 @@ import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.configuration.TimeoutConfiguration;
 import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.graffitti.response.common.UserRatingsSummary;
 import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import org.cloudinary.json.JSONObject;
@@ -41,7 +42,11 @@ public class GenericTemplateElementFilmHelper {
             builder.subtitle(subtitle);
         }
 
-        final String imageUrl = buildImageUrl(pageItem);
+        final String imageUrl = buildImageUrl(
+            pageItem.getGraffittiImage(),
+            pageItem.getEditorialRating(),
+            pageItem.getUserRatingsSummary()
+        );
         if (imageUrl != null) {
             builder.imageUrl(imageUrl);
         }
@@ -73,32 +78,57 @@ public class GenericTemplateElementFilmHelper {
         return subtitle;
     }
 
-    public String buildImageUrl(PageItem pageItem) {
-//        String name = pageItem.getName();
-//        name = name.replace(" ", "%20");
+    public String buildImageUrl(
+        GraffittiImage graffittiImage,
+        Integer editorialRating,
+        UserRatingsSummary userRatingsSummary
+    ) {
 
         String url = timeoutConfiguration.getImageUrlPlacholder();
-
-        final GraffittiImage graffittiImage = pageItem.getGraffittiImage();
         if (graffittiImage != null) {
             final String imageId = graffittiImage.getId();
             if (imageId != null) {
-                url = "http://media.timeout.com/images/" + imageId + "/320/210/graffittiImage.jpg";
+                url = "http://media.timeout.com/images/" + imageId + "/image.jpg";
             }
         }
 
-        Transformation transformation = new Transformation();
-        transformation =
-            transformation.width(320).height(180).gravity("center").crop("crop").chain();
+        Transformation transformation =
+            new Transformation()
+                .aspectRatio("191:100").crop("crop").chain()
+                .width(764).crop("scale").chain()
+                .overlay("overlay_black_bottom_gradient_loq19q").gravity("south").chain();
 
-//        transformation =
-//            transformation.overlay("see_at_timeout").gravity("north_east").x(0.02).y(0.08).chain();
-
-        final Integer editorialRating = pageItem.getEditorialRating();
+        // Editorial rating
         if (editorialRating != null) {
             transformation =
-                transformation.overlay("rs" + editorialRating + "5").gravity("south_west").x(0.02).y(0.08);
+                transformation.overlay("rs"+editorialRating+"5v1").gravity("south_west").x(0.020).y(0.2).chain();
         }
+
+        // User ratings
+        if (userRatingsSummary != null) {
+            final Integer average = userRatingsSummary.getAverage();
+            if (average != null) {
+                double x = 0.35;
+                if (editorialRating == null) {
+                    x =0.020;
+                }
+                transformation =
+                    transformation.overlay("bs45v1").gravity("south_west").x(x).y(0.2).chain();
+                final Integer count = userRatingsSummary.getCount();
+                if (count != null) {
+                    x = 0.625;
+                    if (editorialRating == null) {
+                        x = 0.295;
+                    }
+                    transformation =
+                        transformation.overlay("text:Arial_34_bold:("+count+")").color("#FFFFFF").gravity("south_west").x(x).y(0.197).chain();
+                }
+            }
+        }
+
+        // Type/Category icon + Subcategory
+        transformation =
+            transformation.overlay("film_icon_nwf5cn").gravity("south_east").x(0.020).y(0.04).chain();
 
         url =
             cloudinary.url()
@@ -106,6 +136,8 @@ public class GenericTemplateElementFilmHelper {
                 .format("png")
                 .type("fetch")
                 .generate(url);
+
+        System.out.println(url);
 
         return url;
     }

@@ -23,7 +23,7 @@ public class NluResult {
         NluIntentType nluIntentType
     ) {
         this.nluIntentType = nluIntentType;
-        this.parameters = null;
+        this.parameters = new HashMap<>();
     }
 
     public NluIntentType getNluIntentType() {

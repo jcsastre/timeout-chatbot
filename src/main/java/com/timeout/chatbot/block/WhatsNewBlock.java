@@ -7,13 +7,13 @@ import com.github.messenger4j.send.NotificationType;
 import com.github.messenger4j.send.Recipient;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
-import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementEventHelper;
 import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementFilmHelper;
 import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementVenueHelper;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
+import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,31 +22,32 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 
 @Component
-public class MostLovedBlock {
+public class WhatsNewBlock {
 
     private final RestTemplate restTemplate;
     private final SearchUrlBuilder searchUrlBuilder;
     private final GenericTemplateElementVenueHelper genericTemplateElementVenueHelper;
     private final GenericTemplateElementFilmHelper genericTemplateElementFilmHelper;
-    private final GenericTemplateElementEventHelper genericTemplateElementEventHelper;
     private final MessengerSendClient messengerSendClient;
+    private final GraffittiService graffittiService;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
 
     @Autowired
-    public MostLovedBlock(
+    public WhatsNewBlock(
         RestTemplate restTemplate,
         SearchUrlBuilder searchUrlBuilder,
         GenericTemplateElementVenueHelper genericTemplateElementVenueHelper,
         GenericTemplateElementFilmHelper genericTemplateElementFilmHelper,
-        GenericTemplateElementEventHelper genericTemplateElementEventHelper, MessengerSendClient messengerSendClient,
+        MessengerSendClient messengerSendClient,
+        GraffittiService graffittiService,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState
     ) {
         this.restTemplate = restTemplate;
         this.searchUrlBuilder = searchUrlBuilder;
         this.genericTemplateElementVenueHelper = genericTemplateElementVenueHelper;
         this.genericTemplateElementFilmHelper = genericTemplateElementFilmHelper;
-        this.genericTemplateElementEventHelper = genericTemplateElementEventHelper;
         this.messengerSendClient = messengerSendClient;
+        this.graffittiService = graffittiService;
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
     }
 
@@ -83,24 +84,15 @@ public class MostLovedBlock {
 
         final List<PageItem> pageItems = searchResponse.getPageItems();
         for (PageItem pageItem : pageItems) {
-            final GraffittiType graffittiType = GraffittiType.fromString(pageItem.getType());
-            switch (graffittiType) {
-
-                case VENUE:
-                    genericTemplateElementVenueHelper.addNotSingleElementInList(listBuilder, pageItem);
-                    break;
-
-                case EVENT:
-                    genericTemplateElementEventHelper.addNotSingleElementInList(listBuilder, pageItem);
-                    break;
-
-                case FILM:
-                    genericTemplateElementFilmHelper.addElement(listBuilder, pageItem);
-                    break;
-
-                case PAGE:
-                    //TODO
-                    break;
+            final GraffittiType type = GraffittiType.fromString(pageItem.getType());
+            if (type == GraffittiType.VENUE) {
+                genericTemplateElementVenueHelper.addNotSingleElementInList(listBuilder, pageItem);
+            } else if (type == GraffittiType.EVENT) {
+                //TODO
+            } else if (type == GraffittiType.FILM) {
+                genericTemplateElementFilmHelper.addElement(listBuilder, pageItem);
+            } else {
+                //TODO
             }
         }
     }

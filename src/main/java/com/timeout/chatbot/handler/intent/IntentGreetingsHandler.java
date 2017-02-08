@@ -1,5 +1,7 @@
 package com.timeout.chatbot.handler.intent;
 
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
@@ -28,19 +30,13 @@ public class IntentGreetingsHandler {
 
     public void handle(
         Session session
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
         switch (session.getSessionState()) {
 
             case UNDEFINED:
                 blockService.sendWelcomeBackBlock(session.getUser());
-                session.setSessionState(SessionState.WELCOMED);
-                break;
-
-            case WELCOMED:
-                messengerSendClientWrapper.sendTextMessage(
-                    session.getUser().getMessengerId(),
-                    "Hi!"
-                );
+                session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
+                blockService.sendSuggestionsBlock(session);
                 break;
 
             case LOOKING:

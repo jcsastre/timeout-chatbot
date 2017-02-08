@@ -12,7 +12,7 @@ public class SearchUrlBuilder {
     private static final String SCHEMA = "http";
     private static final String HOST = "graffiti.timeout.com";
 
-    private static final String PAGE_SIZE = "3";
+    private static final String PAGE_SIZE = "10";
 
     private String path;
     private String locale;

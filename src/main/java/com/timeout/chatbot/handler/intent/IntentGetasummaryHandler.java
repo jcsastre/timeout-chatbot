@@ -51,7 +51,6 @@ public class IntentGetasummaryHandler {
             case LOOKING:
             case BOOKING:
             case UNDEFINED:
-            case WELCOMED:
             default:
                 blockService.sendErrorBlock(session.getUser());
                 break;

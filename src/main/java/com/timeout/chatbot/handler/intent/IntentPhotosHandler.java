@@ -54,7 +54,6 @@ public class IntentPhotosHandler {
 
             case UNDEFINED:
             case LOOKING:
-            case WELCOMED:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, I don't know what photos do you want to see"

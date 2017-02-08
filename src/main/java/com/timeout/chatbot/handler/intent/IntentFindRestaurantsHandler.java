@@ -52,10 +52,8 @@ public class IntentFindRestaurantsHandler {
         switch (session.getSessionState()) {
 
             case UNDEFINED:
-            case WELCOMED:
             case LOOKING:
                 applyNluParameters(session, nluParameters);
-                handle(session);
                 break;
 
             case BOOKING:
@@ -74,7 +72,6 @@ public class IntentFindRestaurantsHandler {
         switch (session.getSessionState()) {
 
             case UNDEFINED:
-            case WELCOMED:
             case LOOKING:
                 fetchAndSend(session);
                 break;
@@ -107,9 +104,11 @@ public class IntentFindRestaurantsHandler {
             ) {
                 if (bag.getGeolocation() == null) {
                     blockService.sendGeolocationAskBlock(session.getUser().getMessengerId());
-                    return;
+                } else {
+                    handle(session);
                 }
             } else {
+                handle(session);
                 //TODO: map text to valid where
                 //bag.setGraffittiWhere(where);
             }

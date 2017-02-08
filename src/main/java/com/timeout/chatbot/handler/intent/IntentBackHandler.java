@@ -40,7 +40,6 @@ public class IntentBackHandler {
 
             case LOOKING:
             case UNDEFINED:
-            case WELCOMED:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "I can't go 'back'"

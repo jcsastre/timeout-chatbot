@@ -67,11 +67,11 @@ public class IntentService {
         helpHandler.handle(session);
     }
 
-    public void handleGreetings(Session session) {
+    public void handleGreetings(Session session) throws MessengerApiException, MessengerIOException {
         greetingsHandler.handle(session);
     }
 
-    public void handleSuggestions(Session session) {
+    public void handleSuggestions(Session session) throws MessengerApiException, MessengerIOException {
         suggestionsHandler.handle(session);
     }
 

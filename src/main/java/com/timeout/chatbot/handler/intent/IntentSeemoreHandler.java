@@ -40,7 +40,6 @@ public class IntentSeemoreHandler {
 
             case BOOKING:
             case UNDEFINED:
-            case WELCOMED:
             default:
                 blockService.sendErrorBlock(session.getUser());
                 break;

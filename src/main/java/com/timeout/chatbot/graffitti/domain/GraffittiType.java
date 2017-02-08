@@ -3,7 +3,8 @@ package com.timeout.chatbot.graffitti.domain;
 public enum GraffittiType {
     VENUE("venue"),
     EVENT("event"),
-    FILM("film");
+    FILM("film"),
+    PAGE("page");
 
     private final String value;
     GraffittiType(String value) {
@@ -26,6 +27,8 @@ public enum GraffittiType {
             return EVENT;
         } else if (type.equalsIgnoreCase(FILM.toString())) {
             return FILM;
+        } else if (type.equalsIgnoreCase(PAGE.toString())) {
+            return PAGE;
         }
 
         return null;

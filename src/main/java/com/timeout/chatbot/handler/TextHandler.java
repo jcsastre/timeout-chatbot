@@ -41,6 +41,7 @@ public class TextHandler {
         String text,
         Session session
     ) throws NluException, MessengerApiException, MessengerIOException {
+
         NluResult nluResult = handleInternal(text);
 
         if (nluResult == null) {

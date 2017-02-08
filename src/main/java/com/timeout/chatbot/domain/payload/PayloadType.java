@@ -6,6 +6,7 @@ public enum PayloadType {
     help,
     suggestions,
     discover,
+    whats_new,
     most_loved,
     start_over,
 

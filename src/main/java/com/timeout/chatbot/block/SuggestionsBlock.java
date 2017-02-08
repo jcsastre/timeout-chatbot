@@ -1,18 +1,21 @@
 package com.timeout.chatbot.block;
 
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
+import com.github.messenger4j.send.MessengerSendClient;
+import com.github.messenger4j.send.NotificationType;
+import com.github.messenger4j.send.Recipient;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
+import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.configuration.TimeoutConfiguration;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
 import com.timeout.chatbot.graffitti.response.tiles.TileItem;
 import com.timeout.chatbot.graffitti.response.tiles.TilesResponse;
-import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
 import com.timeout.chatbot.graffitti.urlbuilder.TilesDiscoverUrlBuilder;
-import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
-import com.timeout.chatbot.services.GraffittiService;
-import com.timeout.chatbot.services.NluService;
+import com.timeout.chatbot.session.Session;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,38 +28,35 @@ import java.util.List;
 @Component
 public class SuggestionsBlock {
 
-    private final MessengerSendClientWrapper messengerSendClientWrapper;
+    private final MessengerSendClient messengerSendClient;
     private final RestTemplate restTemplate;
-    private final GraffittiService graffittiService;
     private final TimeoutConfiguration timeoutConfiguration;
     private final TilesDiscoverUrlBuilder tilesDiscoverUrlBuilder;
-    private final NluService nluService;
-    private final SearchUrlBuilder searchUrlBuilder;
+    private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
 
     @Autowired
     public SuggestionsBlock(
         TimeoutConfiguration timeoutConfiguration,
-        MessengerSendClientWrapper messengerSendClientWrapper,
+        MessengerSendClient messengerSendClient,
         RestTemplate restTemplate,
-        GraffittiService graffittiService,
         TilesDiscoverUrlBuilder tilesDiscoverUrlBuilder,
-        NluService nluService,
-        SearchUrlBuilder searchUrlBuilder) {
+        QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState) {
         this.timeoutConfiguration = timeoutConfiguration;
-        this.messengerSendClientWrapper = messengerSendClientWrapper;
+        this.messengerSendClient = messengerSendClient;
         this.restTemplate = restTemplate;
-        this.graffittiService = graffittiService;
         this.tilesDiscoverUrlBuilder = tilesDiscoverUrlBuilder;
-        this.nluService = nluService;
-        this.searchUrlBuilder = searchUrlBuilder;
+        this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
     }
 
     public void send(
-        String userId
-    ) {
-        messengerSendClientWrapper.sendTemplate(
-            userId,
-            buildGenericTemplate()
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+
+        messengerSendClient.sendTemplate(
+            Recipient.newBuilder().recipientId(session.getUser().getMessengerId()).build(),
+            NotificationType.REGULAR,
+            buildGenericTemplate(),
+            quickReplyBuilderForCurrentSessionState.build(session)
         );
     }
 

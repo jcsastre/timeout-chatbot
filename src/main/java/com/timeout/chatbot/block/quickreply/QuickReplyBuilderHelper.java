@@ -27,6 +27,42 @@ public class QuickReplyBuilderHelper {
         this.restTemplate = restTemplate;
     }
 
+    public void addDiscoverToList(QuickReply.ListBuilder listBuilder) {
+        listBuilder.addTextQuickReply(
+            "Discover",
+            new JSONObject()
+                .put("type", PayloadType.discover)
+                .toString()
+        ).toList();
+    }
+
+    public void addWhatsNewToList(QuickReply.ListBuilder listBuilder) {
+        listBuilder.addTextQuickReply(
+            "What's new",
+            new JSONObject()
+                .put("type", PayloadType.whats_new)
+                .toString()
+        ).toList();
+    }
+
+    public void addMostLovedToList(QuickReply.ListBuilder listBuilder) {
+        listBuilder.addTextQuickReply(
+            "Most loved",
+            new JSONObject()
+                .put("type", PayloadType.most_loved)
+                .toString()
+        ).toList();
+    }
+
+    public void addSearchSuggestionsToList(QuickReply.ListBuilder listBuilder) {
+        listBuilder.addTextQuickReply(
+            "Search suggestions",
+            new JSONObject()
+                .put("type", PayloadType.suggestions)
+                .toString()
+        ).toList();
+    }
+
     public List<QuickReply> buildForSeeVenueItem(
         GraffittiVenueResponse graffittiVenueResponse
     ) {

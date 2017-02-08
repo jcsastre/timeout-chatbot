@@ -87,9 +87,9 @@ public class BlockService {
     }
 
     public void sendSuggestionsBlock(
-        User user
-    ) {
-        suggestionsBlock.send(user.getMessengerId());
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+        suggestionsBlock.send(session);
     }
 
     public void sendDiscoverBlock(
@@ -101,11 +101,10 @@ public class BlockService {
     }
 
     public void sendMostLovedBlock(
-        User user
+        Session session
     ) throws MessengerApiException, MessengerIOException {
-        mostLovedBlock.send(
-            user.getMessengerId()
-        );
+
+        mostLovedBlock.send(session);
     }
 
     public void sendFilmsPageBlock(

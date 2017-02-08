@@ -39,7 +39,6 @@ public class IntentSeeItem {
 
             case UNDEFINED:
             case LOOKING:
-            case WELCOMED:
             case ITEM:
                 final SessionStateItemBag itemBag = session.getSessionStateItemBag();
                 final GraffittiType graffittiType = itemBag.getGraffittiType();

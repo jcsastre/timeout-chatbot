@@ -36,10 +36,6 @@ public class IntentCancelHandler {
                 //TODO
                 break;
 
-            case WELCOMED:
-                //TODO
-                break;
-
             default:
                 blockService.sendErrorBlock(session.getUser());
                 break;

@@ -1,5 +1,7 @@
 package com.timeout.chatbot.handler.intent;
 
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
@@ -19,7 +21,7 @@ public class IntentSuggestionsHandler {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
     }
 
-    public void handle(Session session) {
+    public void handle(Session session) throws MessengerApiException, MessengerIOException {
 
         if (session.getSessionState() == SessionState.BOOKING) {
 
@@ -30,10 +32,9 @@ public class IntentSuggestionsHandler {
                 session.getUser().getMessengerId(),
                 "Cancelling booking"
             );
-
-            session.setSessionState(SessionState.LOOKING);
         }
 
-        blockService.sendSuggestionsBlock(session.getUser());
+        session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
+        blockService.sendSuggestionsBlock(session);
     }
 }
