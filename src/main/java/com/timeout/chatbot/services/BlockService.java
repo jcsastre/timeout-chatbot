@@ -9,6 +9,7 @@ import com.timeout.chatbot.block.WelcomeBackBlock;
 import com.timeout.chatbot.block.WelcomeFirstTimeBlock;
 import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
+import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
 import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -184,10 +185,11 @@ public class BlockService {
     }
 
     public void sendSeeVenueItemBlock(
-        Session session
+        String userId,
+        GraffittiVenueResponse graffittiVenueResponse
     ) throws MessengerApiException, MessengerIOException {
 
-        seeVenueItemBlock.send(session);
+        seeVenueItemBlock.send(userId, graffittiVenueResponse);
     }
 
     public void sendPhoneCallBlock(

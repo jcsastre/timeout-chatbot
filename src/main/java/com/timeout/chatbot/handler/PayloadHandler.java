@@ -82,6 +82,7 @@ public class PayloadHandler {
                 session.reset();
                 blockService.sendWelcomeBackBlock(session.getUser());
                 session.setSessionState(SessionState.WELCOMED);
+                blockService.sendSuggestionsBlock(session.getUser());
                 break;
 
             case see_more:
@@ -143,12 +144,12 @@ public class PayloadHandler {
                 intentService.handleFindRestaurants(session);
                 break;
 
-            case venues_book:
-                messengerSendClient.sendTextMessage(
-                    session.getUser().getMessengerId(),
-                    "Sorry, booking is not implemented yet"
-                );
-                blockService.sendVenuesRemainingBlock(session);
+            case book:
+                intentService.handleBook(session);
+                break;
+
+            case photos:
+                intentService.handlePhotos(session);
                 break;
 
             case no_see_at_timeout:
@@ -187,7 +188,7 @@ public class PayloadHandler {
             case submit_photo:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
-                    "Sorry, 'Submit a photo' is not implemented yet"
+                    "Please attach one or more photos"
                 );
                 break;
 

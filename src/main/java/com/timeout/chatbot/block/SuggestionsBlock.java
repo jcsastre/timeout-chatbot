@@ -67,7 +67,7 @@ public class SuggestionsBlock {
         //TODO: Element Discover (1 element)
         //TODO: Tiles discovery (n elements)
         //TODO: Most loved weekly (10-n-1 elements)
-        addElementDiscover(listBuilder);
+//        addElementDiscover(listBuilder);
         addElementsTiles(listBuilder);
 
         return listBuilder.done().build();

@@ -25,6 +25,8 @@ public class IntentService {
     private final IntentSeeItem seeItem;
     private final IntentGetasummaryHandler getasummaryHandler;
     private final IntentBackHandler backHandler;
+    private final IntentBookHandler bookHandler;
+    private final IntentPhotosHandler photosHandler;
 
     @Autowired
     public IntentService(
@@ -40,7 +42,9 @@ public class IntentService {
         IntentCancelHandler cancelHandler,
         IntentSeeItem seeItem,
         IntentGetasummaryHandler getasummaryHandler,
-        IntentBackHandler backHandler
+        IntentBackHandler backHandler,
+        IntentBookHandler bookHandler,
+        IntentPhotosHandler photosHandler
     ) {
         this.helpHandler = helpHandler;
         this.greetingsHandler = greetingsHandler;
@@ -55,6 +59,8 @@ public class IntentService {
         this.seeItem = seeItem;
         this.getasummaryHandler = getasummaryHandler;
         this.backHandler = backHandler;
+        this.bookHandler = bookHandler;
+        this.photosHandler = photosHandler;
     }
 
     public void handleHelp(Session session) {
@@ -123,9 +129,21 @@ public class IntentService {
         seeItem.handle(session);
     }
 
+    public void handleBook(
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+        bookHandler.handle(session);
+    }
+
     public void handleGetasummary(
         Session session
     ) throws MessengerApiException, MessengerIOException {
         getasummaryHandler.handle(session);
+    }
+
+    public void handlePhotos(
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+        photosHandler.handle(session);
     }
 }

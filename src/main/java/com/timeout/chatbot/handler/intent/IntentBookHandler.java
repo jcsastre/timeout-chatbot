@@ -15,43 +15,48 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class IntentGetasummaryHandler {
+public class IntentBookHandler {
 
-    private final BlockService blockService;
     private final MessengerSendClient messengerSendClient;
+    private final BlockService blockService;
+    private final QuickReplyBuilderHelper quickReplyBuilderHelper;
     private final RestTemplate restTemplate;
     private final VenuesUrlBuilder venuesUrlBuilder;
-    private final QuickReplyBuilderHelper quickReplyBuilderHelper;
 
     @Autowired
-    public IntentGetasummaryHandler(
-        BlockService blockService,
+    public IntentBookHandler(
         MessengerSendClient messengerSendClient,
+        BlockService blockService,
+        QuickReplyBuilderHelper quickReplyBuilderHelper,
         RestTemplate restTemplate,
-        VenuesUrlBuilder venuesUrlBuilder,
-        QuickReplyBuilderHelper quickReplyBuilderHelper
+        VenuesUrlBuilder venuesUrlBuilder
     ) {
-        this.blockService = blockService;
         this.messengerSendClient = messengerSendClient;
+        this.blockService = blockService;
+        this.quickReplyBuilderHelper = quickReplyBuilderHelper;
         this.restTemplate = restTemplate;
         this.venuesUrlBuilder = venuesUrlBuilder;
-        this.quickReplyBuilderHelper = quickReplyBuilderHelper;
     }
 
     public void handle(
         Session session
     ) throws MessengerApiException, MessengerIOException {
-
         switch (session.getSessionState()) {
 
             case ITEM:
                 handleStateItem(session);
                 break;
 
-            case LOOKING:
-            case BOOKING:
             case UNDEFINED:
+            case LOOKING:
             case WELCOMED:
+                messengerSendClient.sendTextMessage(
+                    session.getUser().getMessengerId(),
+                    "Sorry, I don't know what you want to book"
+                );
+                break;
+
+            case BOOKING:
             default:
                 blockService.sendErrorBlock(session.getUser());
                 break;
@@ -72,22 +77,15 @@ public class IntentGetasummaryHandler {
                     GraffittiVenueResponse.class
                 );
 
-            final GraffittiVenueResponse.Body body = graffittiVenueResponse.getBody();
-
-            String summary = body.getSummary();
-            if (summary == null) {
-                summary = "Sorry, there is no summary available";
-            }
-
             messengerSendClient.sendTextMessage(
                 session.getUser().getMessengerId(),
-                summary,
+                "Sorry, 'Book' feature is not implemented yet",
                 quickReplyBuilderHelper.buildForSeeVenueItem(graffittiVenueResponse)
             );
         } else {
             messengerSendClient.sendTextMessage(
                 session.getUser().getMessengerId(),
-                "Sorry, this feature is not implemented yet"
+                "Sorry, 'Book' feature is not implemented yet"
             );
         }
     }

@@ -4,25 +4,32 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
+import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
+import com.timeout.chatbot.graffitti.urlbuilder.VenuesUrlBuilder;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionStateItemBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class IntentSeeItem {
 
     private final MessengerSendClient messengerSendClient;
     private final BlockService blockService;
+    private final RestTemplate restTemplate;
+    private final VenuesUrlBuilder venuesUrlBuilder;
 
     @Autowired
     public IntentSeeItem(
         MessengerSendClient messengerSendClient,
-        BlockService blockService
-    ) {
+        BlockService blockService,
+        RestTemplate restTemplate, VenuesUrlBuilder venuesUrlBuilder) {
         this.messengerSendClient = messengerSendClient;
         this.blockService = blockService;
+        this.restTemplate = restTemplate;
+        this.venuesUrlBuilder = venuesUrlBuilder;
     }
 
     public void handle(
@@ -37,7 +44,19 @@ public class IntentSeeItem {
                 final SessionStateItemBag itemBag = session.getSessionStateItemBag();
                 final GraffittiType graffittiType = itemBag.getGraffittiType();
                 if (graffittiType == GraffittiType.VENUE) {
-                    blockService.sendSeeVenueItemBlock(session);
+
+                    final GraffittiVenueResponse graffittiVenueResponse =
+                        restTemplate.getForObject(
+                            venuesUrlBuilder.build(itemBag.getItemId()).toUri(),
+                            GraffittiVenueResponse.class
+                        );
+
+                    itemBag.setGraffittiVenueResponse(graffittiVenueResponse);
+
+                    blockService.sendSeeVenueItemBlock(
+                        session.getUser().getMessengerId(),
+                        graffittiVenueResponse
+                    );
                 } else {
                     messengerSendClient.sendTextMessage(
                         session.getUser().getMessengerId(),

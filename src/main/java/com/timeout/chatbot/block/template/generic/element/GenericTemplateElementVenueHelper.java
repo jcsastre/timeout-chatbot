@@ -7,9 +7,9 @@ import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.configuration.TimeoutConfiguration;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.response.common.UserRatingsSummary;
-import com.timeout.chatbot.graffitti.response.images.Image;
+import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
-import com.timeout.chatbot.graffitti.response.venues.GraffittiVenueResponse;
+import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
 import org.cloudinary.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -44,7 +44,7 @@ public class GenericTemplateElementVenueHelper {
         }
 
         final String imageUrl = buildImageUrl(
-            pageItem.getImage(),
+            pageItem.getGraffittiImage(),
             pageItem.getLocation(),
             pageItem.getEditorialRating(),
             pageItem.getUserRatingsSummary()
@@ -108,15 +108,15 @@ public class GenericTemplateElementVenueHelper {
     }
 
     public String buildImageUrl(
-        Image image,
+        GraffittiImage graffittiImage,
         String location,
         Integer editorialRating,
         UserRatingsSummary userRatingsSummary
     ) {
 
         String url = timeoutConfiguration.getImageUrlPlacholder();
-        if (image != null) {
-            final String imageId = image.getId();
+        if (graffittiImage != null) {
+            final String imageId = graffittiImage.getId();
             if (imageId != null) {
                 url = "http://media.timeout.com/images/" + imageId + "/image.jpg";
             }

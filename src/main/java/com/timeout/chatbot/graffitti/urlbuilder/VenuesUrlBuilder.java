@@ -30,4 +30,12 @@ public class VenuesUrlBuilder {
             UrlBuilder.empty().withScheme(SCHEMA).withHost(HOST).withPath(path + "/" + venueId)
                 .addParameter(GraffittiQueryParameterType.LOCALE.getValue(), locale);
     }
+
+    public UrlBuilder buildImages(
+        String venueId
+    ) {
+        return
+            UrlBuilder.empty().withScheme(SCHEMA).withHost(HOST).withPath(path + "/" + venueId + "/images")
+                .addParameter(GraffittiQueryParameterType.LOCALE.getValue(), locale);
+    }
 }

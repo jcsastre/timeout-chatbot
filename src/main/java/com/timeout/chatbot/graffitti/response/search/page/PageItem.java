@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.timeout.chatbot.graffitti.response.common.UserRatingsSummary;
 import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCategorisation;
-import com.timeout.chatbot.graffitti.response.images.Image;
+import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +27,8 @@ public class PageItem {
     private String toWebsite;
     private Double distance;
     private String phone;
-    private Image image;
+    @JsonProperty("image")
+    private GraffittiImage graffittiImage;
     @JsonProperty("editorial_rating")
     private Integer editorialRating;
     @JsonProperty("user_ratings_summary")
@@ -141,12 +142,12 @@ public class PageItem {
         this.phone = phone;
     }
 
-    public Image getImage() {
-        return image;
+    public GraffittiImage getGraffittiImage() {
+        return graffittiImage;
     }
 
-    public void setImage(Image image) {
-        this.image = image;
+    public void setGraffittiImage(GraffittiImage graffittiImage) {
+        this.graffittiImage = graffittiImage;
     }
 
     public Integer getEditorialRating() {

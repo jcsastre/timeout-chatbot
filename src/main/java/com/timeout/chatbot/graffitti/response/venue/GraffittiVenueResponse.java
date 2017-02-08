@@ -1,10 +1,10 @@
-package com.timeout.chatbot.graffitti.response.venues;
+package com.timeout.chatbot.graffitti.response.venue;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.timeout.chatbot.graffitti.response.common.UserRatingsSummary;
 import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCategorisation;
-import com.timeout.chatbot.graffitti.response.images.Image;
+import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GraffittiVenueResponse {
@@ -29,7 +29,7 @@ public class GraffittiVenueResponse {
         private String summary;
         private String url;
         private String image_url;
-        private Image image;
+        private GraffittiImage image;
         private String location;
         private String annotation;
         @JsonProperty("to_website")
@@ -88,11 +88,11 @@ public class GraffittiVenueResponse {
             this.image_url = image_url;
         }
 
-        public Image getImage() {
+        public GraffittiImage getImage() {
             return image;
         }
 
-        public void setImage(Image image) {
+        public void setImage(GraffittiImage image) {
             this.image = image;
         }
 

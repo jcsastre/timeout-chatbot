@@ -113,6 +113,8 @@ public class IntentFindRestaurantsHandler {
                 //TODO: map text to valid where
                 //bag.setGraffittiWhere(where);
             }
+        } else {
+            handle(session);
         }
     }
 

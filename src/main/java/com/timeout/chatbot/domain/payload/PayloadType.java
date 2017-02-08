@@ -12,6 +12,8 @@ public enum PayloadType {
     see_more,
     back,
     item_more_options,
+    book,
+    photos,
 
     cancel,
     show_subcategories,

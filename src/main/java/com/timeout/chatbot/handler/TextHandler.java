@@ -50,7 +50,7 @@ public class TextHandler {
         if (nluResult != null) {
             processNluResult(
                 session,
-                nluService.processText(text)
+                nluResult
             );
         } else {
             messengerSendClient.sendTextMessage(

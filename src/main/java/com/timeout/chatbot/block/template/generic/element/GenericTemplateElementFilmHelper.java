@@ -6,7 +6,7 @@ import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.configuration.TimeoutConfiguration;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.graffitti.response.images.Image;
+import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import org.cloudinary.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,11 +79,11 @@ public class GenericTemplateElementFilmHelper {
 
         String url = timeoutConfiguration.getImageUrlPlacholder();
 
-        final Image image = pageItem.getImage();
-        if (image != null) {
-            final String imageId = image.getId();
+        final GraffittiImage graffittiImage = pageItem.getGraffittiImage();
+        if (graffittiImage != null) {
+            final String imageId = graffittiImage.getId();
             if (imageId != null) {
-                url = "http://media.timeout.com/images/" + imageId + "/320/210/image.jpg";
+                url = "http://media.timeout.com/images/" + imageId + "/320/210/graffittiImage.jpg";
             }
         }
 

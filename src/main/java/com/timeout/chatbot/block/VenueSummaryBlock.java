@@ -1,9 +1,9 @@
 package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.templates.GenericTemplate;
-import com.timeout.chatbot.graffitti.response.images.Image;
-import com.timeout.chatbot.graffitti.response.images.ImagesResponse;
-import com.timeout.chatbot.graffitti.response.venues.GraffittiVenueResponse;
+import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
+import com.timeout.chatbot.graffitti.response.images.GraffittiImagesResponse;
+import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
 import com.timeout.chatbot.graffitti.uri.GraffittiEndpoints;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.GraffittiService;
@@ -71,27 +71,27 @@ public class VenueSummaryBlock {
     }
 
     private void sendImagesIfAvailable(String userId, String restaurantId, GraffittiVenueResponse restaurant) {
-        String urlImages = graffittiEndpoints.getVenues() + restaurantId + "/images";
-        final ImagesResponse imagesResponse = restTemplate.getForObject(urlImages, ImagesResponse.class);
+        String urlImages = graffittiEndpoints.getVenues() + restaurantId + "/graffittiImages";
+        final GraffittiImagesResponse graffittiImagesResponse = restTemplate.getForObject(urlImages, GraffittiImagesResponse.class);
 
-        List<Image> images = imagesResponse.getImages();
-        if (images != null) {
-            if (images.size() > 10) {
-                images = images.subList(0, 10);
+        List<GraffittiImage> graffittiImages = graffittiImagesResponse.getGraffittiImages();
+        if (graffittiImages != null) {
+            if (graffittiImages.size() > 10) {
+                graffittiImages = graffittiImages.subList(0, 10);
             }
 
             final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
             final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
-            for (Image image : images) {
-                String title = image.getAltText();
+            for (GraffittiImage graffittiImage : graffittiImages) {
+                String title = graffittiImage.getAltText();
                 if (title == null) {
-                    title = image.getTitle();
+                    title = graffittiImage.getTitle();
                     if (title == null) {
                         title = restaurant.getBody().getName();
                     }
                 }
 
-                listBuilder.addElement(title).imageUrl(image.getUrl()).toList().done();
+                listBuilder.addElement(title).imageUrl(graffittiImage.getUrl()).toList().done();
             }
             final GenericTemplate genericTemplate = genericTemplateBuilder.build();
 
