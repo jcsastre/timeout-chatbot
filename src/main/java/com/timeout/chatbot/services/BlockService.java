@@ -3,13 +3,9 @@ package com.timeout.chatbot.services;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.timeout.chatbot.block.*;
-import com.timeout.chatbot.block.DiscoverBlock;
-import com.timeout.chatbot.block.SuggestionsBlock;
-import com.timeout.chatbot.block.WelcomeBackBlock;
-import com.timeout.chatbot.block.WelcomeFirstTimeBlock;
+import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
-import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
 import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -185,10 +181,10 @@ public class BlockService {
 
     public void sendSeeVenueItemBlock(
         String userId,
-        GraffittiVenueResponse graffittiVenueResponse
+        Venue venue
     ) throws MessengerApiException, MessengerIOException {
 
-        seeVenueItemBlock.send(userId, graffittiVenueResponse);
+        seeVenueItemBlock.send(userId, venue);
     }
 
     public void sendPhoneCallBlock(

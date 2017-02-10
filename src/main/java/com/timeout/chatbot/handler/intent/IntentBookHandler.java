@@ -4,15 +4,13 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderHelper;
+import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
-import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
-import com.timeout.chatbot.graffitti.urlbuilder.VenuesUrlBuilder;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionStateItemBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 @Component
 public class IntentBookHandler {
@@ -20,22 +18,16 @@ public class IntentBookHandler {
     private final MessengerSendClient messengerSendClient;
     private final BlockService blockService;
     private final QuickReplyBuilderHelper quickReplyBuilderHelper;
-    private final RestTemplate restTemplate;
-    private final VenuesUrlBuilder venuesUrlBuilder;
 
     @Autowired
     public IntentBookHandler(
         MessengerSendClient messengerSendClient,
         BlockService blockService,
-        QuickReplyBuilderHelper quickReplyBuilderHelper,
-        RestTemplate restTemplate,
-        VenuesUrlBuilder venuesUrlBuilder
+        QuickReplyBuilderHelper quickReplyBuilderHelper
     ) {
         this.messengerSendClient = messengerSendClient;
         this.blockService = blockService;
         this.quickReplyBuilderHelper = quickReplyBuilderHelper;
-        this.restTemplate = restTemplate;
-        this.venuesUrlBuilder = venuesUrlBuilder;
     }
 
     public void handle(
@@ -70,16 +62,12 @@ public class IntentBookHandler {
 
         final GraffittiType graffittiType = itemBag.getGraffittiType();
         if (graffittiType == GraffittiType.VENUE) {
-            final GraffittiVenueResponse graffittiVenueResponse =
-                restTemplate.getForObject(
-                    venuesUrlBuilder.build(itemBag.getItemId()).toUri(),
-                    GraffittiVenueResponse.class
-                );
+            final Venue venue = itemBag.getVenue();
 
             messengerSendClient.sendTextMessage(
                 session.getUser().getMessengerId(),
                 "Sorry, 'Book' feature is not implemented yet",
-                quickReplyBuilderHelper.buildForSeeVenueItem(graffittiVenueResponse)
+                quickReplyBuilderHelper.buildForSeeVenueItem(venue)
             );
         } else {
             messengerSendClient.sendTextMessage(

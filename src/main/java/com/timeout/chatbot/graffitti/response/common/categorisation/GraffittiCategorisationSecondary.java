@@ -7,12 +7,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class GraffittiCategorisationSecondary {
 
     private String name;
-
     @JsonProperty("tree_node_id")
     private Integer treeNodeId;
-
     private GraffittiCategorisationConcept concept;
-
     private String colour;
 
     public String getName() {

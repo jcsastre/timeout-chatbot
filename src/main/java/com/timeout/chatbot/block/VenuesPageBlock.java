@@ -4,7 +4,7 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.templates.GenericTemplate;
-import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementVenueHelper;
+import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementHelper;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,15 +17,15 @@ import java.util.List;
 public class VenuesPageBlock {
 
     private final MessengerSendClient messengerSendClient;
-    private final GenericTemplateElementVenueHelper genericTemplateElementVenueHelper;
+    private final GenericTemplateElementHelper genericTemplateElementHelper;
 
     @Autowired
     public VenuesPageBlock(
         MessengerSendClient messengerSendClient,
-        GenericTemplateElementVenueHelper genericTemplateElementVenueHelper
+        GenericTemplateElementHelper genericTemplateElementHelper
     ) {
         this.messengerSendClient = messengerSendClient;
-        this.genericTemplateElementVenueHelper = genericTemplateElementVenueHelper;
+        this.genericTemplateElementHelper = genericTemplateElementHelper;
     }
 
     public void send(
@@ -53,7 +53,7 @@ public class VenuesPageBlock {
         final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
         final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
         for (PageItem pageItem : pageItems) {
-            genericTemplateElementVenueHelper.addNotSingleElementInList(listBuilder, pageItem);
+            genericTemplateElementHelper.addNotSingleElementInList(listBuilder, pageItem);
         }
 
         final GenericTemplate genericTemplate = genericTemplateBuilder.build();

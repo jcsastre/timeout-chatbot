@@ -8,7 +8,6 @@ import com.timeout.chatbot.block.PhotosBlock;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 import com.timeout.chatbot.graffitti.response.images.GraffittiImagesResponse;
-import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
 import com.timeout.chatbot.graffitti.urlbuilder.VenuesUrlBuilder;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionStateItemBag;
@@ -75,24 +74,10 @@ public class IntentPhotosHandler {
 
         final GraffittiType graffittiType = itemBag.getGraffittiType();
         if (graffittiType == GraffittiType.VENUE) {
-
-            final String itemId = itemBag.getItemId();
-            if (itemId != null) {
-                final List<GraffittiImage> graffittiImages = getImagesForVenue(itemId);
-                if (graffittiImages != null) {
-                    final GraffittiVenueResponse graffittiVenueResponse =
-                        restTemplate.getForObject(
-                            venuesUrlBuilder.build(itemBag.getItemId()).toUri(),
-                            GraffittiVenueResponse.class
-                        );
-
-                    photosBlock.send(
-                        session.getUser().getMessengerId(),
-                        graffittiVenueResponse,
-                        graffittiImages
-                    );
-                }
-            }
+            photosBlock.send(
+                session.getUser().getMessengerId(),
+                itemBag.getVenue()
+            );
         } else {
             messengerSendClient.sendTextMessage(
                 session.getUser().getMessengerId(),

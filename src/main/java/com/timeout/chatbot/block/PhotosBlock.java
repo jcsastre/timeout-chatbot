@@ -4,8 +4,8 @@ import com.github.messenger4j.send.NotificationType;
 import com.github.messenger4j.send.Recipient;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderHelper;
-import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
-import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
+import com.timeout.chatbot.domain.Image;
+import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -29,25 +29,25 @@ public class PhotosBlock {
 
     public void send(
         String userId,
-        GraffittiVenueResponse graffittiVenueResponse,
-        List<GraffittiImage> graffittiImages
+        Venue venue
     ) {
-        if (graffittiImages.size() > 10) {
-            graffittiImages = graffittiImages.subList(0, 10);
+        List<Image> images = venue.getImages();
+        if (venue.getImages().size() > 10) {
+            images = images.subList(0, 10);
         }
 
         final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
         final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
-        for (GraffittiImage graffittiImage : graffittiImages) {
-            String title = graffittiImage.getAltText();
+        for (Image image : images) {
+            String title = image.getAltText();
             if (title == null) {
-                title = graffittiImage.getTitle();
+                title = image.getTitle();
                 if (title == null) {
                     title = " ";
                 }
             }
 
-            listBuilder.addElement(title).imageUrl(graffittiImage.getUrl()).toList().done();
+            listBuilder.addElement(title).imageUrl(image.getUrl()).toList().done();
         }
         final GenericTemplate genericTemplate = genericTemplateBuilder.build();
 
@@ -55,7 +55,7 @@ public class PhotosBlock {
             Recipient.newBuilder().recipientId(userId).build(),
             NotificationType.REGULAR,
             genericTemplate,
-            quickReplyBuilderHelper.buildForSeeVenueItem(graffittiVenueResponse)
+            quickReplyBuilderHelper.buildForSeeVenueItem(venue)
         );
     }
 }

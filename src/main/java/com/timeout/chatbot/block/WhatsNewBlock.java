@@ -7,13 +7,10 @@ import com.github.messenger4j.send.NotificationType;
 import com.github.messenger4j.send.Recipient;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
-import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementFilmHelper;
-import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementVenueHelper;
-import com.timeout.chatbot.graffitti.domain.GraffittiType;
+import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementHelper;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
-import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,28 +23,22 @@ public class WhatsNewBlock {
 
     private final RestTemplate restTemplate;
     private final SearchUrlBuilder searchUrlBuilder;
-    private final GenericTemplateElementVenueHelper genericTemplateElementVenueHelper;
-    private final GenericTemplateElementFilmHelper genericTemplateElementFilmHelper;
+    private final GenericTemplateElementHelper genericTemplateElementHelper;
     private final MessengerSendClient messengerSendClient;
-    private final GraffittiService graffittiService;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
 
     @Autowired
     public WhatsNewBlock(
         RestTemplate restTemplate,
         SearchUrlBuilder searchUrlBuilder,
-        GenericTemplateElementVenueHelper genericTemplateElementVenueHelper,
-        GenericTemplateElementFilmHelper genericTemplateElementFilmHelper,
+        GenericTemplateElementHelper genericTemplateElementHelper,
         MessengerSendClient messengerSendClient,
-        GraffittiService graffittiService,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState
     ) {
         this.restTemplate = restTemplate;
         this.searchUrlBuilder = searchUrlBuilder;
-        this.genericTemplateElementVenueHelper = genericTemplateElementVenueHelper;
-        this.genericTemplateElementFilmHelper = genericTemplateElementFilmHelper;
+        this.genericTemplateElementHelper = genericTemplateElementHelper;
         this.messengerSendClient = messengerSendClient;
-        this.graffittiService = graffittiService;
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
     }
 
@@ -84,16 +75,7 @@ public class WhatsNewBlock {
 
         final List<PageItem> pageItems = searchResponse.getPageItems();
         for (PageItem pageItem : pageItems) {
-            final GraffittiType type = GraffittiType.fromString(pageItem.getType());
-            if (type == GraffittiType.VENUE) {
-                genericTemplateElementVenueHelper.addNotSingleElementInList(listBuilder, pageItem);
-            } else if (type == GraffittiType.EVENT) {
-                //TODO
-            } else if (type == GraffittiType.FILM) {
-                genericTemplateElementFilmHelper.addElement(listBuilder, pageItem);
-            } else {
-                //TODO
-            }
+            genericTemplateElementHelper.addNotSingleElementInList(listBuilder, pageItem);
         }
     }
 }

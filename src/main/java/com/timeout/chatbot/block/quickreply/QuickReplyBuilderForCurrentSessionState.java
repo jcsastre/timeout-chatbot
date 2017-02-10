@@ -111,7 +111,7 @@ public class QuickReplyBuilderForCurrentSessionState {
             case VENUE:
                 return
                     quickReplyBuilderHelper.buildForSeeVenueItem(
-                        itemBag.getGraffittiVenueResponse()
+                        itemBag.getVenue()
                     );
 
             case FILM:

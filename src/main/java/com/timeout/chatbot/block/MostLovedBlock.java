@@ -9,8 +9,8 @@ import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementEventHelper;
 import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementFilmHelper;
-import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementVenueHelper;
-import com.timeout.chatbot.graffitti.domain.GraffittiType;
+import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementHelper;
+import com.timeout.chatbot.block.template.generic.element.GenericTemplateWithSingleElementVenueBuilder;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.List;
 
 @Component
@@ -26,7 +27,8 @@ public class MostLovedBlock {
 
     private final RestTemplate restTemplate;
     private final SearchUrlBuilder searchUrlBuilder;
-    private final GenericTemplateElementVenueHelper genericTemplateElementVenueHelper;
+    private final GenericTemplateElementHelper genericTemplateElementHelper;
+    private final GenericTemplateWithSingleElementVenueBuilder genericTemplateWithSingleElementVenueBuilder;
     private final GenericTemplateElementFilmHelper genericTemplateElementFilmHelper;
     private final GenericTemplateElementEventHelper genericTemplateElementEventHelper;
     private final MessengerSendClient messengerSendClient;
@@ -36,14 +38,15 @@ public class MostLovedBlock {
     public MostLovedBlock(
         RestTemplate restTemplate,
         SearchUrlBuilder searchUrlBuilder,
-        GenericTemplateElementVenueHelper genericTemplateElementVenueHelper,
+        GenericTemplateElementHelper genericTemplateElementHelper, GenericTemplateWithSingleElementVenueBuilder genericTemplateWithSingleElementVenueBuilder,
         GenericTemplateElementFilmHelper genericTemplateElementFilmHelper,
         GenericTemplateElementEventHelper genericTemplateElementEventHelper, MessengerSendClient messengerSendClient,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState
     ) {
         this.restTemplate = restTemplate;
         this.searchUrlBuilder = searchUrlBuilder;
-        this.genericTemplateElementVenueHelper = genericTemplateElementVenueHelper;
+        this.genericTemplateElementHelper = genericTemplateElementHelper;
+        this.genericTemplateWithSingleElementVenueBuilder = genericTemplateWithSingleElementVenueBuilder;
         this.genericTemplateElementFilmHelper = genericTemplateElementFilmHelper;
         this.genericTemplateElementEventHelper = genericTemplateElementEventHelper;
         this.messengerSendClient = messengerSendClient;
@@ -75,33 +78,37 @@ public class MostLovedBlock {
     private void addElements(
         GenericTemplate.Element.ListBuilder listBuilder
     ) {
+        final URI uri = searchUrlBuilder.buildForMostLovedBlock().toUri();
+        System.out.println(uri);
+
         final SearchResponse searchResponse =
             restTemplate.getForObject(
-                searchUrlBuilder.buildForMostLovedBlock().toUri(),
+                uri,
                 SearchResponse.class
             );
 
         final List<PageItem> pageItems = searchResponse.getPageItems();
         for (PageItem pageItem : pageItems) {
-            final GraffittiType graffittiType = GraffittiType.fromString(pageItem.getType());
-            switch (graffittiType) {
-
-                case VENUE:
-                    genericTemplateElementVenueHelper.addNotSingleElementInList(listBuilder, pageItem);
-                    break;
-
-                case EVENT:
-                    genericTemplateElementEventHelper.addNotSingleElementInList(listBuilder, pageItem);
-                    break;
-
-                case FILM:
-                    genericTemplateElementFilmHelper.addElement(listBuilder, pageItem);
-                    break;
-
-                case PAGE:
-                    //TODO
-                    break;
-            }
+            genericTemplateElementHelper.addNotSingleElementInList(listBuilder, pageItem);
+//            final GraffittiType graffittiType = GraffittiType.fromString(pageItem.getType());
+//            switch (graffittiType) {
+//
+//                case VENUE:
+//                    genericTemplateElementVenueHelper.addNotSingleElementInList(listBuilder, pageItem);
+//                    break;
+//
+//                case EVENT:
+//                    genericTemplateElementEventHelper.addNotSingleElementInList(listBuilder, pageItem);
+//                    break;
+//
+//                case FILM:
+//                    genericTemplateElementFilmHelper.addElement(listBuilder, pageItem);
+//                    break;
+//
+//                case PAGE:
+//                    //TODO
+//                    break;
+//            }
         }
     }
 }

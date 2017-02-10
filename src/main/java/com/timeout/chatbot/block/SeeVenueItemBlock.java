@@ -5,10 +5,9 @@ import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.NotificationType;
 import com.github.messenger4j.send.Recipient;
-import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderHelper;
-import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementVenueHelper;
-import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
+import com.timeout.chatbot.block.template.generic.element.GenericTemplateWithSingleElementVenueBuilder;
+import com.timeout.chatbot.domain.Venue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,35 +15,31 @@ import org.springframework.stereotype.Component;
 public class SeeVenueItemBlock {
 
     private final MessengerSendClient messengerSendClient;
-    private final GenericTemplateElementVenueHelper genericTemplateElementVenueHelper;
+    private final GenericTemplateWithSingleElementVenueBuilder genericTemplateWithSingleElementVenueBuilder;
     private final QuickReplyBuilderHelper quickReplyBuilderHelper;
 
     @Autowired
     public SeeVenueItemBlock(
         MessengerSendClient messengerSendClient,
-        GenericTemplateElementVenueHelper genericTemplateElementVenueHelper,
+        GenericTemplateWithSingleElementVenueBuilder genericTemplateWithSingleElementVenueBuilder,
         QuickReplyBuilderHelper quickReplyBuilderHelper
     ) {
         this.messengerSendClient = messengerSendClient;
-        this.genericTemplateElementVenueHelper = genericTemplateElementVenueHelper;
+        this.genericTemplateWithSingleElementVenueBuilder = genericTemplateWithSingleElementVenueBuilder;
         this.quickReplyBuilderHelper = quickReplyBuilderHelper;
     }
 
     public void send(
         String userId,
-        GraffittiVenueResponse graffittiVenueResponse
+        Venue venue
     ) throws MessengerApiException, MessengerIOException {
 
-        final GenericTemplate.Builder builder = GenericTemplate.newBuilder();
-        final GenericTemplate.Element.ListBuilder listBuilder = builder.addElements();
-
-        genericTemplateElementVenueHelper.addSingleElementInList(listBuilder, graffittiVenueResponse);
 
         messengerSendClient.sendTemplate(
             Recipient.newBuilder().recipientId(userId).build(),
             NotificationType.REGULAR,
-            builder.build(),
-            quickReplyBuilderHelper.buildForSeeVenueItem(graffittiVenueResponse)
+            genericTemplateWithSingleElementVenueBuilder.build(venue),
+            quickReplyBuilderHelper.buildForSeeVenueItem(venue)
         );
     }
 }

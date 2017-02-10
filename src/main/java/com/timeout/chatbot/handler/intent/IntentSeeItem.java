@@ -3,7 +3,9 @@ package com.timeout.chatbot.handler.intent;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
+import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
+import com.timeout.chatbot.graffitti.response.images.GraffittiImagesResponse;
 import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
 import com.timeout.chatbot.graffitti.urlbuilder.VenuesUrlBuilder;
 import com.timeout.chatbot.services.BlockService;
@@ -50,11 +52,24 @@ public class IntentSeeItem {
                             GraffittiVenueResponse.class
                         );
 
-                    itemBag.setGraffittiVenueResponse(graffittiVenueResponse);
+                    final GraffittiImagesResponse graffittiImagesResponse =
+                        restTemplate.getForObject(
+                            venuesUrlBuilder.buildImages(graffittiVenueResponse.getBody().getId()).toUri(),
+                            GraffittiImagesResponse.class
+                        );
+
+
+                    final Venue venue =
+                        new Venue(
+                            graffittiVenueResponse.getBody(),
+                            graffittiImagesResponse.getGraffittiImages()
+                        );
+
+                    itemBag.setVenue(venue);
 
                     blockService.sendSeeVenueItemBlock(
                         session.getUser().getMessengerId(),
-                        graffittiVenueResponse
+                        venue
                     );
                 } else {
                     messengerSendClient.sendTextMessage(

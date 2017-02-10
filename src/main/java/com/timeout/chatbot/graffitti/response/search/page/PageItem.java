@@ -28,7 +28,7 @@ public class PageItem {
     private Double distance;
     private String phone;
     @JsonProperty("image")
-    private GraffittiImage graffittiImage;
+    private GraffittiImage image;
     @JsonProperty("editorial_rating")
     private Integer editorialRating;
     @JsonProperty("user_ratings_summary")
@@ -142,12 +142,12 @@ public class PageItem {
         this.phone = phone;
     }
 
-    public GraffittiImage getGraffittiImage() {
-        return graffittiImage;
+    public GraffittiImage getImage() {
+        return image;
     }
 
-    public void setGraffittiImage(GraffittiImage graffittiImage) {
-        this.graffittiImage = graffittiImage;
+    public void setImage(GraffittiImage image) {
+        this.image = image;
     }
 
     public Integer getEditorialRating() {

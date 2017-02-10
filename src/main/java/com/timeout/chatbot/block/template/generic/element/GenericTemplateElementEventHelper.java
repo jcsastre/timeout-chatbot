@@ -7,13 +7,14 @@ import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.configuration.TimeoutConfiguration;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.response.common.UserRatingsSummary;
+import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCategorisation;
+import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCategorisationSecondary;
 import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
 import org.cloudinary.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.HtmlUtils;
 
 import java.util.List;
 
@@ -40,13 +41,13 @@ public class GenericTemplateElementEventHelper {
     ) {
         final GenericTemplate.Element.Builder builder = listBuilder.addElement(pageItem.getName());
 
-        final String subtitle = buildSubtitle(pageItem);
-        if (subtitle != null && !subtitle.isEmpty()) {
-            builder.subtitle(subtitle);
-        }
+//        final String subtitle = buildSubtitle(pageItem);
+//        if (subtitle != null && !subtitle.isEmpty()) {
+//            builder.subtitle(subtitle);
+//        }
 
         final String imageUrl = buildImageUrl(
-            pageItem.getGraffittiImage(),
+            pageItem.getImage(),
             pageItem.getEditorialRating(),
             pageItem.getUserRatingsSummary(),
             pageItem.getGraffittiCategorisation().getGraffittiCategorisationPrimary().getName()
@@ -72,11 +73,20 @@ public class GenericTemplateElementEventHelper {
                 graffittiVenueResponse.getBody().getName()
             );
 
+        String subcategoryName = null;
+        final GraffittiCategorisation categorisation = graffittiVenueResponse.getBody().getGraffittiCategorisation();
+        if (categorisation != null) {
+            final GraffittiCategorisationSecondary categorisationSecondary = categorisation.getGraffittiCategorisationSecondary();
+            if (categorisationSecondary != null) {
+                subcategoryName = categorisationSecondary.getName();
+            }
+        }
+
         final String imageUrl = buildImageUrl(
             graffittiVenueResponse.getBody().getImage(),
             graffittiVenueResponse.getBody().getEditorialRating(),
             graffittiVenueResponse.getBody().getUserRatingsSummary(),
-            graffittiVenueResponse.getBody().getGraffittiCategorisation().getGraffittiCategorisationPrimary().getName()
+            subcategoryName
         );
         if (imageUrl != null) {
             builder.imageUrl(imageUrl);
@@ -90,30 +100,11 @@ public class GenericTemplateElementEventHelper {
         builder.toList().done();
     }
 
-    public String buildSubtitle(PageItem pageItem) {
-        String subtitle = pageItem.getSummary();
-        if (subtitle == null) {
-            subtitle = pageItem.getDescription();
-            if (subtitle == null) {
-                subtitle = pageItem.getAnnotation();
-            }
-        }
-
-        subtitle = HtmlUtils.htmlUnescape(subtitle);
-
-        if (subtitle != null && subtitle.length() > 80) {
-            subtitle = subtitle.substring(0, 77);
-            subtitle = subtitle + "...";
-        }
-
-        return subtitle;
-    }
-
     public String buildImageUrl(
         GraffittiImage graffittiImage,
         Integer editorialRating,
         UserRatingsSummary userRatingsSummary,
-        String categoryText
+        String subcategoryText
     ) {
 
         String url = timeoutConfiguration.getImageUrlPlacholder();
@@ -128,7 +119,22 @@ public class GenericTemplateElementEventHelper {
             new Transformation()
                 .aspectRatio("191:100").crop("crop").chain()
                 .width(764).crop("scale").chain()
+                .overlay("overlay_black_top_gradient_geexo9").gravity("north").chain()
                 .overlay("overlay_black_bottom_gradient_loq19q").gravity("south").chain();
+
+        // Category icon + Subcategory text
+        transformation =
+            transformation.overlay("event_icon_nehhli").gravity("north_west").x(0.04).y(0.04).chain();
+        if (subcategoryText != null) {
+            subcategoryText = subcategoryText.replace(" ", "%20");
+            double y = 0.08;
+            if (subcategoryText.contains("j") || subcategoryText.contains("g")) {
+                y = y - 0.01;
+            }
+            transformation =
+                transformation.overlay("text:Arial_32:"+subcategoryText).color("#B1B1B1").gravity("north_west").x(0.12).y(y).chain();
+        }
+
 
         // Editorial rating
         if (editorialRating != null) {
@@ -158,19 +164,19 @@ public class GenericTemplateElementEventHelper {
             }
         }
 
-        // Type/Category icon + Subcategory
-        transformation =
-            transformation.overlay("event_icon_nehhli").gravity("south_east").x(0.020).y(0.04).chain();
-
-        if (categoryText != null) {
-            categoryText = categoryText.replace(" ", "%20");
-            double y = 0.06;
-            if (categoryText.contains("j") || categoryText.contains("g")) {
-                y = 0.05;
-            }
-            transformation =
-                transformation.overlay("text:Arial_32:"+categoryText).color("#B1B1B1").gravity("south_east").x(0.1).y(y).chain();
-        }
+//        // Type/Category icon + Subcategory
+//        transformation =
+//            transformation.overlay("event_icon_nehhli").gravity("south_east").x(0.020).y(0.04).chain();
+//
+//        if (categoryText != null) {
+//            categoryText = categoryText.replace(" ", "%20");
+//            double y = 0.06;
+//            if (categoryText.contains("j") || categoryText.contains("g")) {
+//                y = 0.05;
+//            }
+//            transformation =
+//                transformation.overlay("text:Arial_32:"+categoryText).color("#B1B1B1").gravity("south_east").x(0.1).y(y).chain();
+//        }
 
         url =
             cloudinary.url()

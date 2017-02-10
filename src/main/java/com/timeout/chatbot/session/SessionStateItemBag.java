@@ -1,5 +1,6 @@
 package com.timeout.chatbot.session;
 
+import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
 
@@ -7,6 +8,7 @@ public class SessionStateItemBag {
 
     private GraffittiType graffittiType;
     private String itemId;
+    private Venue venue;
     private GraffittiVenueResponse graffittiVenueResponse;
 
     public GraffittiType getGraffittiType() {
@@ -31,5 +33,13 @@ public class SessionStateItemBag {
 
     public void setGraffittiVenueResponse(GraffittiVenueResponse graffittiVenueResponse) {
         this.graffittiVenueResponse = graffittiVenueResponse;
+    }
+
+    public Venue getVenue() {
+        return venue;
+    }
+
+    public void setVenue(Venue venue) {
+        this.venue = venue;
     }
 }

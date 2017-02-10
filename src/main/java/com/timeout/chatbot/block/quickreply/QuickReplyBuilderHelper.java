@@ -1,6 +1,7 @@
 package com.timeout.chatbot.block.quickreply;
 
 import com.github.messenger4j.send.QuickReply;
+import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 import com.timeout.chatbot.graffitti.response.images.GraffittiImagesResponse;
@@ -64,11 +65,8 @@ public class QuickReplyBuilderHelper {
     }
 
     public List<QuickReply> buildForSeeVenueItem(
-        GraffittiVenueResponse graffittiVenueResponse
+        Venue venue
     ) {
-
-        final GraffittiVenueResponse.Body venue = graffittiVenueResponse.getBody();
-
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
         listBuilder.addTextQuickReply(
@@ -92,8 +90,7 @@ public class QuickReplyBuilderHelper {
 //                .toString()
 //        ).toList();
 
-        final List<GraffittiImage> graffittiImages = getImages(graffittiVenueResponse);
-        if (graffittiImages != null) {
+        if (venue.getImages()!=null && venue.getImages().size()>0) {
             listBuilder.addTextQuickReply(
                 "Photos",
                 new JSONObject()
