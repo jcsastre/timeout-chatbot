@@ -83,7 +83,7 @@ public class IntentService {
         whatsnewHandler.handle(session);
     }
 
-    public void handleFindThingsToDo(Session session) { findThingsToDoHandler.handle(session); }
+    public void handleFindThingsToDo(Session session) throws MessengerApiException, MessengerIOException { findThingsToDoHandler.handle(session); }
 
     public void handleFindRestaurants(
         Session session,

@@ -3,6 +3,7 @@ package com.timeout.chatbot.handler;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
+import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.nlu.NluResult;
@@ -23,18 +24,21 @@ public class TextHandler {
     private final NluService nluService;
     private final MessengerSendClient messengerSendClient;
     private final GraffittiService graffittiService;
+    private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
 
     @Autowired
     public TextHandler(
         IntentService intentService,
         NluService nluService,
         MessengerSendClient messengerSendClient,
-        GraffittiService graffittiService
+        GraffittiService graffittiService,
+        QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState
     ) {
         this.intentService = intentService;
         this.nluService = nluService;
         this.messengerSendClient = messengerSendClient;
         this.graffittiService = graffittiService;
+        this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
     }
 
     public void handle(
@@ -64,10 +68,45 @@ public class TextHandler {
     private NluResult handleInternal(
         String text
     ) {
-        if (text.equalsIgnoreCase("restaurants")) {
+        if (text.equalsIgnoreCase("Things to do")) {
+            return
+                new NluResult(
+                    NluIntentType.FIND_THINGSTODO
+                );
+        } else if (text.equalsIgnoreCase("Restaurants")) {
             return
                 new NluResult(
                     NluIntentType.FIND_RESTAURANTS
+                );
+        } else if (text.equalsIgnoreCase("Bars and pubs")) {
+            return
+                new NluResult(
+                    NluIntentType.FIND_BARSANDPUBS
+                );
+        } else if (text.equalsIgnoreCase("Art")) {
+            return
+                new NluResult(
+                    NluIntentType.FIND_ART
+                );
+        } else if (text.equalsIgnoreCase("Theatre")) {
+            return
+                new NluResult(
+                    NluIntentType.FIND_THEATRE
+                );
+        } else if (text.equalsIgnoreCase("Music")) {
+            return
+                new NluResult(
+                    NluIntentType.FIND_MUSIC
+                );
+        } else if (text.equalsIgnoreCase("Nightlife")) {
+            return
+                new NluResult(
+                    NluIntentType.FIND_NIGHTLIFE
+                );
+        } else if (text.equalsIgnoreCase("Film")) {
+            return
+                new NluResult(
+                    NluIntentType.FINDS_FILMS
                 );
         }
 
@@ -112,10 +151,56 @@ public class TextHandler {
 //                intentFindRestaurantsHandler.handleNearby(session);
 //                break;
 
-//            case FIND_BARSANDPUBS:
+            case FIND_BARSANDPUBS:
+                messengerSendClient.sendTextMessage(
+                    session.getUser().getMessengerId(),
+                    "Sorry, 'Bars & Pubs' is not implemented yet",
+                    quickReplyBuilderForCurrentSessionState.build(session)
+                );
 //                onIntentFindBars();
-//                break;
-//
+                break;
+
+            case FIND_ART:
+                messengerSendClient.sendTextMessage(
+                    session.getUser().getMessengerId(),
+                    "Sorry, 'Art' is not implemented yet",
+                    quickReplyBuilderForCurrentSessionState.build(session)
+                );
+                break;
+
+            case FIND_THEATRE:
+                messengerSendClient.sendTextMessage(
+                    session.getUser().getMessengerId(),
+                    "Sorry, 'Theatre' is not implemented yet",
+                    quickReplyBuilderForCurrentSessionState.build(session)
+                );
+                break;
+
+            case FIND_MUSIC:
+                messengerSendClient.sendTextMessage(
+                    session.getUser().getMessengerId(),
+                    "Sorry, 'Music' is not implemented yet",
+                    quickReplyBuilderForCurrentSessionState.build(session)
+                );
+                break;
+
+            case FIND_NIGHTLIFE:
+                messengerSendClient.sendTextMessage(
+                    session.getUser().getMessengerId(),
+                    "Sorry, 'Nightlife' is not implemented yet",
+                    quickReplyBuilderForCurrentSessionState.build(session)
+                );
+                break;
+
+            case FINDS_FILMS:
+                messengerSendClient.sendTextMessage(
+                    session.getUser().getMessengerId(),
+                    "Sorry, 'Films' is not implemented yet",
+                    quickReplyBuilderForCurrentSessionState.build(session)
+                );
+                break;
+
+                //
 //            case FIND_BARSANDPUBS_NEARBY:
 //                onIntentFindBarsNearby();
 //                break;

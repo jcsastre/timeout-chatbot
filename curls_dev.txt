@@ -37,8 +37,8 @@ curl -X POST -H "Content-Type: application/json" -d '{
     },
     {
       "type":"postback",
-      "title":"Suggestions",
-      "payload":"{\"type\": \"suggestions\"}"
+      "title":"Search suggestions",
+      "payload":"{\"type\": \"search_suggestions\"}"
     },
     {
       "type":"postback",

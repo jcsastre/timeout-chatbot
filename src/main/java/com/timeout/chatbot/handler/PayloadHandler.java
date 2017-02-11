@@ -54,15 +54,17 @@ public class PayloadHandler {
 
             case get_started:
                 blockService.sendWelcomeFirstTimeBlock(session.getUser());
-                session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
-                blockService.sendSuggestionsBlock(session);
+                intentService.handleDiscover(session);
+//                session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
+//                blockService.sendSuggestionsBlock(session);
                 break;
 
             case start_over:
                 session.reset();
                 blockService.sendWelcomeBackBlock(session.getUser());
-                session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
-                blockService.sendSuggestionsBlock(session);
+                intentService.handleDiscover(session);
+//                session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
+//                blockService.sendSuggestionsBlock(session);
                 break;
 
             case utterance:
@@ -75,8 +77,9 @@ public class PayloadHandler {
                 break;
 
             case search_suggestions:
-                session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
-                blockService.sendSuggestionsBlock(session);
+                intentService.handleSuggestions(session);
+//                session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
+//                blockService.sendSuggestionsBlock(session);
                 break;
 
             case most_loved:
