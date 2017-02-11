@@ -46,8 +46,8 @@ public class Venue {
             if (gcs != null) {
                 categorySecondary =
                     new CategoryNode(
-                        gcp.getName(),
-                        gcp.getTreeNodeId()
+                        gcs.getName(),
+                        gcs.getTreeNodeId()
                     );
             }
         }

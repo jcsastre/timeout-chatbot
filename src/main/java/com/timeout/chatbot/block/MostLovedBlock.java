@@ -12,7 +12,7 @@ import com.timeout.chatbot.block.template.generic.element.GenericTemplateElement
 import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementHelper;
 import com.timeout.chatbot.block.template.generic.element.GenericTemplateWithSingleElementVenueBuilder;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
-import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
+import com.timeout.chatbot.graffitti.response.search.page.GraffittiSearchResponse;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
 import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,13 +81,13 @@ public class MostLovedBlock {
         final URI uri = searchUrlBuilder.buildForMostLovedBlock().toUri();
         System.out.println(uri);
 
-        final SearchResponse searchResponse =
+        final GraffittiSearchResponse graffittiSearchResponse =
             restTemplate.getForObject(
                 uri,
-                SearchResponse.class
+                GraffittiSearchResponse.class
             );
 
-        final List<PageItem> pageItems = searchResponse.getPageItems();
+        final List<PageItem> pageItems = graffittiSearchResponse.getPageItems();
         for (PageItem pageItem : pageItems) {
             genericTemplateElementHelper.addNotSingleElementInList(listBuilder, pageItem);
 //            final GraffittiType graffittiType = GraffittiType.fromString(pageItem.getType());

@@ -24,7 +24,7 @@ public class IntentCancelHandler {
     ) {
         switch (session.getSessionState()) {
 
-            case LOOKING:
+            case SEARCHING:
                 handleLooking(session);
                 break;
 

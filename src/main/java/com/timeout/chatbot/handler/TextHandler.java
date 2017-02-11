@@ -97,7 +97,7 @@ public class TextHandler {
                 break;
 
             case FIND_RESTAURANTS:
-                session.setSessionState(SessionState.LOOKING);
+                session.setSessionState(SessionState.SEARCHING);
                 session.getSessionStateLookingBag().setGraffittiType(GraffittiType.VENUE);
                 session.getSessionStateLookingBag().setWhat(What.RESTAURANT);
                 session.getSessionStateLookingBag().setGraffittiWhatCategoryNode(
@@ -108,7 +108,7 @@ public class TextHandler {
                 break;
 
 //            case FIND_RESTAURANTS_NEARBY:
-//                session.setSessionState(SessionState.LOOKING);
+//                session.setSessionState(SessionState.SEARCHING);
 //                intentFindRestaurantsHandler.handleNearby(session);
 //                break;
 

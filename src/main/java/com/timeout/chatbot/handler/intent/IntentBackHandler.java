@@ -38,7 +38,7 @@ public class IntentBackHandler {
                 handleItem(session);
                 break;
 
-            case LOOKING:
+            case SEARCHING:
             case UNDEFINED:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),

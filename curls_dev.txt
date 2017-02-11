@@ -37,11 +37,6 @@ curl -X POST -H "Content-Type: application/json" -d '{
     },
     {
       "type":"postback",
-      "title":"Help",
-      "payload":"{\"type\": \"help\"}"
-    },
-    {
-      "type":"postback",
       "title":"Suggestions",
       "payload":"{\"type\": \"suggestions\"}"
     },
@@ -51,9 +46,14 @@ curl -X POST -H "Content-Type: application/json" -d '{
       "payload":"{\"type\": \"most_loved\"}"
     },
     {
-      "type":"web_url",
-      "title":"View Website",
-      "url":"https://timeout.com/london"
+      "type":"postback",
+      "title":"Discover",
+      "payload":"{\"type\": \"discover\"}"
+    },
+    {
+      "type":"postback",
+      "title":"Help",
+      "payload":"{\"type\": \"help\"}"
     }
   ]
 }' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAASeusXP6OEBAAjScKM2kehZBjhAYDsO3KgZCeZCMC21fPdRUylvhSMPA1UE7d27PveO5uDiBN0IgpgR3TRCaiirIpmfEzYQYlkbzNFZAZCgZASv1jTZC3V55vUI552ErvJWfyLHt8gQTsEjn8iPhAz44RkCYXMeocFUY3eWPoTREqnBmshPWC5"

@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 public class WelcomeFirstTimeBlock {
 
     private final MessengerSendClientWrapper messengerSendClientWrapper;
-    private final SuggestionsBlock suggestionsBlock;
+    private final SearchSuggestionsBlock searchSuggestionsBlock;
 
     @Autowired
     public WelcomeFirstTimeBlock(
         MessengerSendClientWrapper messengerSendClientWrapper,
-        SuggestionsBlock suggestionsBlock
+        SearchSuggestionsBlock searchSuggestionsBlock
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
-        this.suggestionsBlock = suggestionsBlock;
+        this.searchSuggestionsBlock = searchSuggestionsBlock;
     }
 
     public void send(

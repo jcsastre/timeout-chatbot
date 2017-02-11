@@ -10,8 +10,8 @@ import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.configuration.TimeoutConfiguration;
 import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.graffitti.response.search.page.GraffittiSearchResponse;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
-import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
 import com.timeout.chatbot.graffitti.response.tiles.TileItem;
 import com.timeout.chatbot.graffitti.response.tiles.TilesResponse;
 import com.timeout.chatbot.graffitti.urlbuilder.TilesDiscoverUrlBuilder;
@@ -26,7 +26,7 @@ import java.net.URLDecoder;
 import java.util.List;
 
 @Component
-public class SuggestionsBlock {
+public class SearchSuggestionsBlock {
 
     private final MessengerSendClient messengerSendClient;
     private final RestTemplate restTemplate;
@@ -35,7 +35,7 @@ public class SuggestionsBlock {
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
 
     @Autowired
-    public SuggestionsBlock(
+    public SearchSuggestionsBlock(
         TimeoutConfiguration timeoutConfiguration,
         MessengerSendClient messengerSendClient,
         RestTemplate restTemplate,
@@ -64,10 +64,6 @@ public class SuggestionsBlock {
 
         final GenericTemplate.Element.ListBuilder listBuilder = GenericTemplate.newBuilder().addElements();
 
-        //TODO: Element Discover (1 element)
-        //TODO: Tiles discovery (n elements)
-        //TODO: Most loved weekly (10-n-1 elements)
-//        addElementDiscover(listBuilder);
         addElementsTiles(listBuilder);
 
         return listBuilder.done().build();
@@ -176,31 +172,6 @@ public class SuggestionsBlock {
 //                .buildButtonsList();
     }
 
-    public void addElementDiscover(
-        GenericTemplate.Element.ListBuilder listBuilder
-    ) {
-        String imageUrlCity = "https://media.giphy.com/media/QGMiTNBw8hB72/giphy.gif";
-        if (timeoutConfiguration.getSite().equalsIgnoreCase("es-barcelona")) {
-            imageUrlCity = "http://2015.phpconference.es/wp-content/uploads/2015/05/barcelona1.jpg";
-        }
-
-            listBuilder
-                .addElement("Discover " + timeoutConfiguration.getCityName())
-                .imageUrl(imageUrlCity)
-                .buttons(
-                    Button.newListBuilder()
-                        .addPostbackButton(
-                            "Discover",
-                            new JSONObject()
-                                .put("type", "utterance")
-                                .put("utterance", "Discover")
-                                .toString()
-                        ).toList()
-                        .build()
-                )
-                .toList();
-    }
-
     public void addElementsTiles(
         GenericTemplate.Element.ListBuilder listBuilder
     ) {
@@ -258,13 +229,13 @@ public class SuggestionsBlock {
             }
 
             if (urlDecoded != null) {
-                final SearchResponse searchResponse =
+                final GraffittiSearchResponse graffittiSearchResponse =
                     restTemplate.getForObject(
                         urlDecoded,
-                        SearchResponse.class
+                        GraffittiSearchResponse.class
                     );
 
-                final List<PageItem> pageItems = searchResponse.getPageItems();
+                final List<PageItem> pageItems = graffittiSearchResponse.getPageItems();
                 if (pageItems != null) {
                     for (PageItem pageItem : pageItems) {
                         final String pageItemImageUrl = pageItem.getImage_url();

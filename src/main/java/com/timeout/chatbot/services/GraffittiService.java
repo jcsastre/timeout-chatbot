@@ -1,11 +1,15 @@
 package com.timeout.chatbot.services;
 
 import com.timeout.chatbot.domain.Neighborhood;
+import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4Response;
 import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
 import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Response;
+import com.timeout.chatbot.graffitti.response.images.GraffittiImagesResponse;
+import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
 import com.timeout.chatbot.graffitti.uri.GraffittiEndpoints;
+import com.timeout.chatbot.graffitti.urlbuilder.VenuesUrlBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -15,6 +19,9 @@ import java.util.List;
 
 @Component
 public class GraffittiService {
+
+    private final RestTemplate restTemplate;
+    private final VenuesUrlBuilder venuesUrlBuilder;
 
     private final GraffittiFacetV5Response graffittiFacetV5Response;
 
@@ -30,8 +37,12 @@ public class GraffittiService {
     @Autowired
     public GraffittiService(
         RestTemplate restTemplate,
-        GraffittiEndpoints graffittiEndpoints
+        GraffittiEndpoints graffittiEndpoints,
+        VenuesUrlBuilder venuesUrlBuilder
     ) {
+        this.restTemplate = restTemplate;
+        this.venuesUrlBuilder = venuesUrlBuilder;
+
         graffittiFacetV5Response =
             restTemplate.getForObject(graffittiEndpoints.getFacetsV5(), GraffittiFacetV5Response.class);
 
@@ -314,6 +325,10 @@ public class GraffittiService {
 //    }
 
 
+    public GraffittiFacetV4FacetNode getFacetWhatCategoriesRootNode() {
+        return facetWhatCategoriesRootNode;
+    }
+
     public List<Neighborhood> getNeighborhoods() {
         return neighborhoods;
     }
@@ -337,5 +352,30 @@ public class GraffittiService {
         public List<GraffittiFacetV5Node> getChildren() {
             return children;
         }
+    }
+
+    public Venue fetchVenue(String venueId) {
+
+        final GraffittiVenueResponse graffittiVenueResponse =
+            restTemplate.getForObject(
+                venuesUrlBuilder.build(venueId).toUri(),
+                GraffittiVenueResponse.class
+            );
+
+        final GraffittiImagesResponse graffittiImagesResponse =
+            restTemplate.getForObject(
+                venuesUrlBuilder.buildImages(venueId).toUri(),
+                GraffittiImagesResponse.class
+            );
+
+        return
+            new Venue(
+                graffittiVenueResponse.getBody(),
+                graffittiImagesResponse.getGraffittiImages()
+            );
+    }
+
+    public GraffittiFacetV5Response getGraffittiFacetV5Response() {
+        return graffittiFacetV5Response;
     }
 }

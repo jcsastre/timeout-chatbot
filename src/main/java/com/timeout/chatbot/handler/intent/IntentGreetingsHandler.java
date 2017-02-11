@@ -39,7 +39,7 @@ public class IntentGreetingsHandler {
                 blockService.sendSuggestionsBlock(session);
                 break;
 
-            case LOOKING:
+            case SEARCHING:
                 messengerSendClientWrapper.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Hi!"

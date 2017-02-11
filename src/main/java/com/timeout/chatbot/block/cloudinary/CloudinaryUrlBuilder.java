@@ -15,7 +15,6 @@ import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.HtmlUtils;
 
 import java.util.List;
 
@@ -39,14 +38,14 @@ public class CloudinaryUrlBuilder {
     ) {
         Transformation transformation = buildBaseTransformation();
 
-        // Type icon
-        transformation = chainTypeIconTransformation(transformation, GraffittiType.fromString(pageItem.getType()));
-
         // Categorisation
         String categorisationText = buildCategorisationText(pageItem);
         if (categorisationText != null) {
             transformation = chainCategorisationTransformation(transformation, categorisationText);
         }
+
+        // Type icon
+        transformation = chainTypeIconTransformation(transformation, GraffittiType.fromString(pageItem.getType()));
 
         // Editorial rating
         final Integer editorialRating = pageItem.getEditorialRating();
@@ -88,6 +87,9 @@ public class CloudinaryUrlBuilder {
         if (categorisationText != null) {
             transformation = chainCategorisationTransformation(transformation, categorisationText);
         }
+
+        // Type icon
+        transformation = chainTypeIconTransformation(transformation, GraffittiType.VENUE);
 
         // Editorial rating
         final Integer editorialRating = venue.getEditorialRating();
@@ -249,25 +251,6 @@ public class CloudinaryUrlBuilder {
             .width(764).crop("scale").chain()
             .overlay("overlay_black_top_gradient_geexo9").gravity("north").chain()
             .overlay("overlay_black_bottom_gradient_loq19q").gravity("south").chain();
-    }
-
-    private String buildSubtitle(PageItem pageItem) {
-        String subtitle = pageItem.getSummary();
-        if (subtitle == null) {
-            subtitle = pageItem.getDescription();
-            if (subtitle == null) {
-                subtitle = pageItem.getAnnotation();
-            }
-        }
-
-        subtitle = HtmlUtils.htmlUnescape(subtitle);
-
-        if (subtitle != null && subtitle.length() > 80) {
-            subtitle = subtitle.substring(0, 77);
-            subtitle = subtitle + "...";
-        }
-
-        return subtitle;
     }
 
     private String buildCategorisationText(

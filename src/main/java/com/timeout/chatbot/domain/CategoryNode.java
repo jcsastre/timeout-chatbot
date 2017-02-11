@@ -5,7 +5,10 @@ public class CategoryNode {
     private String name;
     private Integer graffittiNodeId;
 
-    public CategoryNode(String name, Integer graffittiNodeId) {
+    public CategoryNode(
+        String name,
+        Integer graffittiNodeId
+    ) {
         this.name = name;
         this.graffittiNodeId = graffittiNodeId;
     }

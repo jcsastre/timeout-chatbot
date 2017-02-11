@@ -3,10 +3,10 @@ package com.timeout.chatbot.block;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.graffitti.response.search.page.GraffittiSearchResponse;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.graffitti.response.films.GraffitiFilmResponse;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
-import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
 import com.timeout.chatbot.graffitti.uri.FilmsEndpoint;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.json.JSONObject;
@@ -43,17 +43,17 @@ public class FilmsPageBlock {
 
         List<GraffitiFilmResponse> graffitiFilmResponses = new ArrayList<>();
 
-        final SearchResponse searchResponse =
+        final GraffittiSearchResponse graffittiSearchResponse =
             restTemplate.getForObject(
                 FilmsEndpoint.buildGeolocatedUri(
                     session.getSessionStateLookingBag().getGeolocation().getLatitude(),
                     session.getSessionStateLookingBag().getGeolocation().getLongitude(),
                     pageNumber
                 ),
-                SearchResponse.class
+                GraffittiSearchResponse.class
             );
 
-        final List<PageItem> pageItems = searchResponse.getPageItems();
+        final List<PageItem> pageItems = graffittiSearchResponse.getPageItems();
         for (PageItem pageItem : pageItems) {
             graffitiFilmResponses.add(
                 restTemplate.getForObject(

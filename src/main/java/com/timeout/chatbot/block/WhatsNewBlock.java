@@ -8,14 +8,15 @@ import com.github.messenger4j.send.Recipient;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementHelper;
+import com.timeout.chatbot.graffitti.response.search.page.GraffittiSearchResponse;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
-import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
 import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.List;
 
 @Component
@@ -67,13 +68,16 @@ public class WhatsNewBlock {
     private void addElements(
         GenericTemplate.Element.ListBuilder listBuilder
     ) {
-        final SearchResponse searchResponse =
+        final URI uri = searchUrlBuilder.buildForWhatsNewBlock().toUri();
+        System.out.println(uri);
+
+        final GraffittiSearchResponse graffittiSearchResponse =
             restTemplate.getForObject(
-                searchUrlBuilder.buildForMostLovedBlock().toUri(),
-                SearchResponse.class
+                uri,
+                GraffittiSearchResponse.class
             );
 
-        final List<PageItem> pageItems = searchResponse.getPageItems();
+        final List<PageItem> pageItems = graffittiSearchResponse.getPageItems();
         for (PageItem pageItem : pageItems) {
             genericTemplateElementHelper.addNotSingleElementInList(listBuilder, pageItem);
         }

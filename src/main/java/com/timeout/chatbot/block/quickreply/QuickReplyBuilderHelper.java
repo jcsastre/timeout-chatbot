@@ -59,7 +59,7 @@ public class QuickReplyBuilderHelper {
         listBuilder.addTextQuickReply(
             "Search suggestions",
             new JSONObject()
-                .put("type", PayloadType.suggestions)
+                .put("type", PayloadType.search_suggestions)
                 .toString()
         ).toList();
     }
@@ -94,7 +94,7 @@ public class QuickReplyBuilderHelper {
             listBuilder.addTextQuickReply(
                 "Photos",
                 new JSONObject()
-                    .put("type", PayloadType.see_more)
+                    .put("type", PayloadType.photos)
                     .toString()
             ).toList();
         }

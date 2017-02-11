@@ -1,5 +1,7 @@
 package com.timeout.chatbot.block;
 
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
@@ -30,7 +32,8 @@ public class SubcategoriesQuickrepliesBlock {
     public void send(
         Session session,
         Integer pageNumber
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
+
         final SessionStateLookingBag bag = session.getSessionStateLookingBag();
 
         final GraffittiFacetV4FacetNode categoryNode = bag.getGraffittiWhatCategoryNode();
@@ -38,7 +41,7 @@ public class SubcategoriesQuickrepliesBlock {
         if (children!=null && children.size()>0) {
             buildAndSendMessage(session, children, pageNumber);
         } else {
-            discoverBlock.send(session.getUser().getMessengerId());
+            discoverBlock.send(session);
         }
     }
 

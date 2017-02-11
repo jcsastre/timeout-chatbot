@@ -4,7 +4,7 @@ public enum PayloadType {
     get_started,
 
     help,
-    suggestions,
+    search_suggestions,
     discover,
     whats_new,
     most_loved,

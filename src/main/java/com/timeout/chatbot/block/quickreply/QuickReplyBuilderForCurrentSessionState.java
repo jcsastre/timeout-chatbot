@@ -2,12 +2,10 @@ package com.timeout.chatbot.block.quickreply;
 
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
-import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionStateItemBag;
 import com.timeout.chatbot.session.context.SessionState;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -38,13 +36,19 @@ public class QuickReplyBuilderForCurrentSessionState {
             case UNDEFINED:
                 return handleStateUndefined(session);
 
+            case DISCOVER:
+                return handleDiscover(session);
+
             case SEARCH_SUGGESTIONS:
                 return handleStateSearchSuggestions(session);
 
             case MOST_LOVED:
                 return handleStateMostLoved(session);
 
-//            case LOOKING:
+//            case WHATS_NEW:
+//                return handleWhatsNew(session);
+
+//            case SEARCHING:
 //                //TODO
 //                break;
 
@@ -57,14 +61,38 @@ public class QuickReplyBuilderForCurrentSessionState {
         }
     }
 
+    public  List<QuickReply> handleDiscover(
+        Session session
+    ) {
+        final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
+
+        quickReplyBuilderHelper.addMostLovedToList(listBuilder);
+        quickReplyBuilderHelper.addSearchSuggestionsToList(listBuilder);
+//        quickReplyBuilderHelper.addWhatsNewToList(listBuilder);
+
+        return listBuilder.build();
+    }
+
+//    public  List<QuickReply> handleWhatsNew(
+//        Session session
+//    ) {
+//        final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
+//
+//        quickReplyBuilderHelper.addDiscoverToList(listBuilder);
+//        quickReplyBuilderHelper.addMostLovedToList(listBuilder);
+//        quickReplyBuilderHelper.addSearchSuggestionsToList(listBuilder);
+//
+//        return listBuilder.build();
+//    }
+
     public  List<QuickReply> handleStateMostLoved(
         Session session
     ) {
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
         quickReplyBuilderHelper.addDiscoverToList(listBuilder);
-        quickReplyBuilderHelper.addWhatsNewToList(listBuilder);
         quickReplyBuilderHelper.addSearchSuggestionsToList(listBuilder);
+//        quickReplyBuilderHelper.addWhatsNewToList(listBuilder);
 
         return listBuilder.build();
     }
@@ -75,8 +103,8 @@ public class QuickReplyBuilderForCurrentSessionState {
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
         quickReplyBuilderHelper.addDiscoverToList(listBuilder);
-        quickReplyBuilderHelper.addWhatsNewToList(listBuilder);
         quickReplyBuilderHelper.addMostLovedToList(listBuilder);
+//        quickReplyBuilderHelper.addWhatsNewToList(listBuilder);
 
         return listBuilder.build();
     }
@@ -86,15 +114,20 @@ public class QuickReplyBuilderForCurrentSessionState {
     ) {
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
-        for (GraffittiFacetV5Node primaryCategoryPrimary : graffittiService.getFacetsV5PrimaryCategories()) {
-            listBuilder.addTextQuickReply(
-                primaryCategoryPrimary.getName(),
-                new JSONObject()
-                    .put("type", "utterance")
-                    .put("utterance", primaryCategoryPrimary.getName())
-                    .toString()
-            ).toList();
-        }
+        quickReplyBuilderHelper.addDiscoverToList(listBuilder);
+        quickReplyBuilderHelper.addMostLovedToList(listBuilder);
+        quickReplyBuilderHelper.addSearchSuggestionsToList(listBuilder);
+//        quickReplyBuilderHelper.addWhatsNewToList(listBuilder);
+
+//        for (GraffittiFacetV5Node primaryCategoryPrimary : graffittiService.getFacetsV5PrimaryCategories()) {
+//            listBuilder.addTextQuickReply(
+//                primaryCategoryPrimary.getName(),
+//                new JSONObject()
+//                    .put("type", "utterance")
+//                    .put("utterance", primaryCategoryPrimary.getName())
+//                    .toString()
+//            ).toList();
+//        }
 
         return listBuilder.build();
     }

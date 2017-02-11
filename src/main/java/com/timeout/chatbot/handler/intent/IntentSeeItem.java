@@ -5,10 +5,9 @@ import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
-import com.timeout.chatbot.graffitti.response.images.GraffittiImagesResponse;
-import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
 import com.timeout.chatbot.graffitti.urlbuilder.VenuesUrlBuilder;
 import com.timeout.chatbot.services.BlockService;
+import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionStateItemBag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,16 +21,18 @@ public class IntentSeeItem {
     private final BlockService blockService;
     private final RestTemplate restTemplate;
     private final VenuesUrlBuilder venuesUrlBuilder;
+    private final GraffittiService graffittiService;
 
     @Autowired
     public IntentSeeItem(
         MessengerSendClient messengerSendClient,
         BlockService blockService,
-        RestTemplate restTemplate, VenuesUrlBuilder venuesUrlBuilder) {
+        RestTemplate restTemplate, VenuesUrlBuilder venuesUrlBuilder, GraffittiService graffittiService) {
         this.messengerSendClient = messengerSendClient;
         this.blockService = blockService;
         this.restTemplate = restTemplate;
         this.venuesUrlBuilder = venuesUrlBuilder;
+        this.graffittiService = graffittiService;
     }
 
     public void handle(
@@ -40,31 +41,13 @@ public class IntentSeeItem {
         switch (session.getSessionState()) {
 
             case UNDEFINED:
-            case LOOKING:
+            case SEARCHING:
             case ITEM:
                 final SessionStateItemBag itemBag = session.getSessionStateItemBag();
                 final GraffittiType graffittiType = itemBag.getGraffittiType();
                 if (graffittiType == GraffittiType.VENUE) {
 
-                    final GraffittiVenueResponse graffittiVenueResponse =
-                        restTemplate.getForObject(
-                            venuesUrlBuilder.build(itemBag.getItemId()).toUri(),
-                            GraffittiVenueResponse.class
-                        );
-
-                    final GraffittiImagesResponse graffittiImagesResponse =
-                        restTemplate.getForObject(
-                            venuesUrlBuilder.buildImages(graffittiVenueResponse.getBody().getId()).toUri(),
-                            GraffittiImagesResponse.class
-                        );
-
-
-                    final Venue venue =
-                        new Venue(
-                            graffittiVenueResponse.getBody(),
-                            graffittiImagesResponse.getGraffittiImages()
-                        );
-
+                    final Venue venue = graffittiService.fetchVenue(itemBag.getItemId());
                     itemBag.setVenue(venue);
 
                     blockService.sendSeeVenueItemBlock(

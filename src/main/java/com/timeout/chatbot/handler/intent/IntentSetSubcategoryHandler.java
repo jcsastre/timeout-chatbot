@@ -38,7 +38,7 @@ public class IntentSetSubcategoryHandler {
     ) throws MessengerApiException, MessengerIOException {
         switch (session.getSessionState()) {
 
-            case LOOKING:
+            case SEARCHING:
                 handleLooking(session, subcategoryId);
                 break;
 

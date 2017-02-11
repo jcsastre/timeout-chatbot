@@ -17,9 +17,10 @@ import java.util.List;
 public class BlockService {
 
     private final WelcomeFirstTimeBlock welcomeFirstTimeBlock;
-    private final SuggestionsBlock suggestionsBlock;
+    private final SearchSuggestionsBlock searchSuggestionsBlock;
     private final DiscoverBlock discoverBlock;
     private final MostLovedBlock mostLovedBlock;
+    private final WhatsNewBlock whatsNewBlock;
     private final WelcomeBackBlock welcomeBackBlock;
     private final MainOptionsBlock mainOptionsBlock;
     private final VenuesPageBlock venuesPageBlock;
@@ -36,9 +37,10 @@ public class BlockService {
     @Autowired
     public BlockService(
         WelcomeFirstTimeBlock welcomeFirstTimeBlock,
-        SuggestionsBlock suggestionsBlock,
+        SearchSuggestionsBlock searchSuggestionsBlock,
         DiscoverBlock discoverBlock,
         MostLovedBlock mostLovedBlock,
+        WhatsNewBlock whatsNewBlock,
         WelcomeBackBlock welcomeBackBlock,
         MainOptionsBlock mainOptionsBlock,
         VenuesPageBlock venuesPageBlock,
@@ -53,9 +55,10 @@ public class BlockService {
         ErrorBlock errorBlock
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
-        this.suggestionsBlock = suggestionsBlock;
+        this.searchSuggestionsBlock = searchSuggestionsBlock;
         this.discoverBlock = discoverBlock;
         this.mostLovedBlock = mostLovedBlock;
+        this.whatsNewBlock = whatsNewBlock;
         this.welcomeBackBlock = welcomeBackBlock;
         this.mainOptionsBlock = mainOptionsBlock;
         this.venuesPageBlock = venuesPageBlock;
@@ -85,15 +88,15 @@ public class BlockService {
     public void sendSuggestionsBlock(
         Session session
     ) throws MessengerApiException, MessengerIOException {
-        suggestionsBlock.send(session);
+
+        searchSuggestionsBlock.send(session);
     }
 
     public void sendDiscoverBlock(
-        User user
-    ) {
-        discoverBlock.send(
-            user.getMessengerId()
-        );
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+
+        discoverBlock.send(session);
     }
 
     public void sendMostLovedBlock(
@@ -101,6 +104,13 @@ public class BlockService {
     ) throws MessengerApiException, MessengerIOException {
 
         mostLovedBlock.send(session);
+    }
+
+    public void sendWhatsNewBlock(
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+
+        whatsNewBlock.send(session);
     }
 
     public void sendFilmsPageBlock(
@@ -162,7 +172,8 @@ public class BlockService {
     public void sendSubcategoriesQuickrepliesBlock(
         Session session,
         Integer pageNumber
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
+
         subcategoriesQuickrepliesBlock.send(session, pageNumber);
     }
 

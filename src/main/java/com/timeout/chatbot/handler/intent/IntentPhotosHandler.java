@@ -52,7 +52,7 @@ public class IntentPhotosHandler {
                 break;
 
             case UNDEFINED:
-            case LOOKING:
+            case SEARCHING:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, I don't know what photos do you want to see"

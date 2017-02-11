@@ -2,7 +2,6 @@ package com.timeout.chatbot.graffitti.response.tiles;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.timeout.chatbot.graffitti.response.search.page.Meta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +30,30 @@ public class TilesResponse {
 
     public void setTileItems(List<TileItem> tileItems) {
         this.tileItems = tileItems;
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public class Meta {
+
+        private String url;
+        @JsonProperty("supports_setup")
+        private Boolean supportsSetup;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
+
+        public Boolean getSupportsSetup() {
+            return supportsSetup;
+        }
+
+        public void setSupportsSetup(Boolean supportsSetup) {
+            this.supportsSetup = supportsSetup;
+        }
     }
 
     @Override

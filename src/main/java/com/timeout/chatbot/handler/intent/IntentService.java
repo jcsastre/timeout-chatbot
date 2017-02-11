@@ -75,7 +75,7 @@ public class IntentService {
         suggestionsHandler.handle(session);
     }
 
-    public void handleDiscover(Session session) {
+    public void handleDiscover(Session session) throws MessengerApiException, MessengerIOException {
         discoverHandler.handle(session);
     }
 

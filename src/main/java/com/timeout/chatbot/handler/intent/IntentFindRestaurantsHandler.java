@@ -8,7 +8,7 @@ import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
-import com.timeout.chatbot.graffitti.response.search.page.SearchResponse;
+import com.timeout.chatbot.graffitti.response.search.page.GraffittiSearchResponse;
 import com.timeout.chatbot.graffitti.uri.GraffittiQueryParameterType;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
 import com.timeout.chatbot.services.BlockService;
@@ -52,7 +52,7 @@ public class IntentFindRestaurantsHandler {
         switch (session.getSessionState()) {
 
             case UNDEFINED:
-            case LOOKING:
+            case SEARCHING:
                 applyNluParameters(session, nluParameters);
                 break;
 
@@ -72,7 +72,7 @@ public class IntentFindRestaurantsHandler {
         switch (session.getSessionState()) {
 
             case UNDEFINED:
-            case LOOKING:
+            case SEARCHING:
                 fetchAndSend(session);
                 break;
 
@@ -178,19 +178,19 @@ public class IntentFindRestaurantsHandler {
 
         System.out.println(urlBuilder.toUrl().toString());
 
-        final SearchResponse searchResponse =
+        final GraffittiSearchResponse graffittiSearchResponse =
             restTemplate.getForObject(
                 urlBuilder.toUri(),
-                SearchResponse.class
+                GraffittiSearchResponse.class
             );
 
-        if (searchResponse.getMeta().getTotalItems() > 0) {
+        if (graffittiSearchResponse.getMeta().getTotalItems() > 0) {
 
-            bag.setReaminingItems(searchResponse.getRemainingItems());
+            bag.setReaminingItems(graffittiSearchResponse.getRemainingItems());
 
             blockService.sendVenuesPageBlock(
                 session,
-                searchResponse.getPageItems(),
+                graffittiSearchResponse.getPageItems(),
                 "RestaurantsManager"
             );
 
@@ -204,7 +204,7 @@ public class IntentFindRestaurantsHandler {
             );
         }
 
-        session.setSessionState(SessionState.LOOKING);
+        session.setSessionState(SessionState.SEARCHING);
     }
 
     private UrlBuilder urlBuilderBase(

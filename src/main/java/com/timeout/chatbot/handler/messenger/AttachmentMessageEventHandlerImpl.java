@@ -89,7 +89,7 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
         lookingBag.setNeighborhood(null);
         lookingBag.setGeolocation(geolocation);
 
-        if (session.getSessionState() == SessionState.LOOKING) {
+        if (session.getSessionState() == SessionState.SEARCHING) {
             final What what = lookingBag.getWhat();
             if (what == What.RESTAURANT) {
                 findRestaurantsHandler.fetchAndSend(session);

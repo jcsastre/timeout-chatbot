@@ -3,10 +3,10 @@ package com.timeout.chatbot.session.context;
 public enum SessionState {
     UNDEFINED,
     SEARCH_SUGGESTIONS,
+//    WHATS_NEW,
     DISCOVER,
-    WHATS_NEW,
     MOST_LOVED,
-    LOOKING, // looking around
-    ITEM, // options about particular item
-    BOOKING  // booking over an item
+    SEARCHING,
+    ITEM,
+    BOOKING
 }

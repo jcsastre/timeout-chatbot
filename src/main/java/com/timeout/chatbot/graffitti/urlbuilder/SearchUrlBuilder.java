@@ -49,6 +49,28 @@ public class SearchUrlBuilder {
                 .addParameter(GraffittiQueryParameterType.VIEW.getValue(), "complete");
     }
 
+    public UrlBuilder buildForWhatsNewBlock() {
+        return
+            UrlBuilder.empty().withScheme(SCHEMA).withHost(HOST).withPath(path)
+                .addParameter(GraffittiQueryParameterType.LOCALE.getValue(), locale)
+                .addParameter(GraffittiQueryParameterType.PAGE_SIZE.getValue(), PAGE_SIZE)
+                .addParameter(GraffittiQueryParameterType.SORT.getValue(), "posted-at-date")
+                .addParameter(GraffittiQueryParameterType.VIEW.getValue(), "complete");
+    }
+
+    public UrlBuilder buildForDiscoverBlock(
+        String what
+    ) {
+        return
+            UrlBuilder.empty().withScheme(SCHEMA).withHost(HOST).withPath(path)
+                .addParameter(GraffittiQueryParameterType.LOCALE.getValue(), locale)
+                .addParameter(GraffittiQueryParameterType.WHAT.getValue(), what)
+                .addParameter(GraffittiQueryParameterType.PAGE_SIZE.getValue(), PAGE_SIZE)
+                .addParameter(GraffittiQueryParameterType.VIEW.getValue(), "default");
+    }
+
+
+
 //    public UrlBuilder buildWithGeolocation(
 //        String what,
 //        String type,

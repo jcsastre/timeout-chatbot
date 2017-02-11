@@ -15,7 +15,7 @@ public enum NluIntentType {
     SET_LOCATION("setGeolocation"),
     FINDS_FILMS("findFilms"),
     DISCOVER("discover"),
-    SUGGESTIONS("suggestions");
+    SUGGESTIONS("search_suggestions");
 
     private final String action;
 

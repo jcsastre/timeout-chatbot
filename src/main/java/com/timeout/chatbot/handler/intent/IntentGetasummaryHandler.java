@@ -48,7 +48,7 @@ public class IntentGetasummaryHandler {
                 handleStateItem(session);
                 break;
 
-            case LOOKING:
+            case SEARCHING:
             case BOOKING:
             case UNDEFINED:
             default:
