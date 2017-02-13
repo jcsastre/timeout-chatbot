@@ -100,5 +100,5 @@ public class AreasQuickrepliesBlock {
         return builder.build();
     }
 
-    private static final int PAGE_SIZE = 7;
+    private static final int PAGE_SIZE = 6;
 }

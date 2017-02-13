@@ -1,4 +1,4 @@
-package com.timeout.chatbot.block.submittingreview;
+package com.timeout.chatbot.block.state.submittingreview;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
@@ -9,15 +9,13 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
-public class SubmittingReviewRateBlock {
+public class SubmittingReviewCommentBlock {
 
     private final MessengerSendClient messengerSendClient;
 
     @Autowired
-    public SubmittingReviewRateBlock(
+    public SubmittingReviewCommentBlock(
         MessengerSendClient messengerSendClient
     ) {
         this.messengerSendClient = messengerSendClient;
@@ -29,25 +27,16 @@ public class SubmittingReviewRateBlock {
 
         messengerSendClient.sendTextMessage(
             userId,
-            "Please, give your rate",
-            buildQuickReplies()
+            "Please write a review. If you don't want to include a review just type 'no review'",
+            QuickReply.newListBuilder()
+                .addTextQuickReply(
+                    "No review",
+                    new JSONObject()
+                        .put("type", PayloadType.utterance)
+                        .put("utterance", "No review")
+                        .toString()
+                ).toList()
+            .build()
         );
-    }
-
-    private List<QuickReply> buildQuickReplies() {
-
-        final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
-
-        for (int i=1; i<=5; i++) {
-            listBuilder.addTextQuickReply(
-                Integer.toString(i),
-                new JSONObject()
-                    .put("type", PayloadType.submitting_review_rate)
-                    .put("rate", Integer.toString(i))
-                    .toString()
-            ).toList();
-        }
-
-        return listBuilder.build();
     }
 }

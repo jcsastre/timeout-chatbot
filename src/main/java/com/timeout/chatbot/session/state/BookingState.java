@@ -1,7 +1,6 @@
 package com.timeout.chatbot.session.state;
 
 public enum BookingState {
-    UNKOWN,
     PEOPLE_COUNT,
     DATE,
     TIME,
@@ -10,6 +9,7 @@ public enum BookingState {
     LAST_NAME,
     EMAIL,
     PHONE,
-    CONFIRMATION,
-    SAVE_INFO
+    CONFIRMATION_PERSONAL_DETAILS,
+    SAVE_INFO,
+    CONFIRMATION
 }

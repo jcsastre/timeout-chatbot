@@ -1,4 +1,4 @@
-package com.timeout.chatbot.handler;
+package com.timeout.chatbot.handler.states;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
@@ -60,6 +60,7 @@ public class PayloadHandler {
 
             case get_started:
                 blockService.sendWelcomeFirstTimeBlock(session.getUser());
+                blockService.sendVersionInfoBlock(session.getUser().getMessengerId());
                 intentService.handleDiscover(session);
 //                session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
 //                blockService.sendSuggestionsBlock(session);
@@ -68,6 +69,7 @@ public class PayloadHandler {
             case start_over:
                 session.reset();
                 blockService.sendWelcomeBackBlock(session.getUser());
+                blockService.sendVersionInfoBlock(session.getUser().getMessengerId());
                 intentService.handleDiscover(session);
 //                session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
 //                blockService.sendSuggestionsBlock(session);
@@ -136,7 +138,7 @@ public class PayloadHandler {
 
             case venues_show_areas:
                 final Integer pageNumber = payload.getInt("pageNumber");
-                blockService.sendNeighborhoodsQuickrepliesBlock(session, pageNumber);
+                blockService.sendAreasQuickrepliesBlock(session, pageNumber);
                 break;
 
             case venues_set_neighborhood:
@@ -159,10 +161,6 @@ public class PayloadHandler {
                 bag.setGeolocation(null);
                 bag.setNeighborhood(null);
                 intentService.handleFindRestaurants(session);
-                break;
-
-            case book:
-                intentService.handleBook(session);
                 break;
 
             case photos:
@@ -207,6 +205,10 @@ public class PayloadHandler {
                     session.getUser().getMessengerId(),
                     "Please attach one or more photos"
                 );
+                break;
+
+            case book:
+                intentService.handleBook(session);
                 break;
 
             case submit_review:

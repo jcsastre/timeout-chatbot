@@ -60,14 +60,14 @@ public class VenuesRemainingBlock {
             ).toList();
         }
 
-//        listBuilder.addTextQuickReply(
-//            "Area",
-//            new JSONObject()
-//                .put("type", PayloadType.venues_show_areas)
-//                .put("pageNumber", 1)
-//                .toString()
-//        ).toList();
-//
+        listBuilder.addTextQuickReply(
+            "Area",
+            new JSONObject()
+                .put("type", PayloadType.venues_show_areas)
+                .put("pageNumber", 1)
+                .toString()
+        ).toList();
+
 //        String categorySingularName = "Cuisine";
 //        if (bag.getWhat() == What.BAR) {
 //            categorySingularName = "Style";

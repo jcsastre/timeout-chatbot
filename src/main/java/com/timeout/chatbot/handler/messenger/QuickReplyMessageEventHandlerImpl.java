@@ -4,7 +4,7 @@ import com.github.messenger4j.receive.events.QuickReplyMessageEvent;
 import com.github.messenger4j.receive.handlers.QuickReplyMessageEventHandler;
 import com.timeout.chatbot.block.ErrorBlock;
 import com.timeout.chatbot.domain.page.PageUid;
-import com.timeout.chatbot.handler.PayloadHandler;
+import com.timeout.chatbot.handler.states.PayloadHandler;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionPool;
 import org.springframework.beans.factory.annotation.Autowired;

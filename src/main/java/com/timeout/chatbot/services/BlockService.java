@@ -3,9 +3,12 @@ package com.timeout.chatbot.services;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.timeout.chatbot.block.*;
-import com.timeout.chatbot.block.submittingreview.SubmittingReviewCommentBlock;
-import com.timeout.chatbot.block.submittingreview.SubmittingReviewConfirmationBlock;
-import com.timeout.chatbot.block.submittingreview.SubmittingReviewRateBlock;
+import com.timeout.chatbot.block.deprecated.MainOptionsBlock;
+import com.timeout.chatbot.block.deprecated.PhoneCallBlock;
+import com.timeout.chatbot.block.deprecated.WhatsNewBlock;
+import com.timeout.chatbot.block.state.submittingreview.SubmittingReviewCommentBlock;
+import com.timeout.chatbot.block.state.submittingreview.SubmittingReviewConfirmationBlock;
+import com.timeout.chatbot.block.state.submittingreview.SubmittingReviewRateBlock;
 import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
@@ -20,6 +23,7 @@ import java.util.List;
 public class BlockService {
 
     private final WelcomeFirstTimeBlock welcomeFirstTimeBlock;
+    private final VersionInfoBlock versionInfoBlock;
     private final SearchSuggestionsBlock searchSuggestionsBlock;
     private final DiscoverBlock discoverBlock;
     private final MostLovedBlock mostLovedBlock;
@@ -43,6 +47,7 @@ public class BlockService {
     @Autowired
     public BlockService(
         WelcomeFirstTimeBlock welcomeFirstTimeBlock,
+        VersionInfoBlock versionInfoBlock,
         SearchSuggestionsBlock searchSuggestionsBlock,
         DiscoverBlock discoverBlock,
         MostLovedBlock mostLovedBlock,
@@ -64,6 +69,7 @@ public class BlockService {
         ErrorBlock errorBlock
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
+        this.versionInfoBlock = versionInfoBlock;
         this.searchSuggestionsBlock = searchSuggestionsBlock;
         this.discoverBlock = discoverBlock;
         this.mostLovedBlock = mostLovedBlock;
@@ -89,6 +95,13 @@ public class BlockService {
         User user
     ) {
         welcomeFirstTimeBlock.send(user);
+    }
+
+    public void sendVersionInfoBlock(
+        String userId
+    ) throws MessengerApiException, MessengerIOException {
+
+        versionInfoBlock.send(userId);
     }
 
     public void sendWelcomeBackBlock(
@@ -189,7 +202,7 @@ public class BlockService {
         subcategoriesQuickrepliesBlock.send(session, pageNumber);
     }
 
-    public void sendNeighborhoodsQuickrepliesBlock(
+    public void sendAreasQuickrepliesBlock(
         Session session,
         Integer pageNumber
     ) throws MessengerApiException, MessengerIOException {

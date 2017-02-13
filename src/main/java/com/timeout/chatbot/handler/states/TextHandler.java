@@ -1,4 +1,4 @@
-package com.timeout.chatbot.handler;
+package com.timeout.chatbot.handler.states;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
@@ -10,13 +10,12 @@ import com.timeout.chatbot.domain.nlu.NluResult;
 import com.timeout.chatbot.domain.nlu.intent.NluIntentType;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentService;
+import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStateTextHandler;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.services.NluService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateSubmittingReviewBag;
 import com.timeout.chatbot.session.state.SessionState;
-import com.timeout.chatbot.session.state.SubmittingReviewState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,26 +24,29 @@ public class TextHandler {
 
     private final IntentService intentService;
     private final NluService nluService;
-    private final MessengerSendClient messengerSendClient;
+    private final MessengerSendClient msc;
     private final GraffittiService graffittiService;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
     private final BlockService blockService;
+    private final SubmittingReviewStateTextHandler submittingReviewStateTextHandler;
 
     @Autowired
     public TextHandler(
         IntentService intentService,
         NluService nluService,
-        MessengerSendClient messengerSendClient,
+        MessengerSendClient msc,
         GraffittiService graffittiService,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
-        BlockService blockService
+        BlockService blockService,
+        SubmittingReviewStateTextHandler submittingReviewStateTextHandler
     ) {
         this.intentService = intentService;
         this.nluService = nluService;
-        this.messengerSendClient = messengerSendClient;
+        this.msc = msc;
         this.graffittiService = graffittiService;
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
         this.blockService = blockService;
+        this.submittingReviewStateTextHandler = submittingReviewStateTextHandler;
     }
 
     public void handle(
@@ -57,30 +59,11 @@ public class TextHandler {
         switch (sessionState) {
 
             case SUBMITTING_REVIEW:
-                handleStateSubmittingReview(text, session);
+                submittingReviewStateTextHandler.handle(text, session);
                 break;
 
             default:
                 handleDefault(text, session);
-        }
-    }
-
-    private void handleStateSubmittingReview(
-        String text,
-        Session session
-    ) throws NluException, MessengerApiException, MessengerIOException {
-
-        final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
-        final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
-
-        if (submittingReviewState==SubmittingReviewState.WRITING_COMMENT) {
-            if (!text.equalsIgnoreCase("No review")) {
-                bag.setComment(text);
-            }
-            bag.setSubmittingReviewState(SubmittingReviewState.ASKING_FOR_CONFIRMATION);
-            blockService.sendSubmittingReviewConfirmationBlock(session);
-        } else {
-            blockService.sendErrorBlock(session.getUser());
         }
     }
 
@@ -101,7 +84,7 @@ public class TextHandler {
                 nluResult
             );
         } else {
-            messengerSendClient.sendTextMessage(
+            msc.sendTextMessage(
                 session.getUser().getMessengerId(),
                 "Sorry, I don't understand"
             );
@@ -195,7 +178,7 @@ public class TextHandler {
 //                break;
 
             case FIND_BARSANDPUBS:
-                messengerSendClient.sendTextMessage(
+                msc.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, 'Bars & Pubs' is not implemented yet",
                     quickReplyBuilderForCurrentSessionState.build(session)
@@ -204,7 +187,7 @@ public class TextHandler {
                 break;
 
             case FIND_ART:
-                messengerSendClient.sendTextMessage(
+                msc.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, 'Art' is not implemented yet",
                     quickReplyBuilderForCurrentSessionState.build(session)
@@ -212,7 +195,7 @@ public class TextHandler {
                 break;
 
             case FIND_THEATRE:
-                messengerSendClient.sendTextMessage(
+                msc.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, 'Theatre' is not implemented yet",
                     quickReplyBuilderForCurrentSessionState.build(session)
@@ -220,7 +203,7 @@ public class TextHandler {
                 break;
 
             case FIND_MUSIC:
-                messengerSendClient.sendTextMessage(
+                msc.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, 'Music' is not implemented yet",
                     quickReplyBuilderForCurrentSessionState.build(session)
@@ -228,7 +211,7 @@ public class TextHandler {
                 break;
 
             case FIND_NIGHTLIFE:
-                messengerSendClient.sendTextMessage(
+                msc.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, 'Nightlife' is not implemented yet",
                     quickReplyBuilderForCurrentSessionState.build(session)
@@ -236,7 +219,7 @@ public class TextHandler {
                 break;
 
             case FINDS_FILMS:
-                messengerSendClient.sendTextMessage(
+                msc.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, 'Films' is not implemented yet",
                     quickReplyBuilderForCurrentSessionState.build(session)
@@ -257,7 +240,7 @@ public class TextHandler {
                 break;
 
             default:
-                messengerSendClient.sendTextMessage(
+                msc.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, I don't understand you."
                 );

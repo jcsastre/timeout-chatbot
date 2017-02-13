@@ -1,4 +1,4 @@
-package com.timeout.chatbot.block.booking;
+package com.timeout.chatbot.block.state.booking;
 
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.domain.payload.PayloadType;

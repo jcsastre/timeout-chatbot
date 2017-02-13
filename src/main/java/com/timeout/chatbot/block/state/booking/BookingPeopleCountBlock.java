@@ -1,10 +1,8 @@
-package com.timeout.chatbot.block;
+package com.timeout.chatbot.block.state.booking;
 
 import com.github.messenger4j.send.QuickReply;
-import com.timeout.chatbot.domain.user.User;
-import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
+import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
-import com.timeout.chatbot.services.GraffittiService;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,27 +10,22 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class MainOptionsBlock {
+public class BookingPeopleCountBlock{
     private final MessengerSendClientWrapper messengerSendClientWrapper;
-    private final GraffittiService graffittiService;
 
     @Autowired
-    public MainOptionsBlock(
-        MessengerSendClientWrapper messengerSendClientWrapper,
-        GraffittiService graffittiService
+    public BookingPeopleCountBlock(
+        MessengerSendClientWrapper messengerSendClientWrapper
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
-        this.graffittiService = graffittiService;
     }
 
     public void send(
-        User user
+        String userId
     ) {
-        String msg = "GraffittiFacetV4Where are you looking for?";
-
         messengerSendClientWrapper.sendTextMessage(
-            user.getMessengerId(),
-            msg,
+            userId,
+            "How many people? You can also type the number",
             buildQuickReplies()
         );
     }
@@ -41,12 +34,12 @@ public class MainOptionsBlock {
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
-        for (GraffittiFacetV5Node primaryCategoryPrimary : graffittiService.getFacetsV5PrimaryCategories()) {
+        for (int i=1; i<=10; i++) {
             listBuilder.addTextQuickReply(
-                primaryCategoryPrimary.getName(),
+                Integer.toString(i),
                 new JSONObject()
-                    .put("type", "utterance")
-                    .put("utterance", primaryCategoryPrimary.getName())
+                    .put("type", PayloadType.booking_people_count)
+                    .put("count", Integer.toString(i))
                     .toString()
             ).toList();
         }

@@ -1,4 +1,4 @@
-package com.timeout.chatbot.block;
+package com.timeout.chatbot.block.deprecated;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;

@@ -28,6 +28,7 @@ public enum PayloadType {
 
     phone_call,
 
+    areas,
     venues_show_areas,
     venues_set_neighborhood,
     venue_more_options,

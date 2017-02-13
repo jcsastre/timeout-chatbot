@@ -1,4 +1,4 @@
-package com.timeout.chatbot.block.booking;
+package com.timeout.chatbot.block.state.booking;
 
 import com.timeout.chatbot.domain.user.User;
 import org.springframework.beans.factory.annotation.Autowired;

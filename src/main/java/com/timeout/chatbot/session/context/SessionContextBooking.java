@@ -6,7 +6,7 @@ import com.github.messenger4j.receive.events.QuickReplyMessageEvent;
 import com.github.messenger4j.receive.events.TextMessageEvent;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.ButtonTemplate;
-import com.timeout.chatbot.block.booking.BookingBlocksHelper;
+import com.timeout.chatbot.block.state.booking.BookingBlocksHelper;
 import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
@@ -46,7 +46,7 @@ public class SessionContextBooking extends SessionContext {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
         this.bookingBlocksHelper = bookingBlocksHelper;
 
-        this.bookingState = BookingState.UNKOWN;
+//        this.bookingState = BookingState.UNKOWN;
     }
 
     public void startBooking() {
