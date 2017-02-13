@@ -5,7 +5,7 @@ import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.SessionStateLookingBag;
+import com.timeout.chatbot.session.bag.SessionStateLookingBag;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -60,26 +60,26 @@ public class VenuesRemainingBlock {
             ).toList();
         }
 
-        listBuilder.addTextQuickReply(
-            "Area",
-            new JSONObject()
-                .put("type", PayloadType.venues_show_areas)
-                .put("pageNumber", 1)
-                .toString()
-        ).toList();
-
-        String categorySingularName = "Cuisine";
-        if (bag.getWhat() == What.BAR) {
-            categorySingularName = "Style";
-        }
-
-        listBuilder.addTextQuickReply(
-            bag.getGraffittiWhatCategoryNode().getChildren() == null ?
-                "Change " + categorySingularName : "Set " + categorySingularName,
-            new JSONObject()
-                .put("type", PayloadType.show_subcategories)
-                .toString()
-        ).toList();
+//        listBuilder.addTextQuickReply(
+//            "Area",
+//            new JSONObject()
+//                .put("type", PayloadType.venues_show_areas)
+//                .put("pageNumber", 1)
+//                .toString()
+//        ).toList();
+//
+//        String categorySingularName = "Cuisine";
+//        if (bag.getWhat() == What.BAR) {
+//            categorySingularName = "Style";
+//        }
+//
+//        listBuilder.addTextQuickReply(
+//            bag.getGraffittiWhatCategoryNode().getChildren() == null ?
+//                "Change " + categorySingularName : "Set " + categorySingularName,
+//            new JSONObject()
+//                .put("type", PayloadType.show_subcategories)
+//                .toString()
+//        ).toList();
 
         return listBuilder.build();
     }

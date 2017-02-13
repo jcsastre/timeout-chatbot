@@ -10,7 +10,7 @@ import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 import com.timeout.chatbot.graffitti.response.images.GraffittiImagesResponse;
 import com.timeout.chatbot.graffitti.urlbuilder.VenuesUrlBuilder;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.SessionStateItemBag;
+import com.timeout.chatbot.session.bag.SessionStateItemBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;

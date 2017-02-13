@@ -44,6 +44,10 @@ public enum PayloadType {
     films_find_cinemas,
     no_see_at_timeout,
     booking_people_count,
+
+    submitting_review_rate,
+    submitting_review_no_comment,
+
     booking_date,
     booking_time,
     booking_info_ok,
@@ -58,5 +62,7 @@ public enum PayloadType {
     booking_save_not_ok,
 
     submit_review,
-    submit_photo
+    submit_photo,
+
+    temporaly_disabled;
 }

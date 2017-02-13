@@ -95,13 +95,20 @@ public class DiscoverBlock {
         String nodeName,
         PageItem pageItem
     ) {
+        String titleForButton = nodeName;
+        if (!titleForButton.equalsIgnoreCase("Restaurants")) {
+            titleForButton = "\ud83d\udeab " + titleForButton;
+        }
+        if (titleForButton.length() > 20) {
+            titleForButton = titleForButton.substring(0, 20);
+        }
         listBuilder
             .addElement(nodeName)
             .imageUrl(pageItem.getImage_url())
             .buttons(
                 Button.newListBuilder()
                     .addPostbackButton(
-                        nodeName.length() <= 20 ? nodeName : nodeName.substring(0, 20),
+                        titleForButton,
                         new JSONObject()
                             .put("type", PayloadType.utterance)
                             .put("utterance", nodeName)

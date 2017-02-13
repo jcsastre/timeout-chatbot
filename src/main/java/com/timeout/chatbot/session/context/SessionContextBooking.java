@@ -11,6 +11,7 @@ import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.ApiAiService;
+import com.timeout.chatbot.session.state.BookingState;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.json.JSONObject;
 

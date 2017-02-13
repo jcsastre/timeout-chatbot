@@ -1,4 +1,4 @@
-package com.timeout.chatbot.session;
+package com.timeout.chatbot.session.bag;
 
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.Neighborhood;

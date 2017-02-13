@@ -10,10 +10,13 @@ import com.timeout.chatbot.domain.nlu.NluResult;
 import com.timeout.chatbot.domain.nlu.intent.NluIntentType;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentService;
+import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.services.NluService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.context.SessionState;
+import com.timeout.chatbot.session.bag.SessionStateSubmittingReviewBag;
+import com.timeout.chatbot.session.state.SessionState;
+import com.timeout.chatbot.session.state.SubmittingReviewState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,6 +28,7 @@ public class TextHandler {
     private final MessengerSendClient messengerSendClient;
     private final GraffittiService graffittiService;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
+    private final BlockService blockService;
 
     @Autowired
     public TextHandler(
@@ -32,16 +36,55 @@ public class TextHandler {
         NluService nluService,
         MessengerSendClient messengerSendClient,
         GraffittiService graffittiService,
-        QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState
+        QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
+        BlockService blockService
     ) {
         this.intentService = intentService;
         this.nluService = nluService;
         this.messengerSendClient = messengerSendClient;
         this.graffittiService = graffittiService;
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
+        this.blockService = blockService;
     }
 
     public void handle(
+        String text,
+        Session session
+    ) throws NluException, MessengerApiException, MessengerIOException {
+
+        final SessionState sessionState = session.getSessionState();
+
+        switch (sessionState) {
+
+            case SUBMITTING_REVIEW:
+                handleStateSubmittingReview(text, session);
+                break;
+
+            default:
+                handleDefault(text, session);
+        }
+    }
+
+    private void handleStateSubmittingReview(
+        String text,
+        Session session
+    ) throws NluException, MessengerApiException, MessengerIOException {
+
+        final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
+        final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
+
+        if (submittingReviewState==SubmittingReviewState.WRITING_COMMENT) {
+            if (!text.equalsIgnoreCase("No review")) {
+                bag.setComment(text);
+            }
+            bag.setSubmittingReviewState(SubmittingReviewState.ASKING_FOR_CONFIRMATION);
+            blockService.sendSubmittingReviewConfirmationBlock(session);
+        } else {
+            blockService.sendErrorBlock(session.getUser());
+        }
+    }
+
+    private void handleDefault(
         String text,
         Session session
     ) throws NluException, MessengerApiException, MessengerIOException {

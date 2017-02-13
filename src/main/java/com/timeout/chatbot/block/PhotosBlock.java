@@ -43,7 +43,7 @@ public class PhotosBlock {
             if (title == null) {
                 title = image.getTitle();
                 if (title == null) {
-                    title = " ";
+                    title = venue.getName();
                 }
             }
 

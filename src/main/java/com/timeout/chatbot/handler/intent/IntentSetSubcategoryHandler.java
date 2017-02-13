@@ -7,7 +7,7 @@ import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.SessionStateLookingBag;
+import com.timeout.chatbot.session.bag.SessionStateLookingBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

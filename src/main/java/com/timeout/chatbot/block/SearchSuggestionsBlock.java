@@ -201,9 +201,10 @@ public class SearchSuggestionsBlock {
             .buttons(
                 Button.newListBuilder()
                     .addPostbackButton(
-                        "Let's go",
+                        "\ud83d\udeab" +" Let's go",
                         new JSONObject()
-                            .put("type", PayloadType.utterance)
+                            .put("type", PayloadType.temporaly_disabled)
+//                            .put("type", PayloadType.utterance)
                             .put("utterance", tileItem.getName())
                             .toString()
                     ).toList()

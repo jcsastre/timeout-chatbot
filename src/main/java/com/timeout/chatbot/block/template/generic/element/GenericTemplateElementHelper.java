@@ -81,11 +81,21 @@ public class GenericTemplateElementHelper {
 
         switch (graffittiType) {
 
-            case EVENT:
             case VENUE:
-            case FILM:
                 buttonsBuilder.addPostbackButton(
                     "More",
+                    new JSONObject()
+                        .put("type", PayloadType.item_more_options)
+                        .put("item_type", pageItem.getType())
+                        .put("item_id", pageItem.getId())
+                        .toString()
+                ).toList();
+                break;
+
+            case EVENT:
+            case FILM:
+                buttonsBuilder.addPostbackButton(
+                    "\uD83D\uDEAB More",
                     new JSONObject()
                         .put("type", PayloadType.item_more_options)
                         .put("item_type", pageItem.getType())

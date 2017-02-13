@@ -1,4 +1,4 @@
-package com.timeout.chatbot.session.context;
+package com.timeout.chatbot.session.state;
 
 public enum SessionState {
     UNDEFINED,
@@ -8,5 +8,6 @@ public enum SessionState {
     MOST_LOVED,
     SEARCHING,
     ITEM,
+    SUBMITTING_REVIEW,
     BOOKING
 }

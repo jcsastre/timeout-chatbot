@@ -1,4 +1,4 @@
-package com.timeout.chatbot.session;
+package com.timeout.chatbot.session.bag;
 
 import com.timeout.chatbot.graffitti.response.search.page.GraffittiSearchResponse;
 

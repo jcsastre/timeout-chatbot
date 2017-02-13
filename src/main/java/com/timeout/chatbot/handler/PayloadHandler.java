@@ -3,6 +3,7 @@ package com.timeout.chatbot.handler;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
+import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
@@ -11,9 +12,11 @@ import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.SessionStateItemBag;
-import com.timeout.chatbot.session.SessionStateLookingBag;
-import com.timeout.chatbot.session.context.SessionState;
+import com.timeout.chatbot.session.bag.SessionStateItemBag;
+import com.timeout.chatbot.session.bag.SessionStateLookingBag;
+import com.timeout.chatbot.session.bag.SessionStateSubmittingReviewBag;
+import com.timeout.chatbot.session.state.SessionState;
+import com.timeout.chatbot.session.state.SubmittingReviewState;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,6 +29,7 @@ public class PayloadHandler {
     private final MessengerSendClient messengerSendClient;
     private final TextHandler textHandler;
     private final GraffittiService graffittiService;
+    private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
 
     @Autowired
     public PayloadHandler(
@@ -33,13 +37,15 @@ public class PayloadHandler {
         BlockService blockService,
         MessengerSendClient messengerSendClient,
         TextHandler textHandler,
-        GraffittiService graffittiService
+        GraffittiService graffittiService,
+        QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState
     ) {
         this.intentService = intentService;
         this.blockService = blockService;
         this.messengerSendClient = messengerSendClient;
         this.textHandler = textHandler;
         this.graffittiService = graffittiService;
+        this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
     }
 
     public void handle(
@@ -204,9 +210,23 @@ public class PayloadHandler {
                 break;
 
             case submit_review:
+                handleSumitReview(session, payload);
+                break;
+
+            case submitting_review_rate:
+                handleSumittingReviewRate(session, payload);
+                break;
+
+            case submitting_review_no_comment:
+                handleSumittingReviewNoComment(session, payload);
+                //TODO
+                break;
+
+            case temporaly_disabled:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
-                    "Sorry, 'Submit a review' is not implemented yet"
+                    "Sorry, my creator has temporarily disabled the 'Search suggestions' :(",
+                    quickReplyBuilderForCurrentSessionState.build(session)
                 );
                 break;
 
@@ -225,10 +245,90 @@ public class PayloadHandler {
     ) throws MessengerApiException, MessengerIOException {
 
         final SessionStateItemBag bag = session.getSessionStateItemBag();
-        bag.setGraffittiType(GraffittiType.fromString(payload.getString("item_type")));
-        bag.setItemId(payload.getString("item_id"));
-        session.setSessionState(SessionState.ITEM);
 
-        intentService.handleSeeItem(session);
+        final GraffittiType graffittiType = GraffittiType.fromString(payload.getString("item_type"));
+
+        switch (graffittiType) {
+
+            case VENUE:
+                bag.setGraffittiType(graffittiType);
+                bag.setItemId(payload.getString("item_id"));
+                session.setSessionState(SessionState.ITEM);
+                intentService.handleSeeItem(session);
+                break;
+
+            case EVENT:
+            case FILM:
+            case PAGE:
+                messengerSendClient.sendTextMessage(
+                    session.getUser().getMessengerId(),
+                    "Sorry, only 'More options' for Venues is available",
+                    quickReplyBuilderForCurrentSessionState.build(session)
+                );
+                break;
+        }
+    }
+
+    private void handleSumitReview(
+        Session session,
+        JSONObject payload
+    ) throws MessengerApiException, MessengerIOException {
+
+        final SessionState sessionState = session.getSessionState();
+        if (sessionState == SessionState.ITEM) {
+            session.setSessionState(SessionState.SUBMITTING_REVIEW);
+            final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
+            bag.setSubmittingReviewState(SubmittingReviewState.RATING);
+            bag.setRate(null);
+            bag.setComment(null);
+            blockService.sendSubmittingReviewRateBlock(session.getUser().getMessengerId());
+        } else {
+            blockService.sendErrorBlock(session.getUser());
+        }
+    }
+
+    private void handleSumittingReviewRate(
+        Session session,
+        JSONObject payload
+    ) throws MessengerApiException, MessengerIOException {
+
+        final SessionState sessionState = session.getSessionState();
+        if (sessionState == SessionState.SUBMITTING_REVIEW) {
+
+            final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
+            final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
+            if (submittingReviewState == SubmittingReviewState.RATING) {
+
+                bag.setRate(payload.getInt("rate"));
+                bag.setSubmittingReviewState(SubmittingReviewState.WRITING_COMMENT);
+                blockService.sendSubmittingReviewCommentBlock(session.getUser().getMessengerId());
+            } else {
+                blockService.sendErrorBlock(session.getUser());
+            }
+        } else {
+            blockService.sendErrorBlock(session.getUser());
+        }
+    }
+
+    private void handleSumittingReviewNoComment(
+        Session session,
+        JSONObject payload
+    ) throws MessengerApiException, MessengerIOException {
+
+        final SessionState sessionState = session.getSessionState();
+        if (sessionState == SessionState.SUBMITTING_REVIEW) {
+
+            final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
+            final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
+            if (submittingReviewState == SubmittingReviewState.WRITING_COMMENT) {
+
+                bag.setSubmittingReviewState(SubmittingReviewState.ASKING_FOR_CONFIRMATION);
+                //TODO: send block for confirmation
+            } else {
+                blockService.sendErrorBlock(session.getUser());
+            }
+        } else {
+            blockService.sendErrorBlock(session.getUser());
+        }
     }
 }

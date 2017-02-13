@@ -65,6 +65,14 @@ public class CloudinaryUrlBuilder {
                 );
         }
 
+        // Location if venue
+        if (pageItem.getType().equalsIgnoreCase("venue")) {
+            String location = pageItem.getLocation();
+            if (location != null) {
+                transformation = chainLocation(transformation, location);
+            }
+        }
+
         String cloudinaryUrl =
             cloudinary.url()
                 .transformation(transformation)
@@ -172,15 +180,15 @@ public class CloudinaryUrlBuilder {
                 x = 0.020;
             }
             transformation =
-                transformation.overlay("bs45v1").gravity("south_west").x(x).y(0.2).chain();
+                transformation.overlay("bs45v1").gravity("south_west").x(x).y(0.18).chain();
 
             if (userRatingsCount != null) {
                 x = 0.630;
                 if (editorialRating == null) {
-                    x = 0.200;
+                    x = 0.30;
                 }
                 transformation =
-                    transformation.overlay("text:Arial_30_bold:(" + userRatingsCount + ")").color("#FFFFFF").gravity("south_west").x(x).y(0.19).chain();
+                    transformation.overlay("text:Arial_30_bold:(" + userRatingsCount + ")").color("#FFFFFF").gravity("south_west").x(x).y(0.18).chain();
             }
         }
         return transformation;
@@ -192,7 +200,7 @@ public class CloudinaryUrlBuilder {
                 .overlay("rs" + editorialRating + "5v1")
                 .gravity("south_west")
                 .x(0.020)
-                .y(0.2)
+                .y(0.18)
                 .chain();
     }
 
@@ -241,6 +249,37 @@ public class CloudinaryUrlBuilder {
                     .y(0.04)
                     .chain();
         }
+
+        return transformation;
+    }
+
+    private Transformation chainLocation(Transformation transformation, String location) {
+        transformation =
+            transformation
+                .overlay("venue_icon_m8qzpk")
+                .gravity("south_west")
+                .x(0.02)
+                .y(0.04)
+                .chain();
+
+        double y = 0.060;
+        if (
+            location.contains("g") ||
+            location.contains("j") ||
+            location.contains("p") ||
+            location.contains("y")
+        ) {
+            y = 0.050;
+        }
+
+        transformation =
+            transformation.
+                overlay("text:Arial_30:" + location)
+                .color("#c8c8c8")
+                .gravity("south_west")
+                .x(0.07)
+                .y(y)
+                .chain();
 
         return transformation;
     }

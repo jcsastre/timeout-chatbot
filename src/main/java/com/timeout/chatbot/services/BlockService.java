@@ -3,6 +3,9 @@ package com.timeout.chatbot.services;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.timeout.chatbot.block.*;
+import com.timeout.chatbot.block.submittingreview.SubmittingReviewCommentBlock;
+import com.timeout.chatbot.block.submittingreview.SubmittingReviewConfirmationBlock;
+import com.timeout.chatbot.block.submittingreview.SubmittingReviewRateBlock;
 import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
@@ -32,6 +35,9 @@ public class BlockService {
     private final FilmsPageBlock filmsPageBlock;
     private final SeeVenueItemBlock seeVenueItemBlock;
     private final PhoneCallBlock phoneCallBlock;
+    private final SubmittingReviewRateBlock submittingReviewRateBlock;
+    private final SubmittingReviewCommentBlock submittingReviewCommentBlock;
+    private final SubmittingReviewConfirmationBlock submittingReviewConfirmationBlock;
     private final ErrorBlock errorBlock;
 
     @Autowired
@@ -52,6 +58,9 @@ public class BlockService {
         FilmsPageBlock filmsPageBlock,
         SeeVenueItemBlock seeVenueItemBlock,
         PhoneCallBlock phoneCallBlock,
+        SubmittingReviewRateBlock submittingReviewRateBlock,
+        SubmittingReviewCommentBlock submittingReviewCommentBlock,
+        SubmittingReviewConfirmationBlock submittingReviewConfirmationBlock,
         ErrorBlock errorBlock
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
@@ -70,6 +79,9 @@ public class BlockService {
         this.filmsPageBlock = filmsPageBlock;
         this.seeVenueItemBlock = seeVenueItemBlock;
         this.phoneCallBlock = phoneCallBlock;
+        this.submittingReviewRateBlock = submittingReviewRateBlock;
+        this.submittingReviewCommentBlock = submittingReviewCommentBlock;
+        this.submittingReviewConfirmationBlock = submittingReviewConfirmationBlock;
         this.errorBlock = errorBlock;
     }
 
@@ -209,6 +221,27 @@ public class BlockService {
             phoneNumber,
             venueName
         );
+    }
+
+    public void sendSubmittingReviewRateBlock(
+        String userId
+    ) throws MessengerApiException, MessengerIOException {
+
+        submittingReviewRateBlock.send(userId);
+    }
+
+    public void sendSubmittingReviewCommentBlock(
+        String userId
+    ) throws MessengerApiException, MessengerIOException {
+
+        submittingReviewCommentBlock.send(userId);
+    }
+
+    public void sendSubmittingReviewConfirmationBlock(
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+
+        submittingReviewConfirmationBlock.send(session);
     }
 
     public void sendErrorBlock(

@@ -1,4 +1,4 @@
-package com.timeout.chatbot.session;
+package com.timeout.chatbot.session.bag;
 
 import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;

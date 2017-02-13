@@ -3,7 +3,7 @@ package com.timeout.chatbot.handler.intent;
 import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.SessionStateLookingBag;
+import com.timeout.chatbot.session.bag.SessionStateLookingBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

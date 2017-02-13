@@ -4,8 +4,8 @@ import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.SessionStateItemBag;
-import com.timeout.chatbot.session.context.SessionState;
+import com.timeout.chatbot.session.bag.SessionStateItemBag;
+import com.timeout.chatbot.session.state.SessionState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -14,8 +14,8 @@ import com.timeout.chatbot.handler.intent.IntentFindRestaurantsHandler;
 import com.timeout.chatbot.handler.intent.IntentSeeItem;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionPool;
-import com.timeout.chatbot.session.SessionStateLookingBag;
-import com.timeout.chatbot.session.context.SessionState;
+import com.timeout.chatbot.session.bag.SessionStateLookingBag;
+import com.timeout.chatbot.session.state.SessionState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -108,8 +108,7 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
         if (session.getSessionState() == SessionState.ITEM) {
             messengerSendClient.sendTextMessage(
                 session.getUser().getMessengerId(),
-                "Thaks for submitting the image!",
-                quickReplyBuilderForCurrentSessionState.build(session)
+                "Thaks for submitting the image!"
             );
 
 //            final SessionStateItemBag bag = session.getSessionStateItemBag();
