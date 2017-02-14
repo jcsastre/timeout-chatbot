@@ -3,6 +3,7 @@ package com.timeout.chatbot.block.template.generic.element;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.block.cloudinary.CloudinaryUrlBuilder;
+import com.timeout.chatbot.configuration.TimeoutConfiguration;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCategorisation;
@@ -12,24 +13,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 
+import java.io.IOException;
 import java.util.List;
 
 @Component
 public class GenericTemplateElementHelper {
 
+    private final TimeoutConfiguration timeoutConfiguration;
     private final CloudinaryUrlBuilder cloudinaryUrlBuilder;
 
     @Autowired
     public GenericTemplateElementHelper(
+        TimeoutConfiguration timeoutConfiguration,
         CloudinaryUrlBuilder cloudinaryUrlBuilder
     ) {
+        this.timeoutConfiguration = timeoutConfiguration;
         this.cloudinaryUrlBuilder = cloudinaryUrlBuilder;
     }
 
     public void addNotSingleElementInList(
         GenericTemplate.Element.ListBuilder listBuilder,
         PageItem pageItem
-    ) {
+    ) throws IOException, InterruptedException {
         final String type = pageItem.getType();
         final GraffittiCategorisation graffittiCategorisation = pageItem.getGraffittiCategorisation();
 
@@ -40,9 +45,15 @@ public class GenericTemplateElementHelper {
             builder.subtitle(subtitle);
         }
 
-        final String imageUrl = cloudinaryUrlBuilder.buildImageUrl(pageItem);
-        if (imageUrl != null) {
-            builder.imageUrl(imageUrl);
+        final String cloudinaryUrl = cloudinaryUrlBuilder.buildImageUrl(pageItem);
+        if (cloudinaryUrl != null) {
+            builder.imageUrl(cloudinaryUrl);
+        } else {
+            if (pageItem.getImage_url() != null) {
+                builder.imageUrl(pageItem.getImage_url());
+            } else {
+                builder.imageUrl(timeoutConfiguration.getImageUrlPlacholder());
+            }
         }
 
         final List<Button> buttons = buildButtonsForNotSingleElementInList(pageItem);

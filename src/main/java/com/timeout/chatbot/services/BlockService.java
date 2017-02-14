@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.List;
 
 @Component
@@ -126,14 +127,14 @@ public class BlockService {
 
     public void sendMostLovedBlock(
         Session session
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         mostLovedBlock.send(session);
     }
 
     public void sendWhatsNewBlock(
         Session session
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         whatsNewBlock.send(session);
     }
@@ -158,7 +159,7 @@ public class BlockService {
         Session session,
         List<PageItem> pageItems,
         String itemPluralName
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         venuesPageBlock.send(
             session,
@@ -218,7 +219,7 @@ public class BlockService {
     public void sendSeeVenueItemBlock(
         String userId,
         Venue venue
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         seeVenueItemBlock.send(userId, venue);
     }

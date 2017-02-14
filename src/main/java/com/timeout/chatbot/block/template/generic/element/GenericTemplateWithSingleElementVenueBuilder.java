@@ -5,10 +5,12 @@ import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.block.cloudinary.CloudinaryUrlBuilder;
 import com.timeout.chatbot.configuration.TimeoutConfiguration;
+import com.timeout.chatbot.domain.Image;
 import com.timeout.chatbot.domain.Venue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.List;
 
 @Component
@@ -31,7 +33,7 @@ public class GenericTemplateWithSingleElementVenueBuilder {
 
     public GenericTemplate build(
         Venue venue
-    ) {
+    ) throws IOException, InterruptedException {
 
         final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
 
@@ -42,11 +44,17 @@ public class GenericTemplateWithSingleElementVenueBuilder {
                 venue.getName()
             );
 
-        final String imageUrl = cloudinaryUrlBuilder.buildImageUrl(venue);
-        if (imageUrl != null) {
-            elementBuilder.imageUrl(imageUrl);
+        final String cloudinaryUrl = cloudinaryUrlBuilder.buildImageUrl(venue);
+        if (cloudinaryUrl != null) {
+            elementBuilder.imageUrl(cloudinaryUrl);
+        } else {
+            final List<Image> images = venue.getImages();
+            if (images != null && images.size()>0) {
+                elementBuilder.imageUrl(images.get(0).getUrl());
+            } else {
+                elementBuilder.imageUrl(timeoutConfiguration.getImageUrlPlacholder());
+            }
         }
-
 
         final List<Button> buttons = buildButtonsForSingleElementInList(venue);
         if (buttons != null) {

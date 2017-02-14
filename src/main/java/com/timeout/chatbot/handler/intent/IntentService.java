@@ -7,6 +7,7 @@ import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 @Component
@@ -88,32 +89,32 @@ public class IntentService {
     public void handleFindRestaurants(
         Session session,
         HashMap<String, JsonElement> nluParameters
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         findRestaurantsHandler.handle(session, nluParameters);
     }
 
     public void handleFindRestaurants(
         Session session
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         findRestaurantsHandler.handle(session);
     }
 
     public void handleSeemore(
         Session session
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         seemoreHandler.handle(session);
     }
 
     public void handleBack(
         Session session
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         backHandler.handle(session);
     }
 
     public void handleSetSubcategory(
         Session session,
         String subcategoryId
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         setSubcategoryHandler.handle(session, subcategoryId);
     }
 
@@ -125,7 +126,7 @@ public class IntentService {
 
     public void handleSeeItem(
         Session session
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         seeItem.handle(session);
     }
 

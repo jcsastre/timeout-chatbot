@@ -11,6 +11,8 @@ import com.timeout.chatbot.domain.Venue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 @Component
 public class SeeVenueItemBlock {
 
@@ -32,7 +34,7 @@ public class SeeVenueItemBlock {
     public void send(
         String userId,
         Venue venue
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
 
         messengerSendClient.sendTemplate(

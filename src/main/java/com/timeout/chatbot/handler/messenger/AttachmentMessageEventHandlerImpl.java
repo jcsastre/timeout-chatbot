@@ -19,6 +19,8 @@ import com.timeout.chatbot.session.state.SessionState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 @Component
 public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEventHandler {
 
@@ -73,7 +75,7 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
     private void handleLocation(
         Session session,
         AttachmentMessageEvent.Attachment attachment
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         final AttachmentMessageEvent.LocationPayload locationPayload =
             attachment.getPayload().asLocationPayload();
@@ -100,7 +102,7 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
     private void handleImage(
         Session session,
         AttachmentMessageEvent.Attachment attachment
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         final AttachmentMessageEvent.BinaryPayload binaryPayload =
             attachment.getPayload().asBinaryPayload();

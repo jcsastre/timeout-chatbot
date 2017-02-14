@@ -19,6 +19,8 @@ import com.timeout.chatbot.session.state.SessionState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 @Component
 public class TextHandler {
 
@@ -52,7 +54,7 @@ public class TextHandler {
     public void handle(
         String text,
         Session session
-    ) throws NluException, MessengerApiException, MessengerIOException {
+    ) throws NluException, MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         final SessionState sessionState = session.getSessionState();
 
@@ -70,7 +72,7 @@ public class TextHandler {
     private void handleDefault(
         String text,
         Session session
-    ) throws NluException, MessengerApiException, MessengerIOException {
+    ) throws NluException, MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         NluResult nluResult = handleInternal(text);
 
@@ -142,7 +144,7 @@ public class TextHandler {
     private void processNluResult(
         Session session,
         NluResult nluResult
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         switch (nluResult.getNluIntentType()) {
 
             case GREETINGS:

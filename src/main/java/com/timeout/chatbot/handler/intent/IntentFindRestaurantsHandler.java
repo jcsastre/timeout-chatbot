@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.util.HashMap;
 
 @Component
@@ -48,7 +49,7 @@ public class IntentFindRestaurantsHandler {
     public void handle(
         Session session,
         HashMap<String, JsonElement> nluParameters
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         switch (session.getSessionState()) {
 
             case UNDEFINED:
@@ -68,7 +69,7 @@ public class IntentFindRestaurantsHandler {
 
     public void handle(
         Session session
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         switch (session.getSessionState()) {
 
             case UNDEFINED:
@@ -89,7 +90,7 @@ public class IntentFindRestaurantsHandler {
     private void applyNluParameters(
         Session session,
         HashMap<String, JsonElement> nluParameters
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         if (
             nluParameters.containsKey("whereUkLondon")
@@ -123,7 +124,7 @@ public class IntentFindRestaurantsHandler {
 
     public void fetchAndSend(
         Session session
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         final SessionStateLookingBag bag = session.getSessionStateLookingBag();
 

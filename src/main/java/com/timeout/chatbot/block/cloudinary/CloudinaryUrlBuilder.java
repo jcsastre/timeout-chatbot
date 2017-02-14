@@ -16,6 +16,8 @@ import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.net.*;
 import java.util.List;
 
 @Component
@@ -35,7 +37,7 @@ public class CloudinaryUrlBuilder {
 
     public String buildImageUrl(
         PageItem pageItem
-    ) {
+    ) throws IOException, InterruptedException {
         Transformation transformation = buildBaseTransformation();
 
         // Categorisation
@@ -80,14 +82,16 @@ public class CloudinaryUrlBuilder {
                 .type("fetch")
                 .generate(buildBaseImageUrl(pageItem));
 
-        System.out.println(cloudinaryUrl);
-
-        return cloudinaryUrl;
+        if (checkUrlAvailability(cloudinaryUrl)) {
+            return cloudinaryUrl;
+        } else {
+            return null;
+        }
     }
 
     public String buildImageUrl(
         Venue venue
-    ) {
+    ) throws IOException, InterruptedException {
         Transformation transformation = buildBaseTransformation();
 
         // Categorisation
@@ -124,9 +128,56 @@ public class CloudinaryUrlBuilder {
                 .type("fetch")
                 .generate(buildBaseImageUrl(venue));
 
-        System.out.println(cloudinaryUrl);
+        if (checkUrlAvailability(cloudinaryUrl)) {
+            return cloudinaryUrl;
+        } else {
+            return null;
+        }
+    }
 
-        return cloudinaryUrl;
+    private boolean checkUrlAvailability(
+        String targetUrl
+    ) throws IOException, InterruptedException {
+
+        System.out.println("checkUrlAvailability: " + targetUrl);
+
+        HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(targetUrl).openConnection();
+        httpUrlConnection.setRequestMethod("HEAD");
+
+        int responseCode = httpUrlConnection.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            return true;
+        } else {
+            System.out.println("\tReceived code " + responseCode);
+            System.out.println("\t" + httpUrlConnection.getHeaderFields().toString());
+            System.out.println("\tWaiting " + 200 + "ms");
+            Thread.sleep(200);
+        }
+
+        responseCode = httpUrlConnection.getResponseCode();
+        if (responseCode == HttpURLConnection.HTTP_OK) {
+            return true;
+        } else {
+            System.out.println("\tReceived code " + responseCode);
+            System.out.println("\t" + httpUrlConnection.getHeaderFields().toString());
+            return false;
+        }
+
+        //        boolean isAvailable = false;
+//        int numberOfChecksDone = 0;
+//        while (!isAvailable && numberOfChecksDone <=1) {
+//            int responseCode = httpUrlConnection.getResponseCode();
+//            if (responseCode == HttpURLConnection.HTTP_OK) {
+//                isAvailable = true;
+//            } else {
+//                numberOfChecksDone++;
+//                int numberOfMilis = numberOfChecksDone * 100;
+//                System.out.println("Waiting " + numberOfMilis + "ms for " + targetUrl);
+//                Thread.sleep(numberOfMilis);
+//            }
+//        }
+//
+//        return isAvailable;
     }
 
     private String buildBaseImageUrl(
@@ -161,7 +212,7 @@ public class CloudinaryUrlBuilder {
         String baseImageUrl = timeoutConfiguration.getImageUrlPlacholder();
 
         if (imageId != null) {
-            baseImageUrl = "http://media.timeout.com/images/" + imageId + "/image.jpg";
+            baseImageUrl = "https://media.timeout.com/images/" + imageId + "/image.jpg";
         }
 
         return baseImageUrl;
@@ -224,19 +275,19 @@ public class CloudinaryUrlBuilder {
         switch (graffittiType) {
 
             case VENUE:
-                iconName = "venue_icon_m8qzpk";
+                iconName = "venue_icon_m8qzpkz";
                 break;
 
             case EVENT:
-                iconName = "event_icon_burxuc";
+                iconName = "event_icon_burxucz";
                 break;
 
             case FILM:
-                iconName = "film_icon_csr7j9";
+                iconName = "film_icon_csr7j9z";
                 break;
 
             case PAGE:
-                iconName = "page_icon_zdxsqz";
+                iconName = "page_icon_zdxsqzz";
                 break;
         }
 
@@ -254,9 +305,11 @@ public class CloudinaryUrlBuilder {
     }
 
     private Transformation chainLocation(Transformation transformation, String location) {
+        location = location.replace(" ", "%20");
+
         transformation =
             transformation
-                .overlay("venue_icon_m8qzpk")
+                .overlay("venue_icon_m8qzpkz")
                 .gravity("south_west")
                 .x(0.02)
                 .y(0.04)

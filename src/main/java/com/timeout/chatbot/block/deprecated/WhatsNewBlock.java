@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 
@@ -45,7 +46,7 @@ public class WhatsNewBlock {
 
     public void send(
         Session session
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         messengerSendClient.sendTemplate(
             Recipient.newBuilder().recipientId(session.getUser().getMessengerId()).build(),
@@ -55,7 +56,7 @@ public class WhatsNewBlock {
         );
     }
 
-    private GenericTemplate buildGenericTemplate() {
+    private GenericTemplate buildGenericTemplate() throws IOException, InterruptedException {
 
         final GenericTemplate.Builder builder = GenericTemplate.newBuilder();
         final GenericTemplate.Element.ListBuilder listBuilder = builder.addElements();
@@ -67,7 +68,7 @@ public class WhatsNewBlock {
 
     private void addElements(
         GenericTemplate.Element.ListBuilder listBuilder
-    ) {
+    ) throws IOException, InterruptedException {
         final URI uri = searchUrlBuilder.buildForWhatsNewBlock().toUri();
         System.out.println(uri);
 

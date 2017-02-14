@@ -21,8 +21,10 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 @Component
-public class PayloadHandler {
+public class DefaultPayloadHandler {
 
     private final IntentService intentService;
     private final BlockService blockService;
@@ -32,7 +34,7 @@ public class PayloadHandler {
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
 
     @Autowired
-    public PayloadHandler(
+    public DefaultPayloadHandler(
         IntentService intentService,
         BlockService blockService,
         MessengerSendClient messengerSendClient,
@@ -51,7 +53,7 @@ public class PayloadHandler {
     public void handle(
         String payloadAsString,
         Session session
-    ) throws NluException, MessengerIOException, MessengerApiException {
+    ) throws NluException, MessengerIOException, MessengerApiException, IOException, InterruptedException {
 
         final JSONObject payload = new JSONObject(payloadAsString);
         final PayloadType payloadType = PayloadType.valueOf(payload.getString("type"));
@@ -215,15 +217,6 @@ public class PayloadHandler {
                 handleSumitReview(session, payload);
                 break;
 
-            case submitting_review_rate:
-                handleSumittingReviewRate(session, payload);
-                break;
-
-            case submitting_review_no_comment:
-                handleSumittingReviewNoComment(session, payload);
-                //TODO
-                break;
-
             case temporaly_disabled:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
@@ -244,7 +237,7 @@ public class PayloadHandler {
     private void handleItemMoreOptions(
         Session session,
         JSONObject payload
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         final SessionStateItemBag bag = session.getSessionStateItemBag();
 
@@ -284,51 +277,6 @@ public class PayloadHandler {
             bag.setRate(null);
             bag.setComment(null);
             blockService.sendSubmittingReviewRateBlock(session.getUser().getMessengerId());
-        } else {
-            blockService.sendErrorBlock(session.getUser());
-        }
-    }
-
-    private void handleSumittingReviewRate(
-        Session session,
-        JSONObject payload
-    ) throws MessengerApiException, MessengerIOException {
-
-        final SessionState sessionState = session.getSessionState();
-        if (sessionState == SessionState.SUBMITTING_REVIEW) {
-
-            final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
-            final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
-            if (submittingReviewState == SubmittingReviewState.RATING) {
-
-                bag.setRate(payload.getInt("rate"));
-                bag.setSubmittingReviewState(SubmittingReviewState.WRITING_COMMENT);
-                blockService.sendSubmittingReviewCommentBlock(session.getUser().getMessengerId());
-            } else {
-                blockService.sendErrorBlock(session.getUser());
-            }
-        } else {
-            blockService.sendErrorBlock(session.getUser());
-        }
-    }
-
-    private void handleSumittingReviewNoComment(
-        Session session,
-        JSONObject payload
-    ) throws MessengerApiException, MessengerIOException {
-
-        final SessionState sessionState = session.getSessionState();
-        if (sessionState == SessionState.SUBMITTING_REVIEW) {
-
-            final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
-            final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
-            if (submittingReviewState == SubmittingReviewState.WRITING_COMMENT) {
-
-                bag.setSubmittingReviewState(SubmittingReviewState.ASKING_FOR_CONFIRMATION);
-                //TODO: send block for confirmation
-            } else {
-                blockService.sendErrorBlock(session.getUser());
-            }
         } else {
             blockService.sendErrorBlock(session.getUser());
         }

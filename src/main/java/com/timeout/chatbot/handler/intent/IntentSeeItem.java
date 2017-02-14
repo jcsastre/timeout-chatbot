@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
+
 @Component
 public class IntentSeeItem {
 
@@ -37,7 +39,7 @@ public class IntentSeeItem {
 
     public void handle(
         Session session
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         switch (session.getSessionState()) {
 
             case UNDEFINED:

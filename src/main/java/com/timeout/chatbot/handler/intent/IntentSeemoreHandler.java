@@ -10,6 +10,8 @@ import com.timeout.chatbot.session.bag.SessionStateLookingBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 @Component
 public class IntentSeemoreHandler {
 
@@ -30,7 +32,7 @@ public class IntentSeemoreHandler {
 
     public void handle(
         Session session
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         switch (session.getSessionState()) {
 
@@ -48,7 +50,7 @@ public class IntentSeemoreHandler {
 
     private void handleLooking(
         Session session
-    ) throws MessengerApiException, MessengerIOException {
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         final SessionStateLookingBag bag = session.getSessionStateLookingBag();
 

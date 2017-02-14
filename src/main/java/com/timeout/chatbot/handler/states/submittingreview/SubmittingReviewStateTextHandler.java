@@ -13,6 +13,8 @@ import com.timeout.chatbot.session.state.SubmittingReviewState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+
 @Component
 public class SubmittingReviewStateTextHandler {
 
@@ -34,7 +36,7 @@ public class SubmittingReviewStateTextHandler {
     public void handle(
         String text,
         Session session
-    ) throws NluException, MessengerApiException, MessengerIOException {
+    ) throws NluException, MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
         final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
