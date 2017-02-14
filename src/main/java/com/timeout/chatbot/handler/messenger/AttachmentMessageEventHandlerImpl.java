@@ -5,7 +5,7 @@ import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.receive.events.AttachmentMessageEvent;
 import com.github.messenger4j.receive.handlers.AttachmentMessageEventHandler;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.timeout.chatbot.block.ErrorBlock;
+import com.timeout.chatbot.block.BlockError;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.What;
@@ -26,7 +26,7 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
 
     private final SessionPool sessionPool;
     private final IntentFindRestaurantsHandler findRestaurantsHandler;
-    private final ErrorBlock errorBlock;
+    private final BlockError blockError;
     private final MessengerSendClient messengerSendClient;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
     private final IntentSeeItem intentSeeItem;
@@ -35,13 +35,13 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
     public AttachmentMessageEventHandlerImpl(
         SessionPool sessionPool,
         IntentFindRestaurantsHandler findRestaurantsHandler,
-        ErrorBlock errorBlock,
+        BlockError blockError,
         MessengerSendClient messengerSendClient,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
         IntentSeeItem intentSeeItem) {
         this.sessionPool = sessionPool;
         this.findRestaurantsHandler = findRestaurantsHandler;
-        this.errorBlock = errorBlock;
+        this.blockError = blockError;
         this.messengerSendClient = messengerSendClient;
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
         this.intentSeeItem = intentSeeItem;
@@ -68,7 +68,7 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
             }
         } catch (Exception e) {
             e.printStackTrace();
-            errorBlock.send(session.getUser());
+            blockError.send(session.getUser());
         }
     }
 

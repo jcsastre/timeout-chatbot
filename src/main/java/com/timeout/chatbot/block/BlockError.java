@@ -10,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ErrorBlock {
+public class BlockError {
     private final MessengerSendClientWrapper messengerSendClientWrapper;
 
     @Autowired
-    public ErrorBlock(
+    public BlockError(
         MessengerSendClientWrapper messengerSendClientWrapper
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;

@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class BookingPeopleCountBlock{
+public class BlockBookingPeopleCount {
     private final MessengerSendClientWrapper messengerSendClientWrapper;
 
     @Autowired
-    public BookingPeopleCountBlock(
+    public BlockBookingPeopleCount(
         MessengerSendClientWrapper messengerSendClientWrapper
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
@@ -25,7 +25,7 @@ public class BookingPeopleCountBlock{
     ) {
         messengerSendClientWrapper.sendTextMessage(
             userId,
-            "How many people? You can also type the number",
+            "Please, press or type the number of people",
             buildQuickReplies()
         );
     }
@@ -39,7 +39,7 @@ public class BookingPeopleCountBlock{
                 Integer.toString(i),
                 new JSONObject()
                     .put("type", PayloadType.booking_people_count)
-                    .put("count", Integer.toString(i))
+                    .put("count", i)
                     .toString()
             ).toList();
         }

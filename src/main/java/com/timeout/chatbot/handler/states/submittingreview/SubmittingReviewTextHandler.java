@@ -16,14 +16,14 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class SubmittingReviewStateTextHandler {
+public class SubmittingReviewTextHandler {
 
     private final IntentService intentService;
     private final MessengerSendClient msc;
     private final BlockService blockService;
 
     @Autowired
-    public SubmittingReviewStateTextHandler(
+    public SubmittingReviewTextHandler(
         IntentService intentService,
         MessengerSendClient msc,
         BlockService blockService

@@ -43,7 +43,7 @@ public class BlockService {
     private final SubmittingReviewRateBlock submittingReviewRateBlock;
     private final SubmittingReviewCommentBlock submittingReviewCommentBlock;
     private final SubmittingReviewConfirmationBlock submittingReviewConfirmationBlock;
-    private final ErrorBlock errorBlock;
+    private final BlockError blockError;
 
     @Autowired
     public BlockService(
@@ -67,7 +67,7 @@ public class BlockService {
         SubmittingReviewRateBlock submittingReviewRateBlock,
         SubmittingReviewCommentBlock submittingReviewCommentBlock,
         SubmittingReviewConfirmationBlock submittingReviewConfirmationBlock,
-        ErrorBlock errorBlock
+        BlockError blockError
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
         this.versionInfoBlock = versionInfoBlock;
@@ -89,7 +89,7 @@ public class BlockService {
         this.submittingReviewRateBlock = submittingReviewRateBlock;
         this.submittingReviewCommentBlock = submittingReviewCommentBlock;
         this.submittingReviewConfirmationBlock = submittingReviewConfirmationBlock;
-        this.errorBlock = errorBlock;
+        this.blockError = blockError;
     }
 
     public void sendWelcomeFirstTimeBlock(
@@ -261,6 +261,6 @@ public class BlockService {
     public void sendErrorBlock(
         User user
     ) {
-        errorBlock.send(user);
+        blockError.send(user);
     }
 }

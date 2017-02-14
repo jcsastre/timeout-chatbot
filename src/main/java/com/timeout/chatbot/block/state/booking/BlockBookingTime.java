@@ -10,11 +10,11 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class BookingTimeBlock {
+public class BlockBookingTime {
     private final MessengerSendClientWrapper messengerSendClientWrapper;
 
     @Autowired
-    public BookingTimeBlock(
+    public BlockBookingTime(
         MessengerSendClientWrapper messengerSendClientWrapper
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;

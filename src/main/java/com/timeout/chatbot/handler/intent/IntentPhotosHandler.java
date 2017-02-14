@@ -3,7 +3,7 @@ package com.timeout.chatbot.handler.intent;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.timeout.chatbot.block.ErrorBlock;
+import com.timeout.chatbot.block.BlockError;
 import com.timeout.chatbot.block.PhotosBlock;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
@@ -24,7 +24,7 @@ public class IntentPhotosHandler {
     private final PhotosBlock photosBlock;
     private final RestTemplate restTemplate;
     private final VenuesUrlBuilder venuesUrlBuilder;
-    private final ErrorBlock errorBlock;
+    private final BlockError blockError;
 
     @Autowired
     public IntentPhotosHandler(
@@ -32,13 +32,13 @@ public class IntentPhotosHandler {
         PhotosBlock photosBlock,
         RestTemplate restTemplate,
         VenuesUrlBuilder venuesUrlBuilder,
-        ErrorBlock errorBlock
+        BlockError blockError
     ) {
         this.messengerSendClient = messengerSendClient;
         this.photosBlock = photosBlock;
         this.restTemplate = restTemplate;
         this.venuesUrlBuilder = venuesUrlBuilder;
-        this.errorBlock = errorBlock;
+        this.blockError = blockError;
     }
 
     public void handle(
@@ -61,7 +61,7 @@ public class IntentPhotosHandler {
 
             case BOOKING:
             default:
-                errorBlock.send(session.getUser());
+                blockError.send(session.getUser());
                 break;
         }
     }

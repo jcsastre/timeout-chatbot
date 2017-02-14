@@ -18,14 +18,14 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class SubmittingReviewPayloadHandler {
+public class SubmittingReviewStatePayloadHandler {
 
     private final BlockService blockService;
     private final MessengerSendClient messengerSendClient;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
 
     @Autowired
-    public SubmittingReviewPayloadHandler(
+    public SubmittingReviewStatePayloadHandler(
         BlockService blockService,
         MessengerSendClient messengerSendClient,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState
@@ -51,7 +51,6 @@ public class SubmittingReviewPayloadHandler {
 
             case submitting_review_no_comment:
                 handleSumittingReviewNoComment(session, payload);
-                //TODO
                 break;
 
             case temporaly_disabled:
@@ -63,10 +62,7 @@ public class SubmittingReviewPayloadHandler {
                 break;
 
             default:
-                messengerSendClient.sendTextMessage(
-                    session.getUser().getMessengerId(),
-                    "Sorry, I don't understand you."
-                );
+                blockService.sendErrorBlock(session.getUser());
                 break;
         }
     }

@@ -9,6 +9,7 @@ import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentService;
+import com.timeout.chatbot.handler.states.booking.BookingBeginHandler;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
@@ -29,25 +30,28 @@ public class DefaultPayloadHandler {
     private final IntentService intentService;
     private final BlockService blockService;
     private final MessengerSendClient messengerSendClient;
-    private final TextHandler textHandler;
+    private final DefaultTextHandler defaultTextHandler;
     private final GraffittiService graffittiService;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
+    private final BookingBeginHandler bookingBeginHandler;
 
     @Autowired
     public DefaultPayloadHandler(
         IntentService intentService,
         BlockService blockService,
         MessengerSendClient messengerSendClient,
-        TextHandler textHandler,
+        DefaultTextHandler defaultTextHandler,
         GraffittiService graffittiService,
-        QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState
+        QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
+        BookingBeginHandler bookingBeginHandler
     ) {
         this.intentService = intentService;
         this.blockService = blockService;
         this.messengerSendClient = messengerSendClient;
-        this.textHandler = textHandler;
+        this.defaultTextHandler = defaultTextHandler;
         this.graffittiService = graffittiService;
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
+        this.bookingBeginHandler = bookingBeginHandler;
     }
 
     public void handle(
@@ -79,7 +83,7 @@ public class DefaultPayloadHandler {
 
             case utterance:
                 final String utterance = payload.getString("utterance");
-                textHandler.handle(utterance, session);
+                defaultTextHandler.handle(utterance, session);
                 break;
 
             case help:
@@ -210,7 +214,7 @@ public class DefaultPayloadHandler {
                 break;
 
             case book:
-                intentService.handleBook(session);
+                bookingBeginHandler.handle(session);
                 break;
 
             case submit_review:

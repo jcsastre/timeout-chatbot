@@ -7,47 +7,36 @@ import org.springframework.stereotype.Component;
 @Component
 public class BookingBlocksHelper {
 
-    private final BookingPeopleCountBlock bookingPeopleCountBlock;
-    private final BookingDateBlock bookingDateBlock;
-    private final BookingTimeBlock bookingTimeBlock;
+    private final BlockBookingDate blockBookingDate;
+    private final BlockBookingTime blockBookingTime;
     private final BookingFirstnameConfirmationBlock bookingFirstnameConfirmationBlock;
     private final BookingLastnameConfirmationBlock bookingLastnameConfirmationBlock;
 
     @Autowired
     public BookingBlocksHelper(
-        BookingPeopleCountBlock bookingPeopleCountBlock,
-        BookingDateBlock bookingDateBlock,
-        BookingTimeBlock bookingTimeBlock,
+        BlockBookingDate blockBookingDate,
+        BlockBookingTime blockBookingTime,
         BookingFirstnameConfirmationBlock bookingFirstnameConfirmationBlock,
         BookingLastnameConfirmationBlock bookingLastnameConfirmationBlock
-    )
-    {
-        this.bookingPeopleCountBlock = bookingPeopleCountBlock;
-        this.bookingDateBlock = bookingDateBlock;
-        this.bookingTimeBlock = bookingTimeBlock;
+    ) {
+        this.blockBookingDate = blockBookingDate;
+        this.blockBookingTime = blockBookingTime;
         this.bookingFirstnameConfirmationBlock = bookingFirstnameConfirmationBlock;
         this.bookingLastnameConfirmationBlock = bookingLastnameConfirmationBlock;
-    }
-
-    public void sendBookingPeopleCountBlock(
-        User user
-    )
-    {
-        bookingPeopleCountBlock.send(user.getMessengerId());
     }
 
     public void sendBookingDateBlock(
         User user
     )
     {
-        bookingDateBlock.send(user.getMessengerId());
+        blockBookingDate.send(user.getMessengerId());
     }
 
     public void sendBookingTimeBlock(
         User user
     )
     {
-        bookingTimeBlock.send(user.getMessengerId());
+        blockBookingTime.send(user.getMessengerId());
     }
 
     public void sendBookingFirstnameConfirmationBlock(

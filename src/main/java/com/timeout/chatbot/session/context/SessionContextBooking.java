@@ -58,7 +58,7 @@ public class SessionContextBooking extends SessionContext {
 
         this.bookingState = BookingState.PEOPLE_COUNT;
 
-        bookingBlocksHelper.sendBookingPeopleCountBlock(user);
+//        bookingBlocksHelper.sendBookingPeopleCountBlock(user);
     }
 
     public void applyUtterance(

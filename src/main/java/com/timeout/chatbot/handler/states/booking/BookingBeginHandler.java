@@ -1,56 +1,47 @@
-package com.timeout.chatbot.handler.intent;
+package com.timeout.chatbot.handler.states.booking;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.timeout.chatbot.block.quickreply.QuickReplyBuilderHelper;
-import com.timeout.chatbot.domain.Venue;
+import com.timeout.chatbot.block.state.booking.BlockBookingPeopleCount;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
+import com.timeout.chatbot.session.bag.SessionStateBookingBag;
 import com.timeout.chatbot.session.bag.SessionStateItemBag;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.timeout.chatbot.session.state.BookingState;
+import com.timeout.chatbot.session.state.SessionState;
 import org.springframework.stereotype.Component;
 
 @Component
-public class IntentBookHandler {
+public class BookingBeginHandler {
 
     private final MessengerSendClient messengerSendClient;
     private final BlockService blockService;
-    private final QuickReplyBuilderHelper quickReplyBuilderHelper;
+    private final BlockBookingPeopleCount blockBookingPeopleCount;
 
-    @Autowired
-    public IntentBookHandler(
+    public BookingBeginHandler(
         MessengerSendClient messengerSendClient,
         BlockService blockService,
-        QuickReplyBuilderHelper quickReplyBuilderHelper
+        BlockBookingPeopleCount blockBookingPeopleCount
     ) {
         this.messengerSendClient = messengerSendClient;
         this.blockService = blockService;
-        this.quickReplyBuilderHelper = quickReplyBuilderHelper;
+        this.blockBookingPeopleCount = blockBookingPeopleCount;
     }
 
     public void handle(
         Session session
     ) throws MessengerApiException, MessengerIOException {
+
         switch (session.getSessionState()) {
 
             case ITEM:
                 handleStateItem(session);
                 break;
 
-            case UNDEFINED:
-            case SEARCHING:
-                messengerSendClient.sendTextMessage(
-                    session.getUser().getMessengerId(),
-                    "Sorry, I don't know what you want to book"
-                );
-                break;
-
-            case BOOKING:
             default:
                 blockService.sendErrorBlock(session.getUser());
-                break;
         }
     }
 
@@ -62,14 +53,14 @@ public class IntentBookHandler {
 
         final GraffittiType graffittiType = itemBag.getGraffittiType();
         if (graffittiType == GraffittiType.VENUE) {
-            final Venue venue = itemBag.getVenue();
 
-            messengerSendClient.sendTextMessage(
-                session.getUser().getMessengerId(),
-                "Sorry, 'Book' feature is not implemented yet",
-                quickReplyBuilderHelper.buildForSeeVenueItem(venue)
-            );
+            session.setSessionState(SessionState.BOOKING);
+            final SessionStateBookingBag bookingBag = session.getSessionStateBookingBag();
+            bookingBag.setBookingState(BookingState.PEOPLE_COUNT);
+            blockBookingPeopleCount.send(session.getUser().getMessengerId());
+
         } else {
+
             messengerSendClient.sendTextMessage(
                 session.getUser().getMessengerId(),
                 "Sorry, 'Book' feature is not implemented yet"

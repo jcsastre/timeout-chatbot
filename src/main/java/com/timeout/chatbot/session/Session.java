@@ -2,6 +2,7 @@ package com.timeout.chatbot.session;
 
 import com.timeout.chatbot.domain.page.Page;
 import com.timeout.chatbot.domain.user.User;
+import com.timeout.chatbot.session.bag.SessionStateBookingBag;
 import com.timeout.chatbot.session.bag.SessionStateItemBag;
 import com.timeout.chatbot.session.bag.SessionStateLookingBag;
 import com.timeout.chatbot.session.bag.SessionStateSubmittingReviewBag;
@@ -14,6 +15,7 @@ public class Session {
     private SessionState sessionState;
     private SessionStateLookingBag sessionStateLookingBag;
     private SessionStateItemBag sessionStateItemBag;
+    private SessionStateBookingBag sessionStateBookingBag;
     private SessionStateSubmittingReviewBag sessionStateSubmittingReviewBag;
     private long lastAccessTime;
 
@@ -31,6 +33,7 @@ public class Session {
         this.sessionState = SessionState.UNDEFINED;
         this.sessionStateLookingBag = new SessionStateLookingBag();
         this.sessionStateItemBag = new SessionStateItemBag();
+        this.sessionStateBookingBag = new SessionStateBookingBag();
         this.sessionStateSubmittingReviewBag = new SessionStateSubmittingReviewBag();
     }
 
@@ -64,6 +67,10 @@ public class Session {
 
     public SessionStateItemBag getSessionStateItemBag() {
         return sessionStateItemBag;
+    }
+
+    public SessionStateBookingBag getSessionStateBookingBag() {
+        return sessionStateBookingBag;
     }
 
     public SessionStateSubmittingReviewBag getSessionStateSubmittingReviewBag() {

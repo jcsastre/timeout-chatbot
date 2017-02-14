@@ -2,9 +2,9 @@ package com.timeout.chatbot.handler.messenger;
 
 import com.github.messenger4j.receive.events.TextMessageEvent;
 import com.github.messenger4j.receive.handlers.TextMessageEventHandler;
-import com.timeout.chatbot.block.ErrorBlock;
+import com.timeout.chatbot.block.BlockError;
 import com.timeout.chatbot.domain.page.PageUid;
-import com.timeout.chatbot.handler.states.TextHandler;
+import com.timeout.chatbot.handler.states.DefaultTextHandler;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionPool;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +14,18 @@ import org.springframework.stereotype.Component;
 public class TextMessageEventHandlerImpl implements TextMessageEventHandler {
 
     private final SessionPool sessionPool;
-    private final ErrorBlock errorBlock;
-    private final TextHandler textHandler;
+    private final BlockError blockError;
+    private final DefaultTextHandler defaultTextHandler;
 
     @Autowired
     public TextMessageEventHandlerImpl(
         SessionPool sessionPool,
-        ErrorBlock errorBlock,
-        TextHandler textHandler
+        BlockError blockError,
+        DefaultTextHandler defaultTextHandler
     ) {
         this.sessionPool = sessionPool;
-        this.errorBlock = errorBlock;
-        this.textHandler = textHandler;
+        this.blockError = blockError;
+        this.defaultTextHandler = defaultTextHandler;
     }
 
     @Override
@@ -38,13 +38,13 @@ public class TextMessageEventHandlerImpl implements TextMessageEventHandler {
         );
 
         try {
-            textHandler.handle(
+            defaultTextHandler.handle(
                 event.getText(),
                 session
             );
         } catch (Exception e) {
             e.printStackTrace();
-            errorBlock.send(session.getUser());
+            blockError.send(session.getUser());
         }
     }
 }

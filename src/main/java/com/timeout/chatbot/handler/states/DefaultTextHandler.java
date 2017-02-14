@@ -10,7 +10,7 @@ import com.timeout.chatbot.domain.nlu.NluResult;
 import com.timeout.chatbot.domain.nlu.intent.NluIntentType;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentService;
-import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStateTextHandler;
+import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewTextHandler;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.services.NluService;
@@ -22,7 +22,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class TextHandler {
+public class DefaultTextHandler {
 
     private final IntentService intentService;
     private final NluService nluService;
@@ -30,17 +30,17 @@ public class TextHandler {
     private final GraffittiService graffittiService;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
     private final BlockService blockService;
-    private final SubmittingReviewStateTextHandler submittingReviewStateTextHandler;
+    private final SubmittingReviewTextHandler submittingReviewStateTextHandler;
 
     @Autowired
-    public TextHandler(
+    public DefaultTextHandler(
         IntentService intentService,
         NluService nluService,
         MessengerSendClient msc,
         GraffittiService graffittiService,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
         BlockService blockService,
-        SubmittingReviewStateTextHandler submittingReviewStateTextHandler
+        SubmittingReviewTextHandler submittingReviewStateTextHandler
     ) {
         this.intentService = intentService;
         this.nluService = nluService;

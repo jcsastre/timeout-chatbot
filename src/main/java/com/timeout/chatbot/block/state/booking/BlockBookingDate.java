@@ -13,11 +13,11 @@ import java.util.List;
 import java.util.Locale;
 
 @Component
-public class BookingDateBlock {
+public class BlockBookingDate {
     private final MessengerSendClientWrapper messengerSendClientWrapper;
 
     @Autowired
-    public BookingDateBlock(
+    public BlockBookingDate(
         MessengerSendClientWrapper messengerSendClientWrapper
     ) {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
