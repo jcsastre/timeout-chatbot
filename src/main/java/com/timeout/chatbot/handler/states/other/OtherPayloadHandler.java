@@ -1,4 +1,4 @@
-package com.timeout.chatbot.handler.states;
+package com.timeout.chatbot.handler.states.other;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
@@ -9,6 +9,7 @@ import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentService;
+import com.timeout.chatbot.handler.states.DefaultTextHandler;
 import com.timeout.chatbot.handler.states.booking.BookingBeginHandler;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.GraffittiService;
@@ -25,7 +26,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class DefaultPayloadHandler {
+public class OtherPayloadHandler {
 
     private final IntentService intentService;
     private final BlockService blockService;
@@ -36,7 +37,7 @@ public class DefaultPayloadHandler {
     private final BookingBeginHandler bookingBeginHandler;
 
     @Autowired
-    public DefaultPayloadHandler(
+    public OtherPayloadHandler(
         IntentService intentService,
         BlockService blockService,
         MessengerSendClient messengerSendClient,

@@ -17,22 +17,25 @@ public class BookingStatePayloadHandler {
 
     private final BlockService blockService;
     private final BookingPeopleCountHandler bookingPeopleCountHandler;
+    private final BookingDateHandler bookingDateHandler;
+    private final BookingTimeHandler bookingTimeHandler;
 
     @Autowired
     public BookingStatePayloadHandler(
         BlockService blockService,
-        BookingPeopleCountHandler bookingPeopleCountHandler
-    ) {
+        BookingPeopleCountHandler bookingPeopleCountHandler,
+        BookingDateHandler bookingDateHandler, BookingTimeHandler bookingTimeHandler) {
         this.blockService = blockService;
         this.bookingPeopleCountHandler = bookingPeopleCountHandler;
+        this.bookingDateHandler = bookingDateHandler;
+        this.bookingTimeHandler = bookingTimeHandler;
     }
 
     public void handle(
-        String payloadAsString,
-        Session session
+        Session session,
+        JSONObject payload
     ) throws NluException, MessengerIOException, MessengerApiException, IOException, InterruptedException {
 
-        final JSONObject payload = new JSONObject(payloadAsString);
         final PayloadType payloadType = PayloadType.valueOf(payload.getString("type"));
 
         switch (payloadType) {
@@ -42,7 +45,11 @@ public class BookingStatePayloadHandler {
                 break;
 
             case booking_date:
-                //TODO
+                bookingDateHandler.handle(session, payload);
+                break;
+
+            case booking_time:
+                bookingTimeHandler.handle(session, payload);
                 break;
 
             default:

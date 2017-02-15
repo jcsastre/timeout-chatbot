@@ -36,11 +36,10 @@ public class SubmittingReviewStatePayloadHandler {
     }
 
     public void handle(
-        String payloadAsString,
-        Session session
+        Session session,
+        JSONObject payload
     ) throws NluException, MessengerIOException, MessengerApiException, IOException, InterruptedException {
 
-        final JSONObject payload = new JSONObject(payloadAsString);
         final PayloadType payloadType = PayloadType.valueOf(payload.getString("type"));
 
         switch (payloadType) {
