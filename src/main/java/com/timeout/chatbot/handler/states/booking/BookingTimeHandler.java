@@ -31,22 +31,6 @@ public class BookingTimeHandler {
         JSONObject payload
     ) throws MessengerApiException, MessengerIOException {
 
-        switch (session.getSessionState()) {
-
-            case BOOKING:
-                handleStateBooking(session, payload);
-                break;
-
-            default:
-                blockError.send(session.getUser());
-        }
-    }
-
-    private void handleStateBooking(
-        Session session,
-        JSONObject payload
-    ) throws MessengerApiException, MessengerIOException {
-
         final SessionStateBookingBag bag = session.getSessionStateBookingBag();
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.TIME) {

@@ -3,8 +3,7 @@ package com.timeout.chatbot.block.state.booking;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.github.messenger4j.send.buttons.Button;
-import com.github.messenger4j.send.templates.ButtonTemplate;
+import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Component
 public class BlockConfirmationBookingDetails {
@@ -32,17 +32,6 @@ public class BlockConfirmationBookingDetails {
 
     ) throws MessengerApiException, MessengerIOException {
 
-        messengerSendClient.sendTemplate(
-            userId,
-            buildButtonTemplate(peopleCount, localDate, localTime)
-        );
-    }
-
-    private ButtonTemplate buildButtonTemplate(
-        Integer peopleCount,
-        LocalDate localDate,
-        LocalTime localTime
-    ) {
         String msg =
             "Is that booking information correct?:\n" +
                 "\n" +
@@ -50,23 +39,31 @@ public class BlockConfirmationBookingDetails {
                 "Date: " + localDate + "\n" +
                 "Time: " + localTime;
 
-        return ButtonTemplate.newBuilder(
+        messengerSendClient.sendTextMessage(
+            userId,
             msg,
-            Button.newListBuilder()
-                .addPostbackButton(
-                    "Yes",
-                    new JSONObject()
-                        .put("type", PayloadType.booking_info_ok)
-                        .toString()
-                ).toList()
-                .addPostbackButton(
-                    "No",
-                    new JSONObject()
-                        .put("type", PayloadType.booking_info_not_ok)
-                        .toString()
-                ).toList()
+            buildQuickReplies()
+        );
+    }
 
-                .build()
-        ).build();
+    private List<QuickReply> buildQuickReplies() {
+
+        final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
+
+        listBuilder.addTextQuickReply(
+            "Yes",
+            new JSONObject()
+                .put("type", PayloadType.booking_info_ok)
+                .toString()
+        ).toList();
+
+        listBuilder.addTextQuickReply(
+            "No",
+            new JSONObject()
+                .put("type", PayloadType.booking_info_not_ok)
+                .toString()
+        ).toList();
+
+        return listBuilder.build();
     }
 }

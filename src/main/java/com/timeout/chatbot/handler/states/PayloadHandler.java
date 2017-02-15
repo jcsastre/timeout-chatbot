@@ -9,8 +9,8 @@ import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentService;
-import com.timeout.chatbot.handler.states.booking.BookingBeginHandler;
 import com.timeout.chatbot.handler.states.booking.BookingStatePayloadHandler;
+import com.timeout.chatbot.handler.states.item.ItemStatePayloadHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStatePayloadHandler;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.GraffittiService;
@@ -35,10 +35,9 @@ public class PayloadHandler {
     private final DefaultTextHandler defaultTextHandler;
     private final GraffittiService graffittiService;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
-    private final BookingBeginHandler bookingBeginHandler;
     private final SubmittingReviewStatePayloadHandler submittingReviewStatePayloadHandler;
     private final BookingStatePayloadHandler bookingStatePayloadHandler;
-
+    private final ItemStatePayloadHandler itemStatePayloadHandler;
 
     @Autowired
     public PayloadHandler(
@@ -48,19 +47,18 @@ public class PayloadHandler {
         DefaultTextHandler defaultTextHandler,
         GraffittiService graffittiService,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
-        BookingBeginHandler bookingBeginHandler,
         SubmittingReviewStatePayloadHandler submittingReviewStatePayloadHandler,
-        BookingStatePayloadHandler bookingStatePayloadHandler
-    ) {
+        BookingStatePayloadHandler bookingStatePayloadHandler,
+        ItemStatePayloadHandler itemStatePayloadHandler) {
         this.intentService = intentService;
         this.blockService = blockService;
         this.messengerSendClient = messengerSendClient;
         this.defaultTextHandler = defaultTextHandler;
         this.graffittiService = graffittiService;
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
-        this.bookingBeginHandler = bookingBeginHandler;
         this.submittingReviewStatePayloadHandler = submittingReviewStatePayloadHandler;
         this.bookingStatePayloadHandler = bookingStatePayloadHandler;
+        this.itemStatePayloadHandler = itemStatePayloadHandler;
     }
 
     public void handle(
@@ -84,6 +82,9 @@ public class PayloadHandler {
 
             try {
                 switch (sessionState) {
+
+                    case ITEM:
+                        itemStatePayloadHandler.handle(session, payload);
 
                     case SUBMITTING_REVIEW:
                         submittingReviewStatePayloadHandler.handle(session, payload);
@@ -248,10 +249,6 @@ public class PayloadHandler {
                     session.getUser().getMessengerId(),
                     "Please attach one or more photos"
                 );
-                break;
-
-            case book:
-                bookingBeginHandler.handle(session);
                 break;
 
             case submit_review:

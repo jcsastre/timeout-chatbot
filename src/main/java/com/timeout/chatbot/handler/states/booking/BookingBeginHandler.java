@@ -34,21 +34,6 @@ public class BookingBeginHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        switch (session.getSessionState()) {
-
-            case ITEM:
-                handleStateItem(session);
-                break;
-
-            default:
-                blockService.sendErrorBlock(session.getUser());
-        }
-    }
-
-    private void handleStateItem(
-        Session session
-    ) throws MessengerApiException, MessengerIOException {
-
         final SessionStateItemBag itemBag = session.getSessionStateItemBag();
 
         final GraffittiType graffittiType = itemBag.getGraffittiType();

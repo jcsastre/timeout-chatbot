@@ -1,30 +1,33 @@
 package com.timeout.chatbot.block.state.booking;
 
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
+import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.ButtonTemplate;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BookingFirstnameConfirmationBlock {
-    private final MessengerSendClientWrapper messengerSendClientWrapper;
+public class BlockBookingFirstnameConfirmation {
+
+    private final MessengerSendClient messengerSendClient;
 
     @Autowired
-    public BookingFirstnameConfirmationBlock(
-        MessengerSendClientWrapper messengerSendClientWrapper
+    public BlockBookingFirstnameConfirmation(
+        MessengerSendClient messengerSendClient
     ) {
-        this.messengerSendClientWrapper = messengerSendClientWrapper;
+        this.messengerSendClient = messengerSendClient;
     }
 
     public void send(
         String userId,
         String userFirstName
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
 
-        messengerSendClientWrapper.sendTemplate(
+        messengerSendClient.sendTemplate(
             userId,
             ButtonTemplate.newBuilder(
                 "Can I use '" + userFirstName + "' as your first name for the booking?",

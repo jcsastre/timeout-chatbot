@@ -9,19 +9,19 @@ public class BookingBlocksHelper {
 
     private final BlockBookingDate blockBookingDate;
     private final BlockBookingTime blockBookingTime;
-    private final BookingFirstnameConfirmationBlock bookingFirstnameConfirmationBlock;
+    private final BlockBookingFirstnameConfirmation blockBookingFirstnameConfirmation;
     private final BookingLastnameConfirmationBlock bookingLastnameConfirmationBlock;
 
     @Autowired
     public BookingBlocksHelper(
         BlockBookingDate blockBookingDate,
         BlockBookingTime blockBookingTime,
-        BookingFirstnameConfirmationBlock bookingFirstnameConfirmationBlock,
+        BlockBookingFirstnameConfirmation blockBookingFirstnameConfirmation,
         BookingLastnameConfirmationBlock bookingLastnameConfirmationBlock
     ) {
         this.blockBookingDate = blockBookingDate;
         this.blockBookingTime = blockBookingTime;
-        this.bookingFirstnameConfirmationBlock = bookingFirstnameConfirmationBlock;
+        this.blockBookingFirstnameConfirmation = blockBookingFirstnameConfirmation;
         this.bookingLastnameConfirmationBlock = bookingLastnameConfirmationBlock;
     }
 
@@ -43,7 +43,7 @@ public class BookingBlocksHelper {
         User user
     )
     {
-        bookingFirstnameConfirmationBlock.send(
+        blockBookingFirstnameConfirmation.send(
             user.getMessengerId(),
             user.getFbUserProfile().getFirstName()
         );

@@ -2,9 +2,9 @@ package com.timeout.chatbot.handler.states.booking;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
+import com.timeout.chatbot.block.BlockError;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,20 +15,28 @@ import java.io.IOException;
 @Component
 public class BookingStatePayloadHandler {
 
-    private final BlockService blockService;
+    private final BlockError blockError;
     private final BookingPeopleCountHandler bookingPeopleCountHandler;
     private final BookingDateHandler bookingDateHandler;
     private final BookingTimeHandler bookingTimeHandler;
+    private final BookingConfirmationBookingDetailsOkHandler bookingConfirmationBookingDetailsOkHandler;
+    private final BookingConfirmationBookingDetailsNotOkHandler bookingConfirmationBookingDetailsNotOkHandler;
 
     @Autowired
     public BookingStatePayloadHandler(
-        BlockService blockService,
+        BlockError blockError,
         BookingPeopleCountHandler bookingPeopleCountHandler,
-        BookingDateHandler bookingDateHandler, BookingTimeHandler bookingTimeHandler) {
-        this.blockService = blockService;
+        BookingDateHandler bookingDateHandler,
+        BookingTimeHandler bookingTimeHandler,
+        BookingConfirmationBookingDetailsOkHandler bookingConfirmationBookingDetailsOkHandler,
+        BookingConfirmationBookingDetailsNotOkHandler bookingConfirmationBookingDetailsNotOkHandler
+    ) {
+        this.blockError = blockError;
         this.bookingPeopleCountHandler = bookingPeopleCountHandler;
         this.bookingDateHandler = bookingDateHandler;
         this.bookingTimeHandler = bookingTimeHandler;
+        this.bookingConfirmationBookingDetailsOkHandler = bookingConfirmationBookingDetailsOkHandler;
+        this.bookingConfirmationBookingDetailsNotOkHandler = bookingConfirmationBookingDetailsNotOkHandler;
     }
 
     public void handle(
@@ -52,8 +60,16 @@ public class BookingStatePayloadHandler {
                 bookingTimeHandler.handle(session, payload);
                 break;
 
+            case booking_info_ok:
+                bookingConfirmationBookingDetailsOkHandler.handle(session, payload);
+                break;
+
+            case booking_info_not_ok:
+                bookingConfirmationBookingDetailsNotOkHandler.handle(session, payload);
+                break;
+
             default:
-                blockService.sendErrorBlock(session.getUser());
+                blockError.send(session.getUser());
                 break;
         }
     }
