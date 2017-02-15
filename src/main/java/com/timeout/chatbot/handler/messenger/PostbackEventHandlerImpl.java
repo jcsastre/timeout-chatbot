@@ -4,7 +4,7 @@ import com.github.messenger4j.receive.events.PostbackEvent;
 import com.github.messenger4j.receive.handlers.PostbackEventHandler;
 import com.timeout.chatbot.block.BlockError;
 import com.timeout.chatbot.domain.page.PageUid;
-import com.timeout.chatbot.handler.states.PayloadHandler;
+import com.timeout.chatbot.handler.states.DefaultPayloadHandler;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionPool;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,17 +14,17 @@ import org.springframework.stereotype.Component;
 public class PostbackEventHandlerImpl implements PostbackEventHandler {
 
     private final SessionPool sessionPool;
-    private final PayloadHandler payloadHandler;
+    private final DefaultPayloadHandler defaultPayloadHandler;
     private final BlockError blockError;
 
     @Autowired
     public PostbackEventHandlerImpl(
         SessionPool sessionPool,
-        PayloadHandler payloadHandler,
+        DefaultPayloadHandler defaultPayloadHandler,
         BlockError blockError
     ) {
         this.sessionPool = sessionPool;
-        this.payloadHandler = payloadHandler;
+        this.defaultPayloadHandler = defaultPayloadHandler;
         this.blockError = blockError;
     }
 
@@ -50,7 +50,7 @@ public class PostbackEventHandlerImpl implements PostbackEventHandler {
         );
 
         try {
-            payloadHandler.handle(payload, session);
+            defaultPayloadHandler.handle(payload, session);
         } catch (Exception e) {
             e.printStackTrace();
             blockError.send(session.getUser());

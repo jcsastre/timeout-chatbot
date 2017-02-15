@@ -1,8 +1,10 @@
 package com.timeout.chatbot.block.state.booking;
 
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
+import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,19 +16,21 @@ import java.util.Locale;
 
 @Component
 public class BlockBookingDate {
-    private final MessengerSendClientWrapper messengerSendClientWrapper;
+
+    private final MessengerSendClient messengerSendClient;
 
     @Autowired
     public BlockBookingDate(
-        MessengerSendClientWrapper messengerSendClientWrapper
+        MessengerSendClient messengerSendClient
     ) {
-        this.messengerSendClientWrapper = messengerSendClientWrapper;
+        this.messengerSendClient = messengerSendClient;
     }
 
     public void send(
         String userId
-    ) {
-        messengerSendClientWrapper.sendTextMessage(
+    ) throws MessengerApiException, MessengerIOException {
+
+        messengerSendClient.sendTextMessage(
             userId,
             "When are you coming? You can type stuff like 'tomorrow', 'next Wednesday', 'Thursday 20th', etc",
             buildQuickReplies()

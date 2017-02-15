@@ -10,8 +10,8 @@ import com.timeout.chatbot.domain.nlu.NluResult;
 import com.timeout.chatbot.domain.nlu.intent.NluIntentType;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentService;
-import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewTextHandler;
-import com.timeout.chatbot.services.BlockService;
+import com.timeout.chatbot.handler.states.booking.BookingStateTextHandler;
+import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStateTextHandler;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.services.NluService;
 import com.timeout.chatbot.session.Session;
@@ -29,8 +29,8 @@ public class DefaultTextHandler {
     private final MessengerSendClient msc;
     private final GraffittiService graffittiService;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
-    private final BlockService blockService;
-    private final SubmittingReviewTextHandler submittingReviewStateTextHandler;
+    private final SubmittingReviewStateTextHandler submittingReviewStateTextHandler;
+    private final BookingStateTextHandler bookingStateTextHandler;
 
     @Autowired
     public DefaultTextHandler(
@@ -39,16 +39,16 @@ public class DefaultTextHandler {
         MessengerSendClient msc,
         GraffittiService graffittiService,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
-        BlockService blockService,
-        SubmittingReviewTextHandler submittingReviewStateTextHandler
+        SubmittingReviewStateTextHandler submittingReviewStateTextHandler,
+        BookingStateTextHandler bookingStateTextHandler
     ) {
         this.intentService = intentService;
         this.nluService = nluService;
         this.msc = msc;
         this.graffittiService = graffittiService;
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
-        this.blockService = blockService;
         this.submittingReviewStateTextHandler = submittingReviewStateTextHandler;
+        this.bookingStateTextHandler = bookingStateTextHandler;
     }
 
     public void handle(
@@ -62,6 +62,10 @@ public class DefaultTextHandler {
 
             case SUBMITTING_REVIEW:
                 submittingReviewStateTextHandler.handle(text, session);
+                break;
+
+            case BOOKING:
+                bookingStateTextHandler.handle(text, session);
                 break;
 
             default:

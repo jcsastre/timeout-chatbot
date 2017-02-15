@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class PayloadHandler {
+public class DefaultPayloadHandler {
 
     private final IntentService intentService;
     private final BlockService blockService;
@@ -40,7 +40,7 @@ public class PayloadHandler {
     private final ItemStatePayloadHandler itemStatePayloadHandler;
 
     @Autowired
-    public PayloadHandler(
+    public DefaultPayloadHandler(
         IntentService intentService,
         BlockService blockService,
         MessengerSendClient messengerSendClient,
