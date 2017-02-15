@@ -1,4 +1,4 @@
-package com.timeout.chatbot.block;
+package com.timeout.chatbot.block.state.booking;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
@@ -7,12 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class VersionInfoBlock {
-
+public class BlockBookingAskEmail {
     private final MessengerSendClient messengerSendClient;
 
     @Autowired
-    public VersionInfoBlock(
+    public BlockBookingAskEmail(
         MessengerSendClient messengerSendClient
     ) {
         this.messengerSendClient = messengerSendClient;
@@ -21,10 +20,9 @@ public class VersionInfoBlock {
     public void send(
         String userId
     ) throws MessengerApiException, MessengerIOException {
-
         messengerSendClient.sendTextMessage(
             userId,
-            "[Developer note: This is the chatbot prototype v2]"
+            "Please, type a valid email"
         );
     }
 }

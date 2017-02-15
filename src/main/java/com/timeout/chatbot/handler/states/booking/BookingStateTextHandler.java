@@ -3,12 +3,13 @@ package com.timeout.chatbot.handler.states.booking;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
+import com.timeout.chatbot.block.state.booking.BlockBookingAskEmail;
+import com.timeout.chatbot.block.state.booking.BlockBookingPeopleCount;
 import com.timeout.chatbot.domain.nlu.NluException;
-import com.timeout.chatbot.handler.intent.IntentService;
-import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateBookingBag;
 import com.timeout.chatbot.session.state.BookingState;
+import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,19 +18,21 @@ import java.io.IOException;
 @Component
 public class BookingStateTextHandler {
 
-    private final IntentService intentService;
     private final MessengerSendClient msc;
-    private final BlockService blockService;
+    private final BlockBookingPeopleCount blockBookingPeopleCount;
+    private final BookingStateHandler bookingStateHandler;
+    private final BlockBookingAskEmail blockBookingAskEmail;
 
     @Autowired
     public BookingStateTextHandler(
-        IntentService intentService,
         MessengerSendClient msc,
-        BlockService blockService
-    ) {
-        this.intentService = intentService;
+        BlockBookingPeopleCount blockBookingPeopleCount,
+        BookingStateHandler bookingStateHandler,
+        BlockBookingAskEmail blockBookingAskEmail) {
+        this.blockBookingPeopleCount = blockBookingPeopleCount;
         this.msc = msc;
-        this.blockService = blockService;
+        this.bookingStateHandler = bookingStateHandler;
+        this.blockBookingAskEmail = blockBookingAskEmail;
     }
 
     public void handle(
@@ -63,8 +66,17 @@ public class BookingStateTextHandler {
                 break;
 
             case LAST_NAME:
-                //TODO
+                handleLastName(text, session);
                 break;
+
+            case EMAIL:
+                handleEmail(text, session);
+                break;
+
+            case PHONE:
+                handlePhone(text, session);
+                break;
+
 
             default:
                 //TODO
@@ -74,14 +86,69 @@ public class BookingStateTextHandler {
     private void handePeopleCount(
         String text,
         Session session
-    ) {
-        //TODO
+    ) throws MessengerApiException, MessengerIOException {
+
+        try {
+
+            final int peopleCount = Integer.parseInt(text);
+
+            bookingStateHandler.setPeopleCountAndContinue(session, peopleCount);
+
+        } catch (NumberFormatException e) {
+            final String userMessengerId = session.getUser().getMessengerId();
+            msc.sendTextMessage(
+                userMessengerId,
+                "Please, enter a number for the number of people"
+            );
+            blockBookingPeopleCount.send(userMessengerId);
+        }
     }
 
     private void handleFirstName(
-        String text,
+        String firstName,
         Session session
-    ) {
-        //TODO
+    ) throws MessengerApiException, MessengerIOException {
+
+        bookingStateHandler.setFirstNameAndContinue(
+            session,
+            firstName
+        );
+    }
+
+    private void handleLastName(
+        String lastName,
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+
+        bookingStateHandler.setLastNameAndContinue(
+            session,
+            lastName
+        );
+    }
+
+    private void handleEmail(
+        String email,
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+
+        if (EmailValidator.getInstance().isValid(email)) {
+            bookingStateHandler.setEmailAndContinue(
+                session,
+                email
+            );
+        } else {
+            blockBookingAskEmail.send(session.getUser().getMessengerId());
+        }
+    }
+
+    private void handlePhone(
+        String phone,
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+
+        bookingStateHandler.setPhoneAndContinue(
+            session,
+            phone
+        );
     }
 }

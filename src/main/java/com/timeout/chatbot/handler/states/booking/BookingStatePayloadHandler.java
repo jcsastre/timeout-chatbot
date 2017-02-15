@@ -21,34 +21,31 @@ import java.time.LocalTime;
 @Component
 public class BookingStatePayloadHandler {
 
-    private final BlockBookingDate blockBookingDate;
+    private final BookingStateHandler bookingStateHandler;
     private final BlockBookingTime blockBookingTime;
     private final BlockConfirmationBookingDetails blockConfirmationBookingDetails;
     private final BlockBookingAskFirstname blockBookingAskFirstname;
     private final BlockBookingFbFirstNameConfirmation blockBookingFbFirstNameConfirmation;
-    private final BlockBookingFbLastNameConfirmation blockBookingFbLastNameConfirmation;
     private final BlockBookingAskLastname blockBookingAskLastname;
     private final BlockError blockError;
 
     @Autowired
     public BookingStatePayloadHandler(
-        BlockError blockError,
-        BlockBookingDate blockBookingDate,
+        BookingStateHandler bookingStateHandler,
         BlockBookingTime blockBookingTime,
         BlockConfirmationBookingDetails blockConfirmationBookingDetails,
         BlockBookingAskFirstname blockBookingAskFirstname,
         BlockBookingFbFirstNameConfirmation blockBookingFbFirstNameConfirmation,
-        BlockBookingFbLastNameConfirmation blockBookingFbLastNameConfirmation,
-        BlockBookingAskLastname blockBookingAskLastname
+        BlockBookingAskLastname blockBookingAskLastname,
+        BlockError blockError
     ) {
-        this.blockError = blockError;
-        this.blockBookingDate = blockBookingDate;
+        this.bookingStateHandler = bookingStateHandler;
         this.blockBookingTime = blockBookingTime;
         this.blockConfirmationBookingDetails = blockConfirmationBookingDetails;
         this.blockBookingAskFirstname = blockBookingAskFirstname;
         this.blockBookingFbFirstNameConfirmation = blockBookingFbFirstNameConfirmation;
-        this.blockBookingFbLastNameConfirmation = blockBookingFbLastNameConfirmation;
         this.blockBookingAskLastname = blockBookingAskLastname;
+        this.blockError = blockError;
     }
 
     public void handle(
@@ -111,10 +108,10 @@ public class BookingStatePayloadHandler {
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.PEOPLE_COUNT) {
 
-            bag.setPeopleCount(payload.getInt("count"));
-            bag.setBookingState(BookingState.DATE);
-
-            blockBookingDate.send(session.getUser().getMessengerId());
+            bookingStateHandler.setPeopleCountAndContinue(
+                session,
+                payload.getInt("count")
+            );
         } else {
             blockError.send(session.getUser());
         }
@@ -203,17 +200,10 @@ public class BookingStatePayloadHandler {
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.FIRST_NAME) {
 
-            bag.setFirstName(session.getUser().getFbUserProfile().getFirstName());
-
-            bag.setBookingState(BookingState.LAST_NAME);
-
-            final User user = session.getUser();
-            final String lastName = user.getFbUserProfile().getLastName();
-            if (lastName != null) {
-                blockBookingFbLastNameConfirmation.send(user);
-            } else {
-                blockBookingAskLastname.send(user.getMessengerId());
-            }
+            bookingStateHandler.setFirstNameAndContinue(
+                session,
+                session.getUser().getFbUserProfile().getFirstName()
+            );
         } else {
             blockError.send(session.getUser());
         }
@@ -234,14 +224,16 @@ public class BookingStatePayloadHandler {
 
     private void handleLastNameFbOk(
         Session session
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
 
         final SessionStateBookingBag bag = session.getSessionStateBookingBag();
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.LAST_NAME) {
 
-            bag.setLastName(session.getUser().getFbUserProfile().getLastName());
-            //TODO
+            bookingStateHandler.setLastNameAndContinue(
+                session,
+                session.getUser().getFbUserProfile().getLastName()
+            );
         } else {
             blockError.send(session.getUser());
         }
