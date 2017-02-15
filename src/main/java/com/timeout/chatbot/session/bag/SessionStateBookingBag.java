@@ -11,6 +11,8 @@ public class SessionStateBookingBag {
     private Integer peopleCount;
     private LocalDate localDate;
     private LocalTime localTime;
+    private String firstName;
+    private String lastName;
 
     public BookingState getBookingState() {
         return bookingState;
@@ -42,5 +44,21 @@ public class SessionStateBookingBag {
 
     public void setLocalTime(LocalTime localTime) {
         this.localTime = localTime;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 }

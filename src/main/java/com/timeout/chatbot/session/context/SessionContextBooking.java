@@ -1,12 +1,13 @@
 package com.timeout.chatbot.session.context;
 
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.receive.events.AttachmentMessageEvent;
 import com.github.messenger4j.receive.events.PostbackEvent;
 import com.github.messenger4j.receive.events.QuickReplyMessageEvent;
 import com.github.messenger4j.receive.events.TextMessageEvent;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.ButtonTemplate;
-import com.timeout.chatbot.block.state.booking.BookingBlocksHelper;
 import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
@@ -24,7 +25,7 @@ public class SessionContextBooking extends SessionContext {
     private BookingState bookingState;
 
     private final MessengerSendClientWrapper messengerSendClientWrapper;
-    private final BookingBlocksHelper bookingBlocksHelper;
+//    private final BookingBlocksHelper bookingBlocksHelper;
 
     private Integer peopleCount;
     private LocalDate localDate;
@@ -37,14 +38,14 @@ public class SessionContextBooking extends SessionContext {
     public SessionContextBooking(
         User user,
         ApiAiService apiAiService,
-        MessengerSendClientWrapper messengerSendClientWrapper,
-        BookingBlocksHelper bookingBlocksHelper
+        MessengerSendClientWrapper messengerSendClientWrapper
+//        BookingBlocksHelper bookingBlocksHelper
     ) {
         super(user, apiAiService, messengerSendClientWrapper);
 
         this.user = user;
         this.messengerSendClientWrapper = messengerSendClientWrapper;
-        this.bookingBlocksHelper = bookingBlocksHelper;
+//        this.bookingBlocksHelper = bookingBlocksHelper;
 
 //        this.bookingState = BookingState.UNKOWN;
     }
@@ -72,7 +73,7 @@ public class SessionContextBooking extends SessionContext {
                     Integer peopleCount = Integer.parseInt(utterance);
                     setPeopleCount(peopleCount);
                     bookingState = BookingState.DATE;
-                    bookingBlocksHelper.sendBookingDateBlock(user);
+//                    bookingBlocksHelper.sendBookingDateBlock(user);
                 } catch (NumberFormatException e) {
                     sendTextMessage("Please, type a number");
                 }
@@ -191,10 +192,10 @@ public class SessionContextBooking extends SessionContext {
         messengerSendClientWrapper.sendTemplate(user.getMessengerId(), yes);
     }
 
-    private void askFirstName() {
+    private void askFirstName() throws MessengerApiException, MessengerIOException {
         final String firstName = user.getFbUserProfile().getFirstName();
         if (firstName != null) {
-            bookingBlocksHelper.sendBookingFirstnameConfirmationBlock(user);
+//            bookingBlocksHelper.sendBookingFirstnameConfirmationBlock(user);
         } else {
             sendTextMessage("Please, type your first name");
         }
@@ -203,7 +204,7 @@ public class SessionContextBooking extends SessionContext {
     private void askLastName() {
         final String lastName = user.getFbUserProfile().getLastName();
         if (lastName != null) {
-            bookingBlocksHelper.sendBookingLastnameConfirmationBlock(user);
+//            bookingBlocksHelper.sendBookingLastnameConfirmationBlock(user);
         } else {
             sendTextMessage("Please, type your last name");
         }
@@ -222,7 +223,7 @@ public class SessionContextBooking extends SessionContext {
                 case booking_people_count:
                     setPeopleCount(Integer.parseInt(payloadAsJson.getString("count")));
                     bookingState = BookingState.DATE;
-                    bookingBlocksHelper.sendBookingDateBlock(user);
+//                    bookingBlocksHelper.sendBookingDateBlock(user);
                     break;
 
                 case booking_date:
@@ -232,7 +233,7 @@ public class SessionContextBooking extends SessionContext {
                         );
                     setLocalDate(date);
                     bookingState = BookingState.TIME;
-                    bookingBlocksHelper.sendBookingTimeBlock(user);
+//                    bookingBlocksHelper.sendBookingTimeBlock(user);
                     break;
 
                 case booking_time:

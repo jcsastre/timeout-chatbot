@@ -21,6 +21,10 @@ public class BookingStatePayloadHandler {
     private final BookingTimeHandler bookingTimeHandler;
     private final BookingConfirmationBookingDetailsOkHandler bookingConfirmationBookingDetailsOkHandler;
     private final BookingConfirmationBookingDetailsNotOkHandler bookingConfirmationBookingDetailsNotOkHandler;
+    private final BookingFbFirstNameOkHandler bookingFbFirstNameOkHandler;
+    private final BookingFbFirstNameNotOkHandler bookingFbFirstNameNotOkHandler;
+    private final BookingFbLastNameOkHandler bookingFbLastNameOkHandler;
+    private final BookingFbLastNameNotOkHandler bookingFbLastNameNotOkHandler;
 
     @Autowired
     public BookingStatePayloadHandler(
@@ -29,14 +33,18 @@ public class BookingStatePayloadHandler {
         BookingDateHandler bookingDateHandler,
         BookingTimeHandler bookingTimeHandler,
         BookingConfirmationBookingDetailsOkHandler bookingConfirmationBookingDetailsOkHandler,
-        BookingConfirmationBookingDetailsNotOkHandler bookingConfirmationBookingDetailsNotOkHandler
-    ) {
+        BookingConfirmationBookingDetailsNotOkHandler bookingConfirmationBookingDetailsNotOkHandler,
+        BookingFbFirstNameOkHandler bookingFbFirstNameOkHandler, BookingFbFirstNameNotOkHandler bookingFbFirstNameNotOkHandler, BookingFbLastNameOkHandler bookingFbLastNameOkHandler, BookingFbLastNameNotOkHandler bookingFbLastNameNotOkHandler) {
         this.blockError = blockError;
         this.bookingPeopleCountHandler = bookingPeopleCountHandler;
         this.bookingDateHandler = bookingDateHandler;
         this.bookingTimeHandler = bookingTimeHandler;
         this.bookingConfirmationBookingDetailsOkHandler = bookingConfirmationBookingDetailsOkHandler;
         this.bookingConfirmationBookingDetailsNotOkHandler = bookingConfirmationBookingDetailsNotOkHandler;
+        this.bookingFbFirstNameOkHandler = bookingFbFirstNameOkHandler;
+        this.bookingFbFirstNameNotOkHandler = bookingFbFirstNameNotOkHandler;
+        this.bookingFbLastNameOkHandler = bookingFbLastNameOkHandler;
+        this.bookingFbLastNameNotOkHandler = bookingFbLastNameNotOkHandler;
     }
 
     public void handle(
@@ -61,11 +69,27 @@ public class BookingStatePayloadHandler {
                 break;
 
             case booking_info_ok:
-                bookingConfirmationBookingDetailsOkHandler.handle(session, payload);
+                bookingConfirmationBookingDetailsOkHandler.handle(session);
                 break;
 
             case booking_info_not_ok:
                 bookingConfirmationBookingDetailsNotOkHandler.handle(session, payload);
+                break;
+
+            case booking_first_name_fb_ok:
+                bookingFbFirstNameOkHandler.handle(session);
+                break;
+
+            case booking_first_name_fb_not_ok:
+                bookingFbFirstNameNotOkHandler.handle(session);
+                break;
+
+            case booking_last_name_fb_ok:
+                bookingFbLastNameOkHandler.handle(session);
+                break;
+
+            case booking_last_name_fb_not_ok:
+                bookingFbLastNameNotOkHandler.handle(session);
                 break;
 
             default:

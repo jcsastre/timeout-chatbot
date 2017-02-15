@@ -85,6 +85,7 @@ public class PayloadHandler {
 
                     case ITEM:
                         itemStatePayloadHandler.handle(session, payload);
+                        break;
 
                     case SUBMITTING_REVIEW:
                         submittingReviewStatePayloadHandler.handle(session, payload);
