@@ -4,6 +4,7 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.block.BlockError;
+import com.timeout.chatbot.block.state.booking.BlockBookingBeginDeveloperNote;
 import com.timeout.chatbot.block.state.booking.BlockBookingPeopleCount;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
@@ -24,16 +25,18 @@ public class ItemStatePayloadHandler {
 
     private final MessengerSendClient messengerSendClient;
     private final BlockBookingPeopleCount blockBookingPeopleCount;
+    private final BlockBookingBeginDeveloperNote blockBookingBeginDeveloperNote;
     private final BlockError blockError;
 
     @Autowired
     public ItemStatePayloadHandler(
         MessengerSendClient messengerSendClient,
         BlockBookingPeopleCount blockBookingPeopleCount,
-        BlockError blockError
+        BlockBookingBeginDeveloperNote blockBookingBeginDeveloperNote, BlockError blockError
     ) {
         this.messengerSendClient = messengerSendClient;
         this.blockBookingPeopleCount = blockBookingPeopleCount;
+        this.blockBookingBeginDeveloperNote = blockBookingBeginDeveloperNote;
         this.blockError = blockError;
     }
 
@@ -61,6 +64,8 @@ public class ItemStatePayloadHandler {
 
         final GraffittiType graffittiType = itemBag.getGraffittiType();
         if (graffittiType == GraffittiType.VENUE) {
+
+            blockBookingBeginDeveloperNote.send(session.getUser().getMessengerId());
 
             session.setSessionState(SessionState.BOOKING);
             final SessionStateBookingBag bookingBag = session.getSessionStateBookingBag();

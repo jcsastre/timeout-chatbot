@@ -8,6 +8,7 @@ import java.time.LocalTime;
 public class SessionStateBookingBag {
 
     private BookingState bookingState;
+
     private Integer peopleCount;
     private LocalDate localDate;
     private LocalTime localTime;

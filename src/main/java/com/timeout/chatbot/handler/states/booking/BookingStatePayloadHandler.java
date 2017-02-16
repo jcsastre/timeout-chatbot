@@ -93,6 +93,14 @@ public class BookingStatePayloadHandler {
                 handleLastNameFbNotOk(session);
                 break;
 
+            case booking_personal_info_ok:
+                handleBookingPersonalInfoOk(session);
+                break;
+
+            case booking_personal_info_not_ok:
+                handleBookingPersonalInfoNotOk(session);
+                break;
+
             default:
                 blockError.send(session.getUser());
                 break;
@@ -251,4 +259,33 @@ public class BookingStatePayloadHandler {
             blockError.send(session.getUser());
         }
     }
+
+    private void handleBookingPersonalInfoOk(
+        Session session
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+
+        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final BookingState bookingState = bag.getBookingState();
+        if (bookingState == BookingState.CONFIRMATION_PERSONAL_DETAILS) {
+
+            bookingStateHandler.confirmBooking(session);
+        } else {
+            blockError.send(session.getUser());
+        }
+    }
+
+    private void handleBookingPersonalInfoNotOk(
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+
+        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final BookingState bookingState = bag.getBookingState();
+        if (bookingState == BookingState.CONFIRMATION_PERSONAL_DETAILS) {
+
+            bookingStateHandler.canceldBooking(session);
+        } else {
+            blockError.send(session.getUser());
+        }
+    }
+
 }
