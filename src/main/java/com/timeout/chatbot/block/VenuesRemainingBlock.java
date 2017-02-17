@@ -1,15 +1,14 @@
 package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.QuickReply;
-import com.timeout.chatbot.domain.User;
+import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.SessionContextBag;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
+import com.timeout.chatbot.session.Session;
+import com.timeout.chatbot.session.bag.SessionStateLookingBag;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import java.util.List;
 
@@ -25,55 +24,62 @@ public class VenuesRemainingBlock {
     }
 
     public void send(
-        Session session,
-        String itemPluralName
+        Session session
     ) {
-        Assert.notNull(session, "The session must not be null");
-        Assert.notNull(itemPluralName, "The itemPluralName must not be null");
+        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
 
-        final User user = session.getUser();
-        final SessionContextBag sessionContextBag = session.getSessionContextBag();
-        final Integer remainingItems = sessionContextBag.getReaminingItems();
-        final Integer nextPageNumber = sessionContextBag.getPageNumber();
-        final SessionContextBag.Geolocation geolocation = sessionContextBag.getGeolocation();
+        String itemPluralName = "Restaurants";
+        if (bag.getWhat() == What.BAR) {
+            itemPluralName = "Bars & Pubs";
+        }
 
         messengerSendClientWrapper.sendTextMessage(
-            user.getMessengerId(),
+            session.getUser().getMessengerId(),
             String.format(
-                "There are %s %s remaining",
-                remainingItems, itemPluralName
+                "There are %s %s more",
+                bag.getReaminingItems(), itemPluralName
             ),
             buildQuickReplies(
-                remainingItems,
-                nextPageNumber,
-                geolocation
+                bag
             )
         );
     }
 
     private List<QuickReply> buildQuickReplies(
-        Integer remainingItems,
-        Integer nextPageNumber,
-        SessionContextBag.Geolocation sessionGeolocation
+        SessionStateLookingBag bag
     ) {
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
-        if (remainingItems > 0) {
+        if (bag.getReaminingItems() > 0) {
             listBuilder.addTextQuickReply(
                 "See more",
                 new JSONObject()
-                    .put("type", PayloadType.venues_see_more)
+                    .put("type", PayloadType.see_more)
                     .toString()
             ).toList();
         }
 
         listBuilder.addTextQuickReply(
-            sessionGeolocation == null ? "Set location" : "Change location",
+            "Area",
             new JSONObject()
-                .put("type", PayloadType.set_location)
+                .put("type", PayloadType.venues_show_areas)
+                .put("pageNumber", 1)
                 .toString()
         ).toList();
+
+//        String categorySingularName = "Cuisine";
+//        if (bag.getWhat() == What.BAR) {
+//            categorySingularName = "Style";
+//        }
+//
+//        listBuilder.addTextQuickReply(
+//            bag.getGraffittiWhatCategoryNode().getChildren() == null ?
+//                "Change " + categorySingularName : "Set " + categorySingularName,
+//            new JSONObject()
+//                .put("type", PayloadType.show_subcategories)
+//                .toString()
+//        ).toList();
 
         return listBuilder.build();
     }

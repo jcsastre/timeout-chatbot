@@ -1,7 +1,7 @@
 package com.timeout.chatbot.controllers;
 
 import com.timeout.chatbot.domain.FbUserProfile;
-import com.timeout.chatbot.domain.User;
+import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,0 +1,59 @@
+--- Get Started Button ---
+
+curl -X POST -H "Content-Type: application/json" -d '{
+  "setting_type":"call_to_actions",
+  "thread_state":"new_thread",
+  "call_to_actions":[
+    {
+      "payload": "{\"type\": \"get_started\"}"
+    }
+  ]
+}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAASeusXP6OEBAAjScKM2kehZBjhAYDsO3KgZCeZCMC21fPdRUylvhSMPA1UE7d27PveO5uDiBN0IgpgR3TRCaiirIpmfEzYQYlkbzNFZAZCgZASv1jTZC3V55vUI552ErvJWfyLHt8gQTsEjn8iPhAz44RkCYXMeocFUY3eWPoTREqnBmshPWC5"
+
+curl -X DELETE -H "Content-Type: application/json" -d '{
+  "setting_type":"call_to_actions",
+  "thread_state":"new_thread"
+}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAASeusXP6OEBAAjScKM2kehZBjhAYDsO3KgZCeZCMC21fPdRUylvhSMPA1UE7d27PveO5uDiBN0IgpgR3TRCaiirIpmfEzYQYlkbzNFZAZCgZASv1jTZC3V55vUI552ErvJWfyLHt8gQTsEjn8iPhAz44RkCYXMeocFUY3eWPoTREqnBmshPWC5"
+
+--- Greeting Text ---
+
+curl -X POST -H "Content-Type: application/json" -d '{
+  "setting_type":"greeting",
+  "greeting":{
+    "action":"Timeout London."
+  }
+}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAASeusXP6OEBAAjScKM2kehZBjhAYDsO3KgZCeZCMC21fPdRUylvhSMPA1UE7d27PveO5uDiBN0IgpgR3TRCaiirIpmfEzYQYlkbzNFZAZCgZASv1jTZC3V55vUI552ErvJWfyLHt8gQTsEjn8iPhAz44RkCYXMeocFUY3eWPoTREqnBmshPWC5"
+
+--- Persistent Menu ---
+
+curl -X POST -H "Content-Type: application/json" -d '{
+  "setting_type" : "call_to_actions",
+  "thread_state" : "existing_thread",
+  "call_to_actions":[
+    {
+      "type":"postback",
+      "title":"Start over",
+      "payload":"{\"type\": \"start_over\"}"
+    },
+    {
+      "type":"postback",
+      "title":"Search suggestions",
+      "payload":"{\"type\": \"search_suggestions\"}"
+    },
+    {
+      "type":"postback",
+      "title":"Most loved",
+      "payload":"{\"type\": \"most_loved\"}"
+    },
+    {
+      "type":"postback",
+      "title":"Discover",
+      "payload":"{\"type\": \"discover\"}"
+    },
+    {
+      "type":"postback",
+      "title":"Help",
+      "payload":"{\"type\": \"help\"}"
+    }
+  ]
+}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAASeusXP6OEBAAjScKM2kehZBjhAYDsO3KgZCeZCMC21fPdRUylvhSMPA1UE7d27PveO5uDiBN0IgpgR3TRCaiirIpmfEzYQYlkbzNFZAZCgZASv1jTZC3V55vUI552ErvJWfyLHt8gQTsEjn8iPhAz44RkCYXMeocFUY3eWPoTREqnBmshPWC5"

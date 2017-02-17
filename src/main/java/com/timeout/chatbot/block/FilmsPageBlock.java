@@ -3,11 +3,11 @@ package com.timeout.chatbot.block;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.graffitti.response.search.page.GraffittiSearchResponse;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.graffitti.domain.response.films.GraffitiFilm;
-import com.timeout.chatbot.graffitti.domain.response.search.page.PageItem;
-import com.timeout.chatbot.graffitti.domain.response.search.page.SearchResponse;
-import com.timeout.chatbot.graffitti.endpoints.FilmsEndpoint;
+import com.timeout.chatbot.graffitti.response.films.GraffitiFilmResponse;
+import com.timeout.chatbot.graffitti.response.search.page.PageItem;
+import com.timeout.chatbot.graffitti.uri.FilmsEndpoint;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,53 +41,49 @@ public class FilmsPageBlock {
             "Looking for Films within 500 meters."
         );
 
-        List<GraffitiFilm> graffitiFilms = new ArrayList<>();
+        List<GraffitiFilmResponse> graffitiFilmResponses = new ArrayList<>();
 
-        String url =
-            FilmsEndpoint.getUrl(
-                "node-7073",
-                session.getSessionContextBag().getGeolocation().getLatitude(),
-                session.getSessionContextBag().getGeolocation().getLongitude(),
-                pageNumber
-            );
-
-        final SearchResponse searchResponse =
+        final GraffittiSearchResponse graffittiSearchResponse =
             restTemplate.getForObject(
-                url,
-                SearchResponse.class
+                FilmsEndpoint.buildGeolocatedUri(
+                    session.getSessionStateLookingBag().getGeolocation().getLatitude(),
+                    session.getSessionStateLookingBag().getGeolocation().getLongitude(),
+                    pageNumber
+                ),
+                GraffittiSearchResponse.class
             );
 
-        final List<PageItem> pageItems = searchResponse.getPageItems();
+        final List<PageItem> pageItems = graffittiSearchResponse.getPageItems();
         for (PageItem pageItem : pageItems) {
-            graffitiFilms.add(
+            graffitiFilmResponses.add(
                 restTemplate.getForObject(
                     pageItem.getUrl(),
-                    GraffitiFilm.class
+                    GraffitiFilmResponse.class
                 )
             );
         }
 
         sendHorizontalCarroussel(
             session.getUser().getMessengerId(),
-            graffitiFilms
+            graffitiFilmResponses
         );
     }
 
     private void sendHorizontalCarroussel(
         String recipientId,
-        List<GraffitiFilm> graffitiFilms
+        List<GraffitiFilmResponse> graffitiFilmResponses
     ) {
         final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
         final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
-        for (GraffitiFilm graffitiFilm : graffitiFilms) {
+        for (GraffitiFilmResponse graffitiFilmResponse : graffitiFilmResponses) {
             final GenericTemplate.Element.Builder elementBuilder =
-                listBuilder.addElement(graffitiFilm.getBody().getName());
+                listBuilder.addElement(graffitiFilmResponse.getBody().getName());
 
-            if (graffitiFilm.getBody().getImageUrl() != null) {
-                elementBuilder.imageUrl(graffitiFilm.getBody().getImageUrl());
+            if (graffitiFilmResponse.getBody().getImageUrl() != null) {
+                elementBuilder.imageUrl(graffitiFilmResponse.getBody().getImageUrl());
             }
 
-            elementBuilder.subtitle(graffitiFilm.getBody().getCategorisation().buildNameMax80());
+            elementBuilder.subtitle(graffitiFilmResponse.getBody().getGraffittiCategorisation().buildNameMax80());
 
             final Button.ListBuilder buttonListBuilder = Button.newListBuilder();
 
@@ -95,14 +91,14 @@ public class FilmsPageBlock {
                 "More info",
                 new JSONObject()
                     .put("type", PayloadType.films_more_info)
-                    .put("film_id", graffitiFilm.getBody().getId())
+                    .put("film_id", graffitiFilmResponse.getBody().getId())
                     .toString()
             ).toList();
 
-            if (graffitiFilm.getBody().getTrailer() != null) {
+            if (graffitiFilmResponse.getBody().getTrailer() != null) {
                 buttonListBuilder.addUrlButton(
                     "See trailer",
-                    graffitiFilm.getBody().getTrailer().getUrl()
+                    graffitiFilmResponse.getBody().getTrailer().getUrl()
                 ).toList();
             }
 
@@ -110,7 +106,7 @@ public class FilmsPageBlock {
                 "Find cinemas",
                 new JSONObject()
                     .put("type", PayloadType.films_find_cinemas)
-                    .put("film_id", graffitiFilm.getBody().getId())
+                    .put("film_id", graffitiFilmResponse.getBody().getId())
                     .toString()
             ).toList().build();
 

@@ -55,11 +55,33 @@ public class MessengerSendClientWrapper {
         }
     }
 
+    /*
+        TEMPLATE
+    */
+
     public void sendTemplate(String recipientId, Template template) {
         try {
             messengerSendClient.sendTemplate(
                 recipientId,
                 template
+            );
+        } catch (MessengerApiException | MessengerIOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void sendTemplate(
+        Recipient recipient,
+        NotificationType notificationType,
+        Template template,
+        List<QuickReply> quickReplies
+    ) {
+        try {
+            messengerSendClient.sendTemplate(
+                recipient,
+                notificationType,
+                template,
+                quickReplies
             );
         } catch (MessengerApiException | MessengerIOException e) {
             e.printStackTrace();

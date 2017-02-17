@@ -22,6 +22,7 @@ public class ApiAiService {
 
     public Result processText(String text) throws AIServiceException {
         AIRequest aiRequest = new AIRequest(text);
+
         AIResponse aiResponse = this.aiDataService.request(aiRequest);
 
         if (aiResponse.getStatus().getCode() == 200) {
@@ -40,6 +41,18 @@ public class ApiAiService {
 //                }
         } else {
             System.err.println(aiResponse.getStatus().getErrorDetails());
+            return null;
+        }
+    }
+
+
+    public Result getApiaiResult(
+        String text
+    ) {
+        try {
+            return processText(text);
+        } catch (AIServiceException e) {
+            e.printStackTrace();
             return null;
         }
     }
