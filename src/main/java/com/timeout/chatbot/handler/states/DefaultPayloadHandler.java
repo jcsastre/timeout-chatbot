@@ -17,9 +17,7 @@ import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateItemBag;
 import com.timeout.chatbot.session.bag.SessionStateLookingBag;
-import com.timeout.chatbot.session.bag.SessionStateSubmittingReviewBag;
 import com.timeout.chatbot.session.state.SessionState;
-import com.timeout.chatbot.session.state.SubmittingReviewState;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -231,31 +229,6 @@ public class DefaultPayloadHandler {
                 intentService.handleCancel(session);
                 break;
 
-            case back:
-                intentService.handleBack(session);
-                break;
-
-            case phone_call:
-                final String phoneNumber = payload.getString("phone_number");
-                final String venueName = payload.getString("venue_name");
-                blockService.sendPhoneCallBlock(
-                    session.getUser().getMessengerId(),
-                    phoneNumber,
-                    venueName
-                );
-                break;
-
-            case submit_photo:
-                messengerSendClient.sendTextMessage(
-                    session.getUser().getMessengerId(),
-                    "Please attach one or more photos"
-                );
-                break;
-
-            case submit_review:
-                handleSumitReview(session, payload);
-                break;
-
             case temporaly_disabled:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
@@ -300,24 +273,6 @@ public class DefaultPayloadHandler {
                     quickReplyBuilderForCurrentSessionState.build(session)
                 );
                 break;
-        }
-    }
-
-    private void handleSumitReview(
-        Session session,
-        JSONObject payload
-    ) throws MessengerApiException, MessengerIOException {
-
-        final SessionState sessionState = session.getSessionState();
-        if (sessionState == SessionState.ITEM) {
-            session.setSessionState(SessionState.SUBMITTING_REVIEW);
-            final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
-            bag.setSubmittingReviewState(SubmittingReviewState.RATING);
-            bag.setRate(null);
-            bag.setComment(null);
-            blockService.sendSubmittingReviewRateBlock(session.getUser().getMessengerId());
-        } else {
-            blockService.sendErrorBlock(session.getUser());
         }
     }
 }

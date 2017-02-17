@@ -6,9 +6,9 @@ import com.timeout.chatbot.block.*;
 import com.timeout.chatbot.block.deprecated.MainOptionsBlock;
 import com.timeout.chatbot.block.deprecated.PhoneCallBlock;
 import com.timeout.chatbot.block.deprecated.WhatsNewBlock;
-import com.timeout.chatbot.block.state.submittingreview.SubmittingReviewCommentBlock;
-import com.timeout.chatbot.block.state.submittingreview.SubmittingReviewConfirmationBlock;
-import com.timeout.chatbot.block.state.submittingreview.SubmittingReviewRateBlock;
+import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewComment;
+import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewAskConfirmation;
+import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewRate;
 import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
@@ -40,9 +40,9 @@ public class BlockService {
     private final FilmsPageBlock filmsPageBlock;
     private final SeeVenueItemBlock seeVenueItemBlock;
     private final PhoneCallBlock phoneCallBlock;
-    private final SubmittingReviewRateBlock submittingReviewRateBlock;
-    private final SubmittingReviewCommentBlock submittingReviewCommentBlock;
-    private final SubmittingReviewConfirmationBlock submittingReviewConfirmationBlock;
+    private final BlockSubmittingReviewRate blockSubmittingReviewRate;
+    private final BlockSubmittingReviewComment blockSubmittingReviewComment;
+    private final BlockSubmittingReviewAskConfirmation blockSubmittingReviewAskConfirmation;
     private final BlockError blockError;
 
     @Autowired
@@ -64,9 +64,9 @@ public class BlockService {
         FilmsPageBlock filmsPageBlock,
         SeeVenueItemBlock seeVenueItemBlock,
         PhoneCallBlock phoneCallBlock,
-        SubmittingReviewRateBlock submittingReviewRateBlock,
-        SubmittingReviewCommentBlock submittingReviewCommentBlock,
-        SubmittingReviewConfirmationBlock submittingReviewConfirmationBlock,
+        BlockSubmittingReviewRate blockSubmittingReviewRate,
+        BlockSubmittingReviewComment blockSubmittingReviewComment,
+        BlockSubmittingReviewAskConfirmation blockSubmittingReviewAskConfirmation,
         BlockError blockError
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
@@ -86,9 +86,9 @@ public class BlockService {
         this.filmsPageBlock = filmsPageBlock;
         this.seeVenueItemBlock = seeVenueItemBlock;
         this.phoneCallBlock = phoneCallBlock;
-        this.submittingReviewRateBlock = submittingReviewRateBlock;
-        this.submittingReviewCommentBlock = submittingReviewCommentBlock;
-        this.submittingReviewConfirmationBlock = submittingReviewConfirmationBlock;
+        this.blockSubmittingReviewRate = blockSubmittingReviewRate;
+        this.blockSubmittingReviewComment = blockSubmittingReviewComment;
+        this.blockSubmittingReviewAskConfirmation = blockSubmittingReviewAskConfirmation;
         this.blockError = blockError;
     }
 
@@ -241,21 +241,21 @@ public class BlockService {
         String userId
     ) throws MessengerApiException, MessengerIOException {
 
-        submittingReviewRateBlock.send(userId);
+        blockSubmittingReviewRate.send(userId);
     }
 
     public void sendSubmittingReviewCommentBlock(
         String userId
     ) throws MessengerApiException, MessengerIOException {
 
-        submittingReviewCommentBlock.send(userId);
+        blockSubmittingReviewComment.send(userId);
     }
 
     public void sendSubmittingReviewConfirmationBlock(
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        submittingReviewConfirmationBlock.send(session);
+        blockSubmittingReviewAskConfirmation.send(session);
     }
 
     public void sendErrorBlock(

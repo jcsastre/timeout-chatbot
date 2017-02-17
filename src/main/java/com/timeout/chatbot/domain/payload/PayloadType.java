@@ -48,6 +48,8 @@ public enum PayloadType {
 
     submitting_review_rate,
     submitting_review_no_comment,
+    submitting_review_confirmation_yes,
+    submitting_review_confirmation_no,
 
     booking_date,
     booking_time,

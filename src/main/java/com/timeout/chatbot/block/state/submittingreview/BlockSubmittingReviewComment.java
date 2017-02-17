@@ -10,12 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SubmittingReviewCommentBlock {
+public class BlockSubmittingReviewComment {
 
     private final MessengerSendClient messengerSendClient;
 
     @Autowired
-    public SubmittingReviewCommentBlock(
+    public BlockSubmittingReviewComment(
         MessengerSendClient messengerSendClient
     ) {
         this.messengerSendClient = messengerSendClient;
@@ -32,8 +32,7 @@ public class SubmittingReviewCommentBlock {
                 .addTextQuickReply(
                     "No review",
                     new JSONObject()
-                        .put("type", PayloadType.utterance)
-                        .put("utterance", "No review")
+                        .put("type", PayloadType.submitting_review_no_comment)
                         .toString()
                 ).toList()
             .build()

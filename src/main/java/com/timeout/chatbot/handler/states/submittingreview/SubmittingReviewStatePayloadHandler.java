@@ -2,11 +2,14 @@ package com.timeout.chatbot.handler.states.submittingreview;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
-import com.github.messenger4j.send.MessengerSendClient;
-import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
+import com.timeout.chatbot.block.BlockError;
+import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewAskConfirmation;
+import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewCancelled;
+import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewComment;
+import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewSubmitted;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.services.BlockService;
+import com.timeout.chatbot.handler.intent.IntentSeeItem;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateSubmittingReviewBag;
 import com.timeout.chatbot.session.state.SessionState;
@@ -20,19 +23,28 @@ import java.io.IOException;
 @Component
 public class SubmittingReviewStatePayloadHandler {
 
-    private final BlockService blockService;
-    private final MessengerSendClient messengerSendClient;
-    private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
+    private final BlockSubmittingReviewComment blockSubmittingReviewComment;
+    private final BlockSubmittingReviewAskConfirmation blockSubmittingReviewAskConfirmation;
+    private final BlockSubmittingReviewSubmitted blockSubmittingReviewSubmitted;
+    private final BlockSubmittingReviewCancelled blockSubmittingReviewCancelled;
+    private final BlockError blockError;
+    private final IntentSeeItem intentSeeItem;
 
     @Autowired
     public SubmittingReviewStatePayloadHandler(
-        BlockService blockService,
-        MessengerSendClient messengerSendClient,
-        QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState
+        BlockSubmittingReviewComment blockSubmittingReviewComment,
+        BlockSubmittingReviewAskConfirmation blockSubmittingReviewAskConfirmation,
+        BlockSubmittingReviewSubmitted blockSubmittingReviewSubmitted,
+        BlockSubmittingReviewCancelled blockSubmittingReviewCancelled,
+        BlockError blockError,
+        IntentSeeItem intentSeeItem
     ) {
-        this.blockService = blockService;
-        this.messengerSendClient = messengerSendClient;
-        this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
+        this.blockSubmittingReviewComment = blockSubmittingReviewComment;
+        this.blockSubmittingReviewAskConfirmation = blockSubmittingReviewAskConfirmation;
+        this.blockSubmittingReviewSubmitted = blockSubmittingReviewSubmitted;
+        this.blockSubmittingReviewCancelled = blockSubmittingReviewCancelled;
+        this.blockError = blockError;
+        this.intentSeeItem = intentSeeItem;
     }
 
     public void handle(
@@ -49,19 +61,21 @@ public class SubmittingReviewStatePayloadHandler {
                 break;
 
             case submitting_review_no_comment:
-                handleSumittingReviewNoComment(session, payload);
+                handleSumittingReviewNoComment(session);
                 break;
 
-            case temporaly_disabled:
-                messengerSendClient.sendTextMessage(
-                    session.getUser().getMessengerId(),
-                    "Sorry, my creator has temporarily disabled the 'Search suggestions' :(",
-                    quickReplyBuilderForCurrentSessionState.build(session)
-                );
+            case submitting_review_confirmation_yes:
+                handleSubmittingReviewConfirmation(session, Boolean.TRUE);
+                //TODO
+                break;
+
+            case submitting_review_confirmation_no:
+                handleSubmittingReviewConfirmation(session, Boolean.FALSE);
+                //TODO
                 break;
 
             default:
-                blockService.sendErrorBlock(session.getUser());
+                blockError.send(session.getUser());
                 break;
         }
     }
@@ -80,18 +94,17 @@ public class SubmittingReviewStatePayloadHandler {
 
                 bag.setRate(payload.getInt("rate"));
                 bag.setSubmittingReviewState(SubmittingReviewState.WRITING_COMMENT);
-                blockService.sendSubmittingReviewCommentBlock(session.getUser().getMessengerId());
+                blockSubmittingReviewComment.send(session.getUser().getMessengerId());
             } else {
-                blockService.sendErrorBlock(session.getUser());
+                blockError.send(session.getUser());
             }
         } else {
-            blockService.sendErrorBlock(session.getUser());
+            blockError.send(session.getUser());
         }
     }
 
     private void handleSumittingReviewNoComment(
-        Session session,
-        JSONObject payload
+        Session session
     ) throws MessengerApiException, MessengerIOException {
 
         final SessionState sessionState = session.getSessionState();
@@ -102,12 +115,40 @@ public class SubmittingReviewStatePayloadHandler {
             if (submittingReviewState == SubmittingReviewState.WRITING_COMMENT) {
 
                 bag.setSubmittingReviewState(SubmittingReviewState.ASKING_FOR_CONFIRMATION);
-                //TODO: send block for confirmation
+                blockSubmittingReviewAskConfirmation.send(session);
             } else {
-                blockService.sendErrorBlock(session.getUser());
+                blockError.send(session.getUser());
             }
         } else {
-            blockService.sendErrorBlock(session.getUser());
+            blockError.send(session.getUser());
+        }
+    }
+
+    private void handleSubmittingReviewConfirmation(
+        Session session,
+        Boolean isYes
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+
+        final SessionState sessionState = session.getSessionState();
+        if (sessionState == SessionState.SUBMITTING_REVIEW) {
+
+            final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
+            final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
+            if (submittingReviewState == SubmittingReviewState.ASKING_FOR_CONFIRMATION) {
+
+                if (isYes) {
+                    blockSubmittingReviewSubmitted.send(session.getUser().getMessengerId());
+                } else {
+                    blockSubmittingReviewCancelled.send(session.getUser().getMessengerId());
+                }
+
+                session.setSessionState(SessionState.ITEM);
+                intentSeeItem.handle(session);
+            } else {
+                blockError.send(session.getUser());
+            }
+        } else {
+            blockError.send(session.getUser());
         }
     }
 }

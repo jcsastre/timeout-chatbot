@@ -3,9 +3,10 @@ package com.timeout.chatbot.handler.states.submittingreview;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
+import com.timeout.chatbot.block.BlockError;
+import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewAskConfirmation;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.handler.intent.IntentService;
-import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateSubmittingReviewBag;
 import com.timeout.chatbot.session.state.SessionState;
@@ -20,17 +21,20 @@ public class SubmittingReviewStateTextHandler {
 
     private final IntentService intentService;
     private final MessengerSendClient msc;
-    private final BlockService blockService;
+    private final BlockSubmittingReviewAskConfirmation blockSubmittingReviewAskConfirmation;
+    private final BlockError blockError;
 
     @Autowired
     public SubmittingReviewStateTextHandler(
         IntentService intentService,
         MessengerSendClient msc,
-        BlockService blockService
+        BlockSubmittingReviewAskConfirmation blockSubmittingReviewAskConfirmation,
+        BlockError blockError
     ) {
         this.intentService = intentService;
         this.msc = msc;
-        this.blockService = blockService;
+        this.blockSubmittingReviewAskConfirmation = blockSubmittingReviewAskConfirmation;
+        this.blockError = blockError;
     }
 
     public void handle(
@@ -46,7 +50,7 @@ public class SubmittingReviewStateTextHandler {
                 bag.setComment(text);
             }
             bag.setSubmittingReviewState(SubmittingReviewState.ASKING_FOR_CONFIRMATION);
-            blockService.sendSubmittingReviewConfirmationBlock(session);
+            blockSubmittingReviewAskConfirmation.send(session);
         } else if (submittingReviewState==SubmittingReviewState.ASKING_FOR_CONFIRMATION) {
             if (text.equalsIgnoreCase("Yes")) {
                 msc.sendTextMessage(
@@ -68,10 +72,10 @@ public class SubmittingReviewStateTextHandler {
                 session.setSessionState(SessionState.ITEM);
                 intentService.handleSeeItem(session);
             } else {
-                blockService.sendErrorBlock(session.getUser());
+                blockError.send(session.getUser());
             }
         } else {
-            blockService.sendErrorBlock(session.getUser());
+            blockError.send(session.getUser());
         }
     }
 }

@@ -12,12 +12,12 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class SubmittingReviewRateBlock {
+public class BlockSubmittingReviewRate {
 
     private final MessengerSendClient messengerSendClient;
 
     @Autowired
-    public SubmittingReviewRateBlock(
+    public BlockSubmittingReviewRate(
         MessengerSendClient messengerSendClient
     ) {
         this.messengerSendClient = messengerSendClient;

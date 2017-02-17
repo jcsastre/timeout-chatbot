@@ -7,9 +7,11 @@ import com.timeout.chatbot.block.state.booking.*;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.domain.user.User;
+import com.timeout.chatbot.handler.intent.IntentSeeItem;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateBookingBag;
 import com.timeout.chatbot.session.state.BookingState;
+import com.timeout.chatbot.session.state.SessionState;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,6 +30,7 @@ public class BookingStatePayloadHandler {
     private final BlockBookingFbFirstNameConfirmation blockBookingFbFirstNameConfirmation;
     private final BlockBookingAskLastname blockBookingAskLastname;
     private final BlockError blockError;
+    private final IntentSeeItem intentSeeItem;
 
     @Autowired
     public BookingStatePayloadHandler(
@@ -37,8 +40,8 @@ public class BookingStatePayloadHandler {
         BlockBookingAskFirstname blockBookingAskFirstname,
         BlockBookingFbFirstNameConfirmation blockBookingFbFirstNameConfirmation,
         BlockBookingAskLastname blockBookingAskLastname,
-        BlockError blockError
-    ) {
+        BlockError blockError,
+        IntentSeeItem intentSeeItem) {
         this.bookingStateHandler = bookingStateHandler;
         this.blockBookingTime = blockBookingTime;
         this.blockConfirmationBookingDetails = blockConfirmationBookingDetails;
@@ -46,6 +49,7 @@ public class BookingStatePayloadHandler {
         this.blockBookingFbFirstNameConfirmation = blockBookingFbFirstNameConfirmation;
         this.blockBookingAskLastname = blockBookingAskLastname;
         this.blockError = blockError;
+        this.intentSeeItem = intentSeeItem;
     }
 
     public void handle(
@@ -269,6 +273,8 @@ public class BookingStatePayloadHandler {
         if (bookingState == BookingState.CONFIRMATION_PERSONAL_DETAILS) {
 
             bookingStateHandler.confirmBooking(session);
+            session.setSessionState(SessionState.ITEM);
+            intentSeeItem.handle(session);
         } else {
             blockError.send(session.getUser());
         }

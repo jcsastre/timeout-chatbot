@@ -12,12 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class SubmittingReviewConfirmationBlock {
+public class BlockSubmittingReviewAskConfirmation {
 
     private final MessengerSendClient messengerSendClient;
 
     @Autowired
-    public SubmittingReviewConfirmationBlock(
+    public BlockSubmittingReviewAskConfirmation(
         MessengerSendClient messengerSendClient
     ) {
         this.messengerSendClient = messengerSendClient;
@@ -37,15 +37,13 @@ public class SubmittingReviewConfirmationBlock {
                 .addTextQuickReply(
                     "Yes",
                     new JSONObject()
-                        .put("type", PayloadType.utterance)
-                        .put("utterance", "Yes")
+                        .put("type", PayloadType.submitting_review_confirmation_yes)
                         .toString()
                 ).toList()
                 .addTextQuickReply(
                     "No",
                     new JSONObject()
-                        .put("type", PayloadType.utterance)
-                        .put("utterance", "No")
+                        .put("type", PayloadType.submitting_review_confirmation_no)
                         .toString()
                 ).toList()
             .build()
