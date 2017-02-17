@@ -4,6 +4,7 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.block.BlockError;
+import com.timeout.chatbot.block.PhotosBlock;
 import com.timeout.chatbot.block.state.booking.BlockBookingBeginDeveloperNote;
 import com.timeout.chatbot.block.state.booking.BlockBookingPeopleCount;
 import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewRate;
@@ -11,6 +12,7 @@ import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentBackHandler;
+import com.timeout.chatbot.handler.intent.IntentPhotosHandler;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateBookingBag;
 import com.timeout.chatbot.session.bag.SessionStateItemBag;
@@ -32,6 +34,8 @@ public class ItemStatePayloadHandler {
     private final BlockBookingBeginDeveloperNote blockBookingBeginDeveloperNote;
     private final BlockSubmittingReviewRate blockSubmittingReviewRate;
     private final IntentBackHandler backHandler;
+    private final PhotosBlock photosBlock;
+    private final IntentPhotosHandler photosHandler;
     private final BlockError blockError;
 
     @Autowired
@@ -41,13 +45,15 @@ public class ItemStatePayloadHandler {
         BlockBookingBeginDeveloperNote blockBookingBeginDeveloperNote,
         BlockSubmittingReviewRate blockSubmittingReviewRate,
         IntentBackHandler backHandler,
-        BlockError blockError
+        PhotosBlock photosBlock, IntentPhotosHandler photosHandler, BlockError blockError
     ) {
         this.messengerSendClient = messengerSendClient;
         this.blockBookingPeopleCount = blockBookingPeopleCount;
         this.blockBookingBeginDeveloperNote = blockBookingBeginDeveloperNote;
         this.blockSubmittingReviewRate = blockSubmittingReviewRate;
         this.backHandler = backHandler;
+        this.photosBlock = photosBlock;
+        this.photosHandler = photosHandler;
         this.blockError = blockError;
     }
 
@@ -68,6 +74,10 @@ public class ItemStatePayloadHandler {
                 backHandler.handle(session);
                 break;
 
+            case photos:
+                photosHandler.handle(session);
+                break;
+
             case submit_photo:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
@@ -83,6 +93,25 @@ public class ItemStatePayloadHandler {
                 blockError.send(session.getUser());
                 break;
         }
+    }
+
+    public void handlePhotos(Session session) throws MessengerApiException, MessengerIOException {
+
+        final SessionStateItemBag itemBag = session.getSessionStateItemBag();
+
+        final GraffittiType graffittiType = itemBag.getGraffittiType();
+        if (graffittiType == GraffittiType.VENUE) {
+            photosBlock.send(
+                session.getUser().getMessengerId(),
+                itemBag.getVenue()
+            );
+        } else {
+            messengerSendClient.sendTextMessage(
+                session.getUser().getMessengerId(),
+                "Sorry, 'Photos' feature is not implemented yet"
+            );
+        }
+
     }
 
     public void handleBook(Session session) throws MessengerApiException, MessengerIOException {

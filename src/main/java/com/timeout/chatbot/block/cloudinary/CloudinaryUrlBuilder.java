@@ -150,8 +150,8 @@ public class CloudinaryUrlBuilder {
         } else {
             System.out.println("\tReceived code " + responseCode);
             System.out.println("\t" + httpUrlConnection.getHeaderFields().toString());
-            System.out.println("\tWaiting " + 200 + "ms");
-            Thread.sleep(200);
+            System.out.println("\tWaiting " + 100 + "ms");
+            Thread.sleep(100);
         }
 
         responseCode = httpUrlConnection.getResponseCode();

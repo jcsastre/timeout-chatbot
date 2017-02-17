@@ -206,10 +206,6 @@ public class DefaultPayloadHandler {
                 intentService.handleFindRestaurants(session);
                 break;
 
-            case photos:
-                intentService.handlePhotos(session);
-                break;
-
             case no_see_at_timeout:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),

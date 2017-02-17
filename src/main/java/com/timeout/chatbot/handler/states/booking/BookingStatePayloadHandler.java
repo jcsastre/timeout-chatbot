@@ -273,8 +273,6 @@ public class BookingStatePayloadHandler {
         if (bookingState == BookingState.CONFIRMATION_PERSONAL_DETAILS) {
 
             bookingStateHandler.confirmBooking(session);
-            session.setSessionState(SessionState.ITEM);
-            intentSeeItem.handle(session);
         } else {
             blockError.send(session.getUser());
         }
