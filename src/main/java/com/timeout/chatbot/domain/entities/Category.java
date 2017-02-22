@@ -2,30 +2,49 @@ package com.timeout.chatbot.domain.entities;
 
 import java.util.List;
 
-public class Category {
-    private final String id;
-    private final String name;
-    private final String conceptName;
-    private final List<Subcategory> subcategories;
+public enum Category {
 
-    public Category(
-        String id,
+    THINGS_TO_DO(
+        "node-7091",
+        "Things to do",
+        "Things to do",
+        "things to do (category)"
+    ),
+    RESTAURANT(
+        "node-7083",
+        "Restaurant",
+        "Restaurants",
+        "restaurants (category)"
+    );
+
+    private final String graffittiId;
+    private final String name;
+    private final String namePlural;
+    private final String conceptName;
+    private List<Subcategory> subcategories;
+
+    Category(
+        String graffittiId,
         String name,
-        String conceptName,
-        List<Subcategory> subcategories
+        String namePlural,
+        String conceptName
     ) {
-        this.id = id;
+        this.graffittiId = graffittiId;
         this.name = name;
+        this.namePlural = namePlural;
         this.conceptName = conceptName;
-        this.subcategories = subcategories;
     }
 
-    public String getId() {
-        return id;
+    public String getGraffittiId() {
+        return graffittiId;
     }
 
     public String getName() {
         return name;
+    }
+
+    public String getNamePlural() {
+        return namePlural;
     }
 
     public String getConceptName() {
@@ -34,5 +53,9 @@ public class Category {
 
     public List<Subcategory> getSubcategories() {
         return subcategories;
+    }
+
+    public void setSubcategories(List<Subcategory> subcategories) {
+        this.subcategories = subcategories;
     }
 }

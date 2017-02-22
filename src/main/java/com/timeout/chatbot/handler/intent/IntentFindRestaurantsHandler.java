@@ -13,7 +13,7 @@ import com.timeout.chatbot.graffitti.uri.GraffittiQueryParameterType;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateLookingBag;
+import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import com.timeout.chatbot.session.state.SessionState;
 import io.mikael.urlbuilder.UrlBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,7 +95,7 @@ public class IntentFindRestaurantsHandler {
         if (
             nluParameters.containsKey("whereUkLondon")
         ) {
-            final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+            final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 
             final String where = nluParameters.get("whereUkLondon").getAsString();
             if (
@@ -126,7 +126,7 @@ public class IntentFindRestaurantsHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 
         UrlBuilder urlBuilder = urlBuilderBase(
             bag.getGraffittiWhatCategoryNode(),

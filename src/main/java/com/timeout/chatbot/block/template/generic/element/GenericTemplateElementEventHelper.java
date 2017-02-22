@@ -316,7 +316,7 @@ public class GenericTemplateElementEventHelper {
 ////            "Book",
 ////            new JSONObject()
 ////                .put("type", PayloadType.venues_book)
-////                .put("restaurant_id", pageItem.getId())
+////                .put("restaurant_id", pageItem.getGraffittiId())
 ////                .toString()
 ////        ).toList();
 //
@@ -324,7 +324,7 @@ public class GenericTemplateElementEventHelper {
 //            "More options",
 //            new JSONObject()
 //                .put("type", PayloadType.venue_more_options)
-//                .put("venue_id", pageItem.getId())
+//                .put("venue_id", pageItem.getGraffittiId())
 //                .toString()
 //        ).toList();
 //

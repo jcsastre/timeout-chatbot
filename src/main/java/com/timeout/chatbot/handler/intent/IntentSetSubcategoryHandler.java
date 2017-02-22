@@ -7,7 +7,7 @@ import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateLookingBag;
+import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -57,13 +57,13 @@ public class IntentSetSubcategoryHandler {
         String subcategoryId
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
         final GraffittiFacetV4FacetNode categoryNode = graffittiService.findNodeInfacetWhatCategoriesRootNode(subcategoryId);
         bag.setGraffittiWhatCategoryNode(categoryNode);
 
         findRestaurantsHandler.fetchAndSend(session);
 
-//        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+//        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 //        final What what = bag.getWhat();
 //
 //        if (bag.getReaminingItems() > 0) {

@@ -2,6 +2,8 @@ package com.timeout.chatbot.services;
 
 import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.domain.Venue;
+import com.timeout.chatbot.domain.entities.Category;
+import com.timeout.chatbot.domain.entities.Subcategory;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4Response;
 import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
@@ -56,6 +58,32 @@ public class GraffittiService {
         facetWhatTree = getFacetWhatTree(facetV4Response);
         facetWhatCategoriesRootNode = getNodeCategoriesFromFaceWhatTree(facetWhatTree);
         neighborhoods = buildNeighborhoodList(facetV4Response);
+
+        initializeSubcategoriesOfCategories();
+    }
+
+    public void initializeSubcategoriesOfCategories() {
+        for (Category category : Category.values()) {
+            GraffittiFacetV4FacetNode categoryNode = null;
+            for (GraffittiFacetV4FacetNode child : facetWhatCategoriesRootNode.getChildren()) {
+                if (child.getId().equalsIgnoreCase(category.getGraffittiId())) {
+                    categoryNode = child;
+                }
+            }
+            if (categoryNode != null) {
+                List<Subcategory> subcategories = new ArrayList<>();
+                for (GraffittiFacetV4FacetNode node : categoryNode.getChildren()) {
+                    subcategories.add(
+                        new Subcategory(
+                            node.getId(),
+                            node.getName(),
+                            node.getConcept().getName()
+                        )
+                    );
+                }
+                category.setSubcategories(subcategories);
+            }
+        }
     }
 
     public List<Neighborhood> buildNeighborhoodList(
@@ -108,7 +136,7 @@ public class GraffittiService {
 
 //    public GraffittiFacetV5Node getCategoryPrimaryById(String id) {
 //        for (GraffittiFacetV5Node categoryPrimary : getFacetsV5PrimaryCategories()) {
-//            if (categoryPrimary.getId().equals(id)) {
+//            if (categoryPrimary.getGraffittiId().equals(id)) {
 //                return categoryPrimary;
 //            }
 //        }
@@ -118,7 +146,7 @@ public class GraffittiService {
 
 //    public List<CategorySecondary> getSecondaryCategories(CategoryPrimary primaryCategoryPrimary) {
 //        for (CategoryPrimary categoryPrimary : getFacetsV5PrimaryCategories()) {
-//            if (categoryPrimary.getId().equals(primaryCategoryPrimary.getId())) {
+//            if (categoryPrimary.getGraffittiId().equals(primaryCategoryPrimary.getGraffittiId())) {
 //                return categoryPrimary.getSecondaryCategories();
 //            }
 //
@@ -179,7 +207,7 @@ public class GraffittiService {
 //            if (child.getCount()>0) {
 //                cuisines.add(
 //                    new Cuisine(
-//                        child.getId(),
+//                        child.getGraffittiId(),
 //                        child.getName()
 //                    )
 //                );
@@ -188,7 +216,7 @@ public class GraffittiService {
 //                        if (childOfChild.getCount()>0) {
 //                            cuisines.add(
 //                                new Cuisine(
-//                                    childOfChild.getId(),
+//                                    childOfChild.getGraffittiId(),
 //                                    childOfChild.getName()
 //                                )
 //                            );
@@ -215,7 +243,7 @@ public class GraffittiService {
 //                    if (subcategoryNode.getCount()> 0) {
 //                        subcategories.add(
 //                            new Subcategory(
-//                                subcategoryNode.getId(),
+//                                subcategoryNode.getGraffittiId(),
 //                                subcategoryNode.getName(),
 //                                subcategoryNode.getConcept().getName()
 //                            )
@@ -225,7 +253,7 @@ public class GraffittiService {
 //                                if (subcategoryNodeChild.getCount()>0) {
 //                                    subcategories.add(
 //                                        new Subcategory(
-//                                            subcategoryNode.getId(),
+//                                            subcategoryNode.getGraffittiId(),
 //                                            subcategoryNode.getName(),
 //                                            subcategoryNode.getConcept().getName()
 //                                        )
@@ -238,7 +266,7 @@ public class GraffittiService {
 //
 //                categories.add(
 //                    new Category(
-//                        categoryNode.getId(),
+//                        categoryNode.getGraffittiId(),
 //                        categoryNode.getName(),
 //                        categoryNode.getConcept().getName(),
 //                        subcategories

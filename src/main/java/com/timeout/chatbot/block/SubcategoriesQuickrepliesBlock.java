@@ -7,7 +7,7 @@ import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateLookingBag;
+import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -34,7 +34,7 @@ public class SubcategoriesQuickrepliesBlock {
         Integer pageNumber
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 
         final GraffittiFacetV4FacetNode categoryNode = bag.getGraffittiWhatCategoryNode();
         final List<GraffittiFacetV4FacetNode> children = categoryNode.getChildren();

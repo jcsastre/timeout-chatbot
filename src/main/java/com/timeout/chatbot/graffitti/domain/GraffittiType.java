@@ -17,6 +17,7 @@ public enum GraffittiType {
     }
 
     public static GraffittiType fromString(String type) {
+
         if (type == null) {
             return null;
         }

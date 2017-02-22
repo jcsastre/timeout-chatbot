@@ -16,7 +16,7 @@ import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateItemBag;
-import com.timeout.chatbot.session.bag.SessionStateLookingBag;
+import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import com.timeout.chatbot.session.state.SessionState;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -188,7 +188,7 @@ public class DefaultPayloadHandler {
                 final String neighborhoodId = payload.getString("neighborhood_id");
                 final Neighborhood neighborhood = graffittiService.getNeighborhoodByGraffittiId(neighborhoodId);
                 if (neighborhood!=null) {
-                    final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+                    final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
                     bag.setGraffittiPageNumber(1);
                     bag.setGeolocation(null);
                     bag.setNeighborhood(neighborhood);
@@ -199,7 +199,7 @@ public class DefaultPayloadHandler {
                 break;
 
             case where_everywhere:
-                final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+                final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
                 bag.setGraffittiPageNumber(1);
                 bag.setGeolocation(null);
                 bag.setNeighborhood(null);

@@ -5,7 +5,7 @@ import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateLookingBag;
+import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,7 +26,7 @@ public class VenuesRemainingBlock {
     public void send(
         Session session
     ) {
-        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 
         String itemPluralName = "Restaurants";
         if (bag.getWhat() == What.BAR) {
@@ -46,7 +46,7 @@ public class VenuesRemainingBlock {
     }
 
     private List<QuickReply> buildQuickReplies(
-        SessionStateLookingBag bag
+        SessionStateSearchingBag bag
     ) {
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();

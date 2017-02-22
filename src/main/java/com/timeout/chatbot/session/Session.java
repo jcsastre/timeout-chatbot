@@ -4,7 +4,7 @@ import com.timeout.chatbot.domain.page.Page;
 import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.session.bag.SessionStateBookingBag;
 import com.timeout.chatbot.session.bag.SessionStateItemBag;
-import com.timeout.chatbot.session.bag.SessionStateLookingBag;
+import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import com.timeout.chatbot.session.bag.SessionStateSubmittingReviewBag;
 import com.timeout.chatbot.session.state.SessionState;
 
@@ -13,7 +13,7 @@ public class Session {
     private final Page page;
     private final User user;
     private SessionState sessionState;
-    private SessionStateLookingBag sessionStateLookingBag;
+    private SessionStateSearchingBag sessionStateSearchingBag;
     private SessionStateItemBag sessionStateItemBag;
     private SessionStateBookingBag sessionStateBookingBag;
     private SessionStateSubmittingReviewBag sessionStateSubmittingReviewBag;
@@ -31,7 +31,7 @@ public class Session {
 
     public void reset() {
         this.sessionState = SessionState.UNDEFINED;
-        this.sessionStateLookingBag = new SessionStateLookingBag();
+        this.sessionStateSearchingBag = new SessionStateSearchingBag();
         this.sessionStateItemBag = new SessionStateItemBag();
         this.sessionStateBookingBag = new SessionStateBookingBag();
         this.sessionStateSubmittingReviewBag = new SessionStateSubmittingReviewBag();
@@ -61,8 +61,8 @@ public class Session {
         this.sessionState = sessionState;
     }
 
-    public SessionStateLookingBag getSessionStateLookingBag() {
-        return sessionStateLookingBag;
+    public SessionStateSearchingBag getSessionStateSearchingBag() {
+        return sessionStateSearchingBag;
     }
 
     public SessionStateItemBag getSessionStateItemBag() {

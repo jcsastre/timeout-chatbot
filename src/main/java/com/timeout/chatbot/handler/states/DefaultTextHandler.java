@@ -8,7 +8,6 @@ import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.nlu.NluResult;
 import com.timeout.chatbot.domain.nlu.intent.NluIntentType;
-import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.handler.states.booking.BookingStateTextHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStateTextHandler;
@@ -169,12 +168,12 @@ public class DefaultTextHandler {
 
             case FIND_RESTAURANTS:
                 session.setSessionState(SessionState.SEARCHING);
-                session.getSessionStateLookingBag().setGraffittiType(GraffittiType.VENUE);
-                session.getSessionStateLookingBag().setWhat(What.RESTAURANT);
-                session.getSessionStateLookingBag().setGraffittiWhatCategoryNode(
+//                session.getSessionStateSearchingBag().setGraffittiType(GraffittiType.VENUE);
+                session.getSessionStateSearchingBag().setWhat(What.RESTAURANT);
+                session.getSessionStateSearchingBag().setGraffittiWhatCategoryNode(
                     graffittiService.findWhatCategoryNodeByConceptName("restaurants (category)")
                 );
-                session.getSessionStateLookingBag().setGraffittiPageNumber(1);
+                session.getSessionStateSearchingBag().setGraffittiPageNumber(1);
                 intentService.handleFindRestaurants(session, nluResult.getParameters());
                 break;
 

@@ -6,7 +6,7 @@ import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateLookingBag;
+import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -52,7 +52,7 @@ public class IntentSeemoreHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 
         final What what = bag.getWhat();
 
