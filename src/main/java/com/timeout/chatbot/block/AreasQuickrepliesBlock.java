@@ -34,6 +34,8 @@ public class AreasQuickrepliesBlock {
         Integer pageNumber
     ) throws MessengerApiException, MessengerIOException {
 
+        System.out.println("AreasQuickrepliesBlock.send()");
+
         messengerSendClient.sendTextMessage(
             session.getUser().getMessengerId(),
             "Please, select one",
@@ -87,7 +89,7 @@ public class AreasQuickrepliesBlock {
             ).toList();
         }
 
-        if ((pageNumber + 1) * PAGE_SIZE < neighborhoodsCount) {
+        if (pageNumber * PAGE_SIZE < neighborhoodsCount) {
             builder.addTextQuickReply(
                 "More neighborhoods",
                 new JSONObject()

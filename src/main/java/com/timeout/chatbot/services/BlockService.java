@@ -34,7 +34,6 @@ public class BlockService {
     private final VenuesPageBlock venuesPageBlock;
     private final VenuesRemainingBlock venuesRemainingBlock;
     private final SubcategoriesQuickrepliesBlock subcategoriesQuickrepliesBlock;
-    private final AreasQuickrepliesBlock areasQuickrepliesBlock;
     private final VenueSummaryBlock venueSummaryBlock;
     private final GeolocationAskBlock geolocationAskBlock;
     private final FilmsPageBlock filmsPageBlock;
@@ -58,7 +57,6 @@ public class BlockService {
         VenuesPageBlock venuesPageBlock,
         VenuesRemainingBlock venuesRemainingBlock,
         SubcategoriesQuickrepliesBlock subcategoriesQuickrepliesBlock,
-        AreasQuickrepliesBlock areasQuickrepliesBlock,
         VenueSummaryBlock venueSummaryBlock,
         GeolocationAskBlock geolocationAskBlock,
         FilmsPageBlock filmsPageBlock,
@@ -80,7 +78,6 @@ public class BlockService {
         this.venuesPageBlock = venuesPageBlock;
         this.venuesRemainingBlock = venuesRemainingBlock;
         this.subcategoriesQuickrepliesBlock = subcategoriesQuickrepliesBlock;
-        this.areasQuickrepliesBlock = areasQuickrepliesBlock;
         this.venueSummaryBlock = venueSummaryBlock;
         this.geolocationAskBlock = geolocationAskBlock;
         this.filmsPageBlock = filmsPageBlock;
@@ -170,21 +167,9 @@ public class BlockService {
 
     public void sendVenuesRemainingBlock(
         Session session
-//        String userMessengerId,
-//        Integer remainingItems,
-//        Boolean isWhereSet,
-//        String itemPluralName,
-//        Boolean isCategorySet,
-//        String categorySingularName
     ) {
         venuesRemainingBlock.send(
             session
-//            userMessengerId,
-//            remainingItems,
-//            isWhereSet,
-//            itemPluralName,
-//            isCategorySet,
-//            categorySingularName
         );
     }
 
@@ -201,13 +186,6 @@ public class BlockService {
     ) throws MessengerApiException, MessengerIOException {
 
         subcategoriesQuickrepliesBlock.send(session, pageNumber);
-    }
-
-    public void sendAreasQuickrepliesBlock(
-        Session session,
-        Integer pageNumber
-    ) throws MessengerApiException, MessengerIOException {
-        areasQuickrepliesBlock.send(session, pageNumber);
     }
 
     public void sendGeolocationAskBlock(

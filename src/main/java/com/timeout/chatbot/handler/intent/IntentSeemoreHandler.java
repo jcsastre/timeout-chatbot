@@ -3,7 +3,7 @@ package com.timeout.chatbot.handler.intent;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.timeout.chatbot.domain.What;
+import com.timeout.chatbot.domain.entities.Category;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
@@ -54,16 +54,16 @@ public class IntentSeemoreHandler {
 
         final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 
-        final What what = bag.getWhat();
+        final Category category = bag.getCategory();
 
         if (bag.getReaminingItems() > 0) {
             bag.setGraffittiPageNumber(bag.getGraffittiPageNumber() +1);
 
-            if (what == What.RESTAURANT) {
+            if (category == Category.RESTAURANT) {
                 findRestaurantsHandler.fetchAndSend(session);
             }
         } else {
-            if (what == What.RESTAURANT) {
+            if (category == Category.RESTAURANT) {
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "There are no remaining RestaurantsManager"

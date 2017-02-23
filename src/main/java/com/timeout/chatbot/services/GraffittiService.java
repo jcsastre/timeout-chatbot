@@ -64,12 +64,14 @@ public class GraffittiService {
 
     public void initializeSubcategoriesOfCategories() {
         for (Category category : Category.values()) {
+
             GraffittiFacetV4FacetNode categoryNode = null;
             for (GraffittiFacetV4FacetNode child : facetWhatCategoriesRootNode.getChildren()) {
                 if (child.getId().equalsIgnoreCase(category.getGraffittiId())) {
                     categoryNode = child;
                 }
             }
+
             if (categoryNode != null) {
                 List<Subcategory> subcategories = new ArrayList<>();
                 for (GraffittiFacetV4FacetNode node : categoryNode.getChildren()) {

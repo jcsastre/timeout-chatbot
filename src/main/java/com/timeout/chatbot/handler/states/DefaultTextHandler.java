@@ -4,7 +4,7 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
-import com.timeout.chatbot.domain.What;
+import com.timeout.chatbot.domain.entities.Category;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.nlu.NluResult;
 import com.timeout.chatbot.domain.nlu.intent.NluIntentType;
@@ -14,6 +14,7 @@ import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewState
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.services.NluService;
 import com.timeout.chatbot.session.Session;
+import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import com.timeout.chatbot.session.state.SessionState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -167,14 +168,7 @@ public class DefaultTextHandler {
                 break;
 
             case FIND_RESTAURANTS:
-                session.setSessionState(SessionState.SEARCHING);
-//                session.getSessionStateSearchingBag().setGraffittiType(GraffittiType.VENUE);
-                session.getSessionStateSearchingBag().setWhat(What.RESTAURANT);
-                session.getSessionStateSearchingBag().setGraffittiWhatCategoryNode(
-                    graffittiService.findWhatCategoryNodeByConceptName("restaurants (category)")
-                );
-                session.getSessionStateSearchingBag().setGraffittiPageNumber(1);
-                intentService.handleFindRestaurants(session, nluResult.getParameters());
+                handleFindRestaurants(session, nluResult);
                 break;
 
 //            case FIND_RESTAURANTS_NEARBY:
@@ -251,5 +245,19 @@ public class DefaultTextHandler {
                 );
                 break;
         }
+    }
+
+    private void handleFindRestaurants(
+        Session session,
+        NluResult nluResult
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+
+        session.setSessionState(SessionState.SEARCHING);
+
+        final SessionStateSearchingBag searchingBag = session.getSessionStateSearchingBag();
+        searchingBag.setCategory(Category.RESTAURANT);
+        searchingBag.setGraffittiPageNumber(1);
+
+        intentService.handleFindRestaurants(session, nluResult.getParameters());
     }
 }

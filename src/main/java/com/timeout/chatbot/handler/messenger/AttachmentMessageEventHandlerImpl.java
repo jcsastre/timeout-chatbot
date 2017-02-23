@@ -6,9 +6,8 @@ import com.github.messenger4j.receive.events.AttachmentMessageEvent;
 import com.github.messenger4j.receive.handlers.AttachmentMessageEventHandler;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.block.BlockError;
-import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.domain.Geolocation;
-import com.timeout.chatbot.domain.What;
+import com.timeout.chatbot.domain.entities.Category;
 import com.timeout.chatbot.domain.page.PageUid;
 import com.timeout.chatbot.handler.intent.IntentFindRestaurantsHandler;
 import com.timeout.chatbot.handler.intent.IntentSeeItem;
@@ -28,7 +27,6 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
     private final IntentFindRestaurantsHandler findRestaurantsHandler;
     private final BlockError blockError;
     private final MessengerSendClient messengerSendClient;
-    private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
     private final IntentSeeItem intentSeeItem;
 
     @Autowired
@@ -37,13 +35,12 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
         IntentFindRestaurantsHandler findRestaurantsHandler,
         BlockError blockError,
         MessengerSendClient messengerSendClient,
-        QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
-        IntentSeeItem intentSeeItem) {
+        IntentSeeItem intentSeeItem
+    ) {
         this.sessionPool = sessionPool;
         this.findRestaurantsHandler = findRestaurantsHandler;
         this.blockError = blockError;
         this.messengerSendClient = messengerSendClient;
-        this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
         this.intentSeeItem = intentSeeItem;
     }
 
@@ -87,13 +84,11 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
             );
 
         final SessionStateSearchingBag lookingBag = session.getSessionStateSearchingBag();
-        lookingBag.setGraffittiPageNumber(1);
-        lookingBag.setNeighborhood(null);
         lookingBag.setGeolocation(geolocation);
 
         if (session.getSessionState() == SessionState.SEARCHING) {
-            final What what = lookingBag.getWhat();
-            if (what == What.RESTAURANT) {
+            final Category category = lookingBag.getCategory();
+            if (category == Category.RESTAURANT) {
                 findRestaurantsHandler.fetchAndSend(session);
             }
         }

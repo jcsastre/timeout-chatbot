@@ -51,6 +51,7 @@ public class VenuesPageBlock {
         String recipientId,
         List<PageItem> pageItems
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+
         final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
         final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
         for (PageItem pageItem : pageItems) {

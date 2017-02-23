@@ -2,10 +2,9 @@ package com.timeout.chatbot.handler.intent;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
-import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
-import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
+import com.timeout.chatbot.domain.entities.Category;
+import com.timeout.chatbot.domain.entities.Subcategory;
 import com.timeout.chatbot.services.BlockService;
-import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,21 +16,15 @@ import java.io.IOException;
 public class IntentSetSubcategoryHandler {
 
     private final BlockService blockService;
-    private final MessengerSendClientWrapper messengerSendClientWrapper;
     private final IntentFindRestaurantsHandler findRestaurantsHandler;
-    private final GraffittiService graffittiService;
 
     @Autowired
     public IntentSetSubcategoryHandler(
         BlockService blockService,
-        MessengerSendClientWrapper messengerSendClientWrapper,
-        IntentFindRestaurantsHandler findRestaurantsHandler,
-        GraffittiService graffittiService
+        IntentFindRestaurantsHandler findRestaurantsHandler
     ) {
         this.blockService = blockService;
-        this.messengerSendClientWrapper = messengerSendClientWrapper;
         this.findRestaurantsHandler = findRestaurantsHandler;
-        this.graffittiService = graffittiService;
     }
 
     public void handle(
@@ -58,8 +51,11 @@ public class IntentSetSubcategoryHandler {
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
-        final GraffittiFacetV4FacetNode categoryNode = graffittiService.findNodeInfacetWhatCategoriesRootNode(subcategoryId);
-        bag.setGraffittiWhatCategoryNode(categoryNode);
+
+        final Category category = bag.getCategory();
+        final Subcategory subcategory = category.findSubcategoryByGraffittiId(subcategoryId);
+
+        bag.setSubcategory(subcategory);
 
         findRestaurantsHandler.fetchAndSend(session);
 

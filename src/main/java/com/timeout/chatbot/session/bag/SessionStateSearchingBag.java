@@ -4,7 +4,6 @@ import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.domain.entities.Category;
 import com.timeout.chatbot.domain.entities.Subcategory;
-import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 
 public class SessionStateSearchingBag {
 
@@ -15,8 +14,6 @@ public class SessionStateSearchingBag {
 //    private GraffittiFacetV4FacetNode graffittiWhatCategoryNode;
 
     private String graffittiWhen;
-
-    private GraffittiFacetV4FacetNode graffittiWhere;
 
     private Integer graffittiPageNumber;
     private Integer reaminingItems;
@@ -52,15 +49,6 @@ public class SessionStateSearchingBag {
         this.graffittiWhen = graffittiWhen;
     }
 
-    public GraffittiFacetV4FacetNode getGraffittiWhere() {
-        return graffittiWhere;
-    }
-
-    public void setGraffittiWhere(GraffittiFacetV4FacetNode graffittiWhere) {
-        this.geolocation = null;
-        this.graffittiWhere = graffittiWhere;
-    }
-
     public Integer getGraffittiPageNumber() {
         return graffittiPageNumber;
     }
@@ -82,12 +70,9 @@ public class SessionStateSearchingBag {
     }
 
     public void setGeolocation(Geolocation geolocation) {
-        this.geolocation = geolocation;
-    }
-
-    public void setGraffittiWhereId(String graffittiWhereId) {
         this.graffittiPageNumber = 1;
-        this.geolocation = null;
+        this.neighborhood = null;
+        this.geolocation = geolocation;
     }
 
     public Neighborhood getNeighborhood() {

@@ -6,8 +6,8 @@ import com.github.messenger4j.send.MessengerSendClient;
 import com.google.gson.JsonElement;
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.Neighborhood;
+import com.timeout.chatbot.domain.entities.Category;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
-import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 import com.timeout.chatbot.graffitti.response.search.page.GraffittiSearchResponse;
 import com.timeout.chatbot.graffitti.uri.GraffittiQueryParameterType;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
@@ -30,8 +30,6 @@ public class IntentFindRestaurantsHandler {
     private final BlockService blockService;
     private final MessengerSendClient messengerSendClient;
     private final SearchUrlBuilder searchUrlBuilder;
-
-    private static final String WHAT_RESTAURANTS ="node-7083";
 
     @Autowired
     public IntentFindRestaurantsHandler(
@@ -58,9 +56,6 @@ public class IntentFindRestaurantsHandler {
                 break;
 
             case BOOKING:
-                handleBooking();
-                break;
-
             default:
                 blockService.sendErrorBlock(session.getUser());
                 break;
@@ -78,9 +73,6 @@ public class IntentFindRestaurantsHandler {
                 break;
 
             case BOOKING:
-                handleBooking();
-                break;
-
             default:
                 blockService.sendErrorBlock(session.getUser());
                 break;
@@ -118,10 +110,6 @@ public class IntentFindRestaurantsHandler {
         }
     }
 
-    private void handleBooking() {
-        //TODO: handleBooking
-    }
-
     public void fetchAndSend(
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
@@ -129,7 +117,7 @@ public class IntentFindRestaurantsHandler {
         final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 
         UrlBuilder urlBuilder = urlBuilderBase(
-            bag.getGraffittiWhatCategoryNode(),
+            bag.getCategory(),
             bag.getGraffittiPageNumber()
         );
 
@@ -209,21 +197,13 @@ public class IntentFindRestaurantsHandler {
     }
 
     private UrlBuilder urlBuilderBase(
-        GraffittiFacetV4FacetNode graffittiFacetV4Node,
+        Category category,
         Integer pageNumber
     ) {
-        if (graffittiFacetV4Node == null) {
-            return searchUrlBuilder.build(
-                WHAT_RESTAURANTS,
-                GraffittiType.VENUE.toString(),
-                pageNumber
-            );
-        } else {
-            return searchUrlBuilder.build(
-                graffittiFacetV4Node.getId(),
-                GraffittiType.VENUE.toString(),
-                pageNumber
-            );
-        }
+        return searchUrlBuilder.build(
+            category.getGraffittiId(),
+            GraffittiType.VENUE.toString(),
+            pageNumber
+        );
     }
 }
