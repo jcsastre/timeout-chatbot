@@ -9,7 +9,17 @@ public enum Category {
         "Restaurant",
         "Restaurants",
         "restaurants (category)",
-        "Cuisine"
+        "Cuisine",
+        "Cuisines"
+    ),
+
+    HOTEL(
+        "node-7099",
+        "Hotel",
+        "Hotels",
+        "hotels (category)",
+        "Type",
+        "Types"
     ),
 
     THINGS_TO_DO(
@@ -17,7 +27,8 @@ public enum Category {
         "Things to do",
         "Things to do",
         "things to do (category)",
-        "Subcategory"
+        "Subcategory",
+        "Subcategories"
     );
 
     private final String graffittiId;
@@ -25,6 +36,7 @@ public enum Category {
     private final String namePlural;
     private final String conceptName;
     private final String subcategoriesName;
+    private final String subcategoriesNamePlural;
     private List<Subcategory> subcategories;
 
     Category(
@@ -32,13 +44,15 @@ public enum Category {
         String name,
         String namePlural,
         String conceptName,
-        String subcategoriesName
+        String subcategoriesName,
+        String subcategoriesNamePlural
     ) {
         this.graffittiId = graffittiId;
         this.name = name;
         this.namePlural = namePlural;
         this.conceptName = conceptName;
         this.subcategoriesName = subcategoriesName;
+        this.subcategoriesNamePlural = subcategoriesNamePlural;
     }
 
     public String getGraffittiId() {
@@ -53,12 +67,17 @@ public enum Category {
         return namePlural;
     }
 
+
     public String getConceptName() {
         return conceptName;
     }
 
     public String getSubcategoriesName() {
         return subcategoriesName;
+    }
+
+    public String getSubcategoriesNamePlural() {
+        return subcategoriesNamePlural;
     }
 
     public List<Subcategory> getSubcategories() {

@@ -26,7 +26,6 @@ public class BlockService {
     private final WelcomeFirstTimeBlock welcomeFirstTimeBlock;
     private final VersionInfoBlock versionInfoBlock;
     private final SearchSuggestionsBlock searchSuggestionsBlock;
-    private final DiscoverBlock discoverBlock;
     private final MostLovedBlock mostLovedBlock;
     private final WhatsNewBlock whatsNewBlock;
     private final WelcomeBackBlock welcomeBackBlock;
@@ -49,7 +48,6 @@ public class BlockService {
         WelcomeFirstTimeBlock welcomeFirstTimeBlock,
         VersionInfoBlock versionInfoBlock,
         SearchSuggestionsBlock searchSuggestionsBlock,
-        DiscoverBlock discoverBlock,
         MostLovedBlock mostLovedBlock,
         WhatsNewBlock whatsNewBlock,
         WelcomeBackBlock welcomeBackBlock,
@@ -70,7 +68,6 @@ public class BlockService {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
         this.versionInfoBlock = versionInfoBlock;
         this.searchSuggestionsBlock = searchSuggestionsBlock;
-        this.discoverBlock = discoverBlock;
         this.mostLovedBlock = mostLovedBlock;
         this.whatsNewBlock = whatsNewBlock;
         this.welcomeBackBlock = welcomeBackBlock;
@@ -91,7 +88,8 @@ public class BlockService {
 
     public void sendWelcomeFirstTimeBlock(
         User user
-    ) {
+    ) throws MessengerApiException, MessengerIOException {
+
         welcomeFirstTimeBlock.send(user);
     }
 
@@ -113,13 +111,6 @@ public class BlockService {
     ) throws MessengerApiException, MessengerIOException {
 
         searchSuggestionsBlock.send(session);
-    }
-
-    public void sendDiscoverBlock(
-        Session session
-    ) throws MessengerApiException, MessengerIOException {
-
-        discoverBlock.send(session);
     }
 
     public void sendMostLovedBlock(

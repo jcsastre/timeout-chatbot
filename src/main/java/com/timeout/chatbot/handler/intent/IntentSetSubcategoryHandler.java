@@ -16,12 +16,12 @@ import java.io.IOException;
 public class IntentSetSubcategoryHandler {
 
     private final BlockService blockService;
-    private final IntentFindRestaurantsHandler findRestaurantsHandler;
+    private final IntentFindVenuesHandler findRestaurantsHandler;
 
     @Autowired
     public IntentSetSubcategoryHandler(
         BlockService blockService,
-        IntentFindRestaurantsHandler findRestaurantsHandler
+        IntentFindVenuesHandler findRestaurantsHandler
     ) {
         this.blockService = blockService;
         this.findRestaurantsHandler = findRestaurantsHandler;
@@ -37,8 +37,6 @@ public class IntentSetSubcategoryHandler {
                 handleLooking(session, subcategoryId);
                 break;
 
-            case BOOKING:
-            case UNDEFINED:
             default:
                 blockService.sendErrorBlock(session.getUser());
                 break;

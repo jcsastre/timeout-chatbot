@@ -17,17 +17,17 @@ public class IntentBackHandler {
 
     private final BlockService blockService;
     private final MessengerSendClient messengerSendClient;
-    private final IntentFindRestaurantsHandler findRestaurantsHandler;
+    private final IntentFindVenuesHandler intentFindVenuesHandler;
 
     @Autowired
     public IntentBackHandler(
         BlockService blockService,
         MessengerSendClient messengerSendClient,
-        IntentFindRestaurantsHandler findRestaurantsHandler
+        IntentFindVenuesHandler intentFindVenuesHandler
     ) {
         this.blockService = blockService;
         this.messengerSendClient = messengerSendClient;
-        this.findRestaurantsHandler = findRestaurantsHandler;
+        this.intentFindVenuesHandler = intentFindVenuesHandler;
     }
 
     public void handle(
@@ -62,7 +62,7 @@ public class IntentBackHandler {
         final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 
         if (bag.getCategory() == Category.RESTAURANT) {
-            findRestaurantsHandler.fetchAndSend(session);
+            intentFindVenuesHandler.fetchAndSend(session);
         }
     }
 }

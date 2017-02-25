@@ -6,16 +6,14 @@ import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.handler.states.booking.BookingStatePayloadHandler;
 import com.timeout.chatbot.handler.states.item.ItemStatePayloadHandler;
 import com.timeout.chatbot.handler.states.searching.SearchingStatePayloadHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStatePayloadHandler;
+import com.timeout.chatbot.messenger4j.SenderActionsHelper;
 import com.timeout.chatbot.services.BlockService;
-import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateItemBag;
 import com.timeout.chatbot.session.state.SessionState;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +28,12 @@ public class DefaultPayloadHandler {
     private final BlockService blockService;
     private final MessengerSendClient messengerSendClient;
     private final DefaultTextHandler defaultTextHandler;
-    private final GraffittiService graffittiService;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
     private final SubmittingReviewStatePayloadHandler submittingReviewStatePayloadHandler;
     private final BookingStatePayloadHandler bookingStatePayloadHandler;
     private final ItemStatePayloadHandler itemStatePayloadHandler;
     private final SearchingStatePayloadHandler searchingStatePayloadHandler;
+    private final SenderActionsHelper senderActionsHelper;
 
     @Autowired
     public DefaultPayloadHandler(
@@ -43,21 +41,23 @@ public class DefaultPayloadHandler {
         BlockService blockService,
         MessengerSendClient messengerSendClient,
         DefaultTextHandler defaultTextHandler,
-        GraffittiService graffittiService,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
         SubmittingReviewStatePayloadHandler submittingReviewStatePayloadHandler,
         BookingStatePayloadHandler bookingStatePayloadHandler,
-        ItemStatePayloadHandler itemStatePayloadHandler, SearchingStatePayloadHandler searchingStatePayloadHandler) {
+        ItemStatePayloadHandler itemStatePayloadHandler,
+        SearchingStatePayloadHandler searchingStatePayloadHandler,
+        SenderActionsHelper senderActionsHelper
+    ) {
         this.intentService = intentService;
         this.blockService = blockService;
         this.messengerSendClient = messengerSendClient;
         this.defaultTextHandler = defaultTextHandler;
-        this.graffittiService = graffittiService;
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
         this.submittingReviewStatePayloadHandler = submittingReviewStatePayloadHandler;
         this.bookingStatePayloadHandler = bookingStatePayloadHandler;
         this.itemStatePayloadHandler = itemStatePayloadHandler;
         this.searchingStatePayloadHandler = searchingStatePayloadHandler;
+        this.senderActionsHelper = senderActionsHelper;
     }
 
     public void handle(
@@ -72,8 +72,9 @@ public class DefaultPayloadHandler {
 
             session.reset();
             blockService.sendWelcomeBackBlock(session.getUser());
-            blockService.sendVersionInfoBlock(session.getUser().getMessengerId());
             intentService.handleDiscover(session);
+//            blockService.sendWelcomeFirstTimeBlock(session.getUser());
+//            blockService.sendVersionInfoBlock(session.getUser().getMessengerId());
 
         } else {
 
@@ -118,9 +119,7 @@ public class DefaultPayloadHandler {
         switch (payloadType) {
 
             case get_started:
-                blockService.sendWelcomeFirstTimeBlock(session.getUser());
-                blockService.sendVersionInfoBlock(session.getUser().getMessengerId());
-                intentService.handleDiscover(session);
+                intentService.handleGetStarted(session);
                 break;
 
             case utterance:
@@ -156,21 +155,8 @@ public class DefaultPayloadHandler {
                 intentService.handleSeemore(session);
                 break;
 
-            case item_more_options:
-                handleItemMoreOptions(session, payload);
-                break;
-
             case set_geolocation:
                 blockService.sendGeolocationAskBlock(session.getUser().getMessengerId());
-                break;
-
-//            case show_subcategories:
-//                blockService.sendSubcategoriesQuickrepliesBlock(session, 1);
-//                break;
-
-            case set_subcategory:
-                final String subcategoryId = payload.getString("id");
-                intentService.handleSetSubcategory(session, subcategoryId);
                 break;
 
             case get_a_summary:
@@ -211,36 +197,6 @@ public class DefaultPayloadHandler {
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, I don't understand you."
-                );
-                break;
-        }
-    }
-
-    private void handleItemMoreOptions(
-        Session session,
-        JSONObject payload
-    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-
-        final SessionStateItemBag bag = session.getSessionStateItemBag();
-
-        final GraffittiType graffittiType = GraffittiType.fromString(payload.getString("item_type"));
-
-        switch (graffittiType) {
-
-            case VENUE:
-                bag.setGraffittiType(graffittiType);
-                bag.setItemId(payload.getString("item_id"));
-                session.setSessionState(SessionState.ITEM);
-                intentService.handleSeeItem(session);
-                break;
-
-            case EVENT:
-            case FILM:
-            case PAGE:
-                messengerSendClient.sendTextMessage(
-                    session.getUser().getMessengerId(),
-                    "Sorry, only 'More options' for Venues is available",
-                    quickReplyBuilderForCurrentSessionState.build(session)
                 );
                 break;
         }

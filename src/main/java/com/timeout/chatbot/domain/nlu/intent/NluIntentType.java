@@ -1,10 +1,12 @@
 package com.timeout.chatbot.domain.nlu.intent;
 
 public enum NluIntentType {
+
     UNKOWN(null),
     GREETINGS("greetings"),
     FIND_THINGSTODO("findThingsToDo"),
     FIND_RESTAURANTS("restaurants"),
+    FIND_HOTELS("hotels"),
     FIND_RESTAURANTS_NEARBY("findRestaurantsNearby"),
     FIND_BARSANDPUBS("findBarsAndPubs"),
     FIND_BARSANDPUBS_NEARBY("findBarsAndPubsNearby"),
@@ -15,7 +17,9 @@ public enum NluIntentType {
     SET_LOCATION("setGeolocation"),
     FINDS_FILMS("findFilms"),
     DISCOVER("discover"),
-    SUGGESTIONS("search_suggestions");
+    SUGGESTIONS("search_suggestions"),
+    FORGET_ME("forget_me"),
+    GET_STARTED("get_started");
 
     private final String action;
 
@@ -27,12 +31,18 @@ public enum NluIntentType {
         return action;
     }
 
-    public static NluIntentType fromApiaiAction(String action) {
+    public static NluIntentType fromApiaiAction(
+        String action
+    ) {
         if (action == null) {
             return UNKOWN;
         }
 
-        if (action.equals(GREETINGS.toApiaiAction())) {
+        if (action.equals(FORGET_ME.toApiaiAction())) {
+            return FORGET_ME;
+        } else if (action.equals(GET_STARTED.toApiaiAction())) {
+            return GET_STARTED;
+        } else if (action.equals(GREETINGS.toApiaiAction())) {
             return GREETINGS;
         } else if (action.equals(FIND_THINGSTODO.toApiaiAction())) {
             return FIND_THINGSTODO;

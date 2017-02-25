@@ -100,7 +100,17 @@ public class DefaultTextHandler {
     private NluResult handleInternal(
         String text
     ) {
-        if (text.equalsIgnoreCase("Things to do")) {
+        if (text.equalsIgnoreCase("get started")) {
+            return
+                new NluResult(
+                    NluIntentType.GET_STARTED
+                );
+        } else if (text.equalsIgnoreCase("Forget me")) {
+            return
+                new NluResult(
+                    NluIntentType.FORGET_ME
+                );
+        } else if (text.equalsIgnoreCase("Things to do")) {
             return
                 new NluResult(
                     NluIntentType.FIND_THINGSTODO
@@ -151,6 +161,14 @@ public class DefaultTextHandler {
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         switch (nluResult.getNluIntentType()) {
 
+            case GET_STARTED:
+                intentService.handleGetStarted(session);
+                break;
+
+            case FORGET_ME:
+                intentService.handleForgetMe(session);
+                break;
+
             case GREETINGS:
                 intentService.handleGreetings(session);
                 break;
@@ -170,6 +188,11 @@ public class DefaultTextHandler {
             case FIND_RESTAURANTS:
                 handleFindRestaurants(session, nluResult);
                 break;
+
+            case FIND_HOTELS:
+                handleFindRestaurants(session, nluResult);
+                break;
+
 
 //            case FIND_RESTAURANTS_NEARBY:
 //                session.setSessionState(SessionState.SEARCHING);
@@ -260,4 +283,19 @@ public class DefaultTextHandler {
 
         intentService.handleFindRestaurants(session, nluResult.getParameters());
     }
+
+    private void handleFindHotels(
+        Session session,
+        NluResult nluResult
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+
+        session.setSessionState(SessionState.SEARCHING);
+
+        final SessionStateSearchingBag searchingBag = session.getSessionStateSearchingBag();
+        searchingBag.setCategory(Category.HOTEL);
+        searchingBag.setGraffittiPageNumber(1);
+
+        intentService.handleFindRestaurants(session, nluResult.getParameters());
+    }
+
 }

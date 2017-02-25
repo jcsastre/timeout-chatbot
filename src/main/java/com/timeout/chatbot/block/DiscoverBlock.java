@@ -3,8 +3,6 @@ package com.timeout.chatbot.block;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.github.messenger4j.send.NotificationType;
-import com.github.messenger4j.send.Recipient;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
@@ -13,7 +11,7 @@ import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.response.search.page.GraffittiSearchResponse;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
-import com.timeout.chatbot.session.Session;
+import com.timeout.chatbot.messenger4j.SenderActionsHelper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,31 +23,39 @@ import java.util.List;
 public class DiscoverBlock {
 
     private final SearchUrlBuilder searchUrlBuilder;
-    private final MessengerSendClient messengerSendClient;
+    private final MessengerSendClient msc;
     private final RestTemplate restTemplate;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
+    private final SenderActionsHelper senderActionsHelper;
 
     @Autowired
     public DiscoverBlock(
-        SearchUrlBuilder searchUrlBuilder, MessengerSendClient messengerSendClient,
+        SearchUrlBuilder searchUrlBuilder,
+        MessengerSendClient msc,
         RestTemplate restTemplate,
-        QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState
+        QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
+        SenderActionsHelper senderActionsHelper
     ) {
         this.searchUrlBuilder = searchUrlBuilder;
-        this.messengerSendClient = messengerSendClient;
+        this.msc = msc;
         this.restTemplate = restTemplate;
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
+        this.senderActionsHelper = senderActionsHelper;
     }
 
     public void send(
-        Session session
+        String userMessengerId
     ) throws MessengerApiException, MessengerIOException {
 
-        messengerSendClient.sendTemplate(
-            Recipient.newBuilder().recipientId(session.getUser().getMessengerId()).build(),
-            NotificationType.REGULAR,
-            buildGenericTemplate(),
-            quickReplyBuilderForCurrentSessionState.build(session)
+        senderActionsHelper.typingOnAndWait(userMessengerId, 1000);
+        msc.sendTextMessage(
+            userMessengerId,
+            "What are you looking for?"
+        );
+
+        msc.sendTemplate(
+            userMessengerId,
+            buildGenericTemplate()
         );
     }
 

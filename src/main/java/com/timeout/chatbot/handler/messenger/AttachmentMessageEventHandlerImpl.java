@@ -9,7 +9,7 @@ import com.timeout.chatbot.block.BlockError;
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.entities.Category;
 import com.timeout.chatbot.domain.page.PageUid;
-import com.timeout.chatbot.handler.intent.IntentFindRestaurantsHandler;
+import com.timeout.chatbot.handler.intent.IntentFindVenuesHandler;
 import com.timeout.chatbot.handler.intent.IntentSeeItem;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionPool;
@@ -24,7 +24,7 @@ import java.io.IOException;
 public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEventHandler {
 
     private final SessionPool sessionPool;
-    private final IntentFindRestaurantsHandler findRestaurantsHandler;
+    private final IntentFindVenuesHandler findRestaurantsHandler;
     private final BlockError blockError;
     private final MessengerSendClient messengerSendClient;
     private final IntentSeeItem intentSeeItem;
@@ -32,7 +32,7 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
     @Autowired
     public AttachmentMessageEventHandlerImpl(
         SessionPool sessionPool,
-        IntentFindRestaurantsHandler findRestaurantsHandler,
+        IntentFindVenuesHandler findRestaurantsHandler,
         BlockError blockError,
         MessengerSendClient messengerSendClient,
         IntentSeeItem intentSeeItem

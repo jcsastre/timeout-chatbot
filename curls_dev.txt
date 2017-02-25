@@ -22,7 +22,7 @@ curl -X POST -H "Content-Type: application/json" -d '{
   "greeting":{
     "text":"Timeout London: Guide to art and entertainment, food and drink, film, travel and more"
   }
-}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD"
+}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAASeusXP6OEBAAjScKM2kehZBjhAYDsO3KgZCeZCMC21fPdRUylvhSMPA1UE7d27PveO5uDiBN0IgpgR3TRCaiirIpmfEzYQYlkbzNFZAZCgZASv1jTZC3V55vUI552ErvJWfyLHt8gQTsEjn8iPhAz44RkCYXMeocFUY3eWPoTREqnBmshPWC5"
 
 --- Persistent Menu ---
 

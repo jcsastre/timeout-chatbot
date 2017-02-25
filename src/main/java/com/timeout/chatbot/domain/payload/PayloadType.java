@@ -24,6 +24,7 @@ public enum PayloadType {
 
     get_a_summary,
 
+    subcategory_any,
     where_everywhere,
 
     phone_call,

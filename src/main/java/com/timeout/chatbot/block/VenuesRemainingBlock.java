@@ -57,8 +57,17 @@ public class VenuesRemainingBlock {
             ).toList();
         }
 
+        boolean areaSet = false;
+        if (bag.getGeolocation() != null) {
+            areaSet = true;
+        } else {
+            if (bag.getNeighborhood() != null) {
+                areaSet = true;
+            }
+        }
+
         listBuilder.addTextQuickReply(
-            "Area",
+            areaSet ? "Change area" : "Set area",
             new JSONObject()
                 .put("type", PayloadType.venues_show_areas)
                 .put("pageNumber", 1)
@@ -74,6 +83,7 @@ public class VenuesRemainingBlock {
                     "Set " + subcategoryName : "Change " + subcategoryName,
                 new JSONObject()
                     .put("type", PayloadType.show_subcategories)
+                    .put("pageNumber", 1)
                     .toString()
             ).toList();
         }
