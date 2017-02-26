@@ -76,6 +76,8 @@ public class DefaultPayloadHandler {
 //            blockService.sendWelcomeFirstTimeBlock(session.getUser());
 //            blockService.sendVersionInfoBlock(session.getUser().getMessengerId());
 
+        } else if (payloadType == PayloadType.discover) {
+            intentService.handleDiscover(session);
         } else {
 
             final SessionState sessionState = session.getSessionState();
@@ -127,15 +129,15 @@ public class DefaultPayloadHandler {
                 defaultTextHandler.handle(utterance, session);
                 break;
 
-            case help:
-                intentService.handleHelp(session);
-                break;
+//            case help:
+//                intentService.handleHelp(session);
+//                break;
 
-            case search_suggestions:
-                intentService.handleSuggestions(session);
-//                session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
-//                blockService.sendSuggestionsBlock(session);
-                break;
+//            case search_suggestions:
+//                intentService.handleSuggestions(session);
+////                session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
+////                blockService.sendSuggestionsBlock(session);
+//                break;
 
             case most_loved:
                 session.setSessionState(SessionState.MOST_LOVED);
@@ -146,10 +148,6 @@ public class DefaultPayloadHandler {
 //                session.setSessionState(SessionState.WHATS_NEW);
 //                blockService.sendWhatsNewBlock(session);
 //                break;
-
-            case discover:
-                intentService.handleDiscover(session);
-                break;
 
             case set_geolocation:
                 blockService.sendGeolocationAskBlock(session.getUser().getMessengerId());
@@ -169,7 +167,7 @@ public class DefaultPayloadHandler {
             case no_see_at_timeout:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
-                    "Ok, back to the list of restaurants"
+                    "Ok, item_Back to the list of restaurants"
                 );
                 intentService.handleFindRestaurants(session);
                 break;

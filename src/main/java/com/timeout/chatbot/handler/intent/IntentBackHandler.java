@@ -44,7 +44,7 @@ public class IntentBackHandler {
             case UNDEFINED:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
-                    "I can't go 'back'"
+                    "I can't go back"
                 );
                 break;
 
@@ -61,7 +61,10 @@ public class IntentBackHandler {
 
         final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 
-        if (bag.getCategory() == Category.RESTAURANT) {
+        if (
+            bag.getCategory() == Category.RESTAURANT ||
+            bag.getCategory() == Category.HOTEL
+        ) {
             intentFindVenuesHandler.fetchAndSend(session);
         }
     }

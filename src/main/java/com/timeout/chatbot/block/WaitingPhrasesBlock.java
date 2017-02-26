@@ -11,6 +11,7 @@ public class WaitingPhrasesBlock implements Runnable {
     private MessengerSendClient msc;
     private Boolean isCancelled = false;
     private final SenderActionsHelper senderActionsHelper;
+    private Integer counter = 0;
 
     public WaitingPhrasesBlock(
         String userMessengerId,
@@ -34,17 +35,49 @@ public class WaitingPhrasesBlock implements Runnable {
                 e.printStackTrace();
             }
 
+            senderActionsHelper.typingOff(userMessengerId);
+
+            String text = null;
+            String gifUrl = null;
+            if (counter==0) {
+                text = "Don't worry, I'm on it :)";
+            } else if (counter==1) {
+                gifUrl = "https://media.giphy.com/media/6hE5JyVPvivCg/giphy.gif";
+            } else if (counter==2) {
+                text = "I'm still working on it :|";
+            } else if (counter==3) {
+                gifUrl = "https://media.giphy.com/media/XIqCQx02E1U9W/giphy.gif";
+            } else if (counter==4) {
+                text = "Work in progress :)";
+            } else if (counter==5) {
+                gifUrl = "https://media.giphy.com/media/l0HlJR8AWpaS22XIs/giphy.gif";
+            } else {
+                gifUrl = " https://media.giphy.com/media/MIY4jpusckRmU/giphy.gif";
+            }
+
             if (!isCancelled) {
                 try {
-                    msc.sendTextMessage(
-                        userMessengerId,
-                        "Please, wait a moment"
-                    );
+                    if (text != null) {
+                        senderActionsHelper.typingOn(userMessengerId);
+                        msc.sendTextMessage(
+                            userMessengerId,
+                            text
+                        );
+                    }
+                    if (gifUrl != null) {
+                        senderActionsHelper.typingOn(userMessengerId);
+                        msc.sendImageAttachment(
+                            userMessengerId,
+                            gifUrl
+                        );
+                    }
                     senderActionsHelper.typingOn(userMessengerId);
                 } catch (MessengerApiException | MessengerIOException e) {
                     e.printStackTrace();
                 }
             }
+
+            counter++;
         }
     }
 

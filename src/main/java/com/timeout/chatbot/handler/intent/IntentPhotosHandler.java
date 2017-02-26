@@ -55,7 +55,7 @@ public class IntentPhotosHandler {
             case SEARCHING:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
-                    "Sorry, I don't know what photos do you want to see"
+                    "Sorry, I don't know what item_Photos do you want to see"
                 );
                 break;
 

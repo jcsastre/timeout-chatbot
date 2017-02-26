@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Date;
 
 @Component
 public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEventHandler {
@@ -47,25 +48,35 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
     @Override
     public void handle(AttachmentMessageEvent event) {
 
-        final String recipitientId = event.getRecipient().getId();
-
         final Session session =
             sessionPool.getSession(
-                new PageUid(recipitientId),
+                new PageUid(event.getRecipient().getId()),
                 event.getSender().getId()
             );
 
-        try {
-            for (AttachmentMessageEvent.Attachment attachment : event.getAttachments()) {
-                if (attachment.getType() == AttachmentMessageEvent.AttachmentType.LOCATION) {
-                    handleLocation(session, attachment);
-                } else if (attachment.getType() == AttachmentMessageEvent.AttachmentType.IMAGE) {
-                    handleImage(session, attachment);
-                }
+        boolean proceed = true;
+        final Date currentTimestamp = session.getCurrentTimestamp();
+        if (currentTimestamp != null) {
+            if (currentTimestamp.equals(event.getTimestamp())) {
+                proceed = false;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            blockError.send(session.getUser());
+        }
+
+        if (proceed) {
+            session.setCurrentTimestamp(event.getTimestamp());
+
+            try {
+                for (AttachmentMessageEvent.Attachment attachment : event.getAttachments()) {
+                    if (attachment.getType() == AttachmentMessageEvent.AttachmentType.LOCATION) {
+                        handleLocation(session, attachment);
+                    } else if (attachment.getType() == AttachmentMessageEvent.AttachmentType.IMAGE) {
+                        handleImage(session, attachment);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                blockError.send(session.getUser());
+            }
         }
     }
 
@@ -88,7 +99,10 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
 
         if (session.getSessionState() == SessionState.SEARCHING) {
             final Category category = lookingBag.getCategory();
-            if (category == Category.RESTAURANT) {
+            if (
+                category == Category.RESTAURANT ||
+                category == Category.HOTEL
+            ) {
                 findRestaurantsHandler.fetchAndSend(session);
             }
         }

@@ -66,26 +66,26 @@ public class ItemStatePayloadHandler {
 
         switch (payloadType) {
 
-            case book:
+            case item_Book:
                 handleBook(session);
                 break;
 
-            case back:
+            case item_Back:
                 backHandler.handle(session);
                 break;
 
-            case photos:
+            case item_Photos:
                 photosHandler.handle(session);
                 break;
 
-            case submit_photo:
+            case item_SubmitPhoto:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
-                    "Please attach one or more photos"
+                    "Please attach one or more item_Photos"
                 );
                 break;
 
-            case submit_review:
+            case item_SubmitReview:
                 handleSumitReview(session);
                 break;
 

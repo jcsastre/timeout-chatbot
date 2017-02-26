@@ -11,16 +11,18 @@ public enum PayloadType {
     searching_WhereEverywhere,
     searching_SeeMore,
 
+    item_Back,
+    item_Book,
+    item_Photos,
+    item_SubmitPhoto,
+    item_SubmitReview,
+
     help,
     search_suggestions,
     discover,
     whats_new,
     most_loved,
     start_over,
-
-    back,
-    book,
-    photos,
 
     cancel,
 
@@ -55,8 +57,6 @@ public enum PayloadType {
     booking_save_ok,
     booking_save_not_ok,
 
-    submit_review,
-    submit_photo,
 
     temporaly_disabled;
 }

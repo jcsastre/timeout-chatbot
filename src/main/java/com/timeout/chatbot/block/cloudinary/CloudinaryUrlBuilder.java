@@ -181,6 +181,8 @@ public class CloudinaryUrlBuilder {
 
         System.out.println("checkUrlAvailability: " + targetUrl);
 
+//        Thread.sleep(5000);
+
         HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(targetUrl).openConnection();
         httpUrlConnection.setRequestMethod("HEAD");
 
