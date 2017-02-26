@@ -151,10 +151,6 @@ public class DefaultPayloadHandler {
                 intentService.handleDiscover(session);
                 break;
 
-            case see_more:
-                intentService.handleSeemore(session);
-                break;
-
             case set_geolocation:
                 blockService.sendGeolocationAskBlock(session.getUser().getMessengerId());
                 break;

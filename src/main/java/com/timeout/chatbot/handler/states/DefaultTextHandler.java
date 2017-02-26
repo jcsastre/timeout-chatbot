@@ -120,6 +120,11 @@ public class DefaultTextHandler {
                 new NluResult(
                     NluIntentType.FIND_RESTAURANTS
                 );
+        } else if (text.equalsIgnoreCase("Hotels")) {
+            return
+                new NluResult(
+                    NluIntentType.FIND_HOTELS
+                );
         } else if (text.equalsIgnoreCase("Bars and pubs")) {
             return
                 new NluResult(
@@ -190,9 +195,8 @@ public class DefaultTextHandler {
                 break;
 
             case FIND_HOTELS:
-                handleFindRestaurants(session, nluResult);
+                handleFindHotels(session, nluResult);
                 break;
-
 
 //            case FIND_RESTAURANTS_NEARBY:
 //                session.setSessionState(SessionState.SEARCHING);
@@ -297,5 +301,4 @@ public class DefaultTextHandler {
 
         intentService.handleFindRestaurants(session, nluResult.getParameters());
     }
-
 }

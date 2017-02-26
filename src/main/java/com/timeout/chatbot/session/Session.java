@@ -8,6 +8,8 @@ import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import com.timeout.chatbot.session.bag.SessionStateSubmittingReviewBag;
 import com.timeout.chatbot.session.state.SessionState;
 
+import java.util.Date;
+
 public class Session {
 
     private final Page page;
@@ -18,6 +20,7 @@ public class Session {
     private SessionStateBookingBag sessionStateBookingBag;
     private SessionStateSubmittingReviewBag sessionStateSubmittingReviewBag;
     private long lastAccessTime;
+    private Date currentTimestamp;
 
     public Session(
         Page page,
@@ -75,6 +78,14 @@ public class Session {
 
     public SessionStateSubmittingReviewBag getSessionStateSubmittingReviewBag() {
         return sessionStateSubmittingReviewBag;
+    }
+
+    public Date getCurrentTimestamp() {
+        return currentTimestamp;
+    }
+
+    public void setCurrentTimestamp(Date currentTimestamp) {
+        this.currentTimestamp = currentTimestamp;
     }
 
     @Override

@@ -52,7 +52,7 @@ public class VenuesRemainingBlock {
             listBuilder.addTextQuickReply(
                 "See more",
                 new JSONObject()
-                    .put("type", PayloadType.see_more)
+                    .put("type", PayloadType.searching_SeeMore)
                     .toString()
             ).toList();
         }
@@ -69,7 +69,7 @@ public class VenuesRemainingBlock {
         listBuilder.addTextQuickReply(
             areaSet ? "Change area" : "Set area",
             new JSONObject()
-                .put("type", PayloadType.venues_show_areas)
+                .put("type", PayloadType.searching_VenuesShowAreas)
                 .put("pageNumber", 1)
                 .toString()
         ).toList();
@@ -82,7 +82,7 @@ public class VenuesRemainingBlock {
                 bag.getSubcategory() == null ?
                     "Set " + subcategoryName : "Change " + subcategoryName,
                 new JSONObject()
-                    .put("type", PayloadType.show_subcategories)
+                    .put("type", PayloadType.searching_ShowSubcategories)
                     .put("pageNumber", 1)
                     .toString()
             ).toList();

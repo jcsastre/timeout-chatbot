@@ -82,7 +82,7 @@ public class SubcategoriesQuickrepliesBlock {
             builder.addTextQuickReply(
                 name,
                 new JSONObject()
-                    .put("type", PayloadType.set_subcategory)
+                    .put("type", PayloadType.searching_SetSubcategory)
                     .put("subcategory_id", subcategory.getGraffittiId())
                     .toString()
             ).toList();
@@ -92,7 +92,7 @@ public class SubcategoriesQuickrepliesBlock {
             builder.addTextQuickReply(
                 "More " + category.getSubcategoriesNamePlural().toLowerCase(),
                 new JSONObject()
-                    .put("type", PayloadType.show_subcategories)
+                    .put("type", PayloadType.searching_ShowSubcategories)
                     .put("pageNumber", pageNumber+1)
                     .toString()
             ).toList();

@@ -20,7 +20,6 @@ import com.timeout.chatbot.session.bag.SessionStateItemBag;
 import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import com.timeout.chatbot.session.state.SessionState;
 import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -38,27 +37,28 @@ public class SearchingStatePayloadHandler {
     private final IntentSeeItem intentSeeItem;
     private final BlockError blockError;
 
-    @Autowired
     public SearchingStatePayloadHandler(
         MessengerSendClient messengerSendClient,
         GraffittiService graffittiService,
         AreasQuickrepliesBlock areasQuickrepliesBlock,
         SubcategoriesQuickrepliesBlock subcategoriesQuickrepliesBlock,
         VenuesRemainingBlock venuesRemainingBlock,
-        IntentFindVenuesHandler intentFindVenuesHandler,
         IntentSetSubcategoryHandler intentSetSubcategoryHandler,
-        IntentSeeItem intentSeeItem, BlockError blockError
+        IntentSeeItem intentSeeItem,
+        BlockError blockError,
+        IntentFindVenuesHandler intentFindVenuesHandler
     ) {
         this.messengerSendClient = messengerSendClient;
         this.graffittiService = graffittiService;
         this.areasQuickrepliesBlock = areasQuickrepliesBlock;
         this.subcategoriesQuickrepliesBlock = subcategoriesQuickrepliesBlock;
         this.venuesRemainingBlock = venuesRemainingBlock;
-        this.intentFindVenuesHandler = intentFindVenuesHandler;
         this.intentSetSubcategoryHandler = intentSetSubcategoryHandler;
         this.intentSeeItem = intentSeeItem;
         this.blockError = blockError;
+        this.intentFindVenuesHandler = intentFindVenuesHandler;
     }
+
 
     public void handle(
         Session session,
@@ -69,15 +69,19 @@ public class SearchingStatePayloadHandler {
 
         switch (payloadType) {
 
-            case item_more_options:
+            case searching_SeeMore:
+                handleSeeMore(session);
+                break;
+
+            case searching_ItemMoreOptions:
                 handleItemMoreOptions(session, payload);
                 break;
 
-            case venues_show_areas:
+            case searching_VenuesShowAreas:
                 handleVenuesShowAreas(session, payload);
                 break;
 
-            case show_subcategories:
+            case searching_ShowSubcategories:
                 handleShowSubcategories(session, payload);
                 break;
 
@@ -85,15 +89,15 @@ public class SearchingStatePayloadHandler {
                 venuesRemainingBlock.send(session);
                 break;
 
-            case venues_set_neighborhood:
+            case searching_VenuesSetNeighborhood:
                 handleVenuesSetNeighborhood(session, payload);
                 break;
 
-            case set_subcategory:
+            case searching_SetSubcategory:
                 handleSetSubcategory(session, payload);
                 break;
 
-            case where_everywhere:
+            case searching_WhereEverywhere:
                 handleWhereEverywhere(session);
                 break;
 
@@ -173,7 +177,7 @@ public class SearchingStatePayloadHandler {
         intentFindVenuesHandler.handle(session);
     }
 
-    public void handleVenuesSetNeighborhood(
+    private void handleVenuesSetNeighborhood(
         Session session,
         JSONObject payload
     ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException {
@@ -187,5 +191,23 @@ public class SearchingStatePayloadHandler {
         } else {
             blockError.send(session.getUser());
         }
+    }
+
+    private void handleSeeMore(
+        Session session
+    ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException {
+
+        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
+
+        if (bag.getReaminingItems() > 0) {
+            bag.setGraffittiPageNumber(bag.getGraffittiPageNumber() +1);
+            intentFindVenuesHandler.fetchAndSend(session);
+        } else {
+            messengerSendClient.sendTextMessage(
+                session.getUser().getMessengerId(),
+                "There are no remaining " + bag.getCategory().getNamePlural()
+            );
+        }
+
     }
 }

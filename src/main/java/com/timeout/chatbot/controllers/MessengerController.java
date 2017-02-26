@@ -88,16 +88,16 @@ MessengerController {
     ) {
         logger.info("Received Messenger Platform callback - payload: {} | signature: {}", payload, signature);
 
-        return ResponseEntity.status(HttpStatus.OK).build();
+//        return ResponseEntity.status(HttpStatus.OK).build();
 
-//        try {
-//            this.receiveClient.processCallbackPayload(payload, signature);
-//            logger.debug("Processed callback payload successfully");
-//            return ResponseEntity.status(HttpStatus.OK).build();
-//
-//        } catch (MessengerVerificationException e) {
-//            logger.warn("Processing of callback payload failed: {}", e.getMessage());
-//            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-//        }
+        try {
+            this.receiveClient.processCallbackPayload(payload, signature);
+            logger.debug("Processed callback payload successfully");
+            return ResponseEntity.status(HttpStatus.OK).build();
+
+        } catch (MessengerVerificationException e) {
+            logger.warn("Processing of callback payload failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 }

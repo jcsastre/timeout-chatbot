@@ -10,6 +10,8 @@ import com.timeout.chatbot.session.SessionPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+
 @Component
 public class PostbackEventHandlerImpl implements PostbackEventHandler {
 
@@ -35,25 +37,38 @@ public class PostbackEventHandlerImpl implements PostbackEventHandler {
         handle(
             event.getPayload(),
             event.getRecipient().getId(),
-            event.getSender().getId()
+            event.getSender().getId(),
+            event.getTimestamp()
         );
     }
 
     public void handle(
         String payload,
-        String recipitientId,
-        String senderId
+        String recipientId,
+        String senderId,
+        Date timestamp
     ) {
         final Session session = this.sessionPool.getSession(
-            new PageUid(recipitientId),
+            new PageUid(recipientId),
             senderId
         );
 
-        try {
-            defaultPayloadHandler.handle(payload, session);
-        } catch (Exception e) {
-            e.printStackTrace();
-            blockError.send(session.getUser());
+        boolean proceed = true;
+        final Date currentTimestamp = session.getCurrentTimestamp();
+        if (currentTimestamp != null) {
+            if (currentTimestamp.equals(timestamp)) {
+                proceed = false;
+            }
+        }
+
+        if (proceed) {
+            session.setCurrentTimestamp(timestamp);
+            try {
+                defaultPayloadHandler.handle(payload, session);
+            } catch (Exception e) {
+                e.printStackTrace();
+                blockError.send(session.getUser());
+            }
         }
     }
 }

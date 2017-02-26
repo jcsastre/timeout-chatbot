@@ -72,7 +72,6 @@ public class DiscoverBlock {
                     pageItem
                 );
             }
-
         }
 
         return listBuilder.done().build();
@@ -84,7 +83,10 @@ public class DiscoverBlock {
         PageItem pageItem
     ) {
         String titleForButton = nodeName;
-        if (!titleForButton.equalsIgnoreCase("Restaurants")) {
+        if (
+            !titleForButton.equalsIgnoreCase("Restaurants") &&
+            !titleForButton.equalsIgnoreCase("Hotels")
+        ) {
             titleForButton = "\ud83d\udeab " + titleForButton;
         }
         if (titleForButton.length() > 20) {
