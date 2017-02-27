@@ -6,69 +6,77 @@ import com.github.messenger4j.receive.events.AttachmentMessageEvent;
 import com.github.messenger4j.receive.handlers.AttachmentMessageEventHandler;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.block.BlockError;
-import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.domain.Geolocation;
-import com.timeout.chatbot.domain.What;
+import com.timeout.chatbot.domain.entities.Category;
 import com.timeout.chatbot.domain.page.PageUid;
-import com.timeout.chatbot.handler.intent.IntentFindRestaurantsHandler;
+import com.timeout.chatbot.handler.intent.IntentFindVenuesHandler;
 import com.timeout.chatbot.handler.intent.IntentSeeItem;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionPool;
-import com.timeout.chatbot.session.bag.SessionStateLookingBag;
+import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import com.timeout.chatbot.session.state.SessionState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Date;
 
 @Component
 public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEventHandler {
 
     private final SessionPool sessionPool;
-    private final IntentFindRestaurantsHandler findRestaurantsHandler;
+    private final IntentFindVenuesHandler findRestaurantsHandler;
     private final BlockError blockError;
     private final MessengerSendClient messengerSendClient;
-    private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
     private final IntentSeeItem intentSeeItem;
 
     @Autowired
     public AttachmentMessageEventHandlerImpl(
         SessionPool sessionPool,
-        IntentFindRestaurantsHandler findRestaurantsHandler,
+        IntentFindVenuesHandler findRestaurantsHandler,
         BlockError blockError,
         MessengerSendClient messengerSendClient,
-        QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
-        IntentSeeItem intentSeeItem) {
+        IntentSeeItem intentSeeItem
+    ) {
         this.sessionPool = sessionPool;
         this.findRestaurantsHandler = findRestaurantsHandler;
         this.blockError = blockError;
         this.messengerSendClient = messengerSendClient;
-        this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
         this.intentSeeItem = intentSeeItem;
     }
 
     @Override
     public void handle(AttachmentMessageEvent event) {
 
-        final String recipitientId = event.getRecipient().getId();
-
         final Session session =
             sessionPool.getSession(
-                new PageUid(recipitientId),
+                new PageUid(event.getRecipient().getId()),
                 event.getSender().getId()
             );
 
-        try {
-            for (AttachmentMessageEvent.Attachment attachment : event.getAttachments()) {
-                if (attachment.getType() == AttachmentMessageEvent.AttachmentType.LOCATION) {
-                    handleLocation(session, attachment);
-                } else if (attachment.getType() == AttachmentMessageEvent.AttachmentType.IMAGE) {
-                    handleImage(session, attachment);
-                }
+        boolean proceed = true;
+        final Date currentTimestamp = session.getCurrentTimestamp();
+        if (currentTimestamp != null) {
+            if (currentTimestamp.equals(event.getTimestamp())) {
+                proceed = false;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            blockError.send(session.getUser());
+        }
+
+        if (proceed) {
+            session.setCurrentTimestamp(event.getTimestamp());
+
+            try {
+                for (AttachmentMessageEvent.Attachment attachment : event.getAttachments()) {
+                    if (attachment.getType() == AttachmentMessageEvent.AttachmentType.LOCATION) {
+                        handleLocation(session, attachment);
+                    } else if (attachment.getType() == AttachmentMessageEvent.AttachmentType.IMAGE) {
+                        handleImage(session, attachment);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                blockError.send(session.getUser());
+            }
         }
     }
 
@@ -86,14 +94,15 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
                 locationPayload.getCoordinates().getLongitude()
             );
 
-        final SessionStateLookingBag lookingBag = session.getSessionStateLookingBag();
-        lookingBag.setGraffittiPageNumber(1);
-        lookingBag.setNeighborhood(null);
+        final SessionStateSearchingBag lookingBag = session.getSessionStateSearchingBag();
         lookingBag.setGeolocation(geolocation);
 
         if (session.getSessionState() == SessionState.SEARCHING) {
-            final What what = lookingBag.getWhat();
-            if (what == What.RESTAURANT) {
+            final Category category = lookingBag.getCategory();
+            if (
+                category == Category.RESTAURANTS ||
+                category == Category.HOTELS
+            ) {
                 findRestaurantsHandler.fetchAndSend(session);
             }
         }

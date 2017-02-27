@@ -18,12 +18,14 @@ public class QuickReplyMessageEventHandlerImpl implements QuickReplyMessageEvent
     }
 
     @Override
-    public void handle(QuickReplyMessageEvent event) {
-
-        final String payload = event.getQuickReply().getPayload();
-        final String recipitientId = event.getRecipient().getId();
-        final String senderId = event.getSender().getId();
-
-        postbackEventHandler.handle(payload, recipitientId, senderId);
+    public void handle(
+        QuickReplyMessageEvent event
+    ) {
+        postbackEventHandler.handle(
+            event.getQuickReply().getPayload(),
+            event.getRecipient().getId(),
+            event.getSender().getId(),
+            event.getTimestamp()
+        );
     }
 }

@@ -36,43 +36,43 @@ public class CloudinaryUrlBuilder {
     }
 
     public String buildImageUrl(
-        PageItem pageItem
+        String categoryPrimaryName,
+        String categorySecondaryName,
+        Integer editorialRating,
+        Integer userRatingsAverage,
+        Integer userRatingsCount,
+        GraffittiType graffittiType,
+        String location,
+        String imageId
     ) throws IOException, InterruptedException {
+
         Transformation transformation = buildBaseTransformation();
 
         // Categorisation
-        String categorisationText = buildCategorisationText(pageItem);
+        String categorisationText = buildCategorisationText(categoryPrimaryName, categorySecondaryName);
         if (categorisationText != null) {
             transformation = chainCategorisationTransformation(transformation, categorisationText);
         }
 
-        // Type icon
-        transformation = chainTypeIconTransformation(transformation, GraffittiType.fromString(pageItem.getType()));
-
         // Editorial rating
-        final Integer editorialRating = pageItem.getEditorialRating();
         if (editorialRating != null) {
             transformation = chainEditorialRatingTransformation(transformation, editorialRating);
         }
 
         // User ratings
-        final UserRatingsSummary userRatingsSummary = pageItem.getUserRatingsSummary();
-        if (userRatingsSummary != null) {
+        if (userRatingsAverage != null) {
             transformation =
                 chainUserRatingsTransformation(
                     transformation,
                     editorialRating,
-                    userRatingsSummary.getAverage(),
-                    userRatingsSummary.getCount()
+                    userRatingsAverage,
+                    userRatingsCount
                 );
         }
 
         // Location if venue
-        if (pageItem.getType().equalsIgnoreCase("venue")) {
-            String location = pageItem.getLocation();
-            if (location != null) {
-                transformation = chainLocation(transformation, location);
-            }
+        if (graffittiType==GraffittiType.VENUE && location!=null) {
+            transformation = chainLocation(transformation, location);
         }
 
         String cloudinaryUrl =
@@ -80,7 +80,7 @@ public class CloudinaryUrlBuilder {
                 .transformation(transformation)
                 .format("png")
                 .type("fetch")
-                .generate(buildBaseImageUrl(pageItem));
+                .generate(buildBaseImageUrl(imageId));
 
         if (checkUrlAvailability(cloudinaryUrl)) {
             return cloudinaryUrl;
@@ -90,49 +90,89 @@ public class CloudinaryUrlBuilder {
     }
 
     public String buildImageUrl(
-        Venue venue
+        PageItem pageItem
     ) throws IOException, InterruptedException {
-        Transformation transformation = buildBaseTransformation();
 
         // Categorisation
-        String categorisationText = buildCategorisationText(venue);
-        if (categorisationText != null) {
-            transformation = chainCategorisationTransformation(transformation, categorisationText);
-        }
-
-        // Type icon
-        transformation = chainTypeIconTransformation(transformation, GraffittiType.VENUE);
-
-        // Editorial rating
-        final Integer editorialRating = venue.getEditorialRating();
-        if (editorialRating != null) {
-            transformation = chainEditorialRatingTransformation(transformation, editorialRating);
+        String categoryPrimaryName = null;
+        String categorySecondaryName = null;
+        final GraffittiCategorisation categorisation = pageItem.getGraffittiCategorisation();
+        if (categorisation != null) {
+            final GraffittiCategorisationPrimary categorisationPrimary =
+                categorisation.getGraffittiCategorisationPrimary();
+            if (categorisationPrimary != null) {
+                categoryPrimaryName = categorisationPrimary.getName();
+                final GraffittiCategorisationSecondary categorisationSecondary =
+                    categorisation.getGraffittiCategorisationSecondary();
+                if (categorisationSecondary != null) {
+                    categorySecondaryName = categorisationSecondary.getName();
+                }
+            }
         }
 
         // User ratings
-        final Integer userRatingsAverage = venue.getUserRatingsAverage();
-        if (userRatingsAverage != null) {
-            transformation =
-                chainUserRatingsTransformation(
-                    transformation,
-                    editorialRating,
-                    userRatingsAverage,
-                    venue.getUserRatingsCount()
-                );
+        Integer userRatingsAverage = null;
+        Integer userRatingsCount = null;
+        final UserRatingsSummary userRatingsSummary = pageItem.getUserRatingsSummary();
+        if (userRatingsSummary != null) {
+            userRatingsAverage = userRatingsSummary.getAverage();
+            userRatingsCount = userRatingsSummary.getCount();
         }
 
-        String cloudinaryUrl =
-            cloudinary.url()
-                .transformation(transformation)
-                .format("png")
-                .type("fetch")
-                .generate(buildBaseImageUrl(venue));
-
-        if (checkUrlAvailability(cloudinaryUrl)) {
-            return cloudinaryUrl;
-        } else {
-            return null;
+        // Image Id
+        String imageId = null;
+        final GraffittiImage image = pageItem.getImage();
+        if (image != null) {
+            imageId = image.getId();
         }
+
+        return buildImageUrl(
+            categoryPrimaryName,
+            categorySecondaryName,
+            pageItem.getEditorialRating(),
+            userRatingsAverage,
+            userRatingsCount,
+            GraffittiType.fromString(pageItem.getType()),
+            pageItem.getLocation(),
+            imageId
+        );
+    }
+
+    public String buildImageUrl(
+        Venue venue
+    ) throws IOException, InterruptedException {
+
+        // Categorisation
+        String categoryPrimaryName = null;
+        String categorySecondaryName = null;
+        final CategoryNode categoryPrimary = venue.getCategoryPrimary();
+        if (categoryPrimary != null) {
+            categoryPrimaryName = categoryPrimary.getName();
+            if (categoryPrimaryName != null) {
+                final CategoryNode categorySecondary = venue.getCategorySecondary();
+                if (categorySecondary != null) {
+                    categorySecondaryName = categorySecondary.getName();
+                }
+            }
+        }
+
+        // Image Id
+        String imageId = null;
+        final List<Image> images = venue.getImages();
+        if (images!=null && images.size()>0) {
+            imageId = images.get(0).getId();
+        }
+
+        return buildImageUrl(
+            categoryPrimaryName,
+            categorySecondaryName,
+            venue.getEditorialRating(),
+            venue.getUserRatingsAverage(),
+            venue.getUserRatingsCount(),
+            GraffittiType.VENUE,
+            venue.getLocation(),
+            imageId
+        );
     }
 
     private boolean checkUrlAvailability(
@@ -140,6 +180,8 @@ public class CloudinaryUrlBuilder {
     ) throws IOException, InterruptedException {
 
         System.out.println("checkUrlAvailability: " + targetUrl);
+
+//        Thread.sleep(5000);
 
         HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(targetUrl).openConnection();
         httpUrlConnection.setRequestMethod("HEAD");
@@ -180,31 +222,31 @@ public class CloudinaryUrlBuilder {
 //        return isAvailable;
     }
 
-    private String buildBaseImageUrl(
-        PageItem pageItem
-    ) {
-        String imageId = null;
+//    private String buildBaseImageUrl(
+//        PageItem pageItem
+//    ) {
+//        String imageId = null;
+//
+//        final GraffittiImage image = pageItem.getImage();
+//        if (image != null) {
+//            imageId = image.getId();
+//        }
+//
+//        return buildBaseImageUrl(imageId);
+//    }
 
-        final GraffittiImage image = pageItem.getImage();
-        if (image != null) {
-            imageId = image.getId();
-        }
-
-        return buildBaseImageUrl(imageId);
-    }
-
-    private String buildBaseImageUrl(
-        Venue venue
-    ) {
-        String imageId = null;
-
-        final List<Image> images = venue.getImages();
-        if (images!=null && images.size()>0) {
-            imageId = images.get(0).getId();
-        }
-
-        return buildBaseImageUrl(imageId);
-    }
+//    private String buildBaseImageUrl(
+//        Venue venue
+//    ) {
+//        String imageId = null;
+//
+//        final List<Image> images = venue.getImages();
+//        if (images!=null && images.size()>0) {
+//            imageId = images.get(0).getId();
+//        }
+//
+//        return buildBaseImageUrl(imageId);
+//    }
 
     private String buildBaseImageUrl(
         String imageId
@@ -266,43 +308,43 @@ public class CloudinaryUrlBuilder {
                 .chain();
     }
 
-    private Transformation chainTypeIconTransformation(
-        Transformation transformation,
-        GraffittiType graffittiType
-    ) {
-        String iconName = null;
-
-        switch (graffittiType) {
-
-            case VENUE:
-                iconName = "venue_icon_m8qzpkz";
-                break;
-
-            case EVENT:
-                iconName = "event_icon_burxucz";
-                break;
-
-            case FILM:
-                iconName = "film_icon_csr7j9z";
-                break;
-
-            case PAGE:
-                iconName = "page_icon_zdxsqzz";
-                break;
-        }
-
-        if (iconName != null) {
-            transformation =
-                transformation
-                    .overlay(iconName)
-                    .gravity("north_east")
-                    .x(0.04)
-                    .y(0.04)
-                    .chain();
-        }
-
-        return transformation;
-    }
+//    private Transformation chainTypeIconTransformation(
+//        Transformation transformation,
+//        GraffittiType graffittiType
+//    ) {
+//        String iconName = null;
+//
+//        switch (graffittiType) {
+//
+//            case VENUE:
+//                iconName = "venue_icon_m8qzpkz";
+//                break;
+//
+//            case EVENT:
+//                iconName = "event_icon_burxucz";
+//                break;
+//
+//            case FILM:
+//                iconName = "film_icon_csr7j9z";
+//                break;
+//
+//            case PAGE:
+//                iconName = "page_icon_zdxsqzz";
+//                break;
+//        }
+//
+//        if (iconName != null) {
+//            transformation =
+//                transformation
+//                    .overlay(iconName)
+//                    .gravity("north_east")
+//                    .x(0.04)
+//                    .y(0.04)
+//                    .chain();
+//        }
+//
+//        return transformation;
+//    }
 
     private Transformation chainLocation(Transformation transformation, String location) {
         location = location.replace(" ", "%20");
@@ -343,49 +385,6 @@ public class CloudinaryUrlBuilder {
             .width(764).crop("scale").chain()
             .overlay("overlay_black_top_gradient_geexo9").gravity("north").chain()
             .overlay("overlay_black_bottom_gradient_loq19q").gravity("south").chain();
-    }
-
-    private String buildCategorisationText(
-        PageItem pageItem
-    ) {
-        String categoryPrimaryName = null;
-        String categorySecondaryName = null;
-
-        final GraffittiCategorisation categorisation = pageItem.getGraffittiCategorisation();
-        if (categorisation != null) {
-            final GraffittiCategorisationPrimary categorisationPrimary =
-                categorisation.getGraffittiCategorisationPrimary();
-            if (categorisationPrimary != null) {
-                categoryPrimaryName = categorisationPrimary.getName();
-                final GraffittiCategorisationSecondary categorisationSecondary =
-                    categorisation.getGraffittiCategorisationSecondary();
-                if (categorisationSecondary != null) {
-                    categorySecondaryName = categorisationSecondary.getName();
-                }
-            }
-        }
-
-        return buildCategorisationText(categoryPrimaryName, categorySecondaryName);
-    }
-
-    private String buildCategorisationText(
-        Venue venue
-    ) {
-        String categoryPrimaryName = null;
-        String categorySecondaryName = null;
-
-        final CategoryNode categoryPrimary = venue.getCategoryPrimary();
-        if (categoryPrimary != null) {
-            categoryPrimaryName = categoryPrimary.getName();
-            if (categoryPrimaryName != null) {
-                final CategoryNode categorySecondary = venue.getCategorySecondary();
-                if (categorySecondary != null) {
-                    categorySecondaryName = categorySecondary.getName();
-                }
-            }
-        }
-
-        return buildCategorisationText(categoryPrimaryName, categorySecondaryName);
     }
 
     private String buildCategorisationText(

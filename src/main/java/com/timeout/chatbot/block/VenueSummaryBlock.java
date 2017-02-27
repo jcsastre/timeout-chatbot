@@ -146,7 +146,7 @@ public class VenueSummaryBlock {
 //            builder.addTextQuickReply(
 //                "See more",
 //                new JSONObject()
-//                    .put("type", PayloadType.see_more)
+//                    .put("type", PayloadType.searching_SeeMore)
 //                    .toString()
 //            ).toList();
 //        }

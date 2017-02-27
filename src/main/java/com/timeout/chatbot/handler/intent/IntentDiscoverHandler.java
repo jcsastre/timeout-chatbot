@@ -2,8 +2,8 @@ package com.timeout.chatbot.handler.intent;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
-import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
-import com.timeout.chatbot.services.BlockService;
+import com.timeout.chatbot.block.BlockError;
+import com.timeout.chatbot.block.DiscoverBlock;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.state.SessionState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,28 +12,80 @@ import org.springframework.stereotype.Component;
 @Component
 public class IntentDiscoverHandler {
 
-    private final BlockService blockService;
-    private final MessengerSendClientWrapper messengerSendClientWrapper;
+    private final DiscoverBlock discoverBlock;
+    private final BlockError blockError;
 
     @Autowired
-    public IntentDiscoverHandler(BlockService blockService, MessengerSendClientWrapper messengerSendClientWrapper) {
-        this.blockService = blockService;
-        this.messengerSendClientWrapper = messengerSendClientWrapper;
+    public IntentDiscoverHandler(
+        DiscoverBlock discoverBlock,
+        BlockError blockError
+    ) {
+        this.discoverBlock = discoverBlock;
+        this.blockError = blockError;
     }
 
     public void handle(Session session) throws MessengerApiException, MessengerIOException {
 
-        if (session.getSessionState() == SessionState.BOOKING) {
-            //TODO: ask before cancelling
-            //TODO: return to previous looking context
+        switch (session.getSessionState()) {
 
-            messengerSendClientWrapper.sendTextMessage(
-                session.getUser().getMessengerId(),
-                "Cancelling booking"
-            );
+            case UNDEFINED:
+                proceed(session);
+                break;
+
+            case SEARCH_SUGGESTIONS:
+                proceed(session);
+                break;
+
+            case DISCOVER:
+                proceed(session);
+                break;
+
+            case MOST_LOVED:
+                proceed(session);
+                break;
+
+            case SEARCHING:
+                proceed(session);
+                break;
+
+            case ITEM:
+                proceed(session);
+                break;
+
+            case SUBMITTING_REVIEW:
+                handleSubmittingReview(session);
+                break;
+
+            case BOOKING:
+                handleBooking(session);
+                break;
+
+            default:
+                blockError.send(session.getUser());
         }
+    }
+
+    private void handleSubmittingReview(
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+
+        //TODO: ask before cancelling
+        //TODO: ...
+    }
+
+    private void handleBooking(
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+
+        //TODO: ask before cancelling
+        //TODO: return to previous looking context
+    }
+
+    private void proceed(
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
 
         session.setSessionState(SessionState.DISCOVER);
-        blockService.sendDiscoverBlock(session);
+        discoverBlock.send(session.getUser().getMessengerId());
     }
 }

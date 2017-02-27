@@ -3,16 +3,15 @@ package com.timeout.chatbot.handler.intent;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
+import com.timeout.chatbot.block.BlockError;
+import com.timeout.chatbot.block.SeeVenueItemBlock;
 import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
-import com.timeout.chatbot.graffitti.urlbuilder.VenuesUrlBuilder;
-import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateItemBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 
@@ -20,21 +19,21 @@ import java.io.IOException;
 public class IntentSeeItem {
 
     private final MessengerSendClient messengerSendClient;
-    private final BlockService blockService;
-    private final RestTemplate restTemplate;
-    private final VenuesUrlBuilder venuesUrlBuilder;
     private final GraffittiService graffittiService;
+    private final SeeVenueItemBlock seeVenueItemBlock;
+    private final BlockError blockError;
 
     @Autowired
     public IntentSeeItem(
         MessengerSendClient messengerSendClient,
-        BlockService blockService,
-        RestTemplate restTemplate, VenuesUrlBuilder venuesUrlBuilder, GraffittiService graffittiService) {
+        GraffittiService graffittiService,
+        SeeVenueItemBlock seeVenueItemBlock,
+        BlockError blockError
+    ) {
         this.messengerSendClient = messengerSendClient;
-        this.blockService = blockService;
-        this.restTemplate = restTemplate;
-        this.venuesUrlBuilder = venuesUrlBuilder;
         this.graffittiService = graffittiService;
+        this.seeVenueItemBlock = seeVenueItemBlock;
+        this.blockError = blockError;
     }
 
     public void handle(
@@ -52,7 +51,7 @@ public class IntentSeeItem {
                     final Venue venue = graffittiService.fetchVenue(itemBag.getItemId());
                     itemBag.setVenue(venue);
 
-                    blockService.sendSeeVenueItemBlock(
+                    seeVenueItemBlock.send(
                         session.getUser().getMessengerId(),
                         venue
                     );
@@ -66,7 +65,7 @@ public class IntentSeeItem {
 
             case BOOKING:
             default:
-                blockService.sendErrorBlock(session.getUser());
+                blockError.send(session.getUser());
                 break;
         }
     }

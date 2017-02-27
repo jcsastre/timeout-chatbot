@@ -87,7 +87,11 @@ public class GenericTemplateWithSingleElementVenueBuilder {
 
         final String phone = venue.getPhone();
         if (phone != null) {
-            final String phoneNumber = "+34" + phone.replaceAll(" ","");
+            String prefix = "+44";
+            if (timeoutConfiguration.getSite().equals("es-barcelona")) {
+                prefix = "+34";
+            }
+            final String phoneNumber = prefix + phone.replaceAll(" ","");
             buttonsBuilder.addCallButton(
                 "Call " + phoneNumber,
                 phoneNumber
@@ -173,7 +177,7 @@ public class GenericTemplateWithSingleElementVenueBuilder {
 ////            "Book",
 ////            new JSONObject()
 ////                .put("type", PayloadType.venues_book)
-////                .put("restaurant_id", pageItem.getId())
+////                .put("restaurant_id", pageItem.getGraffittiId())
 ////                .toString()
 ////        ).toList();
 //
@@ -181,7 +185,7 @@ public class GenericTemplateWithSingleElementVenueBuilder {
 //            "More options",
 //            new JSONObject()
 //                .put("type", PayloadType.venue_more_options)
-//                .put("venue_id", pageItem.getId())
+//                .put("venue_id", pageItem.getGraffittiId())
 //                .toString()
 //        ).toList();
 //

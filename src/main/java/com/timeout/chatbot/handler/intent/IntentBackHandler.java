@@ -3,10 +3,10 @@ package com.timeout.chatbot.handler.intent;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.timeout.chatbot.domain.What;
+import com.timeout.chatbot.domain.entities.Category;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateLookingBag;
+import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -17,17 +17,17 @@ public class IntentBackHandler {
 
     private final BlockService blockService;
     private final MessengerSendClient messengerSendClient;
-    private final IntentFindRestaurantsHandler findRestaurantsHandler;
+    private final IntentFindVenuesHandler intentFindVenuesHandler;
 
     @Autowired
     public IntentBackHandler(
         BlockService blockService,
         MessengerSendClient messengerSendClient,
-        IntentFindRestaurantsHandler findRestaurantsHandler
+        IntentFindVenuesHandler intentFindVenuesHandler
     ) {
         this.blockService = blockService;
         this.messengerSendClient = messengerSendClient;
-        this.findRestaurantsHandler = findRestaurantsHandler;
+        this.intentFindVenuesHandler = intentFindVenuesHandler;
     }
 
     public void handle(
@@ -44,7 +44,7 @@ public class IntentBackHandler {
             case UNDEFINED:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
-                    "I can't go 'back'"
+                    "I can't go back"
                 );
                 break;
 
@@ -59,12 +59,13 @@ public class IntentBackHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 
-        final What what = bag.getWhat();
-
-        if (what == What.RESTAURANT) {
-            findRestaurantsHandler.fetchAndSend(session);
+        if (
+            bag.getCategory() == Category.RESTAURANTS ||
+            bag.getCategory() == Category.HOTELS
+        ) {
+            intentFindVenuesHandler.fetchAndSend(session);
         }
     }
 }

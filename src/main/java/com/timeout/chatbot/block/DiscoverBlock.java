@@ -3,20 +3,15 @@ package com.timeout.chatbot.block;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.github.messenger4j.send.NotificationType;
-import com.github.messenger4j.send.Recipient;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
-import com.timeout.chatbot.configuration.TimeoutConfiguration;
+import com.timeout.chatbot.domain.entities.Category;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
 import com.timeout.chatbot.graffitti.response.search.page.GraffittiSearchResponse;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
-import com.timeout.chatbot.graffitti.urlbuilder.TilesDiscoverUrlBuilder;
-import com.timeout.chatbot.services.GraffittiService;
-import com.timeout.chatbot.session.Session;
+import com.timeout.chatbot.messenger4j.SenderActionsHelper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,42 +22,40 @@ import java.util.List;
 @Component
 public class DiscoverBlock {
 
-    private final MessengerSendClient messengerSendClient;
-    private final RestTemplate restTemplate;
-    private final TimeoutConfiguration timeoutConfiguration;
-    private final TilesDiscoverUrlBuilder tilesDiscoverUrlBuilder;
-    private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
-    private final GraffittiService graffittiService;
     private final SearchUrlBuilder searchUrlBuilder;
+    private final MessengerSendClient msc;
+    private final RestTemplate restTemplate;
+    private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
+    private final SenderActionsHelper senderActionsHelper;
 
     @Autowired
     public DiscoverBlock(
-        TimeoutConfiguration timeoutConfiguration,
-        MessengerSendClient messengerSendClient,
+        SearchUrlBuilder searchUrlBuilder,
+        MessengerSendClient msc,
         RestTemplate restTemplate,
-        TilesDiscoverUrlBuilder tilesDiscoverUrlBuilder,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
-        GraffittiService graffittiService,
-        SearchUrlBuilder searchUrlBuilder
+        SenderActionsHelper senderActionsHelper
     ) {
-        this.timeoutConfiguration = timeoutConfiguration;
-        this.messengerSendClient = messengerSendClient;
-        this.restTemplate = restTemplate;
-        this.tilesDiscoverUrlBuilder = tilesDiscoverUrlBuilder;
-        this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
-        this.graffittiService = graffittiService;
         this.searchUrlBuilder = searchUrlBuilder;
+        this.msc = msc;
+        this.restTemplate = restTemplate;
+        this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
+        this.senderActionsHelper = senderActionsHelper;
     }
 
     public void send(
-        Session session
+        String userMessengerId
     ) throws MessengerApiException, MessengerIOException {
 
-        messengerSendClient.sendTemplate(
-            Recipient.newBuilder().recipientId(session.getUser().getMessengerId()).build(),
-            NotificationType.REGULAR,
-            buildGenericTemplate(),
-            quickReplyBuilderForCurrentSessionState.build(session)
+        senderActionsHelper.typingOnAndWait(userMessengerId, 1000);
+        msc.sendTextMessage(
+            userMessengerId,
+            "What are you looking for?"
+        );
+
+        msc.sendTemplate(
+            userMessengerId,
+            buildGenericTemplate()
         );
     }
 
@@ -70,18 +63,12 @@ public class DiscoverBlock {
 
         final GenericTemplate.Element.ListBuilder listBuilder = GenericTemplate.newBuilder().addElements();
 
-        final List<GraffittiFacetV5Node> children =
-            graffittiService.getGraffittiFacetV5Response().getBody().getFacets().getWhat().getChildren();
-
-        for (GraffittiFacetV5Node node : children) {
-
-            System.out.println(node.getName());
-
-            final PageItem pageItem = getPageItemWithImage(node);
+        for (Category category : Category.values()) {
+            final PageItem pageItem = getPageItemWithImage(category);
             if (pageItem != null) {
                 addPageItemToListBuilder(
                     listBuilder,
-                    node.getName(),
+                    category.getNamePlural(),
                     pageItem
                 );
             }
@@ -96,7 +83,10 @@ public class DiscoverBlock {
         PageItem pageItem
     ) {
         String titleForButton = nodeName;
-        if (!titleForButton.equalsIgnoreCase("Restaurants")) {
+        if (
+            !titleForButton.equalsIgnoreCase("Restaurants") &&
+            !titleForButton.equalsIgnoreCase("Hotels")
+        ) {
             titleForButton = "\ud83d\udeab " + titleForButton;
         }
         if (titleForButton.length() > 20) {
@@ -120,11 +110,11 @@ public class DiscoverBlock {
     }
 
     private PageItem getPageItemWithImage(
-        GraffittiFacetV5Node node
+        Category category
     ) {
         final GraffittiSearchResponse graffittiSearchResponse =
             restTemplate.getForObject(
-                searchUrlBuilder.buildForDiscoverBlock(node.getId()).toUri(),
+                searchUrlBuilder.buildForDiscoverBlock(category.getGraffittiId()).toUri(),
                 GraffittiSearchResponse.class
             );
 

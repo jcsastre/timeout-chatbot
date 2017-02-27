@@ -1,9 +1,4 @@
 timeout:
-#  site: es-barcelona
-#  locale: es-ES
-#  cityName: Barcelona
-#  latitude: 41.3848265585707
-#  longitude: 2.169349193573
   site: uk-london
   locale: en-GB
   cityName: London

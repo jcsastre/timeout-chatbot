@@ -2,22 +2,22 @@ package com.timeout.chatbot.domain.entities;
 
 public class Subcategory {
 
-    private final String id;
+    private final String graffittiId;
     private final String name;
     private final String conceptName;
 
     public Subcategory(
-        String id,
+        String graffittiId,
         String name,
         String conceptName
     ) {
-        this.id = id;
+        this.graffittiId = graffittiId;
         this.name = name;
         this.conceptName = conceptName;
     }
 
-    public String getId() {
-        return id;
+    public String getGraffittiId() {
+        return graffittiId;
     }
 
     public String getName() {

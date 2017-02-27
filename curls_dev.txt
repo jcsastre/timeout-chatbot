@@ -8,23 +8,42 @@ curl -X POST -H "Content-Type: application/json" -d '{
       "payload": "{\"type\": \"get_started\"}"
     }
   ]
-}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAASeusXP6OEBAAjScKM2kehZBjhAYDsO3KgZCeZCMC21fPdRUylvhSMPA1UE7d27PveO5uDiBN0IgpgR3TRCaiirIpmfEzYQYlkbzNFZAZCgZASv1jTZC3V55vUI552ErvJWfyLHt8gQTsEjn8iPhAz44RkCYXMeocFUY3eWPoTREqnBmshPWC5"
+}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD"
 
 curl -X DELETE -H "Content-Type: application/json" -d '{
   "setting_type":"call_to_actions",
   "thread_state":"new_thread"
-}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAASeusXP6OEBAAjScKM2kehZBjhAYDsO3KgZCeZCMC21fPdRUylvhSMPA1UE7d27PveO5uDiBN0IgpgR3TRCaiirIpmfEzYQYlkbzNFZAZCgZASv1jTZC3V55vUI552ErvJWfyLHt8gQTsEjn8iPhAz44RkCYXMeocFUY3eWPoTREqnBmshPWC5"
+}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD"
 
 --- Greeting Text ---
 
 curl -X POST -H "Content-Type: application/json" -d '{
   "setting_type":"greeting",
   "greeting":{
-    "action":"Timeout London."
+    "text":"Timeout London: Guide to art and entertainment, food and drink, film, travel and more"
   }
 }' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAASeusXP6OEBAAjScKM2kehZBjhAYDsO3KgZCeZCMC21fPdRUylvhSMPA1UE7d27PveO5uDiBN0IgpgR3TRCaiirIpmfEzYQYlkbzNFZAZCgZASv1jTZC3V55vUI552ErvJWfyLHt8gQTsEjn8iPhAz44RkCYXMeocFUY3eWPoTREqnBmshPWC5"
 
 --- Persistent Menu ---
+
+curl -X POST -H "Content-Type: application/json" -d '{
+  "setting_type" : "call_to_actions",
+  "thread_state" : "existing_thread",
+  "call_to_actions":[
+    {
+      "type":"postback",
+      "title":"Start over",
+      "payload":"{\"type\": \"start_over\"}"
+    },
+    {
+      "type":"postback",
+      "title":"Discover",
+      "payload":"{\"type\": \"discover\"}"
+    }
+  ]
+}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD"
+
+--- Persistent Menu Old ---
 
 curl -X POST -H "Content-Type: application/json" -d '{
   "setting_type" : "call_to_actions",
@@ -56,4 +75,8 @@ curl -X POST -H "Content-Type: application/json" -d '{
       "payload":"{\"type\": \"help\"}"
     }
   ]
-}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAASeusXP6OEBAAjScKM2kehZBjhAYDsO3KgZCeZCMC21fPdRUylvhSMPA1UE7d27PveO5uDiBN0IgpgR3TRCaiirIpmfEzYQYlkbzNFZAZCgZASv1jTZC3V55vUI552ErvJWfyLHt8gQTsEjn8iPhAz44RkCYXMeocFUY3eWPoTREqnBmshPWC5"
+}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD"
+
+--- Ready again ---
+
+curl -X POST "https://graph.facebook.com/v2.6/me/subscribed_apps?access_token=EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD"

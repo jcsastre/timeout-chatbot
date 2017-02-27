@@ -72,14 +72,14 @@ public class QuickReplyBuilderHelper {
         listBuilder.addTextQuickReply(
             "Back",
             new JSONObject()
-                .put("type", PayloadType.back)
+                .put("type", PayloadType.item_Back)
                 .toString()
         ).toList();
 
         listBuilder.addTextQuickReply(
             "Book",
             new JSONObject()
-                .put("type", PayloadType.book)
+                .put("type", PayloadType.item_Book)
                 .toString()
         ).toList();
 
@@ -94,7 +94,7 @@ public class QuickReplyBuilderHelper {
             listBuilder.addTextQuickReply(
                 "Photos",
                 new JSONObject()
-                    .put("type", PayloadType.photos)
+                    .put("type", PayloadType.item_Photos)
                     .toString()
             ).toList();
         }
@@ -102,14 +102,14 @@ public class QuickReplyBuilderHelper {
         listBuilder.addTextQuickReply(
             "Submit a review",
             new JSONObject()
-                .put("type", PayloadType.submit_review)
+                .put("type", PayloadType.item_SubmitReview)
                 .toString()
         ).toList();
 
         listBuilder.addTextQuickReply(
             "Submit a photo",
             new JSONObject()
-                .put("type", PayloadType.submit_photo)
+                .put("type", PayloadType.item_SubmitPhoto)
                 .toString()
         ).toList();
 

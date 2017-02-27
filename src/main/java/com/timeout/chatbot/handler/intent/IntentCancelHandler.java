@@ -1,9 +1,7 @@
 package com.timeout.chatbot.handler.intent;
 
-import com.timeout.chatbot.domain.What;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateLookingBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -45,11 +43,11 @@ public class IntentCancelHandler {
     private void handleLooking(
         Session session
     ) {
-        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
-        final What what = bag.getWhat();
-
-        if (what == What.RESTAURANT) {
-            blockService.sendVenuesRemainingBlock(session);
-        }
+//        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
+////        final What what = bag.getWhat();
+//
+//        if (what == What.RESTAURANTS) {
+//            blockService.sendVenuesRemainingBlock(session);
+//        }
     }
 }

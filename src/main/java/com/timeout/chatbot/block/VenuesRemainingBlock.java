@@ -1,11 +1,12 @@
 package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.QuickReply;
-import com.timeout.chatbot.domain.What;
+import com.timeout.chatbot.domain.entities.Category;
+import com.timeout.chatbot.domain.entities.Subcategory;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateLookingBag;
+import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Component
 public class VenuesRemainingBlock {
+
     private final MessengerSendClientWrapper messengerSendClientWrapper;
 
     @Autowired
@@ -26,18 +28,13 @@ public class VenuesRemainingBlock {
     public void send(
         Session session
     ) {
-        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
-
-        String itemPluralName = "Restaurants";
-        if (bag.getWhat() == What.BAR) {
-            itemPluralName = "Bars & Pubs";
-        }
+        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 
         messengerSendClientWrapper.sendTextMessage(
             session.getUser().getMessengerId(),
             String.format(
                 "There are %s %s more",
-                bag.getReaminingItems(), itemPluralName
+                bag.getReaminingItems(), bag.getCategory().getNamePlural()
             ),
             buildQuickReplies(
                 bag
@@ -46,7 +43,7 @@ public class VenuesRemainingBlock {
     }
 
     private List<QuickReply> buildQuickReplies(
-        SessionStateLookingBag bag
+        SessionStateSearchingBag bag
     ) {
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
@@ -55,31 +52,41 @@ public class VenuesRemainingBlock {
             listBuilder.addTextQuickReply(
                 "See more",
                 new JSONObject()
-                    .put("type", PayloadType.see_more)
+                    .put("type", PayloadType.searching_SeeMore)
                     .toString()
             ).toList();
         }
 
+        boolean areaSet = false;
+        if (bag.getGeolocation() != null) {
+            areaSet = true;
+        } else {
+            if (bag.getNeighborhood() != null) {
+                areaSet = true;
+            }
+        }
+
         listBuilder.addTextQuickReply(
-            "Area",
+            areaSet ? "Change area" : "Set area",
             new JSONObject()
-                .put("type", PayloadType.venues_show_areas)
+                .put("type", PayloadType.searching_VenuesShowAreas)
                 .put("pageNumber", 1)
                 .toString()
         ).toList();
 
-//        String categorySingularName = "Cuisine";
-//        if (bag.getWhat() == What.BAR) {
-//            categorySingularName = "Style";
-//        }
-//
-//        listBuilder.addTextQuickReply(
-//            bag.getGraffittiWhatCategoryNode().getChildren() == null ?
-//                "Change " + categorySingularName : "Set " + categorySingularName,
-//            new JSONObject()
-//                .put("type", PayloadType.show_subcategories)
-//                .toString()
-//        ).toList();
+        final Category category = bag.getCategory();
+        final List<Subcategory> subcategories = category.getSubcategories();
+        if (subcategories!= null && subcategories.size()>0) {
+            final String subcategoryName = category.getSubcategoriesName().toLowerCase();
+            listBuilder.addTextQuickReply(
+                bag.getSubcategory() == null ?
+                    "Set " + subcategoryName : "Change " + subcategoryName,
+                new JSONObject()
+                    .put("type", PayloadType.searching_ShowSubcategories)
+                    .put("pageNumber", 1)
+                    .toString()
+            ).toList();
+        }
 
         return listBuilder.build();
     }

@@ -153,7 +153,7 @@ public class GenericTemplateElementFilmHelper {
         buttonsBuilder.addPostbackButton(
             "More options",
             new JSONObject()
-                .put("type", PayloadType.item_more_options)
+                .put("type", PayloadType.searching_ItemMoreOptions)
                 .put("item_type", pageItem.getType())
                 .put("item_id", pageItem.getId())
                 .toString()

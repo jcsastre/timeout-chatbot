@@ -6,14 +6,16 @@ import com.github.messenger4j.send.MessengerSendClient;
 import com.google.gson.JsonElement;
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.Neighborhood;
+import com.timeout.chatbot.domain.entities.Category;
+import com.timeout.chatbot.domain.entities.Subcategory;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
-import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 import com.timeout.chatbot.graffitti.response.search.page.GraffittiSearchResponse;
 import com.timeout.chatbot.graffitti.uri.GraffittiQueryParameterType;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
+import com.timeout.chatbot.messenger4j.SenderActionsHelper;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateLookingBag;
+import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import com.timeout.chatbot.session.state.SessionState;
 import io.mikael.urlbuilder.UrlBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,26 +26,27 @@ import java.io.IOException;
 import java.util.HashMap;
 
 @Component
-public class IntentFindRestaurantsHandler {
+public class IntentFindVenuesHandler {
 
     private final RestTemplate restTemplate;
     private final BlockService blockService;
     private final MessengerSendClient messengerSendClient;
     private final SearchUrlBuilder searchUrlBuilder;
-
-    private static final String WHAT_RESTAURANTS ="node-7083";
+    private final SenderActionsHelper senderActionsHelper;
 
     @Autowired
-    public IntentFindRestaurantsHandler(
+    public IntentFindVenuesHandler(
         RestTemplate restTemplate,
         BlockService blockService,
         MessengerSendClient messengerSendClient,
-        SearchUrlBuilder searchUrlBuilder
+        SearchUrlBuilder searchUrlBuilder,
+        SenderActionsHelper senderActionsHelper
     ) {
         this.restTemplate = restTemplate;
         this.blockService = blockService;
         this.messengerSendClient = messengerSendClient;
         this.searchUrlBuilder = searchUrlBuilder;
+        this.senderActionsHelper = senderActionsHelper;
     }
 
     public void handle(
@@ -52,13 +55,8 @@ public class IntentFindRestaurantsHandler {
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         switch (session.getSessionState()) {
 
-            case UNDEFINED:
             case SEARCHING:
                 applyNluParameters(session, nluParameters);
-                break;
-
-            case BOOKING:
-                handleBooking();
                 break;
 
             default:
@@ -72,13 +70,8 @@ public class IntentFindRestaurantsHandler {
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         switch (session.getSessionState()) {
 
-            case UNDEFINED:
             case SEARCHING:
                 fetchAndSend(session);
-                break;
-
-            case BOOKING:
-                handleBooking();
                 break;
 
             default:
@@ -95,7 +88,7 @@ public class IntentFindRestaurantsHandler {
         if (
             nluParameters.containsKey("whereUkLondon")
         ) {
-            final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+            final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 
             final String where = nluParameters.get("whereUkLondon").getAsString();
             if (
@@ -118,22 +111,27 @@ public class IntentFindRestaurantsHandler {
         }
     }
 
-    private void handleBooking() {
-        //TODO: handleBooking
-    }
-
     public void fetchAndSend(
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateLookingBag bag = session.getSessionStateLookingBag();
+        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 
-        UrlBuilder urlBuilder = urlBuilderBase(
-            bag.getGraffittiWhatCategoryNode(),
-            bag.getGraffittiPageNumber()
-        );
+        final Category category = bag.getCategory();
 
-        String msg = "Looking for restaurants";
+        UrlBuilder urlBuilder;
+        final Subcategory subcategory = bag.getSubcategory();
+        if (subcategory != null) {
+            urlBuilder = urlBuilderBase(
+                subcategory,
+                bag.getGraffittiPageNumber()
+            );
+        } else {
+            urlBuilder = urlBuilderBase(
+                category,
+                bag.getGraffittiPageNumber()
+            );
+        }
 
         final Geolocation geolocation = bag.getGeolocation();
         if (geolocation != null) {
@@ -155,8 +153,6 @@ public class IntentFindRestaurantsHandler {
                         GraffittiQueryParameterType.SORT.getValue(),
                         "distance"
                     );
-
-            msg = "Looking for restaurants near the location you specified";
         } else {
             final Neighborhood neighborhood = bag.getNeighborhood();
 
@@ -167,18 +163,17 @@ public class IntentFindRestaurantsHandler {
                             GraffittiQueryParameterType.WHERE.getValue(),
                             neighborhood.getGraffitiId()
                         );
-
-                msg = "Looking for restaurants at "+ neighborhood.getName();
             }
         }
 
+        senderActionsHelper.typingOn(session.getUser().getMessengerId());
         messengerSendClient.sendTextMessage(
             session.getUser().getMessengerId(),
-            msg
+            buildMessage(bag)
         );
 
+        senderActionsHelper.typingOn(session.getUser().getMessengerId());
         System.out.println(urlBuilder.toUrl().toString());
-
         final GraffittiSearchResponse graffittiSearchResponse =
             restTemplate.getForObject(
                 urlBuilder.toUri(),
@@ -192,38 +187,68 @@ public class IntentFindRestaurantsHandler {
             blockService.sendVenuesPageBlock(
                 session,
                 graffittiSearchResponse.getPageItems(),
-                "RestaurantsManager"
+                category.getNamePlural()
             );
 
+            senderActionsHelper.typingOn(session.getUser().getMessengerId());
             blockService.sendVenuesRemainingBlock(
                 session
             );
         } else {
             messengerSendClient.sendTextMessage(
                 session.getUser().getMessengerId(),
-                "There are not available restaurants for your request."
+                "There are not available " + category.getNamePlural() + " for your request."
             );
         }
 
         session.setSessionState(SessionState.SEARCHING);
     }
 
+    private String buildMessage(
+        SessionStateSearchingBag bag
+    ) {
+        String msg = "Looking for";
+
+        final Subcategory subcategory = bag.getSubcategory();
+        if (subcategory != null) {
+            msg = msg + " " + subcategory.getName().toLowerCase();
+        }
+
+        final Category category = bag.getCategory();
+        msg = msg + " " + category.getNamePlural().toLowerCase();
+
+        final Geolocation geolocation = bag.getGeolocation();
+        if (geolocation != null) {
+            msg = msg + " near the location you specified";
+        } else {
+            final Neighborhood neighborhood = bag.getNeighborhood();
+            if (neighborhood != null) {
+                msg = msg + " at " + neighborhood.getName();
+            }
+        }
+
+        return msg;
+    }
+
     private UrlBuilder urlBuilderBase(
-        GraffittiFacetV4FacetNode graffittiFacetV4Node,
+        Category category,
         Integer pageNumber
     ) {
-        if (graffittiFacetV4Node == null) {
-            return searchUrlBuilder.build(
-                WHAT_RESTAURANTS,
-                GraffittiType.VENUE.toString(),
-                pageNumber
-            );
-        } else {
-            return searchUrlBuilder.build(
-                graffittiFacetV4Node.getId(),
-                GraffittiType.VENUE.toString(),
-                pageNumber
-            );
-        }
+        return searchUrlBuilder.build(
+            category.getGraffittiId(),
+            GraffittiType.VENUE.toString(),
+            pageNumber
+        );
+    }
+
+    private UrlBuilder urlBuilderBase(
+        Subcategory subcategory,
+        Integer pageNumber
+    ) {
+        return searchUrlBuilder.build(
+            subcategory.getGraffittiId(),
+            GraffittiType.VENUE.toString(),
+            pageNumber
+        );
     }
 }

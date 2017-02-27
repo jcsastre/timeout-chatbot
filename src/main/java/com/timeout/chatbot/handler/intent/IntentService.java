@@ -18,15 +18,12 @@ public class IntentService {
     private final IntentSuggestionsHandler suggestionsHandler;
     private final IntentDiscoverHandler discoverHandler;
     private final IntentWhatsnewHandler whatsnewHandler;
-    private final IntentSeemoreHandler seemoreHandler;
     private final IntentFindThingsToDoHandler findThingsToDoHandler;
-    private final IntentFindRestaurantsHandler findRestaurantsHandler;
-    private final IntentSetSubcategoryHandler setSubcategoryHandler;
-    private final IntentCancelHandler cancelHandler;
+    private final IntentFindVenuesHandler intentFindVenuesHandler;
     private final IntentSeeItem seeItem;
     private final IntentGetasummaryHandler getasummaryHandler;
-    private final IntentBackHandler backHandler;
-    private final IntentPhotosHandler photosHandler;
+    private final IntentForgetMeHandler forgetMeHandler;
+    private final IntentGetStartedHandler getStartedHandler;
 
     @Autowired
     public IntentService(
@@ -35,30 +32,24 @@ public class IntentService {
         IntentSuggestionsHandler suggestionsHandler,
         IntentDiscoverHandler discoverHandler,
         IntentWhatsnewHandler whatsnewHandler,
-        IntentSeemoreHandler seemoreHandler,
         IntentFindThingsToDoHandler findThingsToDoHandler,
-        IntentFindRestaurantsHandler findRestaurantsHandler,
-        IntentSetSubcategoryHandler setSubcategoryHandler,
-        IntentCancelHandler cancelHandler,
+        IntentFindVenuesHandler intentFindVenuesHandler,
         IntentSeeItem seeItem,
         IntentGetasummaryHandler getasummaryHandler,
-        IntentBackHandler backHandler,
-        IntentPhotosHandler photosHandler
+        IntentForgetMeHandler forgetMeHandler,
+        IntentGetStartedHandler getStartedHandler
     ) {
         this.helpHandler = helpHandler;
         this.greetingsHandler = greetingsHandler;
         this.suggestionsHandler = suggestionsHandler;
         this.discoverHandler = discoverHandler;
         this.whatsnewHandler = whatsnewHandler;
-        this.seemoreHandler = seemoreHandler;
         this.findThingsToDoHandler = findThingsToDoHandler;
-        this.findRestaurantsHandler = findRestaurantsHandler;
-        this.setSubcategoryHandler = setSubcategoryHandler;
-        this.cancelHandler = cancelHandler;
+        this.intentFindVenuesHandler = intentFindVenuesHandler;
         this.seeItem = seeItem;
         this.getasummaryHandler = getasummaryHandler;
-        this.backHandler = backHandler;
-        this.photosHandler = photosHandler;
+        this.forgetMeHandler = forgetMeHandler;
+        this.getStartedHandler = getStartedHandler;
     }
 
     public void handleHelp(Session session) {
@@ -87,38 +78,13 @@ public class IntentService {
         Session session,
         HashMap<String, JsonElement> nluParameters
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-        findRestaurantsHandler.handle(session, nluParameters);
+        intentFindVenuesHandler.handle(session, nluParameters);
     }
 
     public void handleFindRestaurants(
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-        findRestaurantsHandler.handle(session);
-    }
-
-    public void handleSeemore(
-        Session session
-    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-        seemoreHandler.handle(session);
-    }
-
-    public void handleBack(
-        Session session
-    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-        backHandler.handle(session);
-    }
-
-    public void handleSetSubcategory(
-        Session session,
-        String subcategoryId
-    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-        setSubcategoryHandler.handle(session, subcategoryId);
-    }
-
-    public void handleCancel(
-        Session session
-    ) {
-        cancelHandler.handle(session);
+        intentFindVenuesHandler.handle(session);
     }
 
     public void handleSeeItem(
@@ -133,9 +99,17 @@ public class IntentService {
         getasummaryHandler.handle(session);
     }
 
-    public void handlePhotos(
+    public void handleForgetMe(
         Session session
     ) throws MessengerApiException, MessengerIOException {
-        photosHandler.handle(session);
+
+        forgetMeHandler.handle(session);
+    }
+
+    public void handleGetStarted(
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+
+        getStartedHandler.handle(session);
     }
 }

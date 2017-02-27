@@ -46,8 +46,8 @@ public class FilmsPageBlock {
         final GraffittiSearchResponse graffittiSearchResponse =
             restTemplate.getForObject(
                 FilmsEndpoint.buildGeolocatedUri(
-                    session.getSessionStateLookingBag().getGeolocation().getLatitude(),
-                    session.getSessionStateLookingBag().getGeolocation().getLongitude(),
+                    session.getSessionStateSearchingBag().getGeolocation().getLatitude(),
+                    session.getSessionStateSearchingBag().getGeolocation().getLongitude(),
                     pageNumber
                 ),
                 GraffittiSearchResponse.class

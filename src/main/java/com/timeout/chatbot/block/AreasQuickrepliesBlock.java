@@ -61,7 +61,7 @@ public class AreasQuickrepliesBlock {
             builder.addTextQuickReply(
                 "Everywhere",
                 new JSONObject()
-                    .put("type", PayloadType.where_everywhere)
+                    .put("type", PayloadType.searching_WhereEverywhere)
                     .toString()
             ).toList();
 
@@ -81,17 +81,17 @@ public class AreasQuickrepliesBlock {
             builder.addTextQuickReply(
                 name,
                 new JSONObject()
-                    .put("type", PayloadType.venues_set_neighborhood)
+                    .put("type", PayloadType.searching_VenuesSetNeighborhood)
                     .put("neighborhood_id", neighborhood.getGraffitiId())
                     .toString()
             ).toList();
         }
 
-        if ((pageNumber + 1) * PAGE_SIZE < neighborhoodsCount) {
+        if (pageNumber * PAGE_SIZE < neighborhoodsCount) {
             builder.addTextQuickReply(
                 "More neighborhoods",
                 new JSONObject()
-                    .put("type", PayloadType.venues_show_areas)
+                    .put("type", PayloadType.searching_VenuesShowAreas)
                     .put("pageNumber", pageNumber+1)
                     .toString()
             ).toList();

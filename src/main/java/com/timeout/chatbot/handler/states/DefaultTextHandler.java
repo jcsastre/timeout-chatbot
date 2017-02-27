@@ -4,17 +4,17 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
-import com.timeout.chatbot.domain.What;
+import com.timeout.chatbot.domain.entities.Category;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.nlu.NluResult;
 import com.timeout.chatbot.domain.nlu.intent.NluIntentType;
-import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.handler.states.booking.BookingStateTextHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStateTextHandler;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.services.NluService;
 import com.timeout.chatbot.session.Session;
+import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import com.timeout.chatbot.session.state.SessionState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -100,7 +100,17 @@ public class DefaultTextHandler {
     private NluResult handleInternal(
         String text
     ) {
-        if (text.equalsIgnoreCase("Things to do")) {
+        if (text.equalsIgnoreCase("get started")) {
+            return
+                new NluResult(
+                    NluIntentType.GET_STARTED
+                );
+        } else if (text.equalsIgnoreCase("Forget me")) {
+            return
+                new NluResult(
+                    NluIntentType.FORGET_ME
+                );
+        } else if (text.equalsIgnoreCase("Things to do")) {
             return
                 new NluResult(
                     NluIntentType.FIND_THINGSTODO
@@ -109,6 +119,11 @@ public class DefaultTextHandler {
             return
                 new NluResult(
                     NluIntentType.FIND_RESTAURANTS
+                );
+        } else if (text.equalsIgnoreCase("Hotels")) {
+            return
+                new NluResult(
+                    NluIntentType.FIND_HOTELS
                 );
         } else if (text.equalsIgnoreCase("Bars and pubs")) {
             return
@@ -151,6 +166,14 @@ public class DefaultTextHandler {
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         switch (nluResult.getNluIntentType()) {
 
+            case GET_STARTED:
+                intentService.handleGetStarted(session);
+                break;
+
+            case FORGET_ME:
+                intentService.handleForgetMe(session);
+                break;
+
             case GREETINGS:
                 intentService.handleGreetings(session);
                 break;
@@ -168,14 +191,11 @@ public class DefaultTextHandler {
                 break;
 
             case FIND_RESTAURANTS:
-                session.setSessionState(SessionState.SEARCHING);
-                session.getSessionStateLookingBag().setGraffittiType(GraffittiType.VENUE);
-                session.getSessionStateLookingBag().setWhat(What.RESTAURANT);
-                session.getSessionStateLookingBag().setGraffittiWhatCategoryNode(
-                    graffittiService.findWhatCategoryNodeByConceptName("restaurants (category)")
-                );
-                session.getSessionStateLookingBag().setGraffittiPageNumber(1);
-                intentService.handleFindRestaurants(session, nluResult.getParameters());
+                handleFindRestaurants(session, nluResult);
+                break;
+
+            case FIND_HOTELS:
+                handleFindHotels(session, nluResult);
                 break;
 
 //            case FIND_RESTAURANTS_NEARBY:
@@ -252,5 +272,33 @@ public class DefaultTextHandler {
                 );
                 break;
         }
+    }
+
+    private void handleFindRestaurants(
+        Session session,
+        NluResult nluResult
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+
+        session.setSessionState(SessionState.SEARCHING);
+
+        final SessionStateSearchingBag searchingBag = session.getSessionStateSearchingBag();
+        searchingBag.setCategory(Category.RESTAURANTS);
+        searchingBag.setGraffittiPageNumber(1);
+
+        intentService.handleFindRestaurants(session, nluResult.getParameters());
+    }
+
+    private void handleFindHotels(
+        Session session,
+        NluResult nluResult
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+
+        session.setSessionState(SessionState.SEARCHING);
+
+        final SessionStateSearchingBag searchingBag = session.getSessionStateSearchingBag();
+        searchingBag.setCategory(Category.HOTELS);
+        searchingBag.setGraffittiPageNumber(1);
+
+        intentService.handleFindRestaurants(session, nluResult.getParameters());
     }
 }
