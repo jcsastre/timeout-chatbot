@@ -87,7 +87,11 @@ public class GenericTemplateWithSingleElementVenueBuilder {
 
         final String phone = venue.getPhone();
         if (phone != null) {
-            final String phoneNumber = "+34" + phone.replaceAll(" ","");
+            String prefix = "+44";
+            if (timeoutConfiguration.getSite().equals("es-barcelona")) {
+                prefix = "+34";
+            }
+            final String phoneNumber = prefix + phone.replaceAll(" ","");
             buttonsBuilder.addCallButton(
                 "Call " + phoneNumber,
                 phoneNumber

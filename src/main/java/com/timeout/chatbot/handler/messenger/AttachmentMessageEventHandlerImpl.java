@@ -100,8 +100,8 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
         if (session.getSessionState() == SessionState.SEARCHING) {
             final Category category = lookingBag.getCategory();
             if (
-                category == Category.RESTAURANT ||
-                category == Category.HOTEL
+                category == Category.RESTAURANTS ||
+                category == Category.HOTELS
             ) {
                 findRestaurantsHandler.fetchAndSend(session);
             }

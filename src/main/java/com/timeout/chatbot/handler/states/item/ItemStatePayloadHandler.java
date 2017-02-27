@@ -5,9 +5,11 @@ import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.block.BlockError;
 import com.timeout.chatbot.block.PhotosBlock;
+import com.timeout.chatbot.block.quickreply.QuickReplyBuilderHelper;
 import com.timeout.chatbot.block.state.booking.BlockBookingBeginDeveloperNote;
 import com.timeout.chatbot.block.state.booking.BlockBookingPeopleCount;
 import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewRate;
+import com.timeout.chatbot.domain.entities.Category;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
@@ -37,6 +39,7 @@ public class ItemStatePayloadHandler {
     private final PhotosBlock photosBlock;
     private final IntentPhotosHandler photosHandler;
     private final BlockError blockError;
+    private final QuickReplyBuilderHelper quickReplyBuilderHelper;
 
     @Autowired
     public ItemStatePayloadHandler(
@@ -45,8 +48,8 @@ public class ItemStatePayloadHandler {
         BlockBookingBeginDeveloperNote blockBookingBeginDeveloperNote,
         BlockSubmittingReviewRate blockSubmittingReviewRate,
         IntentBackHandler backHandler,
-        PhotosBlock photosBlock, IntentPhotosHandler photosHandler, BlockError blockError
-    ) {
+        PhotosBlock photosBlock, IntentPhotosHandler photosHandler, BlockError blockError,
+        QuickReplyBuilderHelper quickReplyBuilderHelper) {
         this.messengerSendClient = messengerSendClient;
         this.blockBookingPeopleCount = blockBookingPeopleCount;
         this.blockBookingBeginDeveloperNote = blockBookingBeginDeveloperNote;
@@ -55,6 +58,7 @@ public class ItemStatePayloadHandler {
         this.photosBlock = photosBlock;
         this.photosHandler = photosHandler;
         this.blockError = blockError;
+        this.quickReplyBuilderHelper = quickReplyBuilderHelper;
     }
 
     public void handle(
@@ -81,7 +85,7 @@ public class ItemStatePayloadHandler {
             case item_SubmitPhoto:
                 messengerSendClient.sendTextMessage(
                     session.getUser().getMessengerId(),
-                    "Please attach one or more item_Photos"
+                    "Please attach one or more photos"
                 );
                 break;
 
@@ -108,7 +112,8 @@ public class ItemStatePayloadHandler {
         } else {
             messengerSendClient.sendTextMessage(
                 session.getUser().getMessengerId(),
-                "Sorry, 'Photos' feature is not implemented yet"
+                "Sorry, 'Photos' feature is not implemented yet",
+                quickReplyBuilderHelper.buildForSeeVenueItem(itemBag.getVenue())
             );
         }
 
@@ -118,7 +123,7 @@ public class ItemStatePayloadHandler {
         final SessionStateItemBag itemBag = session.getSessionStateItemBag();
 
         final GraffittiType graffittiType = itemBag.getGraffittiType();
-        if (graffittiType == GraffittiType.VENUE) {
+        if (graffittiType == GraffittiType.VENUE && session.getSessionStateSearchingBag().getCategory() == Category.RESTAURANTS) {
 
             blockBookingBeginDeveloperNote.send(session.getUser().getMessengerId());
 
@@ -131,7 +136,8 @@ public class ItemStatePayloadHandler {
 
             messengerSendClient.sendTextMessage(
                 session.getUser().getMessengerId(),
-                "Sorry, 'Book' feature is not implemented yet"
+                "Sorry, 'Book' feature is not implemented yet",
+                quickReplyBuilderHelper.buildForSeeVenueItem(itemBag.getVenue())
             );
         }
     }

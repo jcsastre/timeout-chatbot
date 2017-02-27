@@ -37,6 +37,25 @@ curl -X POST -H "Content-Type: application/json" -d '{
     },
     {
       "type":"postback",
+      "title":"Discover",
+      "payload":"{\"type\": \"discover\"}"
+    }
+  ]
+}' "https://graph.facebook.com/v2.6/me/thread_settings?access_token=EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD"
+
+--- Persistent Menu Old ---
+
+curl -X POST -H "Content-Type: application/json" -d '{
+  "setting_type" : "call_to_actions",
+  "thread_state" : "existing_thread",
+  "call_to_actions":[
+    {
+      "type":"postback",
+      "title":"Start over",
+      "payload":"{\"type\": \"start_over\"}"
+    },
+    {
+      "type":"postback",
       "title":"Search suggestions",
       "payload":"{\"type\": \"search_suggestions\"}"
     },

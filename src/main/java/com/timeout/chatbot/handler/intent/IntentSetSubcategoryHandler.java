@@ -62,11 +62,11 @@ public class IntentSetSubcategoryHandler {
 //
 //        if (bag.getReaminingItems() > 0) {
 //            bag.setGraffittiPageNumber(bag.getGraffittiPageNumber() +1);
-//            if (what == What.RESTAURANT) {
+//            if (what == What.RESTAURANTS) {
 //                findRestaurantsHandler.applyNluParameters(session);
 //            }
 //        } else {
-//            if (what == What.RESTAURANT) {
+//            if (what == What.RESTAURANTS) {
 //                messengerSendClientWrapper.sendTextMessage(
 //                    session.getUser().getMessengerId(),
 //                    "There are no remaining RestaurantsManager"

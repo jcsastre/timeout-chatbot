@@ -62,8 +62,8 @@ public class IntentBackHandler {
         final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 
         if (
-            bag.getCategory() == Category.RESTAURANT ||
-            bag.getCategory() == Category.HOTEL
+            bag.getCategory() == Category.RESTAURANTS ||
+            bag.getCategory() == Category.HOTELS
         ) {
             intentFindVenuesHandler.fetchAndSend(session);
         }

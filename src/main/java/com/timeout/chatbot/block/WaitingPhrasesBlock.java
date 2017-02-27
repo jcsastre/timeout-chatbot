@@ -29,7 +29,7 @@ public class WaitingPhrasesBlock implements Runnable {
         while (!isCancelled) {
 
             try {
-                Thread.sleep(5000);
+                Thread.sleep(8000);
             } catch (InterruptedException e) {
                 isCancelled = true;
                 e.printStackTrace();

@@ -4,7 +4,7 @@ import java.util.List;
 
 public enum Category {
 
-    RESTAURANT(
+    RESTAURANTS(
         "node-7083",
         "Restaurant",
         "Restaurants",
@@ -13,7 +13,7 @@ public enum Category {
         "Cuisines"
     ),
 
-    HOTEL(
+    HOTELS(
         "node-7099",
         "Hotel",
         "Hotels",
@@ -21,6 +21,15 @@ public enum Category {
         "Type",
         "Types"
     ),
+
+//    BARS(
+//        "node-7067",
+//        "Bars & Pubs",
+//        "Bars & Pubs",
+//        "bars and pubs (category)",
+//        "Type",
+//        "Types"
+//    ),
 
     THINGS_TO_DO(
         "node-7091",
@@ -30,6 +39,15 @@ public enum Category {
         "Subcategory",
         "Subcategories"
     );
+
+//    FILMS(
+//        "node-7073",
+//        "Film",
+//        "Films",
+//        "film (category)",
+//        "Genre",
+//        "Genres"
+//    );
 
     private final String graffittiId;
     private final String name;

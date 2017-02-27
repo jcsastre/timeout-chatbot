@@ -46,7 +46,7 @@ public class IntentCancelHandler {
 //        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
 ////        final What what = bag.getWhat();
 //
-//        if (what == What.RESTAURANT) {
+//        if (what == What.RESTAURANTS) {
 //            blockService.sendVenuesRemainingBlock(session);
 //        }
     }

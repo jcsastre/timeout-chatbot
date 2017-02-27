@@ -282,7 +282,7 @@ public class DefaultTextHandler {
         session.setSessionState(SessionState.SEARCHING);
 
         final SessionStateSearchingBag searchingBag = session.getSessionStateSearchingBag();
-        searchingBag.setCategory(Category.RESTAURANT);
+        searchingBag.setCategory(Category.RESTAURANTS);
         searchingBag.setGraffittiPageNumber(1);
 
         intentService.handleFindRestaurants(session, nluResult.getParameters());
@@ -296,7 +296,7 @@ public class DefaultTextHandler {
         session.setSessionState(SessionState.SEARCHING);
 
         final SessionStateSearchingBag searchingBag = session.getSessionStateSearchingBag();
-        searchingBag.setCategory(Category.HOTEL);
+        searchingBag.setCategory(Category.HOTELS);
         searchingBag.setGraffittiPageNumber(1);
 
         intentService.handleFindRestaurants(session, nluResult.getParameters());
