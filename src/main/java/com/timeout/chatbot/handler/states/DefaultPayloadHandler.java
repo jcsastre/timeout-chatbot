@@ -3,6 +3,7 @@ package com.timeout.chatbot.handler.states;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
+import com.timeout.chatbot.block.cloudinary.CloudinaryUrlBuilder;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
@@ -20,13 +21,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Component
 public class DefaultPayloadHandler {
 
     private final IntentService intentService;
     private final BlockService blockService;
-    private final MessengerSendClient messengerSendClient;
+    private final MessengerSendClient msc;
     private final DefaultTextHandler defaultTextHandler;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
     private final SubmittingReviewStatePayloadHandler submittingReviewStatePayloadHandler;
@@ -34,23 +37,24 @@ public class DefaultPayloadHandler {
     private final ItemStatePayloadHandler itemStatePayloadHandler;
     private final SearchingStatePayloadHandler searchingStatePayloadHandler;
     private final SenderActionsHelper senderActionsHelper;
+    private final CloudinaryUrlBuilder cloudinaryUrlBuilder;
 
     @Autowired
     public DefaultPayloadHandler(
         IntentService intentService,
         BlockService blockService,
-        MessengerSendClient messengerSendClient,
+        MessengerSendClient msc,
         DefaultTextHandler defaultTextHandler,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
         SubmittingReviewStatePayloadHandler submittingReviewStatePayloadHandler,
         BookingStatePayloadHandler bookingStatePayloadHandler,
         ItemStatePayloadHandler itemStatePayloadHandler,
         SearchingStatePayloadHandler searchingStatePayloadHandler,
-        SenderActionsHelper senderActionsHelper
-    ) {
+        SenderActionsHelper senderActionsHelper,
+        CloudinaryUrlBuilder cloudinaryUrlBuilder) {
         this.intentService = intentService;
         this.blockService = blockService;
-        this.messengerSendClient = messengerSendClient;
+        this.msc = msc;
         this.defaultTextHandler = defaultTextHandler;
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
         this.submittingReviewStatePayloadHandler = submittingReviewStatePayloadHandler;
@@ -58,6 +62,7 @@ public class DefaultPayloadHandler {
         this.itemStatePayloadHandler = itemStatePayloadHandler;
         this.searchingStatePayloadHandler = searchingStatePayloadHandler;
         this.senderActionsHelper = senderActionsHelper;
+        this.cloudinaryUrlBuilder = cloudinaryUrlBuilder;
     }
 
     public void handle(
@@ -71,8 +76,25 @@ public class DefaultPayloadHandler {
         if (payloadType == PayloadType.start_over) {
 
             session.reset();
-            blockService.sendWelcomeBackBlock(session.getUser());
-            intentService.handleDiscover(session);
+
+            msc.sendImageAttachment(
+                session.getUser().getMessengerId(),
+                cloudinaryUrlBuilder.buildBookReceiptUrl(
+                    2,
+                    LocalDate.now(),
+                    LocalTime.now(),
+                    "101611815",
+                    "La Esquinica",
+                    "Juan Carlos Sastre",
+                    "6 Greek Street",
+                    "London",
+                    "W1D 4DE"
+                )
+            );
+
+//            blockService.sendWelcomeBackBlock(session.getUser());
+//            intentService.handleDiscover(session);
+
 //            blockService.sendWelcomeFirstTimeBlock(session.getUser());
 //            blockService.sendVersionInfoBlock(session.getUser().getMessengerId());
 
@@ -165,7 +187,7 @@ public class DefaultPayloadHandler {
                 break;
 
             case no_see_at_timeout:
-                messengerSendClient.sendTextMessage(
+                msc.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Ok, item_Back to the list of restaurants"
                 );
@@ -173,14 +195,14 @@ public class DefaultPayloadHandler {
                 break;
 
             case films_find_cinemas:
-                messengerSendClient.sendTextMessage(
+                msc.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, 'Find a cinema' is not implemented yet"
                 );
                 break;
 
             case temporaly_disabled:
-                messengerSendClient.sendTextMessage(
+                msc.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, my creator has temporarily disabled the 'Search suggestions' :(",
                     quickReplyBuilderForCurrentSessionState.build(session)
@@ -188,7 +210,7 @@ public class DefaultPayloadHandler {
                 break;
 
             default:
-                messengerSendClient.sendTextMessage(
+                msc.sendTextMessage(
                     session.getUser().getMessengerId(),
                     "Sorry, I don't understand you."
                 );

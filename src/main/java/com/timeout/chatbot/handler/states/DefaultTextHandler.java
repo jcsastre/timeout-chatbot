@@ -7,11 +7,9 @@ import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionSt
 import com.timeout.chatbot.domain.entities.Category;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.nlu.NluResult;
-import com.timeout.chatbot.domain.nlu.intent.NluIntentType;
 import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.handler.states.booking.BookingStateTextHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStateTextHandler;
-import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.services.NluService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
@@ -27,7 +25,6 @@ public class DefaultTextHandler {
     private final IntentService intentService;
     private final NluService nluService;
     private final MessengerSendClient msc;
-    private final GraffittiService graffittiService;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
     private final SubmittingReviewStateTextHandler submittingReviewStateTextHandler;
     private final BookingStateTextHandler bookingStateTextHandler;
@@ -37,7 +34,6 @@ public class DefaultTextHandler {
         IntentService intentService,
         NluService nluService,
         MessengerSendClient msc,
-        GraffittiService graffittiService,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
         SubmittingReviewStateTextHandler submittingReviewStateTextHandler,
         BookingStateTextHandler bookingStateTextHandler
@@ -45,7 +41,6 @@ public class DefaultTextHandler {
         this.intentService = intentService;
         this.nluService = nluService;
         this.msc = msc;
-        this.graffittiService = graffittiService;
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
         this.submittingReviewStateTextHandler = submittingReviewStateTextHandler;
         this.bookingStateTextHandler = bookingStateTextHandler;
@@ -78,11 +73,7 @@ public class DefaultTextHandler {
         Session session
     ) throws NluException, MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        NluResult nluResult = handleInternal(text);
-
-        if (nluResult == null) {
-            nluResult = nluService.processText(text);
-        }
+        final NluResult nluResult = nluService.processText(text);
 
         if (nluResult != null) {
             processNluResult(
@@ -95,69 +86,6 @@ public class DefaultTextHandler {
                 "Sorry, I don't understand"
             );
         }
-    }
-
-    private NluResult handleInternal(
-        String text
-    ) {
-        if (text.equalsIgnoreCase("get started")) {
-            return
-                new NluResult(
-                    NluIntentType.GET_STARTED
-                );
-        } else if (text.equalsIgnoreCase("Forget me")) {
-            return
-                new NluResult(
-                    NluIntentType.FORGET_ME
-                );
-        } else if (text.equalsIgnoreCase("Things to do")) {
-            return
-                new NluResult(
-                    NluIntentType.FIND_THINGSTODO
-                );
-        } else if (text.equalsIgnoreCase("Restaurants")) {
-            return
-                new NluResult(
-                    NluIntentType.FIND_RESTAURANTS
-                );
-        } else if (text.equalsIgnoreCase("Hotels")) {
-            return
-                new NluResult(
-                    NluIntentType.FIND_HOTELS
-                );
-        } else if (text.equalsIgnoreCase("Bars and pubs")) {
-            return
-                new NluResult(
-                    NluIntentType.FIND_BARSANDPUBS
-                );
-        } else if (text.equalsIgnoreCase("Art")) {
-            return
-                new NluResult(
-                    NluIntentType.FIND_ART
-                );
-        } else if (text.equalsIgnoreCase("Theatre")) {
-            return
-                new NluResult(
-                    NluIntentType.FIND_THEATRE
-                );
-        } else if (text.equalsIgnoreCase("Music")) {
-            return
-                new NluResult(
-                    NluIntentType.FIND_MUSIC
-                );
-        } else if (text.equalsIgnoreCase("Nightlife")) {
-            return
-                new NluResult(
-                    NluIntentType.FIND_NIGHTLIFE
-                );
-        } else if (text.equalsIgnoreCase("Film")) {
-            return
-                new NluResult(
-                    NluIntentType.FINDS_FILMS
-                );
-        }
-
-        return null;
     }
 
     private void processNluResult(

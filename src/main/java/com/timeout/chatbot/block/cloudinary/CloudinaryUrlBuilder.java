@@ -17,8 +17,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.net.*;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
 import java.util.List;
+import java.util.Locale;
 
 @Component
 public class CloudinaryUrlBuilder {
@@ -33,6 +40,117 @@ public class CloudinaryUrlBuilder {
     ) {
         this.timeoutConfiguration = timeoutConfiguration;
         this.cloudinary = cloudinary;
+    }
+
+    private String escapeText(String text) {
+        return
+            text.replace(" ", "%20").replace(",", "%252C");
+    }
+
+    public String buildBookReceiptUrl(
+        Integer numberOfPeople,
+        LocalDate localDate,
+        LocalTime localTime,
+        String venueImageId,
+        String venueName,
+        String name,
+        String address,
+        String city,
+        String postCode
+    ) throws UnsupportedEncodingException {
+        // text = text.toUpperCase().replace(" ", "%20");
+
+        Transformation transformation = new Transformation();
+
+        // BOOK header
+        transformation =
+            transformation
+                .overlay("text:Arial_22_bold:BOOK")
+                .color("#fefefe")
+                .gravity("north")
+                .y(80) // previous 0.140
+                .chain();
+
+        // Table for N
+        String tableText = "Table for " + numberOfPeople;
+        transformation =
+            transformation
+                .overlay("text:Arial_18:" + escapeText(tableText))
+                .color("#000000")
+                .gravity("north")
+                .y(140)
+                .chain();
+
+        // on Tuesday, 28 February
+        String date =
+            "on " +
+            localDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.UK) +
+            ", " +
+            localDate.getDayOfMonth() +
+            " " +
+            localDate.getMonth().getDisplayName(TextStyle.FULL, Locale.UK);
+        transformation =
+            transformation
+                .overlay("text:Arial_18:" + escapeText(date))
+                .color("#000000")
+                .gravity("north")
+                .y(170)
+                .chain();
+
+        // at 20:00
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("H:mm");
+        transformation =
+            transformation
+                .overlay("text:Arial_18:" + escapeText("at " + localTime.format(dtf)))
+                .color("#000000")
+                .gravity("north")
+                .y(200)
+                .chain();
+
+        // Venue circled image
+        transformation =
+            transformation
+                .gravity("north")
+                .height(100)
+                .overlay("timages:"+venueImageId+":image.jpg")
+                .radius("max")
+                .width(100)
+                .y(250)
+                .crop("crop")
+                .chain();
+
+        // Restaurant name
+        transformation =
+            transformation
+                .overlay("text:Arial_22_bold:" + escapeText(venueName))
+                .color("#e1192c")
+                .gravity("north")
+                .y(365)
+                .chain();
+
+        // Address
+        transformation =
+            transformation
+                .overlay("text:Arial_18:" + escapeText(address))
+                .color("#000000")
+                .gravity("north")
+                .y(410)
+                .chain();
+
+        // City, Postcode
+        String address2 = city + ", " + postCode;
+        transformation =
+            transformation
+                .overlay("text:Arial_18:" + escapeText(address2))
+                .color("#000000")
+                .gravity("north")
+                .y(440)
+                .chain();
+
+        return
+            cloudinary.url()
+                .transformation(transformation)
+                .generate("booking_template_tj2o9p");
     }
 
     public String buildImageUrl(

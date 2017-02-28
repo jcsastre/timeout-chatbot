@@ -6,9 +6,9 @@ timeout:
   longitude: -0.128177404403687
   imageUrlPlacholder: https://s3-eu-west-1.amazonaws.com/maps.timeout.com/cache/thumb_144_100/default/default.jpg
 messenger:
-  secret: 0c582f67650e79c351a05aac5dd91d6e
-  pageAccessToken: EAAYIgvzPhgwBAOdisw1fIJpD51PhDcK6sGPoCCZCWEZBOZAoPFFGG2cYEfbtWOIWphhCTf7dZCHARD7rUWAkoDSfZA66XK3eNIlP6zcxIxgO5DVV0mRc9zDVbFOAroMVAQWRbCIg9WKK0xcu9nKkgciIGZAlaDDbETZBxrKUZA1KTwZDZD
-  webhookVerificationToken: secreti
+  secret: b6de2732ea8d6b0d22c5fd633a659f54
+  pageAccessToken: EAASeusXP6OEBAAjScKM2kehZBjhAYDsO3KgZCeZCMC21fPdRUylvhSMPA1UE7d27PveO5uDiBN0IgpgR3TRCaiirIpmfEzYQYlkbzNFZAZCgZASv1jTZC3V55vUI552ErvJWfyLHt8gQTsEjn8iPhAz44RkCYXMeocFUY3eWPoTREqnBmshPWC5
+  webhookVerificationToken: devsecreti
 apiai:
   clientAccessToken: 440f2d056d94418ea4f903db566b618a
 ---
