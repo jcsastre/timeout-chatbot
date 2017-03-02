@@ -121,7 +121,7 @@ public class BookingStateHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        blockBookingSubmitted.send(session.getUser().getMessengerId());
+        blockBookingSubmitted.send(session);
         blockBookingEndDeveloperNote.send(session.getUser().getMessengerId());
 
         session.setSessionState(SessionState.ITEM);

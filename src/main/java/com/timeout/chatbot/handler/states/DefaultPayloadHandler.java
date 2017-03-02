@@ -21,8 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Component
 public class DefaultPayloadHandler {
@@ -77,23 +75,23 @@ public class DefaultPayloadHandler {
 
             session.reset();
 
-            msc.sendImageAttachment(
-                session.getUser().getMessengerId(),
-                cloudinaryUrlBuilder.buildBookReceiptUrl(
-                    2,
-                    LocalDate.now(),
-                    LocalTime.now(),
-                    "101611815",
-                    "La Esquinica",
-                    "Juan Carlos Sastre",
-                    "6 Greek Street",
-                    "London",
-                    "W1D 4DE"
-                )
-            );
+//            msc.sendImageAttachment(
+//                session.getUser().getMessengerId(),
+//                cloudinaryUrlBuilder.buildBookReceiptUrl(
+//                    2,
+//                    LocalDate.now(),
+//                    LocalTime.now(),
+//                    "101611815",
+//                    "La Esquinica",
+//                    "Juan Carlos Sastre",
+//                    "6 Greek Street",
+//                    "London",
+//                    "W1D 4DE"
+//                )
+//            );
 
-//            blockService.sendWelcomeBackBlock(session.getUser());
-//            intentService.handleDiscover(session);
+            blockService.sendWelcomeBackBlock(session.getUser());
+            intentService.handleDiscover(session);
 
 //            blockService.sendWelcomeFirstTimeBlock(session.getUser());
 //            blockService.sendVersionInfoBlock(session.getUser().getMessengerId());

@@ -25,6 +25,9 @@ public class Venue {
     private Integer userRatingsCount;
     private Integer userRatingsAverage;
     private List<Image> images;
+    private String address1;
+    private String city;
+    private String postCode;
 
     public Venue(
         GraffittiVenueResponse.Body gvrb,
@@ -59,6 +62,9 @@ public class Venue {
         toWebsite = gvrb.getToWebsite();
         phone = gvrb.getPhone();
         editorialRating = gvrb.getEditorialRating();
+        address1 = gvrb.getAddress1();
+        city = gvrb.getCity();
+        postCode = gvrb.getPostCode();
 
         final UserRatingsSummary userRatingsSummary = gvrb.getUserRatingsSummary();
         if (userRatingsSummary != null) {
@@ -124,5 +130,31 @@ public class Venue {
 
     public List<Image> getImages() {
         return images;
+    }
+
+    public Image getMainImage() {
+
+        Image image = null;
+
+        final List<Image> images = getImages();
+        if (images != null) {
+            if (images.size() > 0) {
+                image = images.get(0);
+            }
+        }
+
+        return image;
+    }
+
+    public String getAddress1() {
+        return address1;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getPostCode() {
+        return postCode;
     }
 }

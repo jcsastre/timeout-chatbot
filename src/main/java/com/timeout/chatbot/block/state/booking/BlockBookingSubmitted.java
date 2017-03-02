@@ -3,26 +3,66 @@ package com.timeout.chatbot.block.state.booking;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
+import com.timeout.chatbot.block.cloudinary.CloudinaryUrlBuilder;
+import com.timeout.chatbot.domain.Venue;
+import com.timeout.chatbot.session.Session;
+import com.timeout.chatbot.session.bag.SessionStateBookingBag;
+import com.timeout.chatbot.session.bag.SessionStateItemBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.UnsupportedEncodingException;
+
 @Component
 public class BlockBookingSubmitted {
-    private final MessengerSendClient messengerSendClient;
+
+    private final MessengerSendClient msc;
+    private final CloudinaryUrlBuilder cloudinaryUrlBuilder;
 
     @Autowired
     public BlockBookingSubmitted(
-        MessengerSendClient messengerSendClient
+        MessengerSendClient msc,
+        CloudinaryUrlBuilder cloudinaryUrlBuilder
     ) {
-        this.messengerSendClient = messengerSendClient;
+        this.msc = msc;
+        this.cloudinaryUrlBuilder = cloudinaryUrlBuilder;
     }
 
     public void send(
-        String userId
-    ) throws MessengerApiException, MessengerIOException {
-        messengerSendClient.sendTextMessage(
-            userId,
+        Session session
+    ) throws MessengerApiException, MessengerIOException, UnsupportedEncodingException {
+
+        final String userMessengerId = session.getUser().getMessengerId();
+
+        msc.sendTextMessage(
+            userMessengerId,
             "Your booking has been submitted"
+        );
+
+        final SessionStateBookingBag bookingBag = session.getSessionStateBookingBag();
+        final SessionStateItemBag itemBag = session.getSessionStateItemBag();
+        final Venue venue = itemBag.getVenue();
+
+        String receiptImageUrl =
+            cloudinaryUrlBuilder.buildBookReceiptUrl(
+                bookingBag.getPeopleCount(),
+                bookingBag.getLocalDate(),
+                bookingBag.getLocalTime(),
+                venue.getMainImage().getId(),
+                venue.getName(),
+                venue.getAddress1(),
+                venue.getCity(),
+                venue.getPostCode()
+            );
+
+        msc.sendTextMessage(
+            userMessengerId,
+            "Below you can see a receipt of your book. Share it with your companions."
+        );
+
+        msc.sendImageAttachment(
+            userMessengerId,
+            receiptImageUrl
         );
     }
 }

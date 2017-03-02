@@ -39,6 +39,10 @@ public class GraffittiVenueResponse {
         private Integer editorialRating;
         @JsonProperty("user_ratings_summary")
         private UserRatingsSummary userRatingsSummary;
+        private String address1;
+        private String city;
+        @JsonProperty("postcode")
+        private String postCode;
 
         public GraffittiCategorisation getGraffittiCategorisation() {
             return graffittiCategorisation;
@@ -142,6 +146,30 @@ public class GraffittiVenueResponse {
 
         public void setUserRatingsSummary(UserRatingsSummary userRatingsSummary) {
             this.userRatingsSummary = userRatingsSummary;
+        }
+
+        public String getAddress1() {
+            return address1;
+        }
+
+        public void setAddress1(String address1) {
+            this.address1 = address1;
+        }
+
+        public String getCity() {
+            return city;
+        }
+
+        public void setCity(String city) {
+            this.city = city;
+        }
+
+        public String getPostCode() {
+            return postCode;
+        }
+
+        public void setPostCode(String postCode) {
+            this.postCode = postCode;
         }
     }
 }

@@ -18,8 +18,8 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate redisTemplate() {
-        final RedisTemplate redisTemplate = new RedisTemplate();
+    public RedisTemplate<String, com.timeout.chatbot.redis.Person> redisTemplate() {
+        final RedisTemplate<String, com.timeout.chatbot.redis.Person> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(jedisConnFactory());
         return redisTemplate;
     }
@@ -30,6 +30,4 @@ public class RedisConfig {
         jedisConnectionFactory.setUsePool(true);
         return jedisConnectionFactory;
     }
-
-
 }
