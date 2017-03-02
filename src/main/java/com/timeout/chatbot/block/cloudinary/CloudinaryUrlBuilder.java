@@ -53,7 +53,6 @@ public class CloudinaryUrlBuilder {
         LocalTime localTime,
         String venueImageId,
         String venueName,
-        String name,
         String address,
         String city,
         String postCode
@@ -301,27 +300,37 @@ public class CloudinaryUrlBuilder {
 
 //        Thread.sleep(5000);
 
-        HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(targetUrl).openConnection();
-        httpUrlConnection.setRequestMethod("HEAD");
+        try {
+            HttpURLConnection.setFollowRedirects(false);
+            HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(targetUrl).openConnection();
+            httpUrlConnection.setRequestMethod("HEAD");
+            httpUrlConnection.setConnectTimeout(3000);
 
-        int responseCode = httpUrlConnection.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            return true;
-        } else {
-            System.out.println("\tReceived code " + responseCode);
-            System.out.println("\t" + httpUrlConnection.getHeaderFields().toString());
-            System.out.println("\tWaiting " + 100 + "ms");
-            Thread.sleep(100);
-        }
-
-        responseCode = httpUrlConnection.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            return true;
-        } else {
-            System.out.println("\tReceived code " + responseCode);
-            System.out.println("\t" + httpUrlConnection.getHeaderFields().toString());
+            return (httpUrlConnection.getResponseCode() == HttpURLConnection.HTTP_OK);
+        } catch (IOException e) {
             return false;
         }
+
+//        httpUrlConnection.setRequestMethod("HEAD");
+//
+//        int responseCode = httpUrlConnection.getResponseCode();
+//        if (responseCode == HttpURLConnection.HTTP_OK) {
+//            return true;
+//        } else {
+//            System.out.println("\tReceived code " + responseCode);
+//            System.out.println("\t" + httpUrlConnection.getHeaderFields().toString());
+//            System.out.println("\tWaiting " + 100 + "ms");
+//            Thread.sleep(100);
+//        }
+//
+//        responseCode = httpUrlConnection.getResponseCode();
+//        if (responseCode == HttpURLConnection.HTTP_OK) {
+//            return true;
+//        } else {
+//            System.out.println("\tReceived code " + responseCode);
+//            System.out.println("\t" + httpUrlConnection.getHeaderFields().toString());
+//            return false;
+//        }
 
         //        boolean isAvailable = false;
 //        int numberOfChecksDone = 0;
