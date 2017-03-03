@@ -1,7 +1,8 @@
 package com.timeout.chatbot.controllers;
 
-import com.timeout.chatbot.domain.UserJpa;
-import com.timeout.chatbot.repository.UserJpaRepository;
+import com.timeout.chatbot.domain.user.SuggestionsDone;
+import com.timeout.chatbot.domain.user.User;
+import com.timeout.chatbot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -9,14 +10,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("/postgresql")
 public class PostgresqlController {
 
-    private final UserJpaRepository repository;
+    private final UserRepository repository;
 
     @Autowired
-    public PostgresqlController(UserJpaRepository repository) {
+    public PostgresqlController(UserRepository repository) {
         this.repository = repository;
     }
 
@@ -24,8 +27,15 @@ public class PostgresqlController {
     @ResponseBody
     public ResponseEntity<String> doGet() {
 
-        repository.save(new UserJpa("Jack", "Bauer"));
-        repository.save(new UserJpa("Chloe", "O'Brian"));
+        final User user = new User(
+            UUID.randomUUID(),
+            "23232332"
+        );
+
+        final SuggestionsDone suggestionsDone = new SuggestionsDone();
+        user.setSuggestionsDone(suggestionsDone);
+
+        repository.save(user);
 
         return ResponseEntity.ok("Ok");
     }

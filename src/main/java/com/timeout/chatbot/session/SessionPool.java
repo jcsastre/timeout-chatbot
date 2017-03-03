@@ -12,6 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 public class SessionPool {
@@ -87,10 +88,11 @@ public class SessionPool {
     }
 
     private User buildUser(String messengerId) {
+
         User user = userRepository.findByMessengerId(messengerId);
 
         if (user == null) {
-            user = new User(messengerId);
+            user = new User(UUID.randomUUID(), messengerId);
             userRepository.save(user);
         }
 
@@ -100,7 +102,7 @@ public class SessionPool {
                 messengerConfiguration.getPageAccessToken();
         final FbUserProfile fbUserProfile = restTemplate.getForObject(url, FbUserProfile.class);
 
-        user.setFbUserProfile(fbUserProfile);
+//        user.setFbUserProfile(fbUserProfile);
 
         return user;
     }

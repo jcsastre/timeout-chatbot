@@ -11,7 +11,6 @@ import com.timeout.chatbot.handler.intent.IntentSeeItem;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateBookingBag;
 import com.timeout.chatbot.session.state.BookingState;
-import com.timeout.chatbot.session.state.SessionState;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -180,9 +179,9 @@ public class BookingStatePayloadHandler {
             bag.setBookingState(BookingState.FIRST_NAME);
 
             final User user = session.getUser();
-            final String firstName = user.getFbUserProfile().getFirstName();
+            final String firstName = session.getFbUserProfile().getFirstName();
             if (firstName != null) {
-                blockBookingFbFirstNameConfirmation.send(user);
+                blockBookingFbFirstNameConfirmation.send(session);
             } else {
                 blockBookingAskFirstname.send(user.getMessengerId());
             }
@@ -214,7 +213,7 @@ public class BookingStatePayloadHandler {
 
             bookingStateHandler.setFirstNameAndContinue(
                 session,
-                session.getUser().getFbUserProfile().getFirstName()
+                session.getFbUserProfile().getFirstName()
             );
         } else {
             blockError.send(session.getUser());
@@ -244,7 +243,7 @@ public class BookingStatePayloadHandler {
 
             bookingStateHandler.setLastNameAndContinue(
                 session,
-                session.getUser().getFbUserProfile().getLastName()
+                session.getFbUserProfile().getLastName()
             );
         } else {
             blockError.send(session.getUser());

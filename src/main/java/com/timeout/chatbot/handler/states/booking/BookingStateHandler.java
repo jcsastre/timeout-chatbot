@@ -3,7 +3,6 @@ package com.timeout.chatbot.handler.states.booking;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.timeout.chatbot.block.state.booking.*;
-import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.handler.intent.IntentSeeItem;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateBookingBag;
@@ -69,12 +68,11 @@ public class BookingStateHandler {
         bag.setFirstName(firstName);
         bag.setBookingState(BookingState.LAST_NAME);
 
-        final User user = session.getUser();
-        final String lastName = user.getFbUserProfile().getLastName();
+        final String lastName = session.getFbUserProfile().getLastName();
         if (lastName != null) {
-            blockBookingFbLastNameConfirmation.send(user);
+            blockBookingFbLastNameConfirmation.send(session);
         } else {
-            blockBookingAskLastname.send(user.getMessengerId());
+            blockBookingAskLastname.send(session.getUser().getMessengerId());
         }
     }
 

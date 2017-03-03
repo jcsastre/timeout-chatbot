@@ -5,7 +5,7 @@ import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.domain.user.User;
+import com.timeout.chatbot.session.Session;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,15 +25,15 @@ public class BlockBookingFbLastNameConfirmation {
     }
 
     public void send(
-        User user
+        Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final String lastName = user.getFbUserProfile().getLastName();
+        final String lastName = session.getFbUserProfile().getLastName();
 
         String msg = "Can I use '" + lastName + "' as your last name for the booking?";
 
         messengerSendClient.sendTextMessage(
-            user.getMessengerId(),
+            session.getUser().getMessengerId(),
             msg,
             buildQuickReplies()
         );

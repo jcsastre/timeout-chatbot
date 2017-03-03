@@ -1,5 +1,6 @@
 package com.timeout.chatbot.session;
 
+import com.timeout.chatbot.domain.FbUserProfile;
 import com.timeout.chatbot.domain.page.Page;
 import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.session.bag.SessionStateBookingBag;
@@ -21,6 +22,7 @@ public class Session {
     private SessionStateSubmittingReviewBag sessionStateSubmittingReviewBag;
     private long lastAccessTime;
     private Date currentTimestamp;
+    private FbUserProfile fbUserProfile;
 
     public Session(
         Page page,
@@ -86,6 +88,14 @@ public class Session {
 
     public void setCurrentTimestamp(Date currentTimestamp) {
         this.currentTimestamp = currentTimestamp;
+    }
+
+    public FbUserProfile getFbUserProfile() {
+        return fbUserProfile;
+    }
+
+    public void setFbUserProfile(FbUserProfile fbUserProfile) {
+        this.fbUserProfile = fbUserProfile;
     }
 
     @Override

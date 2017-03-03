@@ -1,9 +1,20 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/springbootdb
+    username: docker
+    password: docker
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+#    properties:
+#        hibernate:
+#          dialect: com.marvinformatics.hibernate.json.PostgreSQLJsonDialect
 timeout:
-  site: uk-london
+  site: es-barcelona
   locale: en-GB
-  cityName: London
-  latitude: 51.5080613409367
-  longitude: -0.128177404403687
+  cityName: Barcelona
+  latitude: 41.3848265585707
+  longitude: 2.169349193573
   imageUrlPlacholder: https://s3-eu-west-1.amazonaws.com/maps.timeout.com/cache/thumb_144_100/default/default.jpg
 messenger:
   secret: b6de2732ea8d6b0d22c5fd633a659f54

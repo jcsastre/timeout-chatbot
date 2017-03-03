@@ -193,7 +193,7 @@ public class SessionContextBooking extends SessionContext {
     }
 
     private void askFirstName() throws MessengerApiException, MessengerIOException {
-        final String firstName = user.getFbUserProfile().getFirstName();
+//        final String firstName = user.getFbUserProfile().getFirstName();
         if (firstName != null) {
 //            bookingBlocksHelper.sendBookingFirstnameConfirmationBlock(user);
         } else {
@@ -202,7 +202,7 @@ public class SessionContextBooking extends SessionContext {
     }
 
     private void askLastName() {
-        final String lastName = user.getFbUserProfile().getLastName();
+//        final String lastName = user.getFbUserProfile().getLastName();
         if (lastName != null) {
 //            bookingBlocksHelper.sendBookingLastnameConfirmationBlock(user);
         } else {
@@ -253,7 +253,7 @@ public class SessionContextBooking extends SessionContext {
                     break;
 
                 case booking_first_name_fb_ok:
-                    setFirstName(user.getFbUserProfile().getFirstName());
+//                    setFirstName(user.getFbUserProfile().getFirstName());
                     bookingState = BookingState.LAST_NAME;
                     askLastName();
                     break;
@@ -263,7 +263,7 @@ public class SessionContextBooking extends SessionContext {
                     break;
 
                 case booking_last_name_fb_ok:
-                    setLastName(user.getFbUserProfile().getLastName());
+//                    setLastName(user.getFbUserProfile().getLastName());
                     bookingState = BookingState.EMAIL;
                     sendTextMessage("Please, type your email");
                     break;

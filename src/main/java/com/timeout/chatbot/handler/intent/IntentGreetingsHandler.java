@@ -34,7 +34,7 @@ public class IntentGreetingsHandler {
         switch (session.getSessionState()) {
 
             case UNDEFINED:
-                blockService.sendWelcomeBackBlock(session.getUser());
+                blockService.sendWelcomeBackBlock(session);
                 blockService.sendVersionInfoBlock(session.getUser().getMessengerId());
                 session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
                 blockService.sendSuggestionsBlock(session);

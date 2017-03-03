@@ -1,7 +1,7 @@
 package com.timeout.chatbot.block;
 
-import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
+import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -18,17 +18,17 @@ public class WelcomeBackBlock {
     }
 
     public void send(
-        User user
+        Session session
     ) {
         StringBuilder sbMessage = new StringBuilder();
-        if (user.getFbUserProfile().getFirstName() != null) {
-            sbMessage.append("Hi " + user.getFbUserProfile().getFirstName() + ", welcome back!");
+        if (session.getFbUserProfile().getFirstName() != null) {
+            sbMessage.append("Hi " + session.getFbUserProfile().getFirstName() + ", welcome back!");
         } else {
             sbMessage.append("Hi, welcome back!");
         }
 
         messengerSendClientWrapper.sendTextMessage(
-            user.getMessengerId(),
+            session.getUser().getMessengerId(),
             sbMessage.toString()
         );
     }

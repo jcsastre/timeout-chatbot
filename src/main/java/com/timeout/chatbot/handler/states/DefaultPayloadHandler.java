@@ -90,7 +90,7 @@ public class DefaultPayloadHandler {
 //                )
 //            );
 
-            blockService.sendWelcomeBackBlock(session.getUser());
+            blockService.sendWelcomeBackBlock(session);
             intentService.handleDiscover(session);
 
 //            blockService.sendWelcomeFirstTimeBlock(session.getUser());

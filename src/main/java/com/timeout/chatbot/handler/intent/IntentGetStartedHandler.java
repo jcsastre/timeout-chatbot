@@ -26,7 +26,11 @@ public class IntentGetStartedHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        welcomeFirstTimeBlock.send(session.getUser());
+        welcomeFirstTimeBlock.send(
+            session.getUser().getMessengerId(),
+            session.getFbUserProfile()
+        );
+
         intentDiscoverHandler.handle(session);
     }
 }

@@ -1,80 +1,49 @@
 package com.timeout.chatbot.domain.user;
 
 import com.timeout.chatbot.domain.FbUserProfile;
-import org.springframework.data.annotation.Id;
+import org.hibernate.annotations.Type;
 
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.UUID;
+
+@Entity
+@Table(name = "`user`")
 public class User {
+
     @Id
-    public String id;
+    private UUID id;
 
-    public String messengerId;
+    private String messengerId;
 
-    private FbUserProfile fbUserProfile;
+    @Embedded
 
-    public SuggestionsDone suggestionsDone;
+    @Type(type = "com.marvinformatics.hibernate.json.JsonUserType")
+    private SuggestionsDone suggestionsDone;
 
-    public User(String messengerId) {
+    public User() {
+    }
+
+    public User(
+        UUID id,
+        String messengerId
+    ) {
+        this.id = id;
         this.messengerId = messengerId;
-        this.suggestionsDone = new SuggestionsDone();
+//        this.suggestionsDone = new SuggestionsDone();
     }
 
     public String getMessengerId() {
         return messengerId;
     }
 
-    public FbUserProfile getFbUserProfile() {
-        return fbUserProfile;
-    }
-
-    public void setFbUserProfile(FbUserProfile fbUserProfile) {
-        this.fbUserProfile = fbUserProfile;
-    }
-
     public SuggestionsDone getSuggestionsDone() {
         return suggestionsDone;
     }
 
-    @Override
-    public String toString() {
-        return String.format(
-            "User[id=%s, messengerId=%s, fbUserProfile=%s, suggestionsDone=%s]",
-            id, messengerId, fbUserProfile.toString(), suggestionsDone.toString()
-        );
-    }
-
-    public class SuggestionsDone {
-        private Boolean discover = false;
-
-        private Boolean restaurantsFineSearch = false;
-
-        public SuggestionsDone() {
-            this.restaurantsFineSearch = false;
-        }
-
-        @Override
-        public String toString() {
-            return String.format(
-                "SuggestionsDone[fbUserProfile=%s, discover=%s, restaurantsFineSearch=%s]",
-                fbUserProfile.toString(),
-                discover.toString(),
-                restaurantsFineSearch.toString()
-            );
-        }
-
-        public Boolean getRestaurantsFineSearch() {
-            return restaurantsFineSearch;
-        }
-
-        public void setRestaurantsFineSearch(Boolean restaurantsFineSearch) {
-            this.restaurantsFineSearch = restaurantsFineSearch;
-        }
-
-        public Boolean getDiscover() {
-            return discover;
-        }
-
-        public void setDiscover(Boolean discover) {
-            this.discover = discover;
-        }
+    public void setSuggestionsDone(SuggestionsDone suggestionsDone) {
+        this.suggestionsDone = suggestionsDone;
     }
 }
