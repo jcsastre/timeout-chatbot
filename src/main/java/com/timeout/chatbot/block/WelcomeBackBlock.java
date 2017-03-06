@@ -20,16 +20,26 @@ public class WelcomeBackBlock {
     public void send(
         Session session
     ) {
+        System.out.println("*** WelcomeBackBlock.send() BEGIN");
+
         StringBuilder sbMessage = new StringBuilder();
-        if (session.getFbUserProfile().getFirstName() != null) {
-            sbMessage.append("Hi " + session.getFbUserProfile().getFirstName() + ", welcome back!");
-        } else {
+//        if (session.getFbUserProfile().getFirstName() != null) {
+//            sbMessage.append("Hi " + session.getFbUserProfile().getFirstName() + ", welcome back!");
+//        } else {
             sbMessage.append("Hi, welcome back!");
-        }
+//        }
 
         messengerSendClientWrapper.sendTextMessage(
             session.getUser().getMessengerId(),
             sbMessage.toString()
         );
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("*** WelcomeBackBlock.send() END");
     }
 }

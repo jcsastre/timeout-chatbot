@@ -32,6 +32,13 @@ public class TextMessageEventHandlerImpl implements TextMessageEventHandler {
     public void handle(
         TextMessageEvent event
     ) {
+        handleAsync(event);
+    }
+
+//    @Async
+    private void handleAsync(
+        TextMessageEvent event
+    ) {
         final Session session = this.sessionPool.getSession(
             new PageUid(event.getRecipient().getId()),
             event.getSender().getId()
