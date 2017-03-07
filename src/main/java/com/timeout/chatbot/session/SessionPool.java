@@ -67,6 +67,14 @@ public class SessionPool {
                 user
             );
 
+        final String url =
+            "https://graph.facebook.com/v2.6/" + user.getMessengerId() +
+                "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" +
+                messengerConfiguration.getPageAccessToken();
+
+        session.setFbUserProfile(
+            restTemplate.getForObject(url, FbUserProfile.class)
+        );
         session.setLastAccessTime(System.currentTimeMillis());
 
         return session;
@@ -95,14 +103,6 @@ public class SessionPool {
             user = new User(UUID.randomUUID(), messengerId);
             userRepository.save(user);
         }
-
-        final String url =
-            "https://graph.facebook.com/v2.6/" + messengerId +
-                "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" +
-                messengerConfiguration.getPageAccessToken();
-        final FbUserProfile fbUserProfile = restTemplate.getForObject(url, FbUserProfile.class);
-
-//        user.setFbUserProfile(fbUserProfile);
 
         return user;
     }
