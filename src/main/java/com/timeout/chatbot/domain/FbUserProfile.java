@@ -5,10 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 
 @Embeddable
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FbUserProfile {
+public class FbUserProfile implements Serializable {
 
     @JsonProperty("first_name")
     @Column(name = "fb_first_name")

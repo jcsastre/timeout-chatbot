@@ -1,6 +1,8 @@
 package com.timeout.chatbot.domain;
 
-public class Neighborhood {
+import java.io.Serializable;
+
+public class Neighborhood implements Serializable {
 
     private String graffitiId;
     private String name;

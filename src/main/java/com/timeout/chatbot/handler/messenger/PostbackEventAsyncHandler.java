@@ -3,7 +3,6 @@ package com.timeout.chatbot.handler.messenger;
 import com.timeout.chatbot.block.BlockError;
 import com.timeout.chatbot.domain.page.PageUid;
 import com.timeout.chatbot.handler.states.DefaultPayloadHandler;
-import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.SessionPool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -30,33 +29,38 @@ public class PostbackEventAsyncHandler {
     }
 
     @Async
-    public void handle(
+    void handleAsync(
         String payload,
         String recipientId,
-        String senderId,
-        Date timestamp
+        String senderId
     ) {
-        final Session session = this.sessionPool.getSession(
+        this.sessionPool.getSession(
             new PageUid(recipientId),
             senderId
+        ).addCallback(
+            (session -> {
+                final Date currentTimestamp = session.getCurrentTimestamp();
+                session.setCurrentTimestamp(currentTimestamp);
+                try {
+                    defaultPayloadHandler.handle(payload, session);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    blockError.send(session.getUser());
+                }
+
+            }),
+            Throwable::printStackTrace
         );
 
-        boolean proceed = true;
-        final Date currentTimestamp = session.getCurrentTimestamp();
-        if (currentTimestamp != null) {
-            if (currentTimestamp.equals(timestamp)) {
-                proceed = false;
-            }
-        }
-
-        if (proceed) {
-            session.setCurrentTimestamp(timestamp);
-            try {
-                defaultPayloadHandler.handle(payload, session);
-            } catch (Exception e) {
-                e.printStackTrace();
-                blockError.send(session.getUser());
-            }
-        }
+//        listenableFuture.addCallback(
+//            new ListenableFutureCallback<Session>() {
+//                @Override
+//                public void onSuccess(Session session) {
+//                }
+//                @Override
+//                public void onFailure(Throwable ex) {
+//                }
+//            }
+//        );
     }
 }

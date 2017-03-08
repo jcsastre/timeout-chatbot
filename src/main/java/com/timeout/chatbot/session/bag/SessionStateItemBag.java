@@ -4,7 +4,9 @@ import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
 
-public class SessionStateItemBag {
+import java.io.Serializable;
+
+public class SessionStateItemBag implements Serializable {
 
     private GraffittiType graffittiType;
     private String itemId;

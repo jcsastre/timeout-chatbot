@@ -1,9 +1,12 @@
 package com.timeout.chatbot.domain.page;
 
+import java.io.Serializable;
+
 /**
  * Page of facebook.
  */
-public class Page {
+public class Page implements Serializable {
+
     private PageUid uid;
 
     public Page(PageUid uid) {

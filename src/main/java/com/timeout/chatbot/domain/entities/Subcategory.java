@@ -1,6 +1,8 @@
 package com.timeout.chatbot.domain.entities;
 
-public class Subcategory {
+import java.io.Serializable;
+
+public class Subcategory implements Serializable {
 
     private final String graffittiId;
     private final String name;

@@ -1,5 +1,6 @@
 package com.timeout.chatbot.controllers;
 
+import com.timeout.chatbot.redis.Address;
 import com.timeout.chatbot.redis.Person;
 import com.timeout.chatbot.redis.PersonRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +29,15 @@ public class RedisController {
     @ResponseBody
     public ResponseEntity<String> create() {
 
+        Address address1 = new Address("Address1", "Address1", "11111", "Barcelona1");
+        Address address2 = new Address("Address2", "Address2", "22222", "Barcelona2");
+
         Person person = new Person();
         person.setId("1");
         person.setAge(55);
         person.setGender(Person.Gender.Female);
         person.setName("Oracle");
+        person.setAddress(address1);
         personRepo.save(person);
 
         Person person2 = new Person();
@@ -47,6 +52,7 @@ public class RedisController {
         person3.setAge(25);
         person3.setGender(Person.Gender.Male);
         person3.setName("TheOne");
+        person3.setAddress(address2);
         personRepo.save(person3);
 
         return ResponseEntity.ok("Ok");

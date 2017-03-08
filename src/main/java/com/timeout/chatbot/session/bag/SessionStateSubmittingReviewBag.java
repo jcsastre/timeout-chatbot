@@ -2,7 +2,9 @@ package com.timeout.chatbot.session.bag;
 
 import com.timeout.chatbot.session.state.SubmittingReviewState;
 
-public class SessionStateSubmittingReviewBag {
+import java.io.Serializable;
+
+public class SessionStateSubmittingReviewBag implements Serializable {
 
     private SubmittingReviewState submittingReviewState;
     private Integer rate;

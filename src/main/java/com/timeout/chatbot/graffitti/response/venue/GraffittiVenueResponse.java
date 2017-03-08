@@ -6,8 +6,10 @@ import com.timeout.chatbot.graffitti.response.common.UserRatingsSummary;
 import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCategorisation;
 import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 
+import java.io.Serializable;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GraffittiVenueResponse {
+public class GraffittiVenueResponse implements Serializable {
 
     private Body body;
 

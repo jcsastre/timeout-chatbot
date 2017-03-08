@@ -65,6 +65,8 @@ public class VenuesPageBlock {
 
         (new Thread(waitingPhrasesBlock)).start();
 
+        Thread.sleep(25000);
+
         final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
         final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
         for (PageItem pageItem : pageItems) {

@@ -7,10 +7,11 @@ import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCat
 import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 import com.timeout.chatbot.graffitti.response.venue.GraffittiVenueResponse;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Venue {
+public class Venue implements Serializable {
 
     private String id;
     private CategoryNode categoryPrimary;

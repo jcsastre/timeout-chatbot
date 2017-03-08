@@ -86,13 +86,10 @@ MessengerController {
         @RequestBody final String payload,
         @RequestHeader(SIGNATURE_HEADER_NAME) final String signature
     ) {
-        System.out.println("*** MessengerController.handleCallback() BEGIN");
-
         logger.info("Received Messenger Platform callback - payload: {} | signature: {}", payload, signature);
 
         try {
             this.receiveClient.processCallbackPayload(payload, signature);
-            System.out.println("*** MessengerController.handleCallback() END");
             logger.debug("Processed callback payload successfully");
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (MessengerVerificationException e) {

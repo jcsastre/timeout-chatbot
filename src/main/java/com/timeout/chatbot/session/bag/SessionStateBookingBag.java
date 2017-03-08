@@ -2,10 +2,11 @@ package com.timeout.chatbot.session.bag;
 
 import com.timeout.chatbot.session.state.BookingState;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-public class SessionStateBookingBag {
+public class SessionStateBookingBag implements Serializable {
 
     private BookingState bookingState;
 

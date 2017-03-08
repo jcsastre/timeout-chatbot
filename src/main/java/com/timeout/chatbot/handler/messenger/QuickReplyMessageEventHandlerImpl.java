@@ -17,11 +17,10 @@ public class QuickReplyMessageEventHandlerImpl implements QuickReplyMessageEvent
     public void handle(
         QuickReplyMessageEvent event
     ) {
-        postbackEventAsyncHandler.handle(
+        postbackEventAsyncHandler.handleAsync(
             event.getQuickReply().getPayload(),
             event.getRecipient().getId(),
-            event.getSender().getId(),
-            event.getTimestamp()
+            event.getSender().getId()
         );
     }
 }

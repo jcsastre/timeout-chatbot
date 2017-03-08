@@ -1,6 +1,9 @@
 package com.timeout.chatbot.graffitti.domain;
 
-public enum GraffittiType {
+import java.io.Serializable;
+
+public enum GraffittiType implements Serializable {
+
     VENUE("venue"),
     EVENT("event"),
     FILM("film"),

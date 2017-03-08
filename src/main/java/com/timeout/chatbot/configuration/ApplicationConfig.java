@@ -6,12 +6,15 @@ import com.cloudinary.Cloudinary;
 import com.github.messenger4j.MessengerPlatform;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.ApiaiConfiguration;
+import com.timeout.chatbot.http.AsyncHeaderRequestInterceptor;
 import com.timeout.chatbot.http.HeaderRequestInterceptor;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.AsyncClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.web.client.AsyncRestTemplate;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -47,19 +50,32 @@ public class ApplicationConfig {
 
     @Bean
     public RestTemplate restTemplate() {
-        List<ClientHttpRequestInterceptor> interceptors = new ArrayList<ClientHttpRequestInterceptor>();
-        interceptors.add(
-            new HeaderRequestInterceptor(
-                "Authorization",
-//                "Bearer 8EOpBX2cpcZkCf3l7bBh476rzlpRtcKPzZVv4t1TGNMu24OIs1lhDMhUIVAil-9q"
-                "Bearer N492pjDHiJ3_I_ZX7FIxUjJ2Gagwt9-Eq_HGcK7FVUQu24OIs1lhDMhUIVAil-9q"
-            )
+        List<ClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+        final HeaderRequestInterceptor interceptor = new HeaderRequestInterceptor(
+            "Authorization",
+            "Bearer N492pjDHiJ3_I_ZX7FIxUjJ2Gagwt9-Eq_HGcK7FVUQu24OIs1lhDMhUIVAil-9q"
         );
+        interceptors.add(interceptor);
 
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.setInterceptors(interceptors);
 
         return restTemplate;
+    }
+
+    @Bean
+    public AsyncRestTemplate asyncRestTemplate() {
+        List<AsyncClientHttpRequestInterceptor> interceptors = new ArrayList<>();
+        final AsyncHeaderRequestInterceptor interceptor = new AsyncHeaderRequestInterceptor(
+            "Authorization",
+            "Bearer N492pjDHiJ3_I_ZX7FIxUjJ2Gagwt9-Eq_HGcK7FVUQu24OIs1lhDMhUIVAil-9q"
+        );
+        interceptors.add(interceptor);
+
+        AsyncRestTemplate asyncRestTemplate = new AsyncRestTemplate();
+        asyncRestTemplate.setInterceptors(interceptors);
+
+        return asyncRestTemplate;
     }
 
     @Bean

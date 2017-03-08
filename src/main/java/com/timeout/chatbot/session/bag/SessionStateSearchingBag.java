@@ -5,7 +5,9 @@ import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.domain.entities.Category;
 import com.timeout.chatbot.domain.entities.Subcategory;
 
-public class SessionStateSearchingBag {
+import java.io.Serializable;
+
+public class SessionStateSearchingBag implements Serializable {
 
     private Category category;
     private Subcategory subcategory;

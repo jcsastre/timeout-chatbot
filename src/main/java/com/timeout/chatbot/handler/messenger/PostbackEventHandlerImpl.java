@@ -17,11 +17,10 @@ public class PostbackEventHandlerImpl implements PostbackEventHandler {
     public void handle(
         PostbackEvent event
     ) {
-        postbackEventAsyncHandler.handle(
+        postbackEventAsyncHandler.handleAsync(
             event.getPayload(),
             event.getRecipient().getId(),
-            event.getSender().getId(),
-            event.getTimestamp()
+            event.getSender().getId()
         );
     }
 }

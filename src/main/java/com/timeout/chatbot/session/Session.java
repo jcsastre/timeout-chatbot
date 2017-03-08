@@ -9,9 +9,10 @@ import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import com.timeout.chatbot.session.bag.SessionStateSubmittingReviewBag;
 import com.timeout.chatbot.session.state.SessionState;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Session {
+public class Session implements Serializable {
 
     private final Page page;
     private final User user;

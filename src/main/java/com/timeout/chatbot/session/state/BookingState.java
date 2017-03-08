@@ -1,6 +1,9 @@
 package com.timeout.chatbot.session.state;
 
-public enum BookingState {
+import java.io.Serializable;
+
+public enum BookingState implements Serializable {
+
     PEOPLE_COUNT,
     DATE,
     TIME,

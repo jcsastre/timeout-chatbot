@@ -7,7 +7,10 @@ import com.timeout.chatbot.domain.page.PageUid;
 import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
+import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -33,7 +36,8 @@ public class SessionPool {
         this.userRepository = userRepository;
     }
 
-    public Session getSession(
+    @Async
+    public ListenableFuture<Session> getSession(
         PageUid pageUid,
         String userId
     ) {
@@ -44,7 +48,7 @@ public class SessionPool {
             final long currentTimeMillis = System.currentTimeMillis();
             if (currentTimeMillis - lastAccessTime < 15*60*1000) {
                 session.setLastAccessTime(currentTimeMillis);
-                return session;
+                return new AsyncResult<>(session);
             } else {
                 sessions.remove(session);
             }
@@ -54,7 +58,7 @@ public class SessionPool {
 
         sessions.add(session);
 
-        return session;
+        return new AsyncResult<>(session);
     }
 
     private Session buildSession(PageUid pageUid, String userId) {
