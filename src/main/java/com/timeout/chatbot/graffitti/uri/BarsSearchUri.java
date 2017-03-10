@@ -15,7 +15,7 @@ public class BarsSearchUri extends SearchUri {
         return
             UrlBuilder.empty().withScheme(SCHEMA).withHost(HOST).withPath(PATH)
                 .addParameter(GraffittiQueryParameterType.LOCALE.getValue(), LOCALE)
-                .addParameter(GraffittiQueryParameterType.TYPE.getValue(), GraffittiType.VENUE.toString())
+                .addParameter(GraffittiQueryParameterType.TYPE.getValue(), GraffittiType.venue.toString())
                 .addParameter(GraffittiQueryParameterType.WHAT.getValue(), WHAT)
                 .addParameter(GraffittiQueryParameterType.PAGE_SIZE.getValue(), PAGE_SIZE)
                 .addParameter(GraffittiQueryParameterType.PAGE_NUMBER.getValue(), pageNumber.toString())
@@ -30,7 +30,7 @@ public class BarsSearchUri extends SearchUri {
         return
             UrlBuilder.empty().withScheme(SCHEMA).withHost(HOST).withPath(PATH)
                 .addParameter(GraffittiQueryParameterType.LOCALE.getValue(), LOCALE)
-                .addParameter(GraffittiQueryParameterType.TYPE.getValue(), GraffittiType.VENUE.toString())
+                .addParameter(GraffittiQueryParameterType.TYPE.getValue(), GraffittiType.venue.toString())
                 .addParameter(GraffittiQueryParameterType.WHAT.getValue(), WHAT)
                 .addParameter(GraffittiQueryParameterType.LATITUDE.getValue(), latitude.toString())
                 .addParameter(GraffittiQueryParameterType.LONGITUDE.getValue(), longitude.toString())

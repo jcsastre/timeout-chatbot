@@ -141,17 +141,17 @@ public class QuickReplyBuilderForCurrentSessionState {
 
         switch (graffittiType) {
 
-            case VENUE:
+            case venue:
                 return
                     quickReplyBuilderHelper.buildForSeeVenueItem(
                         itemBag.getVenue()
                     );
 
-            case FILM:
+            case film:
                 //TODO
                 return null;
 
-            case EVENT:
+            case event:
                 //TODO
                 return null;
 

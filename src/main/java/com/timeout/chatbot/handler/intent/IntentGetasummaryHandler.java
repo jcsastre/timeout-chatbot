@@ -64,7 +64,7 @@ public class IntentGetasummaryHandler {
         final SessionStateItemBag itemBag = session.getSessionStateItemBag();
 
         final GraffittiType graffittiType = itemBag.getGraffittiType();
-        if (graffittiType == GraffittiType.VENUE) {
+        if (graffittiType == GraffittiType.venue) {
 
             final Venue venue = itemBag.getVenue();
 

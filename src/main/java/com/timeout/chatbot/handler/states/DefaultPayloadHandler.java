@@ -73,23 +73,12 @@ public class DefaultPayloadHandler {
     }
 
     public void handle(
-        String payloadAsString,
+        JSONObject payloadAsJson,
+        PayloadType payloadType,
         Session session
     ) throws NluException, MessengerIOException, MessengerApiException, IOException, InterruptedException {
 
-        final JSONObject payload = new JSONObject(payloadAsString);
-        final PayloadType payloadType = PayloadType.valueOf(payload.getString("type"));
-
-        if (payloadType == PayloadType.start_over) {
-
-            logger.debug("Session BEFORE reset: " + session);
-            sessionService.resetSession(session);
-            logger.debug("Session AFTER  reset: " + session);
-
-            blockService.sendWelcomeBackBlock(session);
-            intentService.handleDiscover(session);
-
-        } else if (payloadType == PayloadType.discover) {
+        if (payloadType == PayloadType.discover) {
             intentService.handleDiscover(session);
         } else {
 
@@ -99,23 +88,23 @@ public class DefaultPayloadHandler {
                 switch (sessionState) {
 
                     case ITEM:
-                        itemStatePayloadHandler.handle(session, payload);
+                        itemStatePayloadHandler.handle(session, payloadAsJson);
                         break;
 
                     case SUBMITTING_REVIEW:
-                        submittingReviewStatePayloadHandler.handle(session, payload);
+                        submittingReviewStatePayloadHandler.handle(session, payloadAsJson);
                         break;
 
                     case BOOKING:
-                        bookingStatePayloadHandler.handle(session, payload);
+                        bookingStatePayloadHandler.handle(session, payloadAsJson);
                         break;
 
                     case SEARCHING:
-                        searchingStatePayloadHandler.handle(session, payload);
+                        searchingStatePayloadHandler.handle(session, payloadAsJson);
                         break;
 
                     default:
-                        handleInternal(session, payload);
+                        handleInternal(session, payloadAsJson);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

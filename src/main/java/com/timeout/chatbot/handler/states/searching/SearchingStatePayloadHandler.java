@@ -114,20 +114,20 @@ public class SearchingStatePayloadHandler {
 
         final SessionStateItemBag itemBag = session.getSessionStateItemBag();
 
-        final GraffittiType graffittiType = GraffittiType.fromString(payload.getString("item_type"));
+        final GraffittiType graffittiType = GraffittiType.fromTypeAsString(payload.getString("item_type"));
 
         switch (graffittiType) {
 
-            case VENUE:
+            case venue:
                 itemBag.setGraffittiType(graffittiType);
                 itemBag.setItemId(payload.getString("item_id"));
                 session.setSessionState(SessionState.ITEM);
                 intentSeeItem.handle(session);
                 break;
 
-            case EVENT:
-            case FILM:
-            case PAGE:
+            case event:
+            case film:
+            case page:
 //                messengerSendClient.sendTextMessage(
 //                    session.getUser().getMessengerId(),
 //                    "Sorry, only 'More options' for Venues is available",

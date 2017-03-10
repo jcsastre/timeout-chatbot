@@ -15,7 +15,7 @@ public class FilmsEndpoint extends SearchUri {
         return
             UrlBuilder.empty().withScheme(SCHEMA).withHost(HOST).withPath(PATH)
                 .addParameter(GraffittiQueryParameterType.LOCALE.getValue(), LOCALE)
-                .addParameter(GraffittiQueryParameterType.TYPE.getValue(), GraffittiType.FILM.toString())
+                .addParameter(GraffittiQueryParameterType.TYPE.getValue(), GraffittiType.film.toString())
                 .addParameter(GraffittiQueryParameterType.WHAT.getValue(), "node-7073")
                 .addParameter(GraffittiQueryParameterType.WHEN.getValue(), "today")
                 .addParameter(GraffittiQueryParameterType.LATITUDE.getValue(), latitude.toString())

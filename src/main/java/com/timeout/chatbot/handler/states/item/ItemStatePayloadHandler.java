@@ -104,7 +104,7 @@ public class ItemStatePayloadHandler {
         final SessionStateItemBag itemBag = session.getSessionStateItemBag();
 
         final GraffittiType graffittiType = itemBag.getGraffittiType();
-        if (graffittiType == GraffittiType.VENUE) {
+        if (graffittiType == GraffittiType.venue) {
             photosBlock.send(
                 session.getUser().getMessengerId(),
                 itemBag.getVenue()
@@ -123,7 +123,7 @@ public class ItemStatePayloadHandler {
         final SessionStateItemBag itemBag = session.getSessionStateItemBag();
 
         final GraffittiType graffittiType = itemBag.getGraffittiType();
-        if (graffittiType == GraffittiType.VENUE && session.getSessionStateSearchingBag().getCategory() == Category.RESTAURANTS) {
+        if (graffittiType == GraffittiType.venue && session.getSessionStateSearchingBag().getCategory() == Category.RESTAURANTS) {
 
             blockBookingBeginDeveloperNote.send(session.getUser().getMessengerId());
 

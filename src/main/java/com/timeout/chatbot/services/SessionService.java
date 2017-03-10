@@ -40,28 +40,25 @@ public class SessionService {
         String recipientId,
         String senderId
     ) {
-        Session session = findSession(recipientId, senderId);
+        logger.debug("getSession -> getSession(" + recipientId + ", " + senderId + ")");
+
+        logger.debug("getSession -> Looking at redis repo");
+        Session session =
+            sessionRepository.findOne(
+                Session.buildId(recipientId, senderId)
+            );
+
         if (session == null) {
+            logger.debug("getSession -> No session found at redis repo. Proceeding to build Session and save it");
             session = buildSession(recipientId, senderId);
             sessionRepository.save(session);
         }
 
-        logger.debug("Session object returned: " + session);
-
+        logger.debug("getSession -> return: " + session);
         return session;
     }
 
-    public Session findSession(
-        String recipientId,
-        String senderId
-    ) {
-        return
-            sessionRepository.findOne(
-                Session.buildId(recipientId, senderId)
-            );
-    }
-
-    public Session buildSession(
+    private Session buildSession(
         String recipientId,
         String senderId
     ) {
@@ -98,7 +95,6 @@ public class SessionService {
         session.setFbUserProfile(
             restTemplate.getForObject(url, FbUserProfile.class)
         );
-        session.setLastAccessTime(System.currentTimeMillis());
 
         return session;
     }
@@ -118,7 +114,7 @@ public class SessionService {
         logger.debug("persistSession("+session+")");
     }
 
-    public void deleteSession(
+    private void deleteSession(
         Session session
     ) {
         sessionRepository.delete(session);

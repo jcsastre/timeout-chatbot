@@ -192,7 +192,7 @@ public class CloudinaryUrlBuilder {
         }
 
         // Location if venue
-        if (graffittiType==GraffittiType.VENUE && location!=null) {
+        if (graffittiType==GraffittiType.venue && location!=null) {
             transformation = chainLocation(transformation, location);
         }
 
@@ -253,7 +253,7 @@ public class CloudinaryUrlBuilder {
             pageItem.getEditorialRating(),
             userRatingsAverage,
             userRatingsCount,
-            GraffittiType.fromString(pageItem.getType()),
+            GraffittiType.fromTypeAsString(pageItem.getType()),
             pageItem.getLocation(),
             imageId
         );
@@ -290,7 +290,7 @@ public class CloudinaryUrlBuilder {
             venue.getEditorialRating(),
             venue.getUserRatingsAverage(),
             venue.getUserRatingsCount(),
-            GraffittiType.VENUE,
+            GraffittiType.venue,
             venue.getLocation(),
             imageId
         );
@@ -445,19 +445,19 @@ public class CloudinaryUrlBuilder {
 //
 //        switch (graffittiType) {
 //
-//            case VENUE:
+//            case venue:
 //                iconName = "venue_icon_m8qzpkz";
 //                break;
 //
-//            case EVENT:
+//            case event:
 //                iconName = "event_icon_burxucz";
 //                break;
 //
-//            case FILM:
+//            case film:
 //                iconName = "film_icon_csr7j9z";
 //                break;
 //
-//            case PAGE:
+//            case page:
 //                iconName = "page_icon_zdxsqzz";
 //                break;
 //        }

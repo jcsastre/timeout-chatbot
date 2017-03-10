@@ -46,7 +46,7 @@ public class IntentSeeItem {
             case ITEM:
                 final SessionStateItemBag itemBag = session.getSessionStateItemBag();
                 final GraffittiType graffittiType = itemBag.getGraffittiType();
-                if (graffittiType == GraffittiType.VENUE) {
+                if (graffittiType == GraffittiType.venue) {
 
                     final Venue venue = graffittiService.fetchVenue(itemBag.getItemId());
                     itemBag.setVenue(venue);

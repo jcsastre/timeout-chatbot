@@ -9,7 +9,9 @@ public class PostbackEventHandlerImpl implements PostbackEventHandler {
 
     private final PostbackEventAsyncHandler postbackEventAsyncHandler;
 
-    public PostbackEventHandlerImpl(PostbackEventAsyncHandler postbackEventAsyncHandler) {
+    public PostbackEventHandlerImpl(
+        PostbackEventAsyncHandler postbackEventAsyncHandler
+    ) {
         this.postbackEventAsyncHandler = postbackEventAsyncHandler;
     }
 

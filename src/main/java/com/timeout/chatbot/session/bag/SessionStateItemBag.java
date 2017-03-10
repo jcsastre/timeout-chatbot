@@ -13,6 +13,10 @@ public class SessionStateItemBag implements Serializable {
     private Venue venue;
     private GraffittiVenueResponse graffittiVenueResponse;
 
+    public SessionStateItemBag() {
+        graffittiType = GraffittiType.venue;
+    }
+
     public GraffittiType getGraffittiType() {
         return graffittiType;
     }

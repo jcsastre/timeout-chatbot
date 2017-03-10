@@ -94,19 +94,19 @@ public class MostLovedBlock {
 //            final GraffittiType graffittiType = GraffittiType.fromString(pageItem.getType());
 //            switch (graffittiType) {
 //
-//                case VENUE:
+//                case venue:
 //                    genericTemplateElementVenueHelper.addNotSingleElementInList(listBuilder, pageItem);
 //                    break;
 //
-//                case EVENT:
+//                case event:
 //                    genericTemplateElementEventHelper.addNotSingleElementInList(listBuilder, pageItem);
 //                    break;
 //
-//                case FILM:
+//                case film:
 //                    genericTemplateElementFilmHelper.addElement(listBuilder, pageItem);
 //                    break;
 //
-//                case PAGE:
+//                case page:
 //                    //TODO
 //                    break;
 //            }

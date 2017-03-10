@@ -15,7 +15,6 @@ import org.springframework.data.redis.core.TimeToLive;
 
 import javax.persistence.Id;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 @RedisHash("sessions")
@@ -37,17 +36,20 @@ public class Session implements Serializable {
     private SessionStateItemBag sessionStateItemBag;
     private SessionStateBookingBag sessionStateBookingBag;
     private SessionStateSubmittingReviewBag sessionStateSubmittingReviewBag;
-    private long lastAccessTime;
-    private Date currentTimestamp;
     private FbUserProfile fbUserProfile;
 
     public Session() {
         logger.debug("Session()");
-//        this.sessionState = SessionState.UNDEFINED;
-//        this.sessionStateSearchingBag = new SessionStateSearchingBag();
-//        this.sessionStateItemBag = new SessionStateItemBag();
-//        this.sessionStateBookingBag = new SessionStateBookingBag();
-//        this.sessionStateSubmittingReviewBag = new SessionStateSubmittingReviewBag();
+        reset();
+    }
+
+    public void reset() {
+        logger.debug("reset()");
+        this.sessionState = SessionState.UNDEFINED;
+        this.sessionStateSearchingBag = null;
+        this.sessionStateItemBag = null;
+        this.sessionStateBookingBag = null;
+        this.sessionStateSubmittingReviewBag = null;
     }
 
     public static String buildId(
@@ -55,15 +57,6 @@ public class Session implements Serializable {
         String senderId
     ) {
         return recipientId + "-" + senderId;
-    }
-
-    public void reset() {
-        logger.debug("reset()");
-        this.sessionState = SessionState.UNDEFINED;
-        this.sessionStateSearchingBag = new SessionStateSearchingBag();
-        this.sessionStateItemBag = new SessionStateItemBag();
-        this.sessionStateBookingBag = new SessionStateBookingBag();
-        this.sessionStateSubmittingReviewBag = new SessionStateSubmittingReviewBag();
     }
 
     public String getId() {
@@ -100,15 +93,6 @@ public class Session implements Serializable {
     public void setTimeToLiveAsSeconds(Long timeToLiveAsSeconds) {
         this.timeToLiveAsSeconds = timeToLiveAsSeconds;
     }
-
-    public long getLastAccessTime() {
-        return lastAccessTime;
-    }
-
-    public void setLastAccessTime(long lastAccessTime) {
-        this.lastAccessTime = lastAccessTime;
-    }
-
 
     public SessionState getSessionState() {
         return sessionState;
@@ -150,14 +134,6 @@ public class Session implements Serializable {
 
     public SessionStateSubmittingReviewBag getSessionStateSubmittingReviewBag() {
         return sessionStateSubmittingReviewBag;
-    }
-
-    public Date getCurrentTimestamp() {
-        return currentTimestamp;
-    }
-
-    public void setCurrentTimestamp(Date currentTimestamp) {
-        this.currentTimestamp = currentTimestamp;
     }
 
     public FbUserProfile getFbUserProfile() {

@@ -236,7 +236,7 @@ public class IntentFindVenuesHandler {
     ) {
         return searchUrlBuilder.build(
             category.getGraffittiId(),
-            GraffittiType.VENUE.toString(),
+            GraffittiType.venue.toString(),
             pageNumber
         );
     }
@@ -247,7 +247,7 @@ public class IntentFindVenuesHandler {
     ) {
         return searchUrlBuilder.build(
             subcategory.getGraffittiId(),
-            GraffittiType.VENUE.toString(),
+            GraffittiType.venue.toString(),
             pageNumber
         );
     }
