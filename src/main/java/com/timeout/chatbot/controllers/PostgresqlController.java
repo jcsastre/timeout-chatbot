@@ -28,7 +28,7 @@ public class PostgresqlController {
     public ResponseEntity<String> doGet() {
 
         final User user = new User(
-            UUID.randomUUID(),
+            UUID.randomUUID().toString(),
             "23232332"
         );
 

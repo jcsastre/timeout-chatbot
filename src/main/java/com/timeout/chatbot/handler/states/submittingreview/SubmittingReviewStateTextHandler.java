@@ -72,10 +72,10 @@ public class SubmittingReviewStateTextHandler {
                 session.setSessionState(SessionState.ITEM);
                 intentService.handleSeeItem(session);
             } else {
-                blockError.send(session.getUser());
+                blockError.send(session.getUser().getMessengerId());
             }
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 }

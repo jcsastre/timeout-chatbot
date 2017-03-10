@@ -7,14 +7,13 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
 
-@RedisHash("Example")
+@RedisHash("persons")
 public class PersonHash implements Serializable {
 
-    @Id
-    private String id;
+    @Id private String id;
     private String name;
 
-    @TimeToLive(unit = TimeUnit.SECONDS)
+    @TimeToLive(unit = TimeUnit.MINUTES)
     private Long timeToLive;
 
     public String getId() {

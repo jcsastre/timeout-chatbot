@@ -7,31 +7,33 @@ import java.io.Serializable;
  */
 public class Page implements Serializable {
 
-    private PageUid uid;
+    private String id;
 
-    public Page(PageUid uid) {
-        this.uid = uid;
+    public Page() {}
+
+    public String getId() {
+        return id;
     }
 
-    public PageUid getUid() {
-        return uid;
+    public void setId(String id) {
+        this.id = id;
     }
 
     @Override
     public boolean equals(Object other){
         if (other == null) return false;
         if (other == this) return true;
-        if (!(other instanceof PageUid))return false;
+        if (!(other instanceof String))return false;
 
         Page otherPage = (Page)other;
-        return this.uid.equals(otherPage.uid);
+        return this.id.equals(otherPage.id);
     }
 
-    @Override
-    public String toString() {
-        return String.format(
-            "Page[uid=%s]",
-            uid
-        );
-    }
+//    @Override
+//    public String toString() {
+//        return String.format(
+//            "Page[id=%s]",
+//            id
+//        );
+//    }
 }

@@ -11,6 +11,7 @@ import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.handler.states.booking.BookingStateTextHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStateTextHandler;
 import com.timeout.chatbot.services.NluService;
+import com.timeout.chatbot.services.SessionService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import com.timeout.chatbot.session.state.SessionState;
@@ -28,6 +29,7 @@ public class DefaultTextHandler {
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
     private final SubmittingReviewStateTextHandler submittingReviewStateTextHandler;
     private final BookingStateTextHandler bookingStateTextHandler;
+    private final SessionService sessionService;
 
     @Autowired
     public DefaultTextHandler(
@@ -36,7 +38,8 @@ public class DefaultTextHandler {
         MessengerSendClient msc,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
         SubmittingReviewStateTextHandler submittingReviewStateTextHandler,
-        BookingStateTextHandler bookingStateTextHandler
+        BookingStateTextHandler bookingStateTextHandler,
+        SessionService sessionService
     ) {
         this.intentService = intentService;
         this.nluService = nluService;
@@ -44,6 +47,7 @@ public class DefaultTextHandler {
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
         this.submittingReviewStateTextHandler = submittingReviewStateTextHandler;
         this.bookingStateTextHandler = bookingStateTextHandler;
+        this.sessionService = sessionService;
     }
 
     public void handle(
@@ -207,11 +211,11 @@ public class DefaultTextHandler {
         NluResult nluResult
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        session.setSessionState(SessionState.SEARCHING);
-
         final SessionStateSearchingBag searchingBag = session.getSessionStateSearchingBag();
         searchingBag.setCategory(Category.RESTAURANTS);
         searchingBag.setGraffittiPageNumber(1);
+        session.setSessionState(SessionState.SEARCHING);
+        sessionService.persistSession(session);
 
         intentService.handleFindRestaurants(session, nluResult.getParameters());
     }
@@ -221,11 +225,11 @@ public class DefaultTextHandler {
         NluResult nluResult
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        session.setSessionState(SessionState.SEARCHING);
-
         final SessionStateSearchingBag searchingBag = session.getSessionStateSearchingBag();
         searchingBag.setCategory(Category.HOTELS);
         searchingBag.setGraffittiPageNumber(1);
+        session.setSessionState(SessionState.SEARCHING);
+        sessionService.persistSession(session);
 
         intentService.handleFindRestaurants(session, nluResult.getParameters());
     }

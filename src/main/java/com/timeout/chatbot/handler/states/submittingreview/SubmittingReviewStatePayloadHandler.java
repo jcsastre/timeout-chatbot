@@ -75,7 +75,7 @@ public class SubmittingReviewStatePayloadHandler {
                 break;
 
             default:
-                blockError.send(session.getUser());
+                blockError.send(session.getUser().getMessengerId());
                 break;
         }
     }
@@ -96,10 +96,10 @@ public class SubmittingReviewStatePayloadHandler {
                 bag.setSubmittingReviewState(SubmittingReviewState.WRITING_COMMENT);
                 blockSubmittingReviewComment.send(session.getUser().getMessengerId());
             } else {
-                blockError.send(session.getUser());
+                blockError.send(session.getUser().getMessengerId());
             }
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 
@@ -117,10 +117,10 @@ public class SubmittingReviewStatePayloadHandler {
                 bag.setSubmittingReviewState(SubmittingReviewState.ASKING_FOR_CONFIRMATION);
                 blockSubmittingReviewAskConfirmation.send(session);
             } else {
-                blockError.send(session.getUser());
+                blockError.send(session.getUser().getMessengerId());
             }
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 
@@ -145,10 +145,10 @@ public class SubmittingReviewStatePayloadHandler {
                 session.setSessionState(SessionState.ITEM);
                 intentSeeItem.handle(session);
             } else {
-                blockError.send(session.getUser());
+                blockError.send(session.getUser().getMessengerId());
             }
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 }

@@ -65,7 +65,7 @@ public class IntentSeeItem {
 
             case BOOKING:
             default:
-                blockError.send(session.getUser());
+                blockError.send(session.getUser().getMessengerId());
                 break;
         }
     }

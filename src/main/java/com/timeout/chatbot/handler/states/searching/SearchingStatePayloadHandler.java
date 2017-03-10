@@ -102,7 +102,7 @@ public class SearchingStatePayloadHandler {
                 break;
 
             default:
-                blockError.send(session.getUser());
+                blockError.send(session.getUser().getMessengerId());
                 break;
         }
     }
@@ -112,15 +112,15 @@ public class SearchingStatePayloadHandler {
         JSONObject payload
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateItemBag bag = session.getSessionStateItemBag();
+        final SessionStateItemBag itemBag = session.getSessionStateItemBag();
 
         final GraffittiType graffittiType = GraffittiType.fromString(payload.getString("item_type"));
 
         switch (graffittiType) {
 
             case VENUE:
-                bag.setGraffittiType(graffittiType);
-                bag.setItemId(payload.getString("item_id"));
+                itemBag.setGraffittiType(graffittiType);
+                itemBag.setItemId(payload.getString("item_id"));
                 session.setSessionState(SessionState.ITEM);
                 intentSeeItem.handle(session);
                 break;
@@ -189,7 +189,7 @@ public class SearchingStatePayloadHandler {
             bag.setNeighborhood(neighborhood);
             intentFindVenuesHandler.handle(session);
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 

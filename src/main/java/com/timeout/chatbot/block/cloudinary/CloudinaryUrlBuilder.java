@@ -13,6 +13,8 @@ import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCat
 import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCategorisationSecondary;
 import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -29,6 +31,8 @@ import java.util.Locale;
 
 @Component
 public class CloudinaryUrlBuilder {
+
+    private static final Logger logger = LoggerFactory.getLogger(CloudinaryUrlBuilder.class);
 
     private final TimeoutConfiguration timeoutConfiguration;
     private final Cloudinary cloudinary;
@@ -296,9 +300,7 @@ public class CloudinaryUrlBuilder {
         String targetUrl
     ) throws IOException, InterruptedException {
 
-        System.out.println("checkUrlAvailability: " + targetUrl);
-
-//        Thread.sleep(5000);
+        logger.debug("checkUrlAvailability: " + targetUrl);
 
         try {
             HttpURLConnection.setFollowRedirects(false);

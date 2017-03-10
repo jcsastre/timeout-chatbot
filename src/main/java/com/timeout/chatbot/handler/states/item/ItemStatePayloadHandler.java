@@ -94,7 +94,7 @@ public class ItemStatePayloadHandler {
                 break;
 
             default:
-                blockError.send(session.getUser());
+                blockError.send(session.getUser().getMessengerId());
                 break;
         }
     }
@@ -155,7 +155,7 @@ public class ItemStatePayloadHandler {
             bag.setComment(null);
             blockSubmittingReviewRate.send(session.getUser().getMessengerId());
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 }

@@ -233,6 +233,6 @@ public class BlockService {
     public void sendErrorBlock(
         User user
     ) {
-        blockError.send(user);
+        blockError.send(user.getMessengerId());
     }
 }

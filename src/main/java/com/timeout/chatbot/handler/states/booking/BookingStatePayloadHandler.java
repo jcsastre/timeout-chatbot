@@ -105,7 +105,7 @@ public class BookingStatePayloadHandler {
                 break;
 
             default:
-                blockError.send(session.getUser());
+                blockError.send(session.getUser().getMessengerId());
                 break;
         }
     }
@@ -124,7 +124,7 @@ public class BookingStatePayloadHandler {
                 payload.getInt("count")
             );
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 
@@ -142,7 +142,7 @@ public class BookingStatePayloadHandler {
 
             blockBookingTime.send(session.getUser().getMessengerId());
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 
@@ -165,7 +165,7 @@ public class BookingStatePayloadHandler {
                 bag.getLocalTime()
             );
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 
@@ -186,7 +186,7 @@ public class BookingStatePayloadHandler {
                 blockBookingAskFirstname.send(user.getMessengerId());
             }
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 
@@ -199,7 +199,7 @@ public class BookingStatePayloadHandler {
         if (bookingState == BookingState.CONFIRMATION_BOOKING_DETAILS) {
             //TODO
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 
@@ -216,7 +216,7 @@ public class BookingStatePayloadHandler {
                 session.getFbUserProfile().getFirstName()
             );
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 
@@ -229,7 +229,7 @@ public class BookingStatePayloadHandler {
         if (bookingState == BookingState.FIRST_NAME) {
             blockBookingAskFirstname.send(session.getUser().getMessengerId());
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 
@@ -246,7 +246,7 @@ public class BookingStatePayloadHandler {
                 session.getFbUserProfile().getLastName()
             );
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 
@@ -259,7 +259,7 @@ public class BookingStatePayloadHandler {
         if (bookingState == BookingState.LAST_NAME) {
             blockBookingAskLastname.send(session.getUser().getMessengerId());
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 
@@ -273,7 +273,7 @@ public class BookingStatePayloadHandler {
 
             bookingStateHandler.confirmBooking(session);
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 
@@ -287,7 +287,7 @@ public class BookingStatePayloadHandler {
 
             bookingStateHandler.canceldBooking(session);
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.getUser().getMessengerId());
         }
     }
 

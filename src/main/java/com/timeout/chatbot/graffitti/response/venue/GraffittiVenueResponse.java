@@ -22,7 +22,7 @@ public class GraffittiVenueResponse implements Serializable {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public class Body {
+    public class Body implements Serializable {
 
         @JsonProperty("categorisation")
         private GraffittiCategorisation graffittiCategorisation;

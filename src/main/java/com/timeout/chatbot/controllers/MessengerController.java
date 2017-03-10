@@ -20,8 +20,8 @@ import static com.github.messenger4j.MessengerPlatform.*;
 
 @RestController
 @RequestMapping("/messenger")
-public class
-MessengerController {
+public class MessengerController {
+
     private static final Logger logger = LoggerFactory.getLogger(MessengerController.class);
 
     private final MessengerReceiveClient receiveClient;

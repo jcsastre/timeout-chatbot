@@ -4,6 +4,7 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.timeout.chatbot.block.BlockError;
 import com.timeout.chatbot.block.DiscoverBlock;
+import com.timeout.chatbot.services.SessionService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.state.SessionState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +15,16 @@ public class IntentDiscoverHandler {
 
     private final DiscoverBlock discoverBlock;
     private final BlockError blockError;
+    private final SessionService sessionService;
 
     @Autowired
     public IntentDiscoverHandler(
         DiscoverBlock discoverBlock,
-        BlockError blockError
-    ) {
+        BlockError blockError,
+        SessionService sessionService) {
         this.discoverBlock = discoverBlock;
         this.blockError = blockError;
+        this.sessionService = sessionService;
     }
 
     public void handle(Session session) throws MessengerApiException, MessengerIOException {
@@ -61,7 +64,7 @@ public class IntentDiscoverHandler {
                 break;
 
             default:
-                blockError.send(session.getUser());
+                blockError.send(session.getUser().getMessengerId());
         }
     }
 
@@ -86,6 +89,8 @@ public class IntentDiscoverHandler {
     ) throws MessengerApiException, MessengerIOException {
 
         session.setSessionState(SessionState.DISCOVER);
+        sessionService.persistSession(session);
+
         discoverBlock.send(session.getUser().getMessengerId());
     }
 }

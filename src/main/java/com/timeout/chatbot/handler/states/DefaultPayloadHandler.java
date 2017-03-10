@@ -14,9 +14,12 @@ import com.timeout.chatbot.handler.states.searching.SearchingStatePayloadHandler
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStatePayloadHandler;
 import com.timeout.chatbot.messenger4j.SenderActionsHelper;
 import com.timeout.chatbot.services.BlockService;
+import com.timeout.chatbot.services.SessionService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.state.SessionState;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +27,8 @@ import java.io.IOException;
 
 @Component
 public class DefaultPayloadHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(DefaultPayloadHandler.class);
 
     private final IntentService intentService;
     private final BlockService blockService;
@@ -36,6 +41,7 @@ public class DefaultPayloadHandler {
     private final SearchingStatePayloadHandler searchingStatePayloadHandler;
     private final SenderActionsHelper senderActionsHelper;
     private final CloudinaryUrlBuilder cloudinaryUrlBuilder;
+    private final SessionService sessionService;
 
     @Autowired
     public DefaultPayloadHandler(
@@ -49,7 +55,9 @@ public class DefaultPayloadHandler {
         ItemStatePayloadHandler itemStatePayloadHandler,
         SearchingStatePayloadHandler searchingStatePayloadHandler,
         SenderActionsHelper senderActionsHelper,
-        CloudinaryUrlBuilder cloudinaryUrlBuilder) {
+        CloudinaryUrlBuilder cloudinaryUrlBuilder,
+        SessionService sessionService
+    ) {
         this.intentService = intentService;
         this.blockService = blockService;
         this.msc = msc;
@@ -61,6 +69,7 @@ public class DefaultPayloadHandler {
         this.searchingStatePayloadHandler = searchingStatePayloadHandler;
         this.senderActionsHelper = senderActionsHelper;
         this.cloudinaryUrlBuilder = cloudinaryUrlBuilder;
+        this.sessionService = sessionService;
     }
 
     public void handle(
@@ -73,28 +82,12 @@ public class DefaultPayloadHandler {
 
         if (payloadType == PayloadType.start_over) {
 
-            session.reset();
-
-//            msc.sendImageAttachment(
-//                session.getUser().getMessengerId(),
-//                cloudinaryUrlBuilder.buildBookReceiptUrl(
-//                    2,
-//                    LocalDate.now(),
-//                    LocalTime.now(),
-//                    "101611815",
-//                    "La Esquinica",
-//                    "Juan Carlos Sastre",
-//                    "6 Greek Street",
-//                    "London",
-//                    "W1D 4DE"
-//                )
-//            );
+            logger.debug("Session BEFORE reset: " + session);
+            sessionService.resetSession(session);
+            logger.debug("Session AFTER  reset: " + session);
 
             blockService.sendWelcomeBackBlock(session);
             intentService.handleDiscover(session);
-
-//            blockService.sendWelcomeFirstTimeBlock(session.getUser());
-//            blockService.sendVersionInfoBlock(session.getUser().getMessengerId());
 
         } else if (payloadType == PayloadType.discover) {
             intentService.handleDiscover(session);

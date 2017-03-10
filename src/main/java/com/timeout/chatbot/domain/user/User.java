@@ -7,14 +7,13 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.UUID;
 
 @Entity
 @Table(name = "`user`")
 public class User implements Serializable {
 
     @Id
-    private UUID id;
+    private String id;
 
     private String messengerId;
 
@@ -27,7 +26,7 @@ public class User implements Serializable {
     }
 
     public User(
-        UUID id,
+        String id,
         String messengerId
     ) {
         this.id = id;

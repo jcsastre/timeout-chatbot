@@ -2,7 +2,9 @@ package com.timeout.chatbot.domain;
 
 import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 
-public class Image {
+import java.io.Serializable;
+
+public class Image implements Serializable {
     private String id;
     private String url;
     private String title;

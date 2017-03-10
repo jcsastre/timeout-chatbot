@@ -1,6 +1,8 @@
 package com.timeout.chatbot.domain;
 
-public class CategoryNode {
+import java.io.Serializable;
+
+public class CategoryNode implements Serializable {
 
     private String name;
     private Integer graffittiNodeId;

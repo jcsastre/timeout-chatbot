@@ -1,16 +1,11 @@
 package com.timeout.chatbot.session;
 
 import com.timeout.chatbot.configuration.MessengerConfiguration;
-import com.timeout.chatbot.domain.FbUserProfile;
-import com.timeout.chatbot.domain.page.Page;
 import com.timeout.chatbot.domain.page.PageUid;
 import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Component;
-import org.springframework.util.concurrent.ListenableFuture;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -36,59 +31,59 @@ public class SessionPool {
         this.userRepository = userRepository;
     }
 
-    @Async
-    public ListenableFuture<Session> getSession(
-        PageUid pageUid,
-        String userId
-    ) {
-        Session session = findSession(pageUid, userId);
+//    @Async
+//    public ListenableFuture<Session> getSession(
+//        PageUid pageUid,
+//        String userId
+//    ) {
+//        Session session = findSession(pageUid, userId);
+//
+//        if (session != null) {
+//            final long lastAccessTime = session.getLastAccessTime();
+//            final long currentTimeMillis = System.currentTimeMillis();
+//            if (currentTimeMillis - lastAccessTime < 15*60*1000) {
+//                session.setLastAccessTime(currentTimeMillis);
+//                return new AsyncResult<>(session);
+//            } else {
+//                sessions.remove(session);
+//            }
+//        }
+//
+//        session = buildSession(pageUid, userId);
+//
+//        sessions.add(session);
+//
+//        return new AsyncResult<>(session);
+//    }
 
-        if (session != null) {
-            final long lastAccessTime = session.getLastAccessTime();
-            final long currentTimeMillis = System.currentTimeMillis();
-            if (currentTimeMillis - lastAccessTime < 15*60*1000) {
-                session.setLastAccessTime(currentTimeMillis);
-                return new AsyncResult<>(session);
-            } else {
-                sessions.remove(session);
-            }
-        }
-
-        session = buildSession(pageUid, userId);
-
-        sessions.add(session);
-
-        return new AsyncResult<>(session);
-    }
-
-    private Session buildSession(PageUid pageUid, String userId) {
-        final User user = buildUser(userId);
-        final Page page = new Page(pageUid);
-
-        final Session session =
-            new Session(
-                page,
-                user
-            );
-
-        final String url =
-            "https://graph.facebook.com/v2.6/" + user.getMessengerId() +
-                "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" +
-                messengerConfiguration.getPageAccessToken();
-
-        session.setFbUserProfile(
-            restTemplate.getForObject(url, FbUserProfile.class)
-        );
-        session.setLastAccessTime(System.currentTimeMillis());
-
-        return session;
-    }
+//    private Session buildSession(PageUid pageUid, String userId) {
+//        final User user = buildUser(userId);
+//        final Page page = new Page(pageUid);
+//
+//        final Session session =
+//            new Session(
+//                page,
+//                user
+//            );
+//
+//        final String url =
+//            "https://graph.facebook.com/v2.6/" + user.getMessengerId() +
+//                "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" +
+//                messengerConfiguration.getPageAccessToken();
+//
+//        session.setFbUserProfile(
+//            restTemplate.getForObject(url, FbUserProfile.class)
+//        );
+//        session.setLastAccessTime(System.currentTimeMillis());
+//
+//        return session;
+//    }
 
     private Session findSession(PageUid pageUid, String userId) {
         synchronized (sessions) {
             for (Session session : sessions) {
                 if (
-                    session.getPage().getUid().equals(pageUid) &&
+                    session.getPage().getId().equals(pageUid) &&
                     session.getUser().getMessengerId().equals(userId)
                 ) {
                     return session;
@@ -104,7 +99,7 @@ public class SessionPool {
         User user = userRepository.findByMessengerId(messengerId);
 
         if (user == null) {
-            user = new User(UUID.randomUUID(), messengerId);
+            user = new User(UUID.randomUUID().toString(), messengerId);
             userRepository.save(user);
         }
 
