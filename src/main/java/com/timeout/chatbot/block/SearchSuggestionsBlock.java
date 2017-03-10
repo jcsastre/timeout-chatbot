@@ -53,7 +53,7 @@ public class SearchSuggestionsBlock {
     ) throws MessengerApiException, MessengerIOException {
 
         messengerSendClient.sendTemplate(
-            Recipient.newBuilder().recipientId(session.getUser().getMessengerId()).build(),
+            Recipient.newBuilder().recipientId(session.user.messengerId).build(),
             NotificationType.REGULAR,
             buildGenericTemplate(),
             quickReplyBuilderForCurrentSessionState.build(session)

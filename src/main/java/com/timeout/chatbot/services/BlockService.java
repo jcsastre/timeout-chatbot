@@ -91,8 +91,8 @@ public class BlockService {
     ) throws MessengerApiException, MessengerIOException {
 
         welcomeFirstTimeBlock.send(
-            session.getUser().getMessengerId(),
-            session.getFbUserProfile()
+            session.user.messengerId,
+            session.fbUserProfile
         );
     }
 
@@ -233,6 +233,6 @@ public class BlockService {
     public void sendErrorBlock(
         User user
     ) {
-        blockError.send(user.getMessengerId());
+        blockError.send(user.messengerId);
     }
 }

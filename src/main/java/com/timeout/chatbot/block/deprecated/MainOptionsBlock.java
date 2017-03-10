@@ -31,7 +31,7 @@ public class MainOptionsBlock {
         String msg = "GraffittiFacetV4Where are you looking for?";
 
         messengerSendClientWrapper.sendTextMessage(
-            user.getMessengerId(),
+            user.messengerId,
             msg,
             buildQuickReplies()
         );

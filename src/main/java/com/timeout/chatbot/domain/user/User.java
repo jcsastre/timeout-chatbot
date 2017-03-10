@@ -13,36 +13,19 @@ import java.io.Serializable;
 public class User implements Serializable {
 
     @Id
-    private String id;
+    public String id;
 
-    private String messengerId;
+    public String messengerId;
 
     @Embedded
-
     @Type(type = "com.marvinformatics.hibernate.json.JsonUserType")
-    private SuggestionsDone suggestionsDone;
+    public SuggestionsDone suggestionsDone;
 
-    public User() {
-    }
-
-    public User(
-        String id,
-        String messengerId
-    ) {
-        this.id = id;
-        this.messengerId = messengerId;
-//        this.suggestionsDone = new SuggestionsDone();
-    }
-
-    public String getMessengerId() {
-        return messengerId;
-    }
-
-    public SuggestionsDone getSuggestionsDone() {
-        return suggestionsDone;
-    }
-
-    public void setSuggestionsDone(SuggestionsDone suggestionsDone) {
-        this.suggestionsDone = suggestionsDone;
+    @Override
+    public String toString() {
+        return String.format(
+            "User[id=%s, messengerId=%s, suggestionsDone=%s]",
+            id, messengerId, suggestionsDone
+        );
     }
 }

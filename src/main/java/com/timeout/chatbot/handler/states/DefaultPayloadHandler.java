@@ -82,7 +82,7 @@ public class DefaultPayloadHandler {
             intentService.handleDiscover(session);
         } else {
 
-            final SessionState sessionState = session.getSessionState();
+            final SessionState sessionState = session.state;
 
             try {
                 switch (sessionState) {
@@ -108,7 +108,7 @@ public class DefaultPayloadHandler {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                blockService.sendErrorBlock(session.getUser());
+                blockService.sendErrorBlock(session.user);
             }
         }
     }
@@ -142,7 +142,7 @@ public class DefaultPayloadHandler {
 //                break;
 
             case most_loved:
-                session.setSessionState(SessionState.MOST_LOVED);
+                session.state = SessionState.MOST_LOVED;
                 blockService.sendMostLovedBlock(session);
                 break;
 
@@ -152,7 +152,7 @@ public class DefaultPayloadHandler {
 //                break;
 
             case set_geolocation:
-                blockService.sendGeolocationAskBlock(session.getUser().getMessengerId());
+                blockService.sendGeolocationAskBlock(session.user.messengerId);
                 break;
 
             case get_a_summary:
@@ -161,14 +161,14 @@ public class DefaultPayloadHandler {
 
             case venues_more_info:
                 blockService.sendVenueSummaryBlock(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     payload.getString("venue_id")
                 );
                 break;
 
             case no_see_at_timeout:
                 msc.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "Ok, item_Back to the list of restaurants"
                 );
                 intentService.handleFindRestaurants(session);
@@ -176,14 +176,14 @@ public class DefaultPayloadHandler {
 
             case films_find_cinemas:
                 msc.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "Sorry, 'Find a cinema' is not implemented yet"
                 );
                 break;
 
             case temporaly_disabled:
                 msc.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "Sorry, my creator has temporarily disabled the 'Search suggestions' :(",
                     quickReplyBuilderForCurrentSessionState.build(session)
                 );
@@ -191,7 +191,7 @@ public class DefaultPayloadHandler {
 
             default:
                 msc.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "Sorry, I don't understand you."
                 );
                 break;

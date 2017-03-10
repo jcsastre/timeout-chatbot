@@ -102,7 +102,7 @@ public class SearchingStatePayloadHandler {
                 break;
 
             default:
-                blockError.send(session.getUser().getMessengerId());
+                blockError.send(session.user.messengerId);
                 break;
         }
     }
@@ -112,16 +112,17 @@ public class SearchingStatePayloadHandler {
         JSONObject payload
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateItemBag itemBag = session.getSessionStateItemBag();
+//        final SessionStateItemBag itemBag = session.stateItemBag;
+        session.stateItemBag = new SessionStateItemBag();
 
         final GraffittiType graffittiType = GraffittiType.fromTypeAsString(payload.getString("item_type"));
 
         switch (graffittiType) {
 
             case venue:
-                itemBag.setGraffittiType(graffittiType);
-                itemBag.setItemId(payload.getString("item_id"));
-                session.setSessionState(SessionState.ITEM);
+                session.stateItemBag.graffittiType = graffittiType;
+                session.stateItemBag.itemId = payload.getString("item_id");
+                session.state = SessionState.ITEM;
                 intentSeeItem.handle(session);
                 break;
 
@@ -129,7 +130,7 @@ public class SearchingStatePayloadHandler {
             case film:
             case page:
 //                messengerSendClient.sendTextMessage(
-//                    session.getUser().getMessengerId(),
+//                    session.user.messengerId,
 //                    "Sorry, only 'More options' for Venues is available",
 //                    quickReplyBuilderForCurrentSessionState.build(session)
 //                );
@@ -172,8 +173,10 @@ public class SearchingStatePayloadHandler {
         Session session
     ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException {
 
-        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
-        bag.setNeighborhood(null);
+        session.stateSearchingBag.graffittiPageNumber = 1;
+        session.stateSearchingBag.geolocation = null;
+        session.stateSearchingBag.neighborhood = null;
+
         intentFindVenuesHandler.handle(session);
     }
 
@@ -185,11 +188,13 @@ public class SearchingStatePayloadHandler {
         final String neighborhoodId = payload.getString("neighborhood_id");
         final Neighborhood neighborhood = graffittiService.getNeighborhoodByGraffittiId(neighborhoodId);
         if (neighborhood!=null) {
-            final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
-            bag.setNeighborhood(neighborhood);
+            session.stateSearchingBag.graffittiPageNumber = 1;
+            session.stateSearchingBag.geolocation = null;
+            session.stateSearchingBag.neighborhood = neighborhood;
+
             intentFindVenuesHandler.handle(session);
         } else {
-            blockError.send(session.getUser().getMessengerId());
+            blockError.send(session.user.messengerId);
         }
     }
 
@@ -197,15 +202,15 @@ public class SearchingStatePayloadHandler {
         Session session
     ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException {
 
-        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
+        final SessionStateSearchingBag bag = session.stateSearchingBag;
 
-        if (bag.getReaminingItems() > 0) {
-            bag.setGraffittiPageNumber(bag.getGraffittiPageNumber() +1);
+        if (bag.reaminingItems > 0) {
+            bag.graffittiPageNumber = bag.graffittiPageNumber +1;
             intentFindVenuesHandler.fetchAndSend(session);
         } else {
             messengerSendClient.sendTextMessage(
-                session.getUser().getMessengerId(),
-                "There are no remaining " + bag.getCategory().getNamePlural()
+                session.user.messengerId,
+                "There are no remaining " + bag.category.getNamePlural()
             );
         }
 

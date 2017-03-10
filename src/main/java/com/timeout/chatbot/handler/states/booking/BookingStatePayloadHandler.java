@@ -105,7 +105,7 @@ public class BookingStatePayloadHandler {
                 break;
 
             default:
-                blockError.send(session.getUser().getMessengerId());
+                blockError.send(session.user.messengerId);
                 break;
         }
     }
@@ -115,7 +115,7 @@ public class BookingStatePayloadHandler {
         JSONObject payload
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.PEOPLE_COUNT) {
 
@@ -124,7 +124,7 @@ public class BookingStatePayloadHandler {
                 payload.getInt("count")
             );
         } else {
-            blockError.send(session.getUser().getMessengerId());
+            blockError.send(session.user.messengerId);
         }
     }
 
@@ -133,16 +133,16 @@ public class BookingStatePayloadHandler {
         JSONObject payload
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.DATE) {
 
             bag.setLocalDate(LocalDate.parse(payload.getString("date")));
             bag.setBookingState(BookingState.TIME);
 
-            blockBookingTime.send(session.getUser().getMessengerId());
+            blockBookingTime.send(session.user.messengerId);
         } else {
-            blockError.send(session.getUser().getMessengerId());
+            blockError.send(session.user.messengerId);
         }
     }
 
@@ -151,7 +151,7 @@ public class BookingStatePayloadHandler {
         JSONObject payload
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.TIME) {
 
@@ -159,34 +159,34 @@ public class BookingStatePayloadHandler {
 
             bag.setBookingState(BookingState.CONFIRMATION_BOOKING_DETAILS);
             blockConfirmationBookingDetails.send(
-                session.getUser().getMessengerId(),
+                session.user.messengerId,
                 bag.getPeopleCount(),
                 bag.getLocalDate(),
                 bag.getLocalTime()
             );
         } else {
-            blockError.send(session.getUser().getMessengerId());
+            blockError.send(session.user.messengerId);
         }
     }
 
     private void handleInfoOk(
         Session session
     ) throws MessengerApiException, MessengerIOException {
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.CONFIRMATION_BOOKING_DETAILS) {
 
             bag.setBookingState(BookingState.FIRST_NAME);
 
-            final User user = session.getUser();
-            final String firstName = session.getFbUserProfile().getFirstName();
+            final User user = session.user;
+            final String firstName = session.fbUserProfile.getFirstName();
             if (firstName != null) {
                 blockBookingFbFirstNameConfirmation.send(session);
             } else {
-                blockBookingAskFirstname.send(user.getMessengerId());
+                blockBookingAskFirstname.send(user.messengerId);
             }
         } else {
-            blockError.send(session.getUser().getMessengerId());
+            blockError.send(session.user.messengerId);
         }
     }
 
@@ -194,12 +194,12 @@ public class BookingStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.CONFIRMATION_BOOKING_DETAILS) {
             //TODO
         } else {
-            blockError.send(session.getUser().getMessengerId());
+            blockError.send(session.user.messengerId);
         }
     }
 
@@ -207,16 +207,16 @@ public class BookingStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.FIRST_NAME) {
 
             bookingStateHandler.setFirstNameAndContinue(
                 session,
-                session.getFbUserProfile().getFirstName()
+                session.fbUserProfile.getFirstName()
             );
         } else {
-            blockError.send(session.getUser().getMessengerId());
+            blockError.send(session.user.messengerId);
         }
     }
 
@@ -224,12 +224,12 @@ public class BookingStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.FIRST_NAME) {
-            blockBookingAskFirstname.send(session.getUser().getMessengerId());
+            blockBookingAskFirstname.send(session.user.messengerId);
         } else {
-            blockError.send(session.getUser().getMessengerId());
+            blockError.send(session.user.messengerId);
         }
     }
 
@@ -237,16 +237,16 @@ public class BookingStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.LAST_NAME) {
 
             bookingStateHandler.setLastNameAndContinue(
                 session,
-                session.getFbUserProfile().getLastName()
+                session.fbUserProfile.getLastName()
             );
         } else {
-            blockError.send(session.getUser().getMessengerId());
+            blockError.send(session.user.messengerId);
         }
     }
 
@@ -254,12 +254,12 @@ public class BookingStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.LAST_NAME) {
-            blockBookingAskLastname.send(session.getUser().getMessengerId());
+            blockBookingAskLastname.send(session.user.messengerId);
         } else {
-            blockError.send(session.getUser().getMessengerId());
+            blockError.send(session.user.messengerId);
         }
     }
 
@@ -267,13 +267,13 @@ public class BookingStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.CONFIRMATION_PERSONAL_DETAILS) {
 
             bookingStateHandler.confirmBooking(session);
         } else {
-            blockError.send(session.getUser().getMessengerId());
+            blockError.send(session.user.messengerId);
         }
     }
 
@@ -281,13 +281,13 @@ public class BookingStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.CONFIRMATION_PERSONAL_DETAILS) {
 
             bookingStateHandler.canceldBooking(session);
         } else {
-            blockError.send(session.getUser().getMessengerId());
+            blockError.send(session.user.messengerId);
         }
     }
 

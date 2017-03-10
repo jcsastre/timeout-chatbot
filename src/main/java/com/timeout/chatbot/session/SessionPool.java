@@ -1,8 +1,6 @@
 package com.timeout.chatbot.session;
 
 import com.timeout.chatbot.configuration.MessengerConfiguration;
-import com.timeout.chatbot.domain.page.PageUid;
-import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,7 +8,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Component
 public class SessionPool {
@@ -67,7 +64,7 @@ public class SessionPool {
 //            );
 //
 //        final String url =
-//            "https://graph.facebook.com/v2.6/" + user.getMessengerId() +
+//            "https://graph.facebook.com/v2.6/" + user.messengerId +
 //                "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" +
 //                messengerConfiguration.getPageAccessToken();
 //
@@ -79,12 +76,12 @@ public class SessionPool {
 //        return session;
 //    }
 
-    private Session findSession(PageUid pageUid, String userId) {
+    private Session findSession(String pageId, String userId) {
         synchronized (sessions) {
             for (Session session : sessions) {
                 if (
-                    session.getPage().getId().equals(pageUid) &&
-                    session.getUser().getMessengerId().equals(userId)
+                    session.page.id.equals(pageId) &&
+                    session.user.messengerId.equals(userId)
                 ) {
                     return session;
                 }
@@ -94,15 +91,15 @@ public class SessionPool {
         return null;
     }
 
-    private User buildUser(String messengerId) {
-
-        User user = userRepository.findByMessengerId(messengerId);
-
-        if (user == null) {
-            user = new User(UUID.randomUUID().toString(), messengerId);
-            userRepository.save(user);
-        }
-
-        return user;
-    }
+//    private User buildUser(String messengerId) {
+//
+////        User user = userRepository.findByMessengerId(messengerId);
+////
+////        if (user == null) {
+////            user = new User(UUID.randomUUID().toString(), messengerId);
+////            userRepository.save(user);
+////        }
+////
+////        return user;
+//    }
 }

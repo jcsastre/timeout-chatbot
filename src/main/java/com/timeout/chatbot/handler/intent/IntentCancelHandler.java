@@ -20,7 +20,7 @@ public class IntentCancelHandler {
     public void handle(
         Session session
     ) {
-        switch (session.getSessionState()) {
+        switch (session.state) {
 
             case SEARCHING:
                 handleLooking(session);
@@ -35,7 +35,7 @@ public class IntentCancelHandler {
                 break;
 
             default:
-                blockService.sendErrorBlock(session.getUser());
+                blockService.sendErrorBlock(session.user);
                 break;
         }
     }
@@ -43,7 +43,7 @@ public class IntentCancelHandler {
     private void handleLooking(
         Session session
     ) {
-//        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
+//        final SessionStateSearchingBag bag = session.stateSearchingBag;
 ////        final What what = bag.getWhat();
 //
 //        if (what == What.RESTAURANTS) {

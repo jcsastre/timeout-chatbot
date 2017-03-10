@@ -17,7 +17,7 @@ public class IntentWhatsnewHandler {
 
     public void handle(Session session) {
         messengerSendClientWrapper.sendTextMessage(
-            session.getUser().getMessengerId(),
+            session.user.messengerId,
             "Sorry, 'GraffittiFacetV4Where's New' is not implemented"
         );
     }

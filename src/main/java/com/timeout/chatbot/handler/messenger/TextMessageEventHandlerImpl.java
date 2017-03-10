@@ -49,7 +49,7 @@ public class TextMessageEventHandlerImpl implements TextMessageEventHandler {
 //            );
 //        } catch (Exception e) {
 //            e.printStackTrace();
-//            blockError.send(session.getUser());
+//            blockError.send(session.user);
 //        }
     }
 }

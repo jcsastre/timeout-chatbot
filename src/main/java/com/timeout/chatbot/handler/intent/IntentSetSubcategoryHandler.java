@@ -31,14 +31,14 @@ public class IntentSetSubcategoryHandler {
         Session session,
         String subcategoryId
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-        switch (session.getSessionState()) {
+        switch (session.state) {
 
             case SEARCHING:
                 handleLooking(session, subcategoryId);
                 break;
 
             default:
-                blockService.sendErrorBlock(session.getUser());
+                blockService.sendErrorBlock(session.user);
                 break;
         }
     }
@@ -48,16 +48,16 @@ public class IntentSetSubcategoryHandler {
         String subcategoryId
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
+        final SessionStateSearchingBag bag = session.stateSearchingBag;
 
-        final Category category = bag.getCategory();
+        final Category category = bag.category;
         final Subcategory subcategory = category.findSubcategoryByGraffittiId(subcategoryId);
 
-        bag.setSubcategory(subcategory);
+        bag.subcategory = subcategory;
 
         findRestaurantsHandler.fetchAndSend(session);
 
-//        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
+//        final SessionStateSearchingBag bag = session.stateSearchingBag;
 //        final What what = bag.getWhat();
 //
 //        if (bag.getReaminingItems() > 0) {
@@ -68,7 +68,7 @@ public class IntentSetSubcategoryHandler {
 //        } else {
 //            if (what == What.RESTAURANTS) {
 //                messengerSendClientWrapper.sendTextMessage(
-//                    session.getUser().getMessengerId(),
+//                    session.user.messengerId,
 //                    "There are no remaining RestaurantsManager"
 //                );
 //            }

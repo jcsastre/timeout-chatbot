@@ -40,7 +40,7 @@ public class BookingStateTextHandler {
         Session session
     ) throws NluException, MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateBookingBag bookingBag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bookingBag = session.stateBookingBag;
         final BookingState bookingState = bookingBag.getBookingState();
 
         switch (bookingState) {
@@ -95,7 +95,7 @@ public class BookingStateTextHandler {
             bookingStateHandler.setPeopleCountAndContinue(session, peopleCount);
 
         } catch (NumberFormatException e) {
-            final String userMessengerId = session.getUser().getMessengerId();
+            final String userMessengerId = session.user.messengerId;
             msc.sendTextMessage(
                 userMessengerId,
                 "Please, enter a number for the number of people"
@@ -137,7 +137,7 @@ public class BookingStateTextHandler {
                 email
             );
         } else {
-            blockBookingAskEmail.send(session.getUser().getMessengerId());
+            blockBookingAskEmail.send(session.user.messengerId);
         }
     }
 

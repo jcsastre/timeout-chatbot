@@ -28,12 +28,12 @@ public class BlockBookingFbFirstNameConfirmation {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final String firstName = session.getFbUserProfile().getFirstName();
+        final String firstName = session.fbUserProfile.getFirstName();
 
         String msg = "Can I use '" + firstName + "' as your first name for the booking?";
 
         messengerSendClient.sendTextMessage(
-            session.getUser().getMessengerId(),
+            session.user.messengerId,
             msg,
             buildQuickReplies()
         );

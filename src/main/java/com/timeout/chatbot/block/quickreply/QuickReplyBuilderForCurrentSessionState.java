@@ -29,7 +29,7 @@ public class QuickReplyBuilderForCurrentSessionState {
     public List<QuickReply> build(
         Session session
     ) {
-        final SessionState sessionState = session.getSessionState();
+        final SessionState sessionState = session.state;
 
         switch (sessionState) {
 
@@ -135,16 +135,16 @@ public class QuickReplyBuilderForCurrentSessionState {
     public  List<QuickReply> handleStateItem(
         Session session
     ) {
-        final SessionStateItemBag itemBag = session.getSessionStateItemBag();
+        final SessionStateItemBag itemBag = session.stateItemBag;
 
-        final GraffittiType graffittiType = itemBag.getGraffittiType();
+        final GraffittiType graffittiType = itemBag.graffittiType;
 
         switch (graffittiType) {
 
             case venue:
                 return
                     quickReplyBuilderHelper.buildForSeeVenueItem(
-                        itemBag.getVenue()
+                        itemBag.venue
                     );
 
             case film:

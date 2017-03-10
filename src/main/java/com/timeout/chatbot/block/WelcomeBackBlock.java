@@ -21,14 +21,14 @@ public class WelcomeBackBlock {
         Session session
     ) {
         StringBuilder sbMessage = new StringBuilder();
-        if (session.getFbUserProfile().getFirstName() != null) {
-            sbMessage.append("Hi " + session.getFbUserProfile().getFirstName() + ", welcome back!");
+        if (session.fbUserProfile.getFirstName() != null) {
+            sbMessage.append("Hi " + session.fbUserProfile.getFirstName() + ", welcome back!");
         } else {
             sbMessage.append("Hi, welcome back!");
         }
 
         messengerSendClientWrapper.sendTextMessage(
-            session.getUser().getMessengerId(),
+            session.user.messengerId,
             sbMessage.toString()
         );
     }

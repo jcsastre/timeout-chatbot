@@ -37,32 +37,32 @@ public class WelcomeFirstTimeBlock {
         /////////////////////
 
 //        messengerSendClient.sendImageAttachment(
-//            user.getMessengerId(),
+//            user.messengerId,
 //            "https://im.ezgif.com/tmp/ezgif-1-2c120f0a36.gif"
 //        );
 
 //
 //
 //        messengerSendClient.sendImageAttachment(
-//            user.getMessengerId(),
+//            user.messengerId,
 //            "https://media.giphy.com/media/pxwlYSM8PfY5y/giphy.gif"
 //        );
 
 
 //        messengerSendClient.sendTextMessage(
-//            user.getMessengerId(),
+//            user.messengerId,
 //            "Let's start!"
 //        );
 
 //        messengerSendClient.sendTextMessage(
-//            user.getMessengerId(),
+//            user.messengerId,
 //            "First, some examples of questions you can ask me"
 //        );
 
-//        suggestionsBlock.send(user.getMessengerId());
+//        suggestionsBlock.send(user.messengerId);
 
 //        messengerSendClient.sendTextMessage(
-//            user.getMessengerId(),
+//            user.messengerId,
 //            "If the options above doesn't fit your needs, just ask me. " +
 //                "And if you don't know what to ask type 'help'"
 //        );

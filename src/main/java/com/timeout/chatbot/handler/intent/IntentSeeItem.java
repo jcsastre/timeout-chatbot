@@ -9,7 +9,6 @@ import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.services.GraffittiService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateItemBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -39,25 +38,23 @@ public class IntentSeeItem {
     public void handle(
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-        switch (session.getSessionState()) {
+        switch (session.state) {
 
             case UNDEFINED:
             case SEARCHING:
             case ITEM:
-                final SessionStateItemBag itemBag = session.getSessionStateItemBag();
-                final GraffittiType graffittiType = itemBag.getGraffittiType();
-                if (graffittiType == GraffittiType.venue) {
+                if (session.stateItemBag.graffittiType == GraffittiType.venue) {
 
-                    final Venue venue = graffittiService.fetchVenue(itemBag.getItemId());
-                    itemBag.setVenue(venue);
+                    final Venue venue = graffittiService.fetchVenue(session.stateItemBag.itemId);
+                    session.stateItemBag.venue = venue;
 
                     seeVenueItemBlock.send(
-                        session.getUser().getMessengerId(),
+                        session.user.messengerId,
                         venue
                     );
                 } else {
                     messengerSendClient.sendTextMessage(
-                        session.getUser().getMessengerId(),
+                        session.user.messengerId,
                         "Sorry, this feature is not implemented yet"
                     );
                 }
@@ -65,7 +62,7 @@ public class IntentSeeItem {
 
             case BOOKING:
             default:
-                blockError.send(session.getUser().getMessengerId());
+                blockError.send(session.user.messengerId);
                 break;
         }
     }

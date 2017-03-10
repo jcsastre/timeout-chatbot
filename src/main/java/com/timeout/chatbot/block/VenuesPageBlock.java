@@ -46,7 +46,7 @@ public class VenuesPageBlock {
         Assert.notNull(itemPluralName, "The itemPluralName must not be null");
 
         sendHorizontalCarroussel(
-            session.getUser().getMessengerId(),
+            session.user.messengerId,
             pageItems
         );
     }

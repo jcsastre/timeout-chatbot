@@ -7,22 +7,11 @@ public class SuggestionsDone implements Serializable {
     private Boolean discover = false;
     private Boolean restaurantsFineSearch = false;
 
-    public SuggestionsDone() {
-    }
-
-    public Boolean getDiscover() {
-        return discover;
-    }
-
-    public void setDiscover(Boolean discover) {
-        this.discover = discover;
-    }
-
-    public Boolean getRestaurantsFineSearch() {
-        return restaurantsFineSearch;
-    }
-
-    public void setRestaurantsFineSearch(Boolean restaurantsFineSearch) {
-        this.restaurantsFineSearch = restaurantsFineSearch;
+    @Override
+    public String toString() {
+        return String.format(
+            "SuggestionsDone[discover=%s, restaurantsFineSearch=%s]",
+            discover, restaurantsFineSearch
+        );
     }
 }

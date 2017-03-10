@@ -42,7 +42,7 @@ public class SubmittingReviewStateTextHandler {
         Session session
     ) throws NluException, MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
+        final SessionStateSubmittingReviewBag bag = session.stateSubmittingReviewBag;
         final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
 
         if (submittingReviewState==SubmittingReviewState.WRITING_COMMENT) {
@@ -54,28 +54,28 @@ public class SubmittingReviewStateTextHandler {
         } else if (submittingReviewState==SubmittingReviewState.ASKING_FOR_CONFIRMATION) {
             if (text.equalsIgnoreCase("Yes")) {
                 msc.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "Thanks! Your review has been submitted"
                 );
                 msc.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "[END OF SUBMIT REVIEW DEMO: No review has been submitted.]"
                 );
 
-                session.setSessionState(SessionState.ITEM);
+                session.state = SessionState.ITEM;
                 intentService.handleSeeItem(session);
             } else if (text.equalsIgnoreCase("No")) {
                 msc.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "No problem. Your review has been canceled"
                 );
-                session.setSessionState(SessionState.ITEM);
+                session.state = SessionState.ITEM;
                 intentService.handleSeeItem(session);
             } else {
-                blockError.send(session.getUser().getMessengerId());
+                blockError.send(session.user.messengerId);
             }
         } else {
-            blockError.send(session.getUser().getMessengerId());
+            blockError.send(session.user.messengerId);
         }
     }
 }

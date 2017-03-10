@@ -31,18 +31,18 @@ public class IntentGreetingsHandler {
     public void handle(
         Session session
     ) throws MessengerApiException, MessengerIOException {
-        switch (session.getSessionState()) {
+        switch (session.state) {
 
             case UNDEFINED:
                 blockService.sendWelcomeBackBlock(session);
-                blockService.sendVersionInfoBlock(session.getUser().getMessengerId());
-                session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
+                blockService.sendVersionInfoBlock(session.user.messengerId);
+                session.state = SessionState.SEARCH_SUGGESTIONS;
                 blockService.sendSuggestionsBlock(session);
                 break;
 
             case SEARCHING:
                 messengerSendClientWrapper.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "Hi!"
                 );
                 break;

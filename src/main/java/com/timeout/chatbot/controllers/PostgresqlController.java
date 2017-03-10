@@ -27,13 +27,11 @@ public class PostgresqlController {
     @ResponseBody
     public ResponseEntity<String> doGet() {
 
-        final User user = new User(
-            UUID.randomUUID().toString(),
-            "23232332"
-        );
 
-        final SuggestionsDone suggestionsDone = new SuggestionsDone();
-        user.setSuggestionsDone(suggestionsDone);
+        final User user = new User();
+        user.id = UUID.randomUUID().toString();
+        user.messengerId = "23232332";
+        user.suggestionsDone = new SuggestionsDone();
 
         repository.save(user);
 

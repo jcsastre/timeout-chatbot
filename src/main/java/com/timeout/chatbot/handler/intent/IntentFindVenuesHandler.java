@@ -18,6 +18,8 @@ import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import com.timeout.chatbot.session.state.SessionState;
 import io.mikael.urlbuilder.UrlBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -27,6 +29,8 @@ import java.util.HashMap;
 
 @Component
 public class IntentFindVenuesHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(IntentFindVenuesHandler.class);
 
     private final RestTemplate restTemplate;
     private final BlockService blockService;
@@ -53,14 +57,14 @@ public class IntentFindVenuesHandler {
         Session session,
         HashMap<String, JsonElement> nluParameters
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-        switch (session.getSessionState()) {
+        switch (session.state) {
 
             case SEARCHING:
                 applyNluParameters(session, nluParameters);
                 break;
 
             default:
-                blockService.sendErrorBlock(session.getUser());
+                blockService.sendErrorBlock(session.user);
                 break;
         }
     }
@@ -68,14 +72,14 @@ public class IntentFindVenuesHandler {
     public void handle(
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-        switch (session.getSessionState()) {
+        switch (session.state) {
 
             case SEARCHING:
                 fetchAndSend(session);
                 break;
 
             default:
-                blockService.sendErrorBlock(session.getUser());
+                blockService.sendErrorBlock(session.user);
                 break;
         }
     }
@@ -88,7 +92,7 @@ public class IntentFindVenuesHandler {
         if (
             nluParameters.containsKey("whereUkLondon")
         ) {
-            final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
+            final SessionStateSearchingBag bag = session.stateSearchingBag;
 
             final String where = nluParameters.get("whereUkLondon").getAsString();
             if (
@@ -96,8 +100,8 @@ public class IntentFindVenuesHandler {
                 where.equalsIgnoreCase("near me") ||
                 where.equalsIgnoreCase("near of me")
             ) {
-                if (bag.getGeolocation() == null) {
-                    blockService.sendGeolocationAskBlock(session.getUser().getMessengerId());
+                if (bag.geolocation == null) {
+                    blockService.sendGeolocationAskBlock(session.user.messengerId);
                 } else {
                     handle(session);
                 }
@@ -115,25 +119,25 @@ public class IntentFindVenuesHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
+        final SessionStateSearchingBag bag = session.stateSearchingBag;
 
-        final Category category = bag.getCategory();
+        final Category category = bag.category;
 
         UrlBuilder urlBuilder;
-        final Subcategory subcategory = bag.getSubcategory();
+        final Subcategory subcategory = bag.subcategory;
         if (subcategory != null) {
             urlBuilder = urlBuilderBase(
                 subcategory,
-                bag.getGraffittiPageNumber()
+                bag.graffittiPageNumber
             );
         } else {
             urlBuilder = urlBuilderBase(
                 category,
-                bag.getGraffittiPageNumber()
+                bag.graffittiPageNumber
             );
         }
 
-        final Geolocation geolocation = bag.getGeolocation();
+        final Geolocation geolocation = bag.geolocation;
         if (geolocation != null) {
             urlBuilder =
                 urlBuilder
@@ -154,7 +158,7 @@ public class IntentFindVenuesHandler {
                         "distance"
                     );
         } else {
-            final Neighborhood neighborhood = bag.getNeighborhood();
+            final Neighborhood neighborhood = bag.neighborhood;
 
             if (neighborhood != null) {
                 urlBuilder =
@@ -166,14 +170,16 @@ public class IntentFindVenuesHandler {
             }
         }
 
-        senderActionsHelper.typingOn(session.getUser().getMessengerId());
+        senderActionsHelper.typingOn(session.user.messengerId);
         messengerSendClient.sendTextMessage(
-            session.getUser().getMessengerId(),
+            session.user.messengerId,
             buildMessage(bag)
         );
 
-        senderActionsHelper.typingOn(session.getUser().getMessengerId());
-        System.out.println(urlBuilder.toUrl().toString());
+        senderActionsHelper.typingOn(session.user.messengerId);
+
+        logger.debug(urlBuilder.toUrl().toString());
+
         final GraffittiSearchResponse graffittiSearchResponse =
             restTemplate.getForObject(
                 urlBuilder.toUri(),
@@ -182,7 +188,7 @@ public class IntentFindVenuesHandler {
 
         if (graffittiSearchResponse.getMeta().getTotalItems() > 0) {
 
-            bag.setReaminingItems(graffittiSearchResponse.getRemainingItems());
+            bag.reaminingItems = graffittiSearchResponse.getRemainingItems();
 
             blockService.sendVenuesPageBlock(
                 session,
@@ -190,18 +196,18 @@ public class IntentFindVenuesHandler {
                 category.getNamePlural()
             );
 
-            senderActionsHelper.typingOn(session.getUser().getMessengerId());
+            senderActionsHelper.typingOn(session.user.messengerId);
             blockService.sendVenuesRemainingBlock(
                 session
             );
         } else {
             messengerSendClient.sendTextMessage(
-                session.getUser().getMessengerId(),
+                session.user.messengerId,
                 "There are not available " + category.getNamePlural() + " for your request."
             );
         }
 
-        session.setSessionState(SessionState.SEARCHING);
+        session.state = SessionState.SEARCHING;
     }
 
     private String buildMessage(
@@ -209,19 +215,19 @@ public class IntentFindVenuesHandler {
     ) {
         String msg = "Looking for";
 
-        final Subcategory subcategory = bag.getSubcategory();
+        final Subcategory subcategory = bag.subcategory;
         if (subcategory != null) {
             msg = msg + " " + subcategory.getName().toLowerCase();
         }
 
-        final Category category = bag.getCategory();
+        final Category category = bag.category;
         msg = msg + " " + category.getNamePlural().toLowerCase();
 
-        final Geolocation geolocation = bag.getGeolocation();
+        final Geolocation geolocation = bag.geolocation;
         if (geolocation != null) {
             msg = msg + " near the location you specified";
         } else {
-            final Neighborhood neighborhood = bag.getNeighborhood();
+            final Neighborhood neighborhood = bag.neighborhood;
             if (neighborhood != null) {
                 msg = msg + " at " + neighborhood.getName();
             }

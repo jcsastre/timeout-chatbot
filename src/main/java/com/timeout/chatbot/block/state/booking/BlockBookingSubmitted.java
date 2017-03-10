@@ -32,16 +32,16 @@ public class BlockBookingSubmitted {
         Session session
     ) throws MessengerApiException, MessengerIOException, UnsupportedEncodingException {
 
-        final String userMessengerId = session.getUser().getMessengerId();
+        final String userMessengerId = session.user.messengerId;
 
         msc.sendTextMessage(
             userMessengerId,
             "Your booking has been submitted"
         );
 
-        final SessionStateBookingBag bookingBag = session.getSessionStateBookingBag();
-        final SessionStateItemBag itemBag = session.getSessionStateItemBag();
-        final Venue venue = itemBag.getVenue();
+        final SessionStateBookingBag bookingBag = session.stateBookingBag;
+        final SessionStateItemBag itemBag = session.stateItemBag;
+        final Venue venue = itemBag.venue;
 
         String receiptImageUrl =
             cloudinaryUrlBuilder.buildBookReceiptUrl(

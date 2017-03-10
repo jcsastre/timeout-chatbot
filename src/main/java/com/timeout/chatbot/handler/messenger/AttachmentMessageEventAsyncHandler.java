@@ -74,7 +74,7 @@ public class AttachmentMessageEventAsyncHandler {
 //                }
 //            } catch (Exception e) {
 //                e.printStackTrace();
-//                blockError.send(session.getUser());
+//                blockError.send(session.user);
 //            }
 //        }
 //
@@ -94,11 +94,11 @@ public class AttachmentMessageEventAsyncHandler {
                 locationPayload.getCoordinates().getLongitude()
             );
 
-        final SessionStateSearchingBag lookingBag = session.getSessionStateSearchingBag();
-        lookingBag.setGeolocation(geolocation);
+        final SessionStateSearchingBag lookingBag = session.stateSearchingBag;
+        lookingBag.geolocation = geolocation;
 
-        if (session.getSessionState() == SessionState.SEARCHING) {
-            final Category category = lookingBag.getCategory();
+        if (session.state == SessionState.SEARCHING) {
+            final Category category = lookingBag.category;
             if (
                 category == Category.RESTAURANTS ||
                 category == Category.HOTELS
@@ -116,16 +116,16 @@ public class AttachmentMessageEventAsyncHandler {
         final AttachmentMessageEvent.BinaryPayload binaryPayload =
             attachment.getPayload().asBinaryPayload();
 
-        if (session.getSessionState() == SessionState.ITEM) {
+        if (session.state == SessionState.ITEM) {
             messengerSendClient.sendTextMessage(
-                session.getUser().getMessengerId(),
+                session.user.messengerId,
                 "Thaks for submitting the image!"
             );
 
 //            final SessionStateItemBag bag = session.getSessionStateItemBag();
 //            bag.setGraffittiType(GraffittiType.fromString(payload.getString("item_type")));
 //            bag.setItemId(payload.getString("item_id"));
-//            session.setSessionState(SessionState.ITEM);
+//            session.state = SessionState.ITEM;
 //            intentService.handleSeeItem(session);
             intentSeeItem.handle(session);
         }

@@ -26,18 +26,18 @@ public class IntentSuggestionsHandler {
 
     public void handle(Session session) throws MessengerApiException, MessengerIOException {
 
-        if (session.getSessionState() == SessionState.BOOKING) {
+        if (session.state == SessionState.BOOKING) {
 
             //TODO: ask before cancelling
             //TODO: return to previous looking context
 
             messengerSendClient.sendTextMessage(
-                session.getUser().getMessengerId(),
+                session.user.messengerId,
                 "Cancelling booking"
             );
         }
 
-        session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
+        session.state = SessionState.SEARCH_SUGGESTIONS;
         blockService.sendSuggestionsBlock(session);
     }
 }

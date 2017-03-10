@@ -42,7 +42,7 @@ public class IntentGetasummaryHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        switch (session.getSessionState()) {
+        switch (session.state) {
 
             case ITEM:
                 handleStateItem(session);
@@ -52,7 +52,7 @@ public class IntentGetasummaryHandler {
             case BOOKING:
             case UNDEFINED:
             default:
-                blockService.sendErrorBlock(session.getUser());
+                blockService.sendErrorBlock(session.user);
                 break;
         }
     }
@@ -61,12 +61,12 @@ public class IntentGetasummaryHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateItemBag itemBag = session.getSessionStateItemBag();
+        final SessionStateItemBag itemBag = session.stateItemBag;
 
-        final GraffittiType graffittiType = itemBag.getGraffittiType();
+        final GraffittiType graffittiType = itemBag.graffittiType;
         if (graffittiType == GraffittiType.venue) {
 
-            final Venue venue = itemBag.getVenue();
+            final Venue venue = itemBag.venue;
 
             String summary = venue.getSummary();
             if (summary == null) {
@@ -74,13 +74,13 @@ public class IntentGetasummaryHandler {
             }
 
             messengerSendClient.sendTextMessage(
-                session.getUser().getMessengerId(),
+                session.user.messengerId,
                 summary,
                 quickReplyBuilderHelper.buildForSeeVenueItem(venue)
             );
         } else {
             messengerSendClient.sendTextMessage(
-                session.getUser().getMessengerId(),
+                session.user.messengerId,
                 "Sorry, this feature is not implemented yet"
             );
         }

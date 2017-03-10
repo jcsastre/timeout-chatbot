@@ -84,7 +84,7 @@ public class ItemStatePayloadHandler {
 
             case item_SubmitPhoto:
                 messengerSendClient.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "Please attach one or more photos"
                 );
                 break;
@@ -94,50 +94,50 @@ public class ItemStatePayloadHandler {
                 break;
 
             default:
-                blockError.send(session.getUser().getMessengerId());
+                blockError.send(session.user.messengerId);
                 break;
         }
     }
 
     public void handlePhotos(Session session) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateItemBag itemBag = session.getSessionStateItemBag();
+        final SessionStateItemBag itemBag = session.stateItemBag;
 
-        final GraffittiType graffittiType = itemBag.getGraffittiType();
+        final GraffittiType graffittiType = itemBag.graffittiType;
         if (graffittiType == GraffittiType.venue) {
             photosBlock.send(
-                session.getUser().getMessengerId(),
-                itemBag.getVenue()
+                session.user.messengerId,
+                itemBag.venue
             );
         } else {
             messengerSendClient.sendTextMessage(
-                session.getUser().getMessengerId(),
+                session.user.messengerId,
                 "Sorry, 'Photos' feature is not implemented yet",
-                quickReplyBuilderHelper.buildForSeeVenueItem(itemBag.getVenue())
+                quickReplyBuilderHelper.buildForSeeVenueItem(itemBag.venue)
             );
         }
 
     }
 
     public void handleBook(Session session) throws MessengerApiException, MessengerIOException {
-        final SessionStateItemBag itemBag = session.getSessionStateItemBag();
+        final SessionStateItemBag itemBag = session.stateItemBag;
 
-        final GraffittiType graffittiType = itemBag.getGraffittiType();
-        if (graffittiType == GraffittiType.venue && session.getSessionStateSearchingBag().getCategory() == Category.RESTAURANTS) {
+        final GraffittiType graffittiType = itemBag.graffittiType;
+        if (graffittiType == GraffittiType.venue && session.stateSearchingBag.category == Category.RESTAURANTS) {
 
-            blockBookingBeginDeveloperNote.send(session.getUser().getMessengerId());
+            blockBookingBeginDeveloperNote.send(session.user.messengerId);
 
-            session.setSessionState(SessionState.BOOKING);
-            final SessionStateBookingBag bookingBag = session.getSessionStateBookingBag();
+            session.state = SessionState.BOOKING;
+            final SessionStateBookingBag bookingBag = session.stateBookingBag;
             bookingBag.setBookingState(BookingState.PEOPLE_COUNT);
-            blockBookingPeopleCount.send(session.getUser().getMessengerId());
+            blockBookingPeopleCount.send(session.user.messengerId);
 
         } else {
 
             messengerSendClient.sendTextMessage(
-                session.getUser().getMessengerId(),
+                session.user.messengerId,
                 "Sorry, 'Book' feature is not implemented yet",
-                quickReplyBuilderHelper.buildForSeeVenueItem(itemBag.getVenue())
+                quickReplyBuilderHelper.buildForSeeVenueItem(itemBag.venue)
             );
         }
     }
@@ -146,16 +146,16 @@ public class ItemStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionState sessionState = session.getSessionState();
+        final SessionState sessionState = session.state;
         if (sessionState == SessionState.ITEM) {
-            session.setSessionState(SessionState.SUBMITTING_REVIEW);
-            final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
+            session.state = SessionState.SUBMITTING_REVIEW;
+            final SessionStateSubmittingReviewBag bag = session.stateSubmittingReviewBag;
             bag.setSubmittingReviewState(SubmittingReviewState.RATING);
             bag.setRate(null);
             bag.setComment(null);
-            blockSubmittingReviewRate.send(session.getUser().getMessengerId());
+            blockSubmittingReviewRate.send(session.user.messengerId);
         } else {
-            blockError.send(session.getUser().getMessengerId());
+            blockError.send(session.user.messengerId);
         }
     }
 }

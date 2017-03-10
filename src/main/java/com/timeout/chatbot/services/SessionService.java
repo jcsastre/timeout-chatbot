@@ -63,55 +63,61 @@ public class SessionService {
         String senderId
     ) {
         final Page page = new Page();
-        page.setId(recipientId);
+        page.id = recipientId;
 
         User user = userRepository.findByMessengerId(senderId);
         if (user == null) {
-            user =
-                new User(
-                    UUID.randomUUID().toString(),
-                    senderId
-                );
+            user = new User();
+            user.id = UUID.randomUUID().toString();
+            user.messengerId = senderId;
             userRepository.save(user);
         }
 
         final String sessionId =
             Session.buildId(
-                page.getId(),
-                user.getMessengerId()
+                page.id,
+                user.messengerId
             );
 
         Session session = new Session();
-        session.setId(sessionId);
-        session.setTimeToLiveAsSeconds(300L);
-        session.setPage(page);
-        session.setUser(user);
+        session.id = sessionId;
+        session.timeToLiveAsSeconds = 300L;
+        session.page = page;
+        session.user = user;
+
+//        final SessionStateSearchingBag stateSearchingBag = new SessionStateSearchingBag();
+//        stateSearchingBag.category = Category.RESTAURANTS;
+//        stateSearchingBag.subcategory = null;
+//        session.stateSearchingBag = stateSearchingBag;
 
         final String url =
-            "https://graph.facebook.com/v2.6/" + user.getMessengerId() +
+            "https://graph.facebook.com/v2.6/" + user.messengerId +
                 "?fields=first_name,last_name,profile_pic,locale,timezone,gender&access_token=" +
                 messengerConfiguration.getPageAccessToken();
 
-        session.setFbUserProfile(
-            restTemplate.getForObject(url, FbUserProfile.class)
-        );
+        session.fbUserProfile =
+            restTemplate.getForObject(url, FbUserProfile.class);
 
         return session;
     }
 
-    public void resetSession(
-        Session session
-    ) {
-        deleteSession(session);
-        session.reset();
-        persistSession(session);
-    }
+//    public void resetSession(
+//        Session session
+//    ) {
+//        deleteSession(session);
+//
+//        session.state = SessionState.UNDEFINED;
+//        session.stateSearchingBag = null;
+//        session.stateItemBag = null;
+//        session.stateBookingBag = null;
+//        session.stateSubmittingReviewBag = null;
+//    }
 
     public void persistSession(
         Session session
     ) {
         sessionRepository.save(session);
-        logger.debug("persistSession("+session+")");
+        logger.debug("persistSession -> " + session);
     }
 
     private void deleteSession(

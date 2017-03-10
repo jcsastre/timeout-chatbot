@@ -53,10 +53,10 @@ public class BookingStateHandler {
         Integer peopleCount
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         bag.setPeopleCount(peopleCount);
         bag.setBookingState(BookingState.DATE);
-        blockBookingDate.send(session.getUser().getMessengerId());
+        blockBookingDate.send(session.user.messengerId);
     }
 
     void setFirstNameAndContinue(
@@ -64,15 +64,15 @@ public class BookingStateHandler {
         String firstName
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         bag.setFirstName(firstName);
         bag.setBookingState(BookingState.LAST_NAME);
 
-        final String lastName = session.getFbUserProfile().getLastName();
+        final String lastName = session.fbUserProfile.getLastName();
         if (lastName != null) {
             blockBookingFbLastNameConfirmation.send(session);
         } else {
-            blockBookingAskLastname.send(session.getUser().getMessengerId());
+            blockBookingAskLastname.send(session.user.messengerId);
         }
     }
 
@@ -81,10 +81,10 @@ public class BookingStateHandler {
         String lastName
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         bag.setLastName(lastName);
         bag.setBookingState(BookingState.EMAIL);
-        blockBookingAskEmail.send(session.getUser().getMessengerId());
+        blockBookingAskEmail.send(session.user.messengerId);
     }
 
     void setEmailAndContinue(
@@ -92,10 +92,10 @@ public class BookingStateHandler {
         String email
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         bag.setEmail(email);
         bag.setBookingState(BookingState.PHONE);
-        blockBookingAskPhone.send(session.getUser().getMessengerId());
+        blockBookingAskPhone.send(session.user.messengerId);
     }
 
     void setPhoneAndContinue(
@@ -103,11 +103,11 @@ public class BookingStateHandler {
         String phone
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.getSessionStateBookingBag();
+        final SessionStateBookingBag bag = session.stateBookingBag;
         bag.setPhone(phone);
         bag.setBookingState(BookingState.CONFIRMATION_PERSONAL_DETAILS);
         blockConfirmationPersonalDetails.send(
-            session.getUser().getMessengerId(),
+            session.user.messengerId,
             bag.getFirstName(),
             bag.getLastName(),
             bag.getEmail(),
@@ -120,9 +120,9 @@ public class BookingStateHandler {
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         blockBookingSubmitted.send(session);
-        blockBookingEndDeveloperNote.send(session.getUser().getMessengerId());
+        blockBookingEndDeveloperNote.send(session.user.messengerId);
 
-        session.setSessionState(SessionState.ITEM);
+        session.state = SessionState.ITEM;
         intentSeeItem.handle(session);
     }
 
@@ -130,6 +130,6 @@ public class BookingStateHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        blockBookingCancelled.send(session.getUser().getMessengerId());
+        blockBookingCancelled.send(session.user.messengerId);
     }
 }

@@ -44,10 +44,10 @@ public class PostbackEventAsyncHandler {
         String senderId
     ) {
         try {
-
             Session session = sessionService.getSession(recipientId, senderId);
 
             final JSONObject payloadAsJson = new JSONObject(payloadAsString);
+
             final PayloadType payloadType = PayloadType.valueOf(payloadAsJson.getString("type"));
             if (payloadType == PayloadType.start_over) {
                 intentStartOverHandler.handle(session);
@@ -58,6 +58,8 @@ public class PostbackEventAsyncHandler {
                     session
                 );
             }
+
+            sessionService.persistSession(session);
         } catch (MessengerApiException | MessengerIOException | NluException | InterruptedException | IOException e) {
             e.printStackTrace();
             blockError.send(senderId);
@@ -74,7 +76,7 @@ public class PostbackEventAsyncHandler {
 //                    defaultPayloadHandler.handle(payload, session);
 //                } catch (Exception e) {
 //                    e.printStackTrace();
-//                    blockError.send(session.getUser());
+//                    blockError.send(session.user);
 //                }
 //
 //            }),

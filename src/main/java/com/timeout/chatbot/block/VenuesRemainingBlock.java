@@ -28,13 +28,13 @@ public class VenuesRemainingBlock {
     public void send(
         Session session
     ) {
-        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
+        final SessionStateSearchingBag bag = session.stateSearchingBag;
 
         messengerSendClientWrapper.sendTextMessage(
-            session.getUser().getMessengerId(),
+            session.user.messengerId,
             String.format(
                 "There are %s %s more",
-                bag.getReaminingItems(), bag.getCategory().getNamePlural()
+                bag.reaminingItems, bag.category.getNamePlural()
             ),
             buildQuickReplies(
                 bag
@@ -48,7 +48,7 @@ public class VenuesRemainingBlock {
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
-        if (bag.getReaminingItems() > 0) {
+        if (bag.reaminingItems > 0) {
             listBuilder.addTextQuickReply(
                 "See more",
                 new JSONObject()
@@ -58,10 +58,10 @@ public class VenuesRemainingBlock {
         }
 
         boolean areaSet = false;
-        if (bag.getGeolocation() != null) {
+        if (bag.geolocation != null) {
             areaSet = true;
         } else {
-            if (bag.getNeighborhood() != null) {
+            if (bag.neighborhood != null) {
                 areaSet = true;
             }
         }
@@ -74,12 +74,12 @@ public class VenuesRemainingBlock {
                 .toString()
         ).toList();
 
-        final Category category = bag.getCategory();
+        final Category category = bag.category;
         final List<Subcategory> subcategories = category.getSubcategories();
         if (subcategories!= null && subcategories.size()>0) {
             final String subcategoryName = category.getSubcategoriesName().toLowerCase();
             listBuilder.addTextQuickReply(
-                bag.getSubcategory() == null ?
+                bag.subcategory == null ?
                     "Set " + subcategoryName : "Change " + subcategoryName,
                 new JSONObject()
                     .put("type", PayloadType.searching_ShowSubcategories)

@@ -45,7 +45,7 @@ public class IntentPhotosHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        switch (session.getSessionState()) {
+        switch (session.state) {
 
             case ITEM:
                 handleStateItem(session);
@@ -54,14 +54,14 @@ public class IntentPhotosHandler {
             case UNDEFINED:
             case SEARCHING:
                 messengerSendClient.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "Sorry, I don't know what item_Photos do you want to see"
                 );
                 break;
 
             case BOOKING:
             default:
-                blockError.send(session.getUser().getMessengerId());
+                blockError.send(session.user.messengerId);
                 break;
         }
     }
@@ -70,17 +70,17 @@ public class IntentPhotosHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateItemBag itemBag = session.getSessionStateItemBag();
+        final SessionStateItemBag itemBag = session.stateItemBag;
 
-        final GraffittiType graffittiType = itemBag.getGraffittiType();
+        final GraffittiType graffittiType = itemBag.graffittiType;
         if (graffittiType == GraffittiType.venue) {
             photosBlock.send(
-                session.getUser().getMessengerId(),
-                itemBag.getVenue()
+                session.user.messengerId,
+                itemBag.venue
             );
         } else {
             messengerSendClient.sendTextMessage(
-                session.getUser().getMessengerId(),
+                session.user.messengerId,
                 "Sorry, 'Photos' feature is not implemented yet"
             );
         }

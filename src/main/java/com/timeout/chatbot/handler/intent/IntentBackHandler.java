@@ -34,7 +34,7 @@ public class IntentBackHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        switch (session.getSessionState()) {
+        switch (session.state) {
 
             case ITEM:
                 handleItem(session);
@@ -43,14 +43,14 @@ public class IntentBackHandler {
             case SEARCHING:
             case UNDEFINED:
                 messengerSendClient.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "I can't go back"
                 );
                 break;
 
             case BOOKING:
             default:
-                blockService.sendErrorBlock(session.getUser());
+                blockService.sendErrorBlock(session.user);
                 break;
         }
     }
@@ -59,11 +59,11 @@ public class IntentBackHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
+        final SessionStateSearchingBag bag = session.stateSearchingBag;
 
         if (
-            bag.getCategory() == Category.RESTAURANTS ||
-            bag.getCategory() == Category.HOTELS
+            bag.category == Category.RESTAURANTS ||
+            bag.category == Category.HOTELS
         ) {
             intentFindVenuesHandler.fetchAndSend(session);
         }

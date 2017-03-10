@@ -11,7 +11,6 @@ import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.handler.states.booking.BookingStateTextHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStateTextHandler;
 import com.timeout.chatbot.services.NluService;
-import com.timeout.chatbot.services.SessionService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import com.timeout.chatbot.session.state.SessionState;
@@ -29,7 +28,6 @@ public class DefaultTextHandler {
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
     private final SubmittingReviewStateTextHandler submittingReviewStateTextHandler;
     private final BookingStateTextHandler bookingStateTextHandler;
-    private final SessionService sessionService;
 
     @Autowired
     public DefaultTextHandler(
@@ -38,8 +36,7 @@ public class DefaultTextHandler {
         MessengerSendClient msc,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
         SubmittingReviewStateTextHandler submittingReviewStateTextHandler,
-        BookingStateTextHandler bookingStateTextHandler,
-        SessionService sessionService
+        BookingStateTextHandler bookingStateTextHandler
     ) {
         this.intentService = intentService;
         this.nluService = nluService;
@@ -47,7 +44,6 @@ public class DefaultTextHandler {
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
         this.submittingReviewStateTextHandler = submittingReviewStateTextHandler;
         this.bookingStateTextHandler = bookingStateTextHandler;
-        this.sessionService = sessionService;
     }
 
     public void handle(
@@ -55,7 +51,7 @@ public class DefaultTextHandler {
         Session session
     ) throws NluException, MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionState sessionState = session.getSessionState();
+        final SessionState sessionState = session.state;
 
         switch (sessionState) {
 
@@ -86,7 +82,7 @@ public class DefaultTextHandler {
             );
         } else {
             msc.sendTextMessage(
-                session.getUser().getMessengerId(),
+                session.user.messengerId,
                 "Sorry, I don't understand"
             );
         }
@@ -137,7 +133,7 @@ public class DefaultTextHandler {
 
             case FIND_BARSANDPUBS:
                 msc.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "Sorry, 'Bars & Pubs' is not implemented yet",
                     quickReplyBuilderForCurrentSessionState.build(session)
                 );
@@ -146,7 +142,7 @@ public class DefaultTextHandler {
 
             case FIND_ART:
                 msc.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "Sorry, 'Art' is not implemented yet",
                     quickReplyBuilderForCurrentSessionState.build(session)
                 );
@@ -154,7 +150,7 @@ public class DefaultTextHandler {
 
             case FIND_THEATRE:
                 msc.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "Sorry, 'Theatre' is not implemented yet",
                     quickReplyBuilderForCurrentSessionState.build(session)
                 );
@@ -162,7 +158,7 @@ public class DefaultTextHandler {
 
             case FIND_MUSIC:
                 msc.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "Sorry, 'Music' is not implemented yet",
                     quickReplyBuilderForCurrentSessionState.build(session)
                 );
@@ -170,7 +166,7 @@ public class DefaultTextHandler {
 
             case FIND_NIGHTLIFE:
                 msc.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "Sorry, 'Nightlife' is not implemented yet",
                     quickReplyBuilderForCurrentSessionState.build(session)
                 );
@@ -178,7 +174,7 @@ public class DefaultTextHandler {
 
             case FINDS_FILMS:
                 msc.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "Sorry, 'Films' is not implemented yet",
                     quickReplyBuilderForCurrentSessionState.build(session)
                 );
@@ -199,7 +195,7 @@ public class DefaultTextHandler {
 
             default:
                 msc.sendTextMessage(
-                    session.getUser().getMessengerId(),
+                    session.user.messengerId,
                     "Sorry, I don't understand you."
                 );
                 break;
@@ -211,11 +207,11 @@ public class DefaultTextHandler {
         NluResult nluResult
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateSearchingBag searchingBag = session.getSessionStateSearchingBag();
-        searchingBag.setCategory(Category.RESTAURANTS);
-        searchingBag.setGraffittiPageNumber(1);
-        session.setSessionState(SessionState.SEARCHING);
-        sessionService.persistSession(session);
+        session.state = SessionState.SEARCHING;
+
+        session.stateSearchingBag = new SessionStateSearchingBag();
+        session.stateSearchingBag.category = Category.RESTAURANTS;
+        session.stateSearchingBag.graffittiPageNumber = 1;
 
         intentService.handleFindRestaurants(session, nluResult.getParameters());
     }
@@ -225,11 +221,11 @@ public class DefaultTextHandler {
         NluResult nluResult
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateSearchingBag searchingBag = session.getSessionStateSearchingBag();
-        searchingBag.setCategory(Category.HOTELS);
-        searchingBag.setGraffittiPageNumber(1);
-        session.setSessionState(SessionState.SEARCHING);
-        sessionService.persistSession(session);
+        session.state = SessionState.SEARCHING;
+
+        session.stateSearchingBag = new SessionStateSearchingBag();
+        session.stateSearchingBag.category = Category.HOTELS;
+        session.stateSearchingBag.graffittiPageNumber = 1;
 
         intentService.handleFindRestaurants(session, nluResult.getParameters());
     }

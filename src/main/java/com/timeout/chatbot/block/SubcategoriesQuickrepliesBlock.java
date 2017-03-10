@@ -33,7 +33,7 @@ public class SubcategoriesQuickrepliesBlock {
     ) throws MessengerApiException, MessengerIOException {
 
         messengerSendClient.sendTextMessage(
-            session.getUser().getMessengerId(),
+            session.user.messengerId,
             "Please, select one",
             buildQuickReplies(
                 session,
@@ -55,8 +55,8 @@ public class SubcategoriesQuickrepliesBlock {
                 .toString()
         ).toList();
 
-        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
-        final Category category = bag.getCategory();
+        final SessionStateSearchingBag bag = session.stateSearchingBag;
+        final Category category = bag.category;
 
         if (pageNumber == 1) {
             builder.addTextQuickReply(

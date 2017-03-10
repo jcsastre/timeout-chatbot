@@ -35,7 +35,7 @@ public class AreasQuickrepliesBlock {
     ) throws MessengerApiException, MessengerIOException {
 
         messengerSendClient.sendTextMessage(
-            session.getUser().getMessengerId(),
+            session.user.messengerId,
             "Please, select one",
             buildQuickReplies(
                 pageNumber

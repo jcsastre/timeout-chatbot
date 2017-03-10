@@ -49,7 +49,7 @@ public class WhatsNewBlock {
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
         messengerSendClient.sendTemplate(
-            Recipient.newBuilder().recipientId(session.getUser().getMessengerId()).build(),
+            Recipient.newBuilder().recipientId(session.user.messengerId).build(),
             NotificationType.REGULAR,
             buildGenericTemplate(),
             quickReplyBuilderForCurrentSessionState.build(session)
