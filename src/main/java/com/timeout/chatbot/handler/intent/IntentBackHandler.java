@@ -3,7 +3,7 @@ package com.timeout.chatbot.handler.intent;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.timeout.chatbot.domain.entities.Category;
+import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
@@ -62,8 +62,8 @@ public class IntentBackHandler {
         final SessionStateSearchingBag bag = session.stateSearchingBag;
 
         if (
-            bag.category == Category.RESTAURANTS ||
-            bag.category == Category.HOTELS
+            bag.graffittiCategory == GraffittiCategory.RESTAURANTS ||
+            bag.graffittiCategory == GraffittiCategory.HOTELS
         ) {
             intentFindVenuesHandler.fetchAndSend(session);
         }

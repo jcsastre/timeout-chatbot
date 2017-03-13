@@ -9,8 +9,8 @@ public class Venue extends What {
         GraffittiCategory graffittiCategory
     ) {
         super(
-            GraffittiType.venue,
-            graffittiCategory
+            graffittiCategory,
+            GraffittiType.VENUE
         );
     }
 }

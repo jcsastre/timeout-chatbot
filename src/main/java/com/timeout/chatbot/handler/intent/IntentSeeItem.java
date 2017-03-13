@@ -43,7 +43,7 @@ public class IntentSeeItem {
             case UNDEFINED:
             case SEARCHING:
             case ITEM:
-                if (session.stateItemBag.graffittiType == GraffittiType.venue) {
+                if (session.stateItemBag.graffittiType == GraffittiType.VENUE) {
 
                     final Venue venue = graffittiService.fetchVenue(session.stateItemBag.itemId);
                     session.stateItemBag.venue = venue;

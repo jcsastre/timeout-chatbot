@@ -45,7 +45,7 @@ public enum Category implements Serializable {
 //        "node-7073",
 //        "Film",
 //        "Films",
-//        "film (category)",
+//        "FILM (category)",
 //        "Genre",
 //        "Genres"
 //    );

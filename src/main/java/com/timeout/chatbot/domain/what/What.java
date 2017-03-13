@@ -5,22 +5,22 @@ import com.timeout.chatbot.graffitti.domain.GraffittiType;
 
 public class What {
 
-    private GraffittiType graffittiType;
     private GraffittiCategory graffittiCategory;
+    private GraffittiType graffittiType;
 
     public What(
-        GraffittiType graffittiType,
-        GraffittiCategory graffittiCategory
+        GraffittiCategory graffittiCategory,
+        GraffittiType graffittiType
     ) {
-        this.graffittiType = graffittiType;
         this.graffittiCategory = graffittiCategory;
-    }
-
-    public GraffittiType getGraffittiType() {
-        return graffittiType;
+        this.graffittiType = graffittiType;
     }
 
     public GraffittiCategory getGraffittiCategory() {
         return graffittiCategory;
+    }
+
+    public GraffittiType getGraffittiType() {
+        return graffittiType;
     }
 }

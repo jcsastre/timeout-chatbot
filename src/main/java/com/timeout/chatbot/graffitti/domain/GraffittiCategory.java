@@ -1,7 +1,5 @@
 package com.timeout.chatbot.graffitti.domain;
 
-import com.timeout.chatbot.domain.entities.Subcategory;
-
 import java.io.Serializable;
 import java.util.List;
 
@@ -47,7 +45,7 @@ public enum GraffittiCategory implements Serializable {
 //        "node-7073",
 //        "Film",
 //        "Films",
-//        "film (category)",
+//        "FILM (category)",
 //        "Genre",
 //        "Genres"
 //    );
@@ -58,7 +56,7 @@ public enum GraffittiCategory implements Serializable {
     private final String conceptName;
     private final String subcategoriesName;
     private final String subcategoriesNamePlural;
-    private List<Subcategory> subcategories;
+    private List<GraffittiSubcategory> subcategories;
 
     GraffittiCategory(
         String graffittiId,
@@ -101,23 +99,31 @@ public enum GraffittiCategory implements Serializable {
         return subcategoriesNamePlural;
     }
 
-    public List<Subcategory> getSubcategories() {
+    public List<GraffittiSubcategory> getSubcategories() {
         return subcategories;
     }
 
-    public void setSubcategories(List<Subcategory> subcategories) {
-        this.subcategories = subcategories;
+    public void setSubcategories(List<GraffittiSubcategory> graffittiSubcategories) {
+        this.subcategories = graffittiSubcategories;
     }
 
-    public Subcategory findSubcategoryByGraffittiId(
-        String graffittiId
+    public GraffittiSubcategory findSubcategoryByGraffittiId(
+        String graffittiSubcategoryId
     ) {
-        for (Subcategory subcategory : getSubcategories()) {
-            if (subcategory.getGraffittiId().equalsIgnoreCase(graffittiId)) {
-                return subcategory;
+        for (GraffittiSubcategory graffittiSubcategory : getSubcategories()) {
+            if (graffittiSubcategory.graffittiId.equalsIgnoreCase(graffittiSubcategoryId)) {
+                return graffittiSubcategory;
             }
         }
 
         return null;
     }
+
+//    @Override
+//    public String toString() {
+//        return String.format(
+//            "GraffittiCategory=%s",
+//            namePlural
+//        );
+//    }
 }

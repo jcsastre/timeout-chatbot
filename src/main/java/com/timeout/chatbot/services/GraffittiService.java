@@ -2,8 +2,8 @@ package com.timeout.chatbot.services;
 
 import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.domain.Venue;
-import com.timeout.chatbot.domain.entities.Category;
-import com.timeout.chatbot.domain.entities.Subcategory;
+import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
+import com.timeout.chatbot.graffitti.domain.GraffittiSubcategory;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4Response;
 import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
@@ -63,7 +63,7 @@ public class GraffittiService {
     }
 
     public void initializeSubcategoriesOfCategories() {
-        for (Category category : Category.values()) {
+        for (GraffittiCategory category : GraffittiCategory.values()) {
 
             GraffittiFacetV4FacetNode categoryNode = null;
             for (GraffittiFacetV4FacetNode child : facetWhatCategoriesRootNode.getChildren()) {
@@ -73,15 +73,15 @@ public class GraffittiService {
             }
 
             if (categoryNode != null) {
-                List<Subcategory> subcategories = new ArrayList<>();
+                List<GraffittiSubcategory> subcategories = new ArrayList<>();
                 for (GraffittiFacetV4FacetNode node : categoryNode.getChildren()) {
-                    subcategories.add(
-                        new Subcategory(
-                            node.getId(),
-                            node.getName(),
-                            node.getConcept().getName()
-                        )
-                    );
+
+                    final GraffittiSubcategory graffittiSubcategory = new GraffittiSubcategory();
+                    graffittiSubcategory.graffittiId = node.getId();
+                    graffittiSubcategory.name = node.getName();
+                    graffittiSubcategory.conceptName = node.getConcept().getName();
+
+                    subcategories.add(graffittiSubcategory);
                 }
                 category.setSubcategories(subcategories);
             }

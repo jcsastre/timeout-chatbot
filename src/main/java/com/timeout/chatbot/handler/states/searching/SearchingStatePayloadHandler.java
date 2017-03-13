@@ -115,20 +115,20 @@ public class SearchingStatePayloadHandler {
 //        final SessionStateItemBag itemBag = session.stateItemBag;
         session.stateItemBag = new SessionStateItemBag();
 
-        final GraffittiType graffittiType = GraffittiType.fromTypeAsString(payload.getString("item_type"));
+        final GraffittiType graffittiType = GraffittiType.fromValue(payload.getString("item_type"));
 
         switch (graffittiType) {
 
-            case venue:
+            case VENUE:
                 session.stateItemBag.graffittiType = graffittiType;
                 session.stateItemBag.itemId = payload.getString("item_id");
                 session.state = SessionState.ITEM;
                 intentSeeItem.handle(session);
                 break;
 
-            case event:
-            case film:
-            case page:
+            case EVENT:
+            case FILM:
+            case PAGE:
 //                messengerSendClient.sendTextMessage(
 //                    session.user.messengerId,
 //                    "Sorry, only 'More options' for Venues is available",
@@ -173,7 +173,7 @@ public class SearchingStatePayloadHandler {
         Session session
     ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException {
 
-        session.stateSearchingBag.graffittiPageNumber = 1;
+        session.stateSearchingBag.pageNumber = 1;
         session.stateSearchingBag.geolocation = null;
         session.stateSearchingBag.neighborhood = null;
 
@@ -188,7 +188,7 @@ public class SearchingStatePayloadHandler {
         final String neighborhoodId = payload.getString("neighborhood_id");
         final Neighborhood neighborhood = graffittiService.getNeighborhoodByGraffittiId(neighborhoodId);
         if (neighborhood!=null) {
-            session.stateSearchingBag.graffittiPageNumber = 1;
+            session.stateSearchingBag.pageNumber = 1;
             session.stateSearchingBag.geolocation = null;
             session.stateSearchingBag.neighborhood = neighborhood;
 
@@ -205,12 +205,12 @@ public class SearchingStatePayloadHandler {
         final SessionStateSearchingBag bag = session.stateSearchingBag;
 
         if (bag.reaminingItems > 0) {
-            bag.graffittiPageNumber = bag.graffittiPageNumber +1;
+            bag.pageNumber = bag.pageNumber +1;
             intentFindVenuesHandler.fetchAndSend(session);
         } else {
             messengerSendClient.sendTextMessage(
                 session.user.messengerId,
-                "There are no remaining " + bag.category.getNamePlural()
+                "There are no remaining " + bag.graffittiCategory.getNamePlural()
             );
         }
 

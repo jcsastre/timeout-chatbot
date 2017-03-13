@@ -1,9 +1,8 @@
 package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.QuickReply;
-import com.timeout.chatbot.domain.entities.Category;
-import com.timeout.chatbot.domain.entities.Subcategory;
 import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.graffitti.domain.GraffittiSubcategory;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
@@ -34,7 +33,7 @@ public class VenuesRemainingBlock {
             session.user.messengerId,
             String.format(
                 "There are %s %s more",
-                bag.reaminingItems, bag.category.getNamePlural()
+                bag.reaminingItems, bag.graffittiCategory.getNamePlural()
             ),
             buildQuickReplies(
                 bag
@@ -74,12 +73,11 @@ public class VenuesRemainingBlock {
                 .toString()
         ).toList();
 
-        final Category category = bag.category;
-        final List<Subcategory> subcategories = category.getSubcategories();
-        if (subcategories!= null && subcategories.size()>0) {
-            final String subcategoryName = category.getSubcategoriesName().toLowerCase();
+        final List<GraffittiSubcategory> graffittiSubcategories = bag.graffittiCategory.getSubcategories();
+        if (graffittiSubcategories!= null && graffittiSubcategories.size()>0) {
+            final String subcategoryName = bag.graffittiCategory.getSubcategoriesName().toLowerCase();
             listBuilder.addTextQuickReply(
-                bag.subcategory == null ?
+                bag.graffittiSubcategory == null ?
                     "Set " + subcategoryName : "Change " + subcategoryName,
                 new JSONObject()
                     .put("type", PayloadType.searching_ShowSubcategories)

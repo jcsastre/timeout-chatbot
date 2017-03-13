@@ -9,9 +9,9 @@ import com.timeout.chatbot.block.quickreply.QuickReplyBuilderHelper;
 import com.timeout.chatbot.block.state.booking.BlockBookingBeginDeveloperNote;
 import com.timeout.chatbot.block.state.booking.BlockBookingPeopleCount;
 import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewRate;
-import com.timeout.chatbot.domain.entities.Category;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentBackHandler;
 import com.timeout.chatbot.handler.intent.IntentPhotosHandler;
@@ -104,7 +104,7 @@ public class ItemStatePayloadHandler {
         final SessionStateItemBag itemBag = session.stateItemBag;
 
         final GraffittiType graffittiType = itemBag.graffittiType;
-        if (graffittiType == GraffittiType.venue) {
+        if (graffittiType == GraffittiType.VENUE) {
             photosBlock.send(
                 session.user.messengerId,
                 itemBag.venue
@@ -123,7 +123,10 @@ public class ItemStatePayloadHandler {
         final SessionStateItemBag itemBag = session.stateItemBag;
 
         final GraffittiType graffittiType = itemBag.graffittiType;
-        if (graffittiType == GraffittiType.venue && session.stateSearchingBag.category == Category.RESTAURANTS) {
+        if (
+            graffittiType == GraffittiType.VENUE &&
+            session.stateSearchingBag.graffittiCategory == GraffittiCategory.RESTAURANTS
+        ) {
 
             blockBookingBeginDeveloperNote.send(session.user.messengerId);
 

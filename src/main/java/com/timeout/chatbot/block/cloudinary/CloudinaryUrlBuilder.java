@@ -191,8 +191,8 @@ public class CloudinaryUrlBuilder {
                 );
         }
 
-        // Location if venue
-        if (graffittiType==GraffittiType.venue && location!=null) {
+        // Location if VENUE
+        if (graffittiType==GraffittiType.VENUE && location!=null) {
             transformation = chainLocation(transformation, location);
         }
 
@@ -253,7 +253,7 @@ public class CloudinaryUrlBuilder {
             pageItem.getEditorialRating(),
             userRatingsAverage,
             userRatingsCount,
-            GraffittiType.fromTypeAsString(pageItem.getType()),
+            GraffittiType.fromValue(pageItem.getType()),
             pageItem.getLocation(),
             imageId
         );
@@ -290,7 +290,7 @@ public class CloudinaryUrlBuilder {
             venue.getEditorialRating(),
             venue.getUserRatingsAverage(),
             venue.getUserRatingsCount(),
-            GraffittiType.venue,
+            GraffittiType.VENUE,
             venue.getLocation(),
             imageId
         );
@@ -365,11 +365,11 @@ public class CloudinaryUrlBuilder {
 //    }
 
 //    private String buildBaseImageUrl(
-//        Venue venue
+//        Venue VENUE
 //    ) {
 //        String imageId = null;
 //
-//        final List<Image> images = venue.getImages();
+//        final List<Image> images = VENUE.getImages();
 //        if (images!=null && images.size()>0) {
 //            imageId = images.get(0).getId();
 //        }
@@ -445,19 +445,19 @@ public class CloudinaryUrlBuilder {
 //
 //        switch (graffittiType) {
 //
-//            case venue:
+//            case VENUE:
 //                iconName = "venue_icon_m8qzpkz";
 //                break;
 //
-//            case event:
+//            case EVENT:
 //                iconName = "event_icon_burxucz";
 //                break;
 //
-//            case film:
+//            case FILM:
 //                iconName = "film_icon_csr7j9z";
 //                break;
 //
-//            case page:
+//            case PAGE:
 //                iconName = "page_icon_zdxsqzz";
 //                break;
 //        }

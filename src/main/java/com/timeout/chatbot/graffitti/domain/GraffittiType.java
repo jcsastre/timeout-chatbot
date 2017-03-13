@@ -4,31 +4,66 @@ import java.io.Serializable;
 
 public enum GraffittiType implements Serializable {
 
-    venue,
-    event,
-    film,
-    page;
+    VENUE("venue"),
+    EVENT("event"),
+    FILM("film"),
+    PAGE("page");
 
-    public static GraffittiType fromTypeAsString(
-        String typeAsString
-    ) {
-        if (typeAsString.equalsIgnoreCase("venue")) {
-            return venue;
-        } else if (typeAsString.equalsIgnoreCase("event")) {
-            return event;
-        } else if (typeAsString.equalsIgnoreCase("film")) {
-            return film;
-        } else if (typeAsString.equalsIgnoreCase("page")) {
-            return page;
-        }
+    private final String value;
 
-        return null;
+    GraffittiType(String value) {
+        this.value = value;
     }
 
-//    venue("venue"),
-//    event("event"),
-//    film("film"),
-//    page("page");
+    public static GraffittiType fromValue(String value) {
+        if (value != null) {
+            for (GraffittiType graffittiType : values()) {
+                if (graffittiType.value.equals(value)) {
+                    return graffittiType;
+                }
+            }
+        }
+
+        throw new IllegalArgumentException("Invalid color: " + value);
+    }
+
+    public String toValue() {
+        return value;
+    }
+
+//    @Override
+//    public String toString() {
+//        return String.format(
+//            "GraffittiType=%s",
+//            value
+//        );
+//    }
+
+    ////////// 2st implementation (part of code)
+
+
+//    public static GraffittiType fromTypeAsString(
+//        String typeAsString
+//    ) {
+//        if (typeAsString.equalsIgnoreCase("VENUE")) {
+//            return VENUE;
+//        } else if (typeAsString.equalsIgnoreCase("EVENT")) {
+//            return EVENT;
+//        } else if (typeAsString.equalsIgnoreCase("FILM")) {
+//            return FILM;
+//        } else if (typeAsString.equalsIgnoreCase("PAGE")) {
+//            return PAGE;
+//        }
+//
+//        return null;
+//    }
+
+    ////////// 1st implementation
+
+//    VENUE("VENUE"),
+//    EVENT("EVENT"),
+//    FILM("FILM"),
+//    PAGE("PAGE");
 //
 //    private String value;
 //    GraffittiType(String value) {
@@ -50,14 +85,14 @@ public enum GraffittiType implements Serializable {
 //            return null;
 //        }
 //
-//        if (type.equalsIgnoreCase(venue.toString())) {
-//            return venue;
-//        } else if (type.equalsIgnoreCase(event.toString())) {
-//            return event;
-//        } else if (type.equalsIgnoreCase(film.toString())) {
-//            return film;
-//        } else if (type.equalsIgnoreCase(page.toString())) {
-//            return page;
+//        if (type.equalsIgnoreCase(VENUE.toString())) {
+//            return VENUE;
+//        } else if (type.equalsIgnoreCase(EVENT.toString())) {
+//            return EVENT;
+//        } else if (type.equalsIgnoreCase(FILM.toString())) {
+//            return FILM;
+//        } else if (type.equalsIgnoreCase(PAGE.toString())) {
+//            return PAGE;
 //        }
 //
 //        return null;

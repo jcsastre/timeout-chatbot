@@ -38,13 +38,13 @@ public class TextMessageEventHandlerImpl implements TextMessageEventHandler {
         TextMessageEvent event
     ) {
 //        final Session session = this.sessionPool.getSession(
-//            new PageUid(event.getRecipient().getId()),
-//            event.getSender().getId()
+//            new PageUid(EVENT.getRecipient().getId()),
+//            EVENT.getSender().getId()
 //        );
 //
 //        try {
 //            defaultTextHandler.handle(
-//                event.getText(),
+//                EVENT.getText(),
 //                session
 //            );
 //        } catch (Exception e) {

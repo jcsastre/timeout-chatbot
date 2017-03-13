@@ -6,7 +6,7 @@ import com.github.messenger4j.receive.events.AttachmentMessageEvent;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.block.BlockError;
 import com.timeout.chatbot.domain.Geolocation;
-import com.timeout.chatbot.domain.entities.Category;
+import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
 import com.timeout.chatbot.handler.intent.IntentFindVenuesHandler;
 import com.timeout.chatbot.handler.intent.IntentSeeItem;
 import com.timeout.chatbot.session.Session;
@@ -49,23 +49,23 @@ public class AttachmentMessageEventAsyncHandler {
     ) {
 //        final Session session =
 //            sessionPool.getSession(
-//                new PageUid(event.getRecipient().getId()),
-//                event.getSender().getId()
+//                new PageUid(EVENT.getRecipient().getId()),
+//                EVENT.getSender().getId()
 //            );
 //
 //        boolean proceed = true;
 //        final Date currentTimestamp = session.getCurrentTimestamp();
 //        if (currentTimestamp != null) {
-//            if (currentTimestamp.equals(event.getTimestamp())) {
+//            if (currentTimestamp.equals(EVENT.getTimestamp())) {
 //                proceed = false;
 //            }
 //        }
 //
 //        if (proceed) {
-//            session.setCurrentTimestamp(event.getTimestamp());
+//            session.setCurrentTimestamp(EVENT.getTimestamp());
 //
 //            try {
-//                for (AttachmentMessageEvent.Attachment attachment : event.getAttachments()) {
+//                for (AttachmentMessageEvent.Attachment attachment : EVENT.getAttachments()) {
 //                    if (attachment.getType() == AttachmentMessageEvent.AttachmentType.LOCATION) {
 //                        handleLocation(session, attachment);
 //                    } else if (attachment.getType() == AttachmentMessageEvent.AttachmentType.IMAGE) {
@@ -94,14 +94,14 @@ public class AttachmentMessageEventAsyncHandler {
                 locationPayload.getCoordinates().getLongitude()
             );
 
-        final SessionStateSearchingBag lookingBag = session.stateSearchingBag;
-        lookingBag.geolocation = geolocation;
+        final SessionStateSearchingBag bag = session.stateSearchingBag;
+
+        bag.geolocation = geolocation;
 
         if (session.state == SessionState.SEARCHING) {
-            final Category category = lookingBag.category;
             if (
-                category == Category.RESTAURANTS ||
-                category == Category.HOTELS
+                bag.graffittiCategory == GraffittiCategory.RESTAURANTS ||
+                bag.graffittiCategory == GraffittiCategory.HOTELS
             ) {
                 findRestaurantsHandler.fetchAndSend(session);
             }

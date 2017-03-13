@@ -73,7 +73,7 @@ public class IntentPhotosHandler {
         final SessionStateItemBag itemBag = session.stateItemBag;
 
         final GraffittiType graffittiType = itemBag.graffittiType;
-        if (graffittiType == GraffittiType.venue) {
+        if (graffittiType == GraffittiType.VENUE) {
             photosBlock.send(
                 session.user.messengerId,
                 itemBag.venue

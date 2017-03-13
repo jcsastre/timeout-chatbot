@@ -55,11 +55,11 @@ public class SessionPool {
 
 //    private Session buildSession(PageUid pageUid, String userId) {
 //        final User user = buildUser(userId);
-//        final Page page = new Page(pageUid);
+//        final Page PAGE = new Page(pageUid);
 //
 //        final Session session =
 //            new Session(
-//                page,
+//                PAGE,
 //                user
 //            );
 //

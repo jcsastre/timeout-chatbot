@@ -88,11 +88,11 @@ public class GenericTemplateElementHelper {
     ) {
         final Button.ListBuilder buttonsBuilder = Button.newListBuilder();
 
-        final GraffittiType graffittiType = GraffittiType.fromTypeAsString(pageItem.getType());
+        final GraffittiType graffittiType = GraffittiType.fromValue(pageItem.getType());
 
         switch (graffittiType) {
 
-            case venue:
+            case VENUE:
                 buttonsBuilder.addPostbackButton(
                     "More options ...",
                     new JSONObject()
@@ -103,8 +103,8 @@ public class GenericTemplateElementHelper {
                 ).toList();
                 break;
 
-            case event:
-            case film:
+            case EVENT:
+            case FILM:
                 buttonsBuilder.addPostbackButton(
                     "\uD83D\uDEAB More",
                     new JSONObject()
@@ -115,7 +115,7 @@ public class GenericTemplateElementHelper {
                 ).toList();
                 break;
 
-            case page:
+            case PAGE:
                 buttonsBuilder.addUrlButton(
                     "Read at Timeout",
                     pageItem.getToWebsite()

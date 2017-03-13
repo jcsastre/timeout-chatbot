@@ -45,7 +45,7 @@ public class Session implements Serializable {
     @Override
     public String toString() {
         return String.format(
-            "Session[state=%s, stateSearchingBag=%s, stateItemBag=%s, page=%s, user=%s]",
+            "Session {state=%s, stateSearchingBag=%s, stateItemBag=%s, PAGE=%s, user=%s}",
             state, stateSearchingBag, stateItemBag, page, user
         );
     }

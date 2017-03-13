@@ -6,8 +6,8 @@ import com.github.messenger4j.send.MessengerSendClient;
 import com.google.gson.JsonElement;
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.Neighborhood;
-import com.timeout.chatbot.domain.entities.Category;
-import com.timeout.chatbot.domain.entities.Subcategory;
+import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
+import com.timeout.chatbot.graffitti.domain.GraffittiSubcategory;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.response.search.page.GraffittiSearchResponse;
 import com.timeout.chatbot.graffitti.uri.GraffittiQueryParameterType;
@@ -121,19 +121,16 @@ public class IntentFindVenuesHandler {
 
         final SessionStateSearchingBag bag = session.stateSearchingBag;
 
-        final Category category = bag.category;
-
         UrlBuilder urlBuilder;
-        final Subcategory subcategory = bag.subcategory;
-        if (subcategory != null) {
+        if (bag.graffittiSubcategory != null) {
             urlBuilder = urlBuilderBase(
-                subcategory,
-                bag.graffittiPageNumber
+                bag.graffittiSubcategory,
+                bag.pageNumber
             );
         } else {
             urlBuilder = urlBuilderBase(
-                category,
-                bag.graffittiPageNumber
+                bag.graffittiCategory,
+                bag.pageNumber
             );
         }
 
@@ -193,7 +190,7 @@ public class IntentFindVenuesHandler {
             blockService.sendVenuesPageBlock(
                 session,
                 graffittiSearchResponse.getPageItems(),
-                category.getNamePlural()
+                bag.graffittiCategory.getNamePlural()
             );
 
             senderActionsHelper.typingOn(session.user.messengerId);
@@ -203,7 +200,7 @@ public class IntentFindVenuesHandler {
         } else {
             messengerSendClient.sendTextMessage(
                 session.user.messengerId,
-                "There are not available " + category.getNamePlural() + " for your request."
+                "There are not available " + bag.graffittiCategory.getNamePlural() + " for your request."
             );
         }
 
@@ -215,13 +212,11 @@ public class IntentFindVenuesHandler {
     ) {
         String msg = "Looking for";
 
-        final Subcategory subcategory = bag.subcategory;
-        if (subcategory != null) {
-            msg = msg + " " + subcategory.getName().toLowerCase();
+        if (bag.graffittiSubcategory != null) {
+            msg = msg + " " + bag.graffittiSubcategory.name.toLowerCase();
         }
 
-        final Category category = bag.category;
-        msg = msg + " " + category.getNamePlural().toLowerCase();
+        msg = msg + " " + bag.graffittiCategory.getNamePlural().toLowerCase();
 
         final Geolocation geolocation = bag.geolocation;
         if (geolocation != null) {
@@ -237,23 +232,23 @@ public class IntentFindVenuesHandler {
     }
 
     private UrlBuilder urlBuilderBase(
-        Category category,
+        GraffittiCategory category,
         Integer pageNumber
     ) {
         return searchUrlBuilder.build(
             category.getGraffittiId(),
-            GraffittiType.venue.toString(),
+            GraffittiType.VENUE.toValue(),
             pageNumber
         );
     }
 
     private UrlBuilder urlBuilderBase(
-        Subcategory subcategory,
+        GraffittiSubcategory subcategory,
         Integer pageNumber
     ) {
         return searchUrlBuilder.build(
-            subcategory.getGraffittiId(),
-            GraffittiType.venue.toString(),
+            subcategory.graffittiId,
+            GraffittiType.VENUE.toValue(),
             pageNumber
         );
     }

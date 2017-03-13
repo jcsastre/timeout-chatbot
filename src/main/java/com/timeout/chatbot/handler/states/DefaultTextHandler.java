@@ -4,9 +4,10 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
-import com.timeout.chatbot.domain.entities.Category;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.nlu.NluResult;
+import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
+import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.handler.states.booking.BookingStateTextHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStateTextHandler;
@@ -210,8 +211,9 @@ public class DefaultTextHandler {
         session.state = SessionState.SEARCHING;
 
         session.stateSearchingBag = new SessionStateSearchingBag();
-        session.stateSearchingBag.category = Category.RESTAURANTS;
-        session.stateSearchingBag.graffittiPageNumber = 1;
+        session.stateSearchingBag.graffittiCategory = GraffittiCategory.RESTAURANTS;
+        session.stateSearchingBag.graffittiType = GraffittiType.VENUE;
+        session.stateSearchingBag.pageNumber = 1;
 
         intentService.handleFindRestaurants(session, nluResult.getParameters());
     }
@@ -224,8 +226,8 @@ public class DefaultTextHandler {
         session.state = SessionState.SEARCHING;
 
         session.stateSearchingBag = new SessionStateSearchingBag();
-        session.stateSearchingBag.category = Category.HOTELS;
-        session.stateSearchingBag.graffittiPageNumber = 1;
+        session.stateSearchingBag.graffittiCategory = GraffittiCategory.HOTELS;
+        session.stateSearchingBag.pageNumber = 1;
 
         intentService.handleFindRestaurants(session, nluResult.getParameters());
     }

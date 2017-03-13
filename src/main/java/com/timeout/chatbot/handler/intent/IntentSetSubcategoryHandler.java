@@ -2,11 +2,8 @@ package com.timeout.chatbot.handler.intent;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
-import com.timeout.chatbot.domain.entities.Category;
-import com.timeout.chatbot.domain.entities.Subcategory;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -43,17 +40,13 @@ public class IntentSetSubcategoryHandler {
         }
     }
 
-    public void handleLooking(
+    private void handleLooking(
         Session session,
         String subcategoryId
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateSearchingBag bag = session.stateSearchingBag;
-
-        final Category category = bag.category;
-        final Subcategory subcategory = category.findSubcategoryByGraffittiId(subcategoryId);
-
-        bag.subcategory = subcategory;
+        session.stateSearchingBag.graffittiSubcategory =
+            session.stateSearchingBag.graffittiCategory.findSubcategoryByGraffittiId(subcategoryId);
 
         findRestaurantsHandler.fetchAndSend(session);
 
