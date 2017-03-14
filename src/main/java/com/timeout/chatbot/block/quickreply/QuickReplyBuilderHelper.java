@@ -32,7 +32,7 @@ public class QuickReplyBuilderHelper {
         listBuilder.addTextQuickReply(
             "Discover",
             new JSONObject()
-                .put("type", PayloadType.discover)
+                .put("type", PayloadType._Discover)
                 .toString()
         ).toList();
     }
@@ -41,7 +41,7 @@ public class QuickReplyBuilderHelper {
         listBuilder.addTextQuickReply(
             "What's new",
             new JSONObject()
-                .put("type", PayloadType.whats_new)
+                .put("type", PayloadType._WhatsNew)
                 .toString()
         ).toList();
     }
@@ -50,7 +50,7 @@ public class QuickReplyBuilderHelper {
         listBuilder.addTextQuickReply(
             "Most loved",
             new JSONObject()
-                .put("type", PayloadType.most_loved)
+                .put("type", PayloadType._MostLoved)
                 .toString()
         ).toList();
     }
@@ -59,7 +59,7 @@ public class QuickReplyBuilderHelper {
         listBuilder.addTextQuickReply(
             "Search suggestions",
             new JSONObject()
-                .put("type", PayloadType.search_suggestions)
+                .put("type", PayloadType._SearchSuggestions)
                 .toString()
         ).toList();
     }

@@ -48,7 +48,7 @@ public class PhoneCallBlock {
                     .addPostbackButton(
                         "Cancel",
                         new JSONObject()
-                            .put("type", PayloadType.cancel)
+                            .put("type", PayloadType._Cancel)
                             .toString()
                     ).toList()
 

@@ -49,7 +49,7 @@ public class PostbackEventAsyncHandler {
             final JSONObject payloadAsJson = new JSONObject(payloadAsString);
 
             final PayloadType payloadType = PayloadType.valueOf(payloadAsJson.getString("type"));
-            if (payloadType == PayloadType.start_over) {
+            if (payloadType == PayloadType._StartOver) {
                 intentStartOverHandler.handle(session);
             } else {
                 defaultPayloadHandler.handle(

@@ -50,7 +50,7 @@ public class SubcategoriesQuickrepliesBlock {
         builder.addTextQuickReply(
             "Cancel",
             new JSONObject()
-                .put("type", PayloadType.cancel)
+                .put("type", PayloadType._Cancel)
                 .toString()
         ).toList();
 

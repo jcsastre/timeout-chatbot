@@ -45,7 +45,7 @@ public class MainOptionsBlock {
             listBuilder.addTextQuickReply(
                 primaryCategoryPrimary.getName(),
                 new JSONObject()
-                    .put("type", "utterance")
+                    .put("type", "_Utterance")
                     .put("utterance", primaryCategoryPrimary.getName())
                     .toString()
             ).toList();

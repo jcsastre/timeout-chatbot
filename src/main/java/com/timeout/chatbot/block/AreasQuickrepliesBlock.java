@@ -53,7 +53,7 @@ public class AreasQuickrepliesBlock {
         builder.addTextQuickReply(
             "Cancel",
                 new JSONObject()
-                    .put("type", PayloadType.cancel)
+                    .put("type", PayloadType._Cancel)
                     .toString()
         ).toList();
 
@@ -73,7 +73,7 @@ public class AreasQuickrepliesBlock {
         int initPos = (pageNumber - 1) * PAGE_SIZE;
         for (int i=initPos; i<initPos+PAGE_SIZE && i<neighborhoodsCount; i++) {
             final Neighborhood neighborhood = neighborhoods.get(i);
-            String name = neighborhood.getName();
+            String name = neighborhood.name;
             if (name.length()>20) {
                 name = name.substring(0, 20);
             }
@@ -82,7 +82,7 @@ public class AreasQuickrepliesBlock {
                 name,
                 new JSONObject()
                     .put("type", PayloadType.searching_VenuesSetNeighborhood)
-                    .put("neighborhood_id", neighborhood.getGraffitiId())
+                    .put("neighborhood_id", neighborhood.graffitiId)
                     .toString()
             ).toList();
         }

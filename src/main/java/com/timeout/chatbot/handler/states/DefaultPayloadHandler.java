@@ -78,7 +78,9 @@ public class DefaultPayloadHandler {
         Session session
     ) throws NluException, MessengerIOException, MessengerApiException, IOException, InterruptedException {
 
-        if (payloadType == PayloadType.discover) {
+
+
+        if (payloadType == PayloadType._Discover) {
             intentService.handleDiscover(session);
         } else {
 
@@ -122,11 +124,11 @@ public class DefaultPayloadHandler {
 
         switch (payloadType) {
 
-            case get_started:
+            case _GetStarted:
                 intentService.handleGetStarted(session);
                 break;
 
-            case utterance:
+            case _Utterance:
                 final String utterance = payload.getString("utterance");
                 defaultTextHandler.handle(utterance, session);
                 break;
@@ -135,18 +137,18 @@ public class DefaultPayloadHandler {
 //                intentService.handleHelp(session);
 //                break;
 
-//            case search_suggestions:
+//            case _SearchSuggestions:
 //                intentService.handleSuggestions(session);
 ////                session.setSessionState(SessionState.SEARCH_SUGGESTIONS);
 ////                blockService.sendSuggestionsBlock(session);
 //                break;
 
-            case most_loved:
+            case _MostLoved:
                 session.state = SessionState.MOST_LOVED;
                 blockService.sendMostLovedBlock(session);
                 break;
 
-//            case whats_new:
+//            case _WhatsNew:
 //                session.setSessionState(SessionState.WHATS_NEW);
 //                blockService.sendWhatsNewBlock(session);
 //                break;
@@ -155,7 +157,7 @@ public class DefaultPayloadHandler {
                 blockService.sendGeolocationAskBlock(session.user.messengerId);
                 break;
 
-            case get_a_summary:
+            case _GetASummary:
                 intentService.handleGetasummary(session);
                 break;
 
@@ -181,7 +183,7 @@ public class DefaultPayloadHandler {
                 );
                 break;
 
-            case temporaly_disabled:
+            case _TemporalyDisabled:
                 msc.sendTextMessage(
                     session.user.messengerId,
                     "Sorry, my creator has temporarily disabled the 'Search suggestions' :(",

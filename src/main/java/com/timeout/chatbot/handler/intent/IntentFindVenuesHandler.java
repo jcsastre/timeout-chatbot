@@ -162,7 +162,7 @@ public class IntentFindVenuesHandler {
                     urlBuilder
                         .addParameter(
                             GraffittiQueryParameterType.WHERE.getValue(),
-                            neighborhood.getGraffitiId()
+                            neighborhood.graffitiId
                         );
             }
         }
@@ -224,7 +224,7 @@ public class IntentFindVenuesHandler {
         } else {
             final Neighborhood neighborhood = bag.neighborhood;
             if (neighborhood != null) {
-                msg = msg + " at " + neighborhood.getName();
+                msg = msg + " at " + neighborhood.name;
             }
         }
 

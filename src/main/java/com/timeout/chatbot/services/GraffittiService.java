@@ -97,12 +97,10 @@ public class GraffittiService {
             if (facet.getId().equalsIgnoreCase("where")) {
                 for (GraffittiFacetV4FacetNode facetWhereChild : facet.getChildren()) {
                     if(!facetWhereChild.getId().equalsIgnoreCase("canned-near_here")) {
-                        neighborhoods.add(
-                            new Neighborhood(
-                                facetWhereChild.getId(),
-                                facetWhereChild.getName()
-                            )
-                        );
+                        Neighborhood neighborhood = new Neighborhood();
+                        neighborhood.graffitiId = facetWhereChild.getId();
+                        neighborhood.name = facetWhereChild.getName();
+                        neighborhoods.add(neighborhood);
                     }
                 }
             }
@@ -113,7 +111,7 @@ public class GraffittiService {
 
     public Neighborhood getNeighborhoodByGraffittiId(String graffittiId) {
         for (Neighborhood neighborhood : neighborhoods) {
-            if (neighborhood.getGraffitiId().equalsIgnoreCase(graffittiId)) {
+            if (neighborhood.graffitiId.equalsIgnoreCase(graffittiId)) {
                 return neighborhood;
             }
         }

@@ -34,16 +34,19 @@ public class SessionStateSearchingBag implements Serializable {
 
     @Override
     public String toString() {
-        String subcategory = null;
-        if (graffittiSubcategory != null) {
-            subcategory = graffittiSubcategory.name;
-        }
-
         return String.format(
-            "SessionStateSearchingBag {graffittiCategory=%s, graffittiType=%s, graffittiSubcategory=%s, pageNumber=%s}",
+            "SessionStateSearchingBag {" +
+                "graffittiCategory=%s, " +
+                "graffittiType=%s, " +
+                "graffittiSubcategory=%s, " +
+                "neighborhood=%s, " +
+                "pageNumber=%s" +
+            "}",
             graffittiCategory,
             graffittiType,
-            subcategory,
+            graffittiSubcategory != null ? graffittiSubcategory.name : "<unset>",
+            neighborhood != null ? neighborhood.name : "<unset>",
+            geolocation != null ? "<set>" : "<unset>",
             pageNumber
         );
     }

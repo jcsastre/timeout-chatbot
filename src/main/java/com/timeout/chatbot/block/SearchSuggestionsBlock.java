@@ -203,9 +203,9 @@ public class SearchSuggestionsBlock {
                     .addPostbackButton(
                         "\ud83d\udeab" +" Let's go",
                         new JSONObject()
-                            .put("type", PayloadType.temporaly_disabled)
+                            .put("type", PayloadType._TemporalyDisabled)
 //                            .put("type", PayloadType.utterance)
-                            .put("utterance", tileItem.getName())
+                            .put("_Utterance", tileItem.getName())
                             .toString()
                     ).toList()
                     .build()

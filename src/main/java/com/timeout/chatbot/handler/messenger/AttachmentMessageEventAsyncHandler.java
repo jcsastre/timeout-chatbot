@@ -9,8 +9,8 @@ import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
 import com.timeout.chatbot.handler.intent.IntentFindVenuesHandler;
 import com.timeout.chatbot.handler.intent.IntentSeeItem;
+import com.timeout.chatbot.services.SessionService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.SessionPool;
 import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import com.timeout.chatbot.session.state.SessionState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ import java.io.IOException;
 @Component
 public class AttachmentMessageEventAsyncHandler {
 
-    private final SessionPool sessionPool;
+    private final SessionService sessionService;
     private final IntentFindVenuesHandler findRestaurantsHandler;
     private final BlockError blockError;
     private final MessengerSendClient messengerSendClient;
@@ -30,13 +30,13 @@ public class AttachmentMessageEventAsyncHandler {
 
     @Autowired
     public AttachmentMessageEventAsyncHandler(
-        SessionPool sessionPool,
+        SessionService sessionService,
         IntentFindVenuesHandler findRestaurantsHandler,
         BlockError blockError,
         MessengerSendClient messengerSendClient,
         IntentSeeItem intentSeeItem
     ) {
-        this.sessionPool = sessionPool;
+        this.sessionService = sessionService;
         this.findRestaurantsHandler = findRestaurantsHandler;
         this.blockError = blockError;
         this.messengerSendClient = messengerSendClient;
@@ -47,37 +47,24 @@ public class AttachmentMessageEventAsyncHandler {
     public void handle(
         AttachmentMessageEvent event
     ) {
-//        final Session session =
-//            sessionPool.getSession(
-//                new PageUid(EVENT.getRecipient().getId()),
-//                EVENT.getSender().getId()
-//            );
-//
-//        boolean proceed = true;
-//        final Date currentTimestamp = session.getCurrentTimestamp();
-//        if (currentTimestamp != null) {
-//            if (currentTimestamp.equals(EVENT.getTimestamp())) {
-//                proceed = false;
-//            }
-//        }
-//
-//        if (proceed) {
-//            session.setCurrentTimestamp(EVENT.getTimestamp());
-//
-//            try {
-//                for (AttachmentMessageEvent.Attachment attachment : EVENT.getAttachments()) {
-//                    if (attachment.getType() == AttachmentMessageEvent.AttachmentType.LOCATION) {
-//                        handleLocation(session, attachment);
-//                    } else if (attachment.getType() == AttachmentMessageEvent.AttachmentType.IMAGE) {
-//                        handleImage(session, attachment);
-//                    }
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                blockError.send(session.user);
-//            }
-//        }
-//
+        Session session =
+            sessionService.getSession(
+                event.getRecipient().getId(),
+                event.getSender().getId()
+            );
+
+        try {
+            for (AttachmentMessageEvent.Attachment attachment : event.getAttachments()) {
+                if (attachment.getType() == AttachmentMessageEvent.AttachmentType.LOCATION) {
+                    handleLocation(session, attachment);
+                } else if (attachment.getType() == AttachmentMessageEvent.AttachmentType.IMAGE) {
+                    handleImage(session, attachment);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            blockError.send(session.user.messengerId);
+        }
     }
 
     private void handleLocation(

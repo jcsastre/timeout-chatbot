@@ -100,8 +100,8 @@ public class DiscoverBlock {
                     .addPostbackButton(
                         titleForButton,
                         new JSONObject()
-                            .put("type", PayloadType.utterance)
-                            .put("utterance", nodeName)
+                            .put("type", PayloadType._Utterance)
+                            .put("_Utterance", nodeName)
                             .toString()
                     ).toList()
                     .build()

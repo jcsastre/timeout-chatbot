@@ -30,7 +30,7 @@ public class BlockError {
                     .addPostbackButton(
                         "Start over",
                         new JSONObject()
-                            .put("type", PayloadType.start_over)
+                            .put("type", PayloadType._StartOver)
                             .toString()
                     ).toList()
                     .build()

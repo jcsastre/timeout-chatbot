@@ -85,7 +85,7 @@ public class SearchingStatePayloadHandler {
                 handleShowSubcategories(session, payload);
                 break;
 
-            case cancel:
+            case _Cancel:
                 venuesRemainingBlock.send(session);
                 break;
 
