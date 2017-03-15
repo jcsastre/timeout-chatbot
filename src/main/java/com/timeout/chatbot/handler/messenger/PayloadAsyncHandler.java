@@ -17,7 +17,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class PostbackEventAsyncHandler {
+public class PayloadAsyncHandler {
 
     private final SessionService sessionService;
     private final DefaultPayloadHandler defaultPayloadHandler;
@@ -25,7 +25,7 @@ public class PostbackEventAsyncHandler {
     private final IntentStartOverHandler intentStartOverHandler;
 
     @Autowired
-    public PostbackEventAsyncHandler(
+    public PayloadAsyncHandler(
         SessionService sessionService,
         DefaultPayloadHandler defaultPayloadHandler,
         BlockError blockError,
