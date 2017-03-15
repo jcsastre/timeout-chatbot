@@ -50,13 +50,13 @@ public enum GraffittiCategory implements Serializable {
 //        "Genres"
 //    );
 
-    private final String graffittiId;
-    private final String name;
-    private final String namePlural;
-    private final String conceptName;
-    private final String subcategoriesName;
-    private final String subcategoriesNamePlural;
-    private List<GraffittiSubcategory> subcategories;
+    public final String graffittiId;
+    public final String name;
+    public final String namePlural;
+    public final String conceptName;
+    public final String subcategoriesName;
+    public final String subcategoriesNamePlural;
+    public List<GraffittiSubcategory> subcategories;
 
     GraffittiCategory(
         String graffittiId,
@@ -74,43 +74,10 @@ public enum GraffittiCategory implements Serializable {
         this.subcategoriesNamePlural = subcategoriesNamePlural;
     }
 
-    public String getGraffittiId() {
-        return graffittiId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getNamePlural() {
-        return namePlural;
-    }
-
-
-    public String getConceptName() {
-        return conceptName;
-    }
-
-    public String getSubcategoriesName() {
-        return subcategoriesName;
-    }
-
-    public String getSubcategoriesNamePlural() {
-        return subcategoriesNamePlural;
-    }
-
-    public List<GraffittiSubcategory> getSubcategories() {
-        return subcategories;
-    }
-
-    public void setSubcategories(List<GraffittiSubcategory> graffittiSubcategories) {
-        this.subcategories = graffittiSubcategories;
-    }
-
     public GraffittiSubcategory findSubcategoryByGraffittiId(
         String graffittiSubcategoryId
     ) {
-        for (GraffittiSubcategory graffittiSubcategory : getSubcategories()) {
+        for (GraffittiSubcategory graffittiSubcategory : subcategories) {
             if (graffittiSubcategory.graffittiId.equalsIgnoreCase(graffittiSubcategoryId)) {
                 return graffittiSubcategory;
             }
@@ -118,12 +85,4 @@ public enum GraffittiCategory implements Serializable {
 
         return null;
     }
-
-//    @Override
-//    public String toString() {
-//        return String.format(
-//            "GraffittiCategory=%s",
-//            namePlural
-//        );
-//    }
 }

@@ -13,6 +13,8 @@ import java.util.HashMap;
 @Component
 public class IntentService {
 
+    private final IntentGetStartedHandler getStartedHandler;
+    private final IntentStartOverHandler startOverHandler;
     private final IntentHelpHandler helpHandler;
     private final IntentGreetingsHandler greetingsHandler;
     private final IntentSuggestionsHandler suggestionsHandler;
@@ -23,11 +25,11 @@ public class IntentService {
     private final IntentSeeItem seeItem;
     private final IntentGetasummaryHandler getasummaryHandler;
     private final IntentForgetMeHandler forgetMeHandler;
-    private final IntentGetStartedHandler getStartedHandler;
 
     @Autowired
     public IntentService(
-        IntentHelpHandler helpHandler,
+        IntentGetStartedHandler getStartedHandler,
+        IntentStartOverHandler startOverHandler, IntentHelpHandler helpHandler,
         IntentGreetingsHandler greetingsHandler,
         IntentSuggestionsHandler suggestionsHandler,
         IntentDiscoverHandler discoverHandler,
@@ -36,9 +38,10 @@ public class IntentService {
         IntentFindVenuesHandler intentFindVenuesHandler,
         IntentSeeItem seeItem,
         IntentGetasummaryHandler getasummaryHandler,
-        IntentForgetMeHandler forgetMeHandler,
-        IntentGetStartedHandler getStartedHandler
+        IntentForgetMeHandler forgetMeHandler
     ) {
+        this.getStartedHandler = getStartedHandler;
+        this.startOverHandler = startOverHandler;
         this.helpHandler = helpHandler;
         this.greetingsHandler = greetingsHandler;
         this.suggestionsHandler = suggestionsHandler;
@@ -49,8 +52,17 @@ public class IntentService {
         this.seeItem = seeItem;
         this.getasummaryHandler = getasummaryHandler;
         this.forgetMeHandler = forgetMeHandler;
-        this.getStartedHandler = getStartedHandler;
     }
+
+    public IntentGetStartedHandler getIntentGetStartedHandler() {
+        return getStartedHandler;
+    }
+
+    public IntentStartOverHandler getIntentStartOverHandler() {
+        return startOverHandler;
+    }
+
+    public IntentFindVenuesHandler getIntentFindVenuesHandler() { return intentFindVenuesHandler; }
 
     public void handleHelp(Session session) {
         helpHandler.handle(session);

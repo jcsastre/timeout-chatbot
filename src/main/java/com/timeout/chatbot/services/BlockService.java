@@ -6,29 +6,28 @@ import com.timeout.chatbot.block.*;
 import com.timeout.chatbot.block.deprecated.MainOptionsBlock;
 import com.timeout.chatbot.block.deprecated.PhoneCallBlock;
 import com.timeout.chatbot.block.deprecated.WhatsNewBlock;
-import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewComment;
 import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewAskConfirmation;
+import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewComment;
 import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewRate;
 import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.domain.user.User;
-import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.util.List;
 
 @Component
 public class BlockService {
 
     private final WelcomeFirstTimeBlock welcomeFirstTimeBlock;
+    private final WelcomeBackBlock welcomeBackBlock;
+    private final DiscoverBlock discoverBlock;
     private final VersionInfoBlock versionInfoBlock;
     private final SearchSuggestionsBlock searchSuggestionsBlock;
     private final MostLovedBlock mostLovedBlock;
     private final WhatsNewBlock whatsNewBlock;
-    private final WelcomeBackBlock welcomeBackBlock;
     private final MainOptionsBlock mainOptionsBlock;
     private final VenuesPageBlock venuesPageBlock;
     private final VenuesRemainingBlock venuesRemainingBlock;
@@ -46,7 +45,7 @@ public class BlockService {
     @Autowired
     public BlockService(
         WelcomeFirstTimeBlock welcomeFirstTimeBlock,
-        VersionInfoBlock versionInfoBlock,
+        DiscoverBlock discoverBlock, VersionInfoBlock versionInfoBlock,
         SearchSuggestionsBlock searchSuggestionsBlock,
         MostLovedBlock mostLovedBlock,
         WhatsNewBlock whatsNewBlock,
@@ -66,6 +65,7 @@ public class BlockService {
         BlockError blockError
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
+        this.discoverBlock = discoverBlock;
         this.versionInfoBlock = versionInfoBlock;
         this.searchSuggestionsBlock = searchSuggestionsBlock;
         this.mostLovedBlock = mostLovedBlock;
@@ -86,27 +86,17 @@ public class BlockService {
         this.blockError = blockError;
     }
 
-    public void sendWelcomeFirstTimeBlock(
-        Session session
-    ) throws MessengerApiException, MessengerIOException {
+    public WelcomeFirstTimeBlock getWelcomeFirstTimeBlock() { return welcomeFirstTimeBlock; }
 
-        welcomeFirstTimeBlock.send(
-            session.user.messengerId,
-            session.fbUserProfile
-        );
-    }
+    public DiscoverBlock getDiscoverBlock() { return discoverBlock; }
+
+    public WelcomeBackBlock getWelcomeBackBlock() { return welcomeBackBlock; }
 
     public void sendVersionInfoBlock(
         String userId
     ) throws MessengerApiException, MessengerIOException {
 
         versionInfoBlock.send(userId);
-    }
-
-    public void sendWelcomeBackBlock(
-        Session session
-    ) {
-        welcomeBackBlock.send(session);
     }
 
     public void sendSuggestionsBlock(
@@ -146,26 +136,9 @@ public class BlockService {
         mainOptionsBlock.send(user);
     }
 
-    public void sendVenuesPageBlock(
-        Session session,
-        List<PageItem> pageItems,
-        String itemPluralName
-    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+    public VenuesPageBlock getVenuesPageBlock() { return  venuesPageBlock; }
 
-        venuesPageBlock.send(
-            session,
-            pageItems,
-            itemPluralName
-        );
-    }
-
-    public void sendVenuesRemainingBlock(
-        Session session
-    ) {
-        venuesRemainingBlock.send(
-            session
-        );
-    }
+    public VenuesRemainingBlock getVenuesRemainingBlock() { return venuesRemainingBlock; }
 
     public void sendVenueSummaryBlock(
         String userId,
@@ -230,9 +203,5 @@ public class BlockService {
         blockSubmittingReviewAskConfirmation.send(session);
     }
 
-    public void sendErrorBlock(
-        User user
-    ) {
-        blockError.send(user.messengerId);
-    }
+    public BlockError getBlockError() { return  blockError; }
 }

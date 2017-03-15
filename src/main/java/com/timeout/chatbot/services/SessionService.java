@@ -7,6 +7,7 @@ import com.timeout.chatbot.domain.user.User;
 import com.timeout.chatbot.repository.SessionRepository;
 import com.timeout.chatbot.repository.UserRepository;
 import com.timeout.chatbot.session.Session;
+import com.timeout.chatbot.session.state.SessionState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -101,17 +102,15 @@ public class SessionService {
         return session;
     }
 
-//    public void resetSession(
-//        Session session
-//    ) {
-//        deleteSession(session);
-//
-//        session.state = SessionState.UNDEFINED;
-//        session.stateSearchingBag = null;
-//        session.stateItemBag = null;
-//        session.stateBookingBag = null;
-//        session.stateSubmittingReviewBag = null;
-//    }
+    public void resetSession(
+        Session session
+    ) {
+        session.state = SessionState.UNDEFINED;
+        session.stateSearchingBag = null;
+        session.stateItemBag = null;
+        session.stateBookingBag = null;
+        session.stateSubmittingReviewBag = null;
+    }
 
     public void persistSession(
         Session session

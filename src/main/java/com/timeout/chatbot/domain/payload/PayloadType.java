@@ -3,14 +3,13 @@ package com.timeout.chatbot.domain.payload;
 public enum PayloadType {
 
     _StartOver,
-
     _GetStarted,
+    _Utterance,
     _SearchSuggestions,
     _Discover,
     _WhatsNew,
     _MostLoved,
     _Cancel,
-    _Utterance,
     _GetASummary,
     _TemporalyDisabled,
 

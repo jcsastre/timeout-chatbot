@@ -1,11 +1,12 @@
 package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.QuickReply;
+import com.timeout.chatbot.domain.Geolocation;
+import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
 import com.timeout.chatbot.graffitti.domain.GraffittiSubcategory;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
-import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,29 +26,40 @@ public class VenuesRemainingBlock {
     }
 
     public void send(
-        Session session
+        String userMessengerId,
+        GraffittiCategory graffittiCategory,
+        GraffittiSubcategory graffittiSubcategory,
+        Integer reaminingItems,
+        Neighborhood neighborhood,
+        Geolocation geolocation
     ) {
-        final SessionStateSearchingBag bag = session.stateSearchingBag;
-
         messengerSendClientWrapper.sendTextMessage(
-            session.user.messengerId,
+            userMessengerId,
             String.format(
                 "There are %s %s more",
-                bag.reaminingItems, bag.graffittiCategory.getNamePlural()
+                reaminingItems, graffittiCategory.getNamePlural()
             ),
             buildQuickReplies(
-                bag
+                graffittiCategory,
+                graffittiSubcategory,
+                reaminingItems,
+                neighborhood,
+                geolocation
             )
         );
     }
 
     private List<QuickReply> buildQuickReplies(
-        SessionStateSearchingBag bag
+        GraffittiCategory graffittiCategory,
+        GraffittiSubcategory graffittiSubcategory,
+        Integer reaminingItems,
+        Neighborhood neighborhood,
+        Geolocation geolocation
     ) {
 
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
 
-        if (bag.reaminingItems > 0) {
+        if (reaminingItems > 0) {
             listBuilder.addTextQuickReply(
                 "See more",
                 new JSONObject()
@@ -57,10 +69,10 @@ public class VenuesRemainingBlock {
         }
 
         boolean areaSet = false;
-        if (bag.geolocation != null) {
+        if (geolocation != null) {
             areaSet = true;
         } else {
-            if (bag.neighborhood != null) {
+            if (neighborhood != null) {
                 areaSet = true;
             }
         }
@@ -73,11 +85,11 @@ public class VenuesRemainingBlock {
                 .toString()
         ).toList();
 
-        final List<GraffittiSubcategory> graffittiSubcategories = bag.graffittiCategory.getSubcategories();
+        final List<GraffittiSubcategory> graffittiSubcategories = graffittiCategory.getSubcategories();
         if (graffittiSubcategories!= null && graffittiSubcategories.size()>0) {
-            final String subcategoryName = bag.graffittiCategory.getSubcategoriesName().toLowerCase();
+            final String subcategoryName = graffittiCategory.getSubcategoriesName().toLowerCase();
             listBuilder.addTextQuickReply(
-                bag.graffittiSubcategory == null ?
+                graffittiSubcategory == null ?
                     "Set " + subcategoryName : "Change " + subcategoryName,
                 new JSONObject()
                     .put("type", PayloadType.searching_ShowSubcategories)

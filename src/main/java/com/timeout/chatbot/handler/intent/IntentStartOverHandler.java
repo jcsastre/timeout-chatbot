@@ -2,43 +2,62 @@ package com.timeout.chatbot.handler.intent;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
-import com.timeout.chatbot.block.WelcomeBackBlock;
+import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.SessionService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.state.SessionState;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class IntentStartOverHandler {
 
     private final SessionService sessionService;
-    private final WelcomeBackBlock welcomeBackBlock;
-    private final IntentDiscoverHandler intentDiscoverHandler;
+    private final IntentService intentService;
+    private final BlockService blockService;
 
-    @Autowired
     public IntentStartOverHandler(
         SessionService sessionService,
-        WelcomeBackBlock welcomeBackBlock,
-        IntentDiscoverHandler intentDiscoverHandler
+        IntentService intentService,
+        BlockService blockService
     ) {
         this.sessionService = sessionService;
-        this.welcomeBackBlock = welcomeBackBlock;
-        this.intentDiscoverHandler = intentDiscoverHandler;
+        this.intentService = intentService;
+        this.blockService = blockService;
     }
 
     public void handle(
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-//        sessionService.resetSession(session);
-        session.state = SessionState.UNDEFINED;
-        session.stateSearchingBag = null;
-        session.stateItemBag = null;
-        session.stateBookingBag = null;
-        session.stateSubmittingReviewBag = null;
+        switch (session.state) {
 
-        welcomeBackBlock.send(session);
-        intentDiscoverHandler.handle(session);
+            case BOOKING:
+                //TODO: EIIIIII
+                break;
+
+            case SUBMITTING_REVIEW:
+                //TODO: EIIIIII
+                break;
+
+            default:
+                proceed(session);
+        }
+    }
+
+    private void proceed(
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+
+        sessionService.resetSession(session);
+
+        blockService.getWelcomeBackBlock().send(
+            session
+        );
+        
+// TODO cambiar a intent discover
+//        blockService.getDiscoverBlock().send(
+//            session.user.messengerId
+//        );
+//
+//        session.state = SessionState.DISCOVER;
     }
 }

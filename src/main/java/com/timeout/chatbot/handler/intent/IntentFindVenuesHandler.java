@@ -53,29 +53,38 @@ public class IntentFindVenuesHandler {
         this.senderActionsHelper = senderActionsHelper;
     }
 
-    public void handle(
-        Session session,
-        HashMap<String, JsonElement> nluParameters
-    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-        switch (session.state) {
-
-            case SEARCHING:
-                applyNluParameters(session, nluParameters);
-                break;
-
-            default:
-                blockService.sendErrorBlock(session.user);
-                break;
-        }
-    }
+//    public void handle(
+//        Session session,
+//        HashMap<String, JsonElement> nluParameters
+//    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+//        switch (session.state) {
+//
+//            case SEARCHING:
+//                applyNluParameters(session, nluParameters);
+//                break;
+//
+//            default:
+//                blockService.sendErrorBlock(session.user);
+//                break;
+//        }
+//    }
 
     public void handle(
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+
+        handle(session, null);
+    }
+
+    public void handle(
+        Session session,
+        String where
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         switch (session.state) {
 
-            case SEARCHING:
-                fetchAndSend(session);
+            case BOOKING:
+            case SUBMITTING_REVIEW:
+                //TODO
                 break;
 
             default:
@@ -84,22 +93,18 @@ public class IntentFindVenuesHandler {
         }
     }
 
-    private void applyNluParameters(
+    private void handleDefault(
         Session session,
-        HashMap<String, JsonElement> nluParameters
-    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-
-        if (
-            nluParameters.containsKey("whereUkLondon")
-        ) {
+        String where
+    ) {
+        if (where != null) {
             final SessionStateSearchingBag bag = session.stateSearchingBag;
 
-            final String where = nluParameters.get("whereUkLondon").getAsString();
             if (
-                where.equalsIgnoreCase("nearby") ||
-                where.equalsIgnoreCase("near me") ||
-                where.equalsIgnoreCase("near of me")
-            ) {
+                    where.equalsIgnoreCase("nearby") ||
+                    where.equalsIgnoreCase("near me") ||
+                    where.equalsIgnoreCase("near of me")
+                ) {
                 if (bag.geolocation == null) {
                     blockService.sendGeolocationAskBlock(session.user.messengerId);
                 } else {
@@ -110,31 +115,57 @@ public class IntentFindVenuesHandler {
                 //TODO: map text to valid where
                 //bag.setGraffittiWhere(where);
             }
-        } else {
-            handle(session);
         }
     }
 
-    public void fetchAndSend(
-        Session session
+//    private void applyNluParameters(
+//        Session session,
+//        HashMap<String, JsonElement> nluParameters
+//    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+//
+//        if (
+//            nluParameters.containsKey("whereUkLondon")
+//        ) {
+//            final SessionStateSearchingBag bag = session.stateSearchingBag;
+//
+//            final String where = nluParameters.get("whereUkLondon").getAsString();
+//            if (
+//                where.equalsIgnoreCase("nearby") ||
+//                where.equalsIgnoreCase("near me") ||
+//                where.equalsIgnoreCase("near of me")
+//            ) {
+//                if (bag.geolocation == null) {
+//                    blockService.sendGeolocationAskBlock(session.user.messengerId);
+//                } else {
+//                    handle(session);
+//                }
+//            } else {
+//                handle(session);
+//                //TODO: map text to valid where
+//                //bag.setGraffittiWhere(where);
+//            }
+//        } else {
+//            handle(session);
+//        }
+//    }
+
+    public void fetchAndSendInternal(
+        String userMessengerId,
+        GraffittiCategory graffittiCategory,
+        GraffittiSubcategory graffittiSubcategory,
+        Integer pageNumber,
+        Geolocation geolocation,
+        Neighborhood neighborhood,
+        Integer reaminingItems
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateSearchingBag bag = session.stateSearchingBag;
-
-        UrlBuilder urlBuilder;
-        if (bag.graffittiSubcategory != null) {
-            urlBuilder = urlBuilderBase(
-                bag.graffittiSubcategory,
-                bag.pageNumber
+        UrlBuilder urlBuilder =
+            searchUrlBuilder.build(
+                graffittiSubcategory != null ? graffittiSubcategory.graffittiId : graffittiCategory.graffittiId,
+                GraffittiType.VENUE.toValue(),
+                pageNumber
             );
-        } else {
-            urlBuilder = urlBuilderBase(
-                bag.graffittiCategory,
-                bag.pageNumber
-            );
-        }
 
-        final Geolocation geolocation = bag.geolocation;
         if (geolocation != null) {
             urlBuilder =
                 urlBuilder
@@ -154,26 +185,27 @@ public class IntentFindVenuesHandler {
                         GraffittiQueryParameterType.SORT.getValue(),
                         "distance"
                     );
-        } else {
-            final Neighborhood neighborhood = bag.neighborhood;
-
-            if (neighborhood != null) {
-                urlBuilder =
-                    urlBuilder
-                        .addParameter(
-                            GraffittiQueryParameterType.WHERE.getValue(),
-                            neighborhood.graffitiId
-                        );
-            }
+        } else if (neighborhood != null) {
+            urlBuilder =
+                urlBuilder
+                    .addParameter(
+                        GraffittiQueryParameterType.WHERE.getValue(),
+                        neighborhood.graffitiId
+                    );
         }
 
-        senderActionsHelper.typingOn(session.user.messengerId);
+        senderActionsHelper.typingOn(userMessengerId);
         messengerSendClient.sendTextMessage(
-            session.user.messengerId,
-            buildMessage(bag)
+            userMessengerId,
+            buildMessage(
+                graffittiCategory,
+                graffittiSubcategory,
+                geolocation,
+                neighborhood
+            )
         );
 
-        senderActionsHelper.typingOn(session.user.messengerId);
+        senderActionsHelper.typingOn(userMessengerId);
 
         logger.debug(urlBuilder.toUrl().toString());
 
@@ -185,71 +217,66 @@ public class IntentFindVenuesHandler {
 
         if (graffittiSearchResponse.getMeta().getTotalItems() > 0) {
 
-            bag.reaminingItems = graffittiSearchResponse.getRemainingItems();
-
-            blockService.sendVenuesPageBlock(
-                session,
+            blockService.getVenuesPageBlock().send(
+                userMessengerId,
                 graffittiSearchResponse.getPageItems(),
-                bag.graffittiCategory.getNamePlural()
+                graffittiCategory.namePlural
             );
 
-            senderActionsHelper.typingOn(session.user.messengerId);
-            blockService.sendVenuesRemainingBlock(
-                session
+            senderActionsHelper.typingOn(userMessengerId);
+            blockService.getVenuesRemainingBlock().send(
+                userMessengerId,
+                graffittiCategory,
+                graffittiSubcategory,
+                reaminingItems,
+                neighborhood,
+                geolocation
             );
         } else {
             messengerSendClient.sendTextMessage(
-                session.user.messengerId,
-                "There are not available " + bag.graffittiCategory.getNamePlural() + " for your request."
+                userMessengerId,
+                "There are not available " + graffittiCategory.namePlural + " for your request."
             );
         }
 
         session.state = SessionState.SEARCHING;
     }
 
+    public void fetchAndSend(
+        Session session
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+
+        fetchAndSendInternal(
+            session.user.messengerId,
+            session.stateSearchingBag.graffittiCategory,
+            session.stateSearchingBag.graffittiSubcategory,
+            session.stateSearchingBag.pageNumber,
+            session.stateSearchingBag.geolocation,
+            session.stateSearchingBag.neighborhood,
+            session.stateSearchingBag.reaminingItems
+        );
+    }
+
     private String buildMessage(
-        SessionStateSearchingBag bag
+        final GraffittiCategory graffittiCategory,
+        final GraffittiSubcategory graffittiSubcategory,
+        final Geolocation geolocation,
+        final Neighborhood neighborhood
     ) {
         String msg = "Looking for";
 
-        if (bag.graffittiSubcategory != null) {
-            msg = msg + " " + bag.graffittiSubcategory.name.toLowerCase();
+        if (graffittiSubcategory != null) {
+            msg = msg + " " + graffittiSubcategory.name.toLowerCase();
         }
 
-        msg = msg + " " + bag.graffittiCategory.getNamePlural().toLowerCase();
+        msg = msg + " " + graffittiCategory.namePlural.toLowerCase();
 
-        final Geolocation geolocation = bag.geolocation;
         if (geolocation != null) {
             msg = msg + " near the location you specified";
-        } else {
-            final Neighborhood neighborhood = bag.neighborhood;
-            if (neighborhood != null) {
-                msg = msg + " at " + neighborhood.name;
-            }
+        } else if (neighborhood != null) {
+            msg = msg + " at " + neighborhood.name;
         }
 
         return msg;
-    }
-
-    private UrlBuilder urlBuilderBase(
-        GraffittiCategory category,
-        Integer pageNumber
-    ) {
-        return searchUrlBuilder.build(
-            category.getGraffittiId(),
-            GraffittiType.VENUE.toValue(),
-            pageNumber
-        );
-    }
-
-    private UrlBuilder urlBuilderBase(
-        GraffittiSubcategory subcategory,
-        Integer pageNumber
-    ) {
-        return searchUrlBuilder.build(
-            subcategory.graffittiId,
-            GraffittiType.VENUE.toValue(),
-            pageNumber
-        );
     }
 }

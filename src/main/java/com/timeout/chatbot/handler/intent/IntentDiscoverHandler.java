@@ -4,6 +4,8 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.timeout.chatbot.block.BlockError;
 import com.timeout.chatbot.block.DiscoverBlock;
+import com.timeout.chatbot.services.BlockService;
+import com.timeout.chatbot.services.SessionService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.state.SessionState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,16 +14,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class IntentDiscoverHandler {
 
-    private final DiscoverBlock discoverBlock;
-    private final BlockError blockError;
+    private final BlockService blockService;
 
-    @Autowired
     public IntentDiscoverHandler(
-        DiscoverBlock discoverBlock,
-        BlockError blockError
+        BlockService blockService
     ) {
-        this.discoverBlock = discoverBlock;
-        this.blockError = blockError;
+        this.blockService = blockService;
     }
 
     public void handle(Session session) throws MessengerApiException, MessengerIOException {
