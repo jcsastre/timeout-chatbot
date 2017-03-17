@@ -43,10 +43,10 @@ public class IntentSeeItem {
             case UNDEFINED:
             case SEARCHING:
             case ITEM:
-                if (session.stateItemBag.graffittiType == GraffittiType.VENUE) {
+                if (session.bagItem.graffittiType == GraffittiType.VENUE) {
 
-                    final Venue venue = graffittiService.fetchVenue(session.stateItemBag.itemId);
-                    session.stateItemBag.venue = venue;
+                    final Venue venue = graffittiService.fetchVenue(session.bagItem.itemId);
+                    session.bagItem.venue = venue;
 
                     seeVenueItemBlock.send(
                         session.user.messengerId,

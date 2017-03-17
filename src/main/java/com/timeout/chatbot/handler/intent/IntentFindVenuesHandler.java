@@ -3,7 +3,6 @@ package com.timeout.chatbot.handler.intent;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.google.gson.JsonElement;
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
@@ -25,7 +24,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 @Component
 public class IntentFindVenuesHandler {
@@ -70,35 +68,43 @@ public class IntentFindVenuesHandler {
 //    }
 
     public void handle(
-        Session session
-    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-
-        handle(session, null);
-    }
-
-    public void handle(
         Session session,
-        String where
+        GraffittiCategory graffittiCategory,
+        GraffittiSubcategory graffittiSubcategory,
+        Neighborhood neighborhood,
+        Geolocation geolocation
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         switch (session.state) {
 
             case BOOKING:
+                //TODO: Implement cancel
+                break;
+
             case SUBMITTING_REVIEW:
-                //TODO
+                //TODO: Implement cancel
                 break;
 
             default:
-                blockService.sendErrorBlock(session.user);
+                handleDefault(
+                    session,
+                    graffittiCategory,
+                    graffittiSubcategory,
+                    neighborhood,
+                    geolocation
+                );
                 break;
         }
     }
 
     private void handleDefault(
         Session session,
-        String where
+        GraffittiCategory graffittiCategory,
+        GraffittiSubcategory graffittiSubcategory,
+        Neighborhood neighborhood,
+        Geolocation geolocation
     ) {
         if (where != null) {
-            final SessionStateSearchingBag bag = session.stateSearchingBag;
+            final SessionStateSearchingBag bag = session.bagSearching;
 
             if (
                     where.equalsIgnoreCase("nearby") ||
@@ -126,7 +132,7 @@ public class IntentFindVenuesHandler {
 //        if (
 //            nluParameters.containsKey("whereUkLondon")
 //        ) {
-//            final SessionStateSearchingBag bag = session.stateSearchingBag;
+//            final SessionStateSearchingBag bag = session.bagSearching;
 //
 //            final String where = nluParameters.get("whereUkLondon").getAsString();
 //            if (
@@ -248,12 +254,12 @@ public class IntentFindVenuesHandler {
 
         fetchAndSendInternal(
             session.user.messengerId,
-            session.stateSearchingBag.graffittiCategory,
-            session.stateSearchingBag.graffittiSubcategory,
-            session.stateSearchingBag.pageNumber,
-            session.stateSearchingBag.geolocation,
-            session.stateSearchingBag.neighborhood,
-            session.stateSearchingBag.reaminingItems
+            session.bagSearching.graffittiCategory,
+            session.bagSearching.graffittiSubcategory,
+            session.bagSearching.pageNumber,
+            session.bagSearching.geolocation,
+            session.bagSearching.neighborhood,
+            session.bagSearching.reaminingItems
         );
     }
 

@@ -26,7 +26,7 @@ public class BlockSubmittingReviewAskConfirmation {
     public void send(
         Session session
     ) throws MessengerApiException, MessengerIOException {
-        final SessionStateSubmittingReviewBag bag = session.stateSubmittingReviewBag;
+        final SessionStateSubmittingReviewBag bag = session.bagSubmitting;
 
         String msg = buildMessage(bag);
 

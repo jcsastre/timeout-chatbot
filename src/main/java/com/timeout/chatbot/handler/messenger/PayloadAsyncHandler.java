@@ -7,14 +7,11 @@ import com.timeout.chatbot.block.BlockError;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.handler.intent.IntentStartOverHandler;
 import com.timeout.chatbot.handler.states.DefaultTextHandler;
 import com.timeout.chatbot.services.SessionService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateItemBag;
-import com.timeout.chatbot.session.state.SessionState;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -84,9 +81,9 @@ public class PayloadAsyncHandler {
                     //TODO
                     break;
 
-                case _Discover:
-                    intentService.handleDiscover(session);
-                    break;
+//                case _Discover:
+//                    intentService.handleDiscover(session);
+//                    break;
 
                 case _WhatsNew:
                     //TODO
@@ -115,33 +112,33 @@ public class PayloadAsyncHandler {
                     );
                     break;
 
-                case searching_ItemMoreOptions:
-                    handleSearchingItemMoreOptions(session, payloadAsJson);
-                    break;
+//                case searching_ItemMoreOptions:
+//                    handleSearchingItemMoreOptions(session, payloadAsJson);
+//                    break;
 
-                case searching_VenuesShowAreas:
-                    handleVenuesShowAreas(session, payload);
-                    break;
-
-                case searching_ShowSubcategories:
-                    handleShowSubcategories(session, payload);
-                    break;
-
-                case searching_VenuesSetNeighborhood:
-                    handleVenuesSetNeighborhood(session, payload);
-                    break;
-
-                case searching_SetSubcategory:
-                    handleSetSubcategory(session, payload);
-                    break;
-
-                case searching_WhereEverywhere:
-                    handleWhereEverywhere(session);
-                    break;
-
-                case searching_SeeMore:
-                    handleSeeMore(session);
-                    break;
+//                case searching_VenuesShowAreas:
+//                    handleVenuesShowAreas(session, payload);
+//                    break;
+//
+//                case searching_ShowSubcategories:
+//                    handleShowSubcategories(session, payload);
+//                    break;
+//
+//                case searching_VenuesSetNeighborhood:
+//                    handleVenuesSetNeighborhood(session, payload);
+//                    break;
+//
+//                case searching_SetSubcategory:
+//                    handleSetSubcategory(session, payload);
+//                    break;
+//
+//                case searching_WhereEverywhere:
+//                    handleWhereEverywhere(session);
+//                    break;
+//
+//                case searching_SeeMore:
+//                    handleSeeMore(session);
+//                    break;
             }
 
 //            if (payloadType == PayloadType._StartOver) {
@@ -190,15 +187,15 @@ public class PayloadAsyncHandler {
 //        );
     }
 
-    private void handleSearchingItemMoreOptions(
-        Session session,
-        JSONObject payload
-    ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException {
-
-        intentService.handleSeeItem(
-            session,
-            GraffittiType.fromValue(payload.getString("item_type")),
-            payload.getString("item_id")
-        );
-    }
+//    private void handleSearchingItemMoreOptions(
+//        Session session,
+//        JSONObject payload
+//    ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException {
+//
+//        intentService.handleSeeItem(
+//            session,
+//            GraffittiType.fromValue(payload.getString("item_type")),
+//            payload.getString("item_id")
+//        );
+//    }
 }

@@ -43,7 +43,7 @@ public class IntentCancelHandler {
     private void handleLooking(
         Session session
     ) {
-//        final SessionStateSearchingBag bag = session.stateSearchingBag;
+//        final SessionStateSearchingBag bag = session.bagSearching;
 ////        final What what = bag.getWhat();
 //
 //        if (what == What.RESTAURANTS) {

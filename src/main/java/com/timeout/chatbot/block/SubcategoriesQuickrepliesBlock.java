@@ -54,7 +54,7 @@ public class SubcategoriesQuickrepliesBlock {
                 .toString()
         ).toList();
 
-        final SessionStateSearchingBag bag = session.stateSearchingBag;
+        final SessionStateSearchingBag bag = session.bagSearching;
 
         if (pageNumber == 1) {
             builder.addTextQuickReply(

@@ -135,7 +135,7 @@ public class QuickReplyBuilderForCurrentSessionState {
     public  List<QuickReply> handleStateItem(
         Session session
     ) {
-        final SessionStateItemBag itemBag = session.stateItemBag;
+        final SessionStateItemBag itemBag = session.bagItem;
 
         final GraffittiType graffittiType = itemBag.graffittiType;
 

@@ -70,7 +70,7 @@ public class IntentPhotosHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateItemBag itemBag = session.stateItemBag;
+        final SessionStateItemBag itemBag = session.bagItem;
 
         final GraffittiType graffittiType = itemBag.graffittiType;
         if (graffittiType == GraffittiType.VENUE) {

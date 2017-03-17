@@ -2,13 +2,9 @@ package com.timeout.chatbot.handler.intent;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
-import com.timeout.chatbot.block.BlockError;
-import com.timeout.chatbot.block.DiscoverBlock;
 import com.timeout.chatbot.services.BlockService;
-import com.timeout.chatbot.services.SessionService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.state.SessionState;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -22,61 +18,23 @@ public class IntentDiscoverHandler {
         this.blockService = blockService;
     }
 
-    public void handle(Session session) throws MessengerApiException, MessengerIOException {
+    public void handle(
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
 
         switch (session.state) {
 
-            case UNDEFINED:
-                proceed(session);
-                break;
-
-            case SEARCH_SUGGESTIONS:
-                proceed(session);
-                break;
-
-            case DISCOVER:
-                proceed(session);
-                break;
-
-            case MOST_LOVED:
-                proceed(session);
-                break;
-
-            case SEARCHING:
-                proceed(session);
-                break;
-
-            case ITEM:
-                proceed(session);
+            case BOOKING:
+                //TODO: Implement Booking Cancel Flow
                 break;
 
             case SUBMITTING_REVIEW:
-                handleSubmittingReview(session);
-                break;
-
-            case BOOKING:
-                handleBooking(session);
+                //TODO: Implement Submitting Review Cancel Flow
                 break;
 
             default:
-                blockError.send(session.user.messengerId);
+                proceed(session);
         }
-    }
-
-    private void handleSubmittingReview(
-        Session session
-    ) throws MessengerApiException, MessengerIOException {
-
-        //TODO: ask before cancelling
-        //TODO: ...
-    }
-
-    private void handleBooking(
-        Session session
-    ) throws MessengerApiException, MessengerIOException {
-
-        //TODO: ask before cancelling
-        //TODO: return to previous looking context
     }
 
     private void proceed(
@@ -85,6 +43,6 @@ public class IntentDiscoverHandler {
 
         session.state = SessionState.DISCOVER;
 
-        discoverBlock.send(session.user.messengerId);
+        blockService.getDiscoverBlock().send(session.user.messengerId);
     }
 }

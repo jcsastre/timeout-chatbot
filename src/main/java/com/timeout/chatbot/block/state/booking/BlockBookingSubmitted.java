@@ -39,8 +39,8 @@ public class BlockBookingSubmitted {
             "Your booking has been submitted"
         );
 
-        final SessionStateBookingBag bookingBag = session.stateBookingBag;
-        final SessionStateItemBag itemBag = session.stateItemBag;
+        final SessionStateBookingBag bookingBag = session.bagBooking;
+        final SessionStateItemBag itemBag = session.bagItem;
         final Venue venue = itemBag.venue;
 
         String receiptImageUrl =

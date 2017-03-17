@@ -31,11 +31,11 @@ public class IntentStartOverHandler {
         switch (session.state) {
 
             case BOOKING:
-                //TODO: EIIIIII
+                //TODO: Implement Booking Cancel Flow
                 break;
 
             case SUBMITTING_REVIEW:
-                //TODO: EIIIIII
+                //TODO: Implement Submitting Review Cancel Flow
                 break;
 
             default:
@@ -52,12 +52,7 @@ public class IntentStartOverHandler {
         blockService.getWelcomeBackBlock().send(
             session
         );
-        
-// TODO cambiar a intent discover
-//        blockService.getDiscoverBlock().send(
-//            session.user.messengerId
-//        );
-//
-//        session.state = SessionState.DISCOVER;
+
+        intentService.getIntentDiscoverHandler().handle(session);
     }
 }

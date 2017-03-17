@@ -55,7 +55,7 @@ public class PostbackEventHandlerAsyncImpl implements PostbackEventHandler {
 
         } catch (InterruptedException | IOException | MessengerApiException | MessengerIOException e) {
             e.printStackTrace();
-            blockService.getBlockError().send(session.user.messengerId);
+            blockService.getError().send(session.user.messengerId);
         }
     }
 
@@ -80,7 +80,7 @@ public class PostbackEventHandlerAsyncImpl implements PostbackEventHandler {
                 break;
 
             default:
-                blockService.getBlockError().send(session.user.messengerId);
+                blockService.getError().send(session.user.messengerId);
         }
     }
 

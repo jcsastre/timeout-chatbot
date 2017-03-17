@@ -53,7 +53,7 @@ public class BookingStateHandler {
         Integer peopleCount
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         bag.setPeopleCount(peopleCount);
         bag.setBookingState(BookingState.DATE);
         blockBookingDate.send(session.user.messengerId);
@@ -64,7 +64,7 @@ public class BookingStateHandler {
         String firstName
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         bag.setFirstName(firstName);
         bag.setBookingState(BookingState.LAST_NAME);
 
@@ -81,7 +81,7 @@ public class BookingStateHandler {
         String lastName
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         bag.setLastName(lastName);
         bag.setBookingState(BookingState.EMAIL);
         blockBookingAskEmail.send(session.user.messengerId);
@@ -92,7 +92,7 @@ public class BookingStateHandler {
         String email
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         bag.setEmail(email);
         bag.setBookingState(BookingState.PHONE);
         blockBookingAskPhone.send(session.user.messengerId);
@@ -103,7 +103,7 @@ public class BookingStateHandler {
         String phone
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         bag.setPhone(phone);
         bag.setBookingState(BookingState.CONFIRMATION_PERSONAL_DETAILS);
         blockConfirmationPersonalDetails.send(

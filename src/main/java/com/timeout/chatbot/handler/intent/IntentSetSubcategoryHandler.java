@@ -45,12 +45,12 @@ public class IntentSetSubcategoryHandler {
         String subcategoryId
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        session.stateSearchingBag.graffittiSubcategory =
-            session.stateSearchingBag.graffittiCategory.findSubcategoryByGraffittiId(subcategoryId);
+        session.bagSearching.graffittiSubcategory =
+            session.bagSearching.graffittiCategory.findSubcategoryByGraffittiId(subcategoryId);
 
         findRestaurantsHandler.fetchAndSend(session);
 
-//        final SessionStateSearchingBag bag = session.stateSearchingBag;
+//        final SessionStateSearchingBag bag = session.bagSearching;
 //        final What what = bag.getWhat();
 //
 //        if (bag.getReaminingItems() > 0) {

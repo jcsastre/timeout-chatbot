@@ -112,16 +112,16 @@ public class SearchingStatePayloadHandler {
         JSONObject payload
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-//        final SessionStateItemBag itemBag = session.stateItemBag;
-        session.stateItemBag = new SessionStateItemBag();
+//        final SessionStateItemBag itemBag = session.bagItem;
+        session.bagItem = new SessionStateItemBag();
 
         final GraffittiType graffittiType = GraffittiType.fromValue(payload.getString("item_type"));
 
         switch (graffittiType) {
 
             case VENUE:
-                session.stateItemBag.graffittiType = graffittiType;
-                session.stateItemBag.itemId = payload.getString("item_id");
+                session.bagItem.graffittiType = graffittiType;
+                session.bagItem.itemId = payload.getString("item_id");
                 session.state = SessionState.ITEM;
                 intentSeeItem.handle(session);
                 break;
@@ -173,9 +173,9 @@ public class SearchingStatePayloadHandler {
         Session session
     ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException {
 
-        session.stateSearchingBag.pageNumber = 1;
-        session.stateSearchingBag.geolocation = null;
-        session.stateSearchingBag.neighborhood = null;
+        session.bagSearching.pageNumber = 1;
+        session.bagSearching.geolocation = null;
+        session.bagSearching.neighborhood = null;
 
         intentFindVenuesHandler.handle(session);
     }
@@ -188,9 +188,9 @@ public class SearchingStatePayloadHandler {
         final String neighborhoodId = payload.getString("neighborhood_id");
         final Neighborhood neighborhood = graffittiService.getNeighborhoodByGraffittiId(neighborhoodId);
         if (neighborhood!=null) {
-            session.stateSearchingBag.pageNumber = 1;
-            session.stateSearchingBag.geolocation = null;
-            session.stateSearchingBag.neighborhood = neighborhood;
+            session.bagSearching.pageNumber = 1;
+            session.bagSearching.geolocation = null;
+            session.bagSearching.neighborhood = neighborhood;
 
             intentFindVenuesHandler.handle(session);
         } else {
@@ -202,7 +202,7 @@ public class SearchingStatePayloadHandler {
         Session session
     ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException {
 
-        final SessionStateSearchingBag bag = session.stateSearchingBag;
+        final SessionStateSearchingBag bag = session.bagSearching;
 
         if (bag.reaminingItems > 0) {
             bag.pageNumber = bag.pageNumber +1;

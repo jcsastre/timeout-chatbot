@@ -115,7 +115,7 @@ public class BookingStatePayloadHandler {
         JSONObject payload
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.PEOPLE_COUNT) {
 
@@ -133,7 +133,7 @@ public class BookingStatePayloadHandler {
         JSONObject payload
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.DATE) {
 
@@ -151,7 +151,7 @@ public class BookingStatePayloadHandler {
         JSONObject payload
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.TIME) {
 
@@ -172,7 +172,7 @@ public class BookingStatePayloadHandler {
     private void handleInfoOk(
         Session session
     ) throws MessengerApiException, MessengerIOException {
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.CONFIRMATION_BOOKING_DETAILS) {
 
@@ -194,7 +194,7 @@ public class BookingStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.CONFIRMATION_BOOKING_DETAILS) {
             //TODO
@@ -207,7 +207,7 @@ public class BookingStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.FIRST_NAME) {
 
@@ -224,7 +224,7 @@ public class BookingStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.FIRST_NAME) {
             blockBookingAskFirstname.send(session.user.messengerId);
@@ -237,7 +237,7 @@ public class BookingStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.LAST_NAME) {
 
@@ -254,7 +254,7 @@ public class BookingStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.LAST_NAME) {
             blockBookingAskLastname.send(session.user.messengerId);
@@ -267,7 +267,7 @@ public class BookingStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.CONFIRMATION_PERSONAL_DETAILS) {
 
@@ -281,7 +281,7 @@ public class BookingStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.stateBookingBag;
+        final SessionStateBookingBag bag = session.bagBooking;
         final BookingState bookingState = bag.getBookingState();
         if (bookingState == BookingState.CONFIRMATION_PERSONAL_DETAILS) {
 

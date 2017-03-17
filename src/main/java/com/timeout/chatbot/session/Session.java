@@ -28,10 +28,11 @@ public class Session implements Serializable {
     public User user;
 
     public SessionState state;
-    public SessionStateSearchingBag stateSearchingBag;
-    public SessionStateItemBag stateItemBag;
-    public SessionStateBookingBag stateBookingBag;
-    public SessionStateSubmittingReviewBag stateSubmittingReviewBag;
+
+    public SessionStateSearchingBag bagSearching;
+    public SessionStateItemBag bagItem;
+    public SessionStateBookingBag bagBooking;
+    public SessionStateSubmittingReviewBag bagSubmitting;
 
     public FbUserProfile fbUserProfile;
 
@@ -45,8 +46,8 @@ public class Session implements Serializable {
     @Override
     public String toString() {
         return String.format(
-            "Session {state=%s, stateSearchingBag=%s, stateItemBag=%s, PAGE=%s, user=%s}",
-            state, stateSearchingBag, stateItemBag, page, user
+            "Session {state=%s, bagSearching=%s, bagItem=%s, PAGE=%s, user=%s}",
+            state, bagSearching, bagItem, page, user
         );
     }
 }

@@ -37,10 +37,11 @@ public class BlockService {
     private final FilmsPageBlock filmsPageBlock;
     private final SeeVenueItemBlock seeVenueItemBlock;
     private final PhoneCallBlock phoneCallBlock;
-    private final BlockSubmittingReviewRate blockSubmittingReviewRate;
-    private final BlockSubmittingReviewComment blockSubmittingReviewComment;
-    private final BlockSubmittingReviewAskConfirmation blockSubmittingReviewAskConfirmation;
-    private final BlockError blockError;
+    private final BlockSubmittingReviewRate submittingReviewRate;
+    private final BlockSubmittingReviewComment submittingReviewComment;
+    private final BlockSubmittingReviewAskConfirmation submittingReviewAskConfirmation;
+    private final BlockError error;
+
 
     @Autowired
     public BlockService(
@@ -59,10 +60,10 @@ public class BlockService {
         FilmsPageBlock filmsPageBlock,
         SeeVenueItemBlock seeVenueItemBlock,
         PhoneCallBlock phoneCallBlock,
-        BlockSubmittingReviewRate blockSubmittingReviewRate,
-        BlockSubmittingReviewComment blockSubmittingReviewComment,
-        BlockSubmittingReviewAskConfirmation blockSubmittingReviewAskConfirmation,
-        BlockError blockError
+        BlockSubmittingReviewRate submittingReviewRate,
+        BlockSubmittingReviewComment submittingReviewComment,
+        BlockSubmittingReviewAskConfirmation submittingReviewAskConfirmation,
+        BlockError error
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
         this.discoverBlock = discoverBlock;
@@ -80,10 +81,10 @@ public class BlockService {
         this.filmsPageBlock = filmsPageBlock;
         this.seeVenueItemBlock = seeVenueItemBlock;
         this.phoneCallBlock = phoneCallBlock;
-        this.blockSubmittingReviewRate = blockSubmittingReviewRate;
-        this.blockSubmittingReviewComment = blockSubmittingReviewComment;
-        this.blockSubmittingReviewAskConfirmation = blockSubmittingReviewAskConfirmation;
-        this.blockError = blockError;
+        this.submittingReviewRate = submittingReviewRate;
+        this.submittingReviewComment = submittingReviewComment;
+        this.submittingReviewAskConfirmation = submittingReviewAskConfirmation;
+        this.error = error;
     }
 
     public WelcomeFirstTimeBlock getWelcomeFirstTimeBlock() { return welcomeFirstTimeBlock; }
@@ -91,6 +92,18 @@ public class BlockService {
     public DiscoverBlock getDiscoverBlock() { return discoverBlock; }
 
     public WelcomeBackBlock getWelcomeBackBlock() { return welcomeBackBlock; }
+
+    public BlockSubmittingReviewRate getSubmittingReviewRate() {
+        return submittingReviewRate;
+    }
+
+    public BlockSubmittingReviewComment getSubmittingReviewComment() {
+        return submittingReviewComment;
+    }
+
+    public BlockSubmittingReviewAskConfirmation getSubmittingReviewAskConfirmation() {
+        return  submittingReviewAskConfirmation;
+    }
 
     public void sendVersionInfoBlock(
         String userId
@@ -182,26 +195,5 @@ public class BlockService {
         );
     }
 
-    public void sendSubmittingReviewRateBlock(
-        String userId
-    ) throws MessengerApiException, MessengerIOException {
-
-        blockSubmittingReviewRate.send(userId);
-    }
-
-    public void sendSubmittingReviewCommentBlock(
-        String userId
-    ) throws MessengerApiException, MessengerIOException {
-
-        blockSubmittingReviewComment.send(userId);
-    }
-
-    public void sendSubmittingReviewConfirmationBlock(
-        Session session
-    ) throws MessengerApiException, MessengerIOException {
-
-        blockSubmittingReviewAskConfirmation.send(session);
-    }
-
-    public BlockError getBlockError() { return  blockError; }
+    public BlockError getError() { return error; }
 }

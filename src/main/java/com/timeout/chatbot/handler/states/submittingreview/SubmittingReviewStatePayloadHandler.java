@@ -88,7 +88,7 @@ public class SubmittingReviewStatePayloadHandler {
         final SessionState sessionState = session.state;
         if (sessionState == SessionState.SUBMITTING_REVIEW) {
 
-            final SessionStateSubmittingReviewBag bag = session.stateSubmittingReviewBag;
+            final SessionStateSubmittingReviewBag bag = session.bagSubmitting;
             final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
             if (submittingReviewState == SubmittingReviewState.RATING) {
 
@@ -110,7 +110,7 @@ public class SubmittingReviewStatePayloadHandler {
         final SessionState sessionState = session.state;
         if (sessionState == SessionState.SUBMITTING_REVIEW) {
 
-            final SessionStateSubmittingReviewBag bag = session.stateSubmittingReviewBag;
+            final SessionStateSubmittingReviewBag bag = session.bagSubmitting;
             final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
             if (submittingReviewState == SubmittingReviewState.WRITING_COMMENT) {
 
@@ -132,7 +132,7 @@ public class SubmittingReviewStatePayloadHandler {
         final SessionState sessionState = session.state;
         if (sessionState == SessionState.SUBMITTING_REVIEW) {
 
-            final SessionStateSubmittingReviewBag bag = session.stateSubmittingReviewBag;
+            final SessionStateSubmittingReviewBag bag = session.bagSubmitting;
             final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
             if (submittingReviewState == SubmittingReviewState.ASKING_FOR_CONFIRMATION) {
 

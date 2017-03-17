@@ -3,15 +3,12 @@ package com.timeout.chatbot.handler.states.submittingreview;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.timeout.chatbot.block.BlockError;
-import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewAskConfirmation;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.handler.intent.IntentService;
+import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateSubmittingReviewBag;
 import com.timeout.chatbot.session.state.SessionState;
 import com.timeout.chatbot.session.state.SubmittingReviewState;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -21,20 +18,16 @@ public class SubmittingReviewStateTextHandler {
 
     private final IntentService intentService;
     private final MessengerSendClient msc;
-    private final BlockSubmittingReviewAskConfirmation blockSubmittingReviewAskConfirmation;
-    private final BlockError blockError;
+    private final BlockService blockService;
 
-    @Autowired
     public SubmittingReviewStateTextHandler(
         IntentService intentService,
         MessengerSendClient msc,
-        BlockSubmittingReviewAskConfirmation blockSubmittingReviewAskConfirmation,
-        BlockError blockError
+        BlockService blockService
     ) {
         this.intentService = intentService;
         this.msc = msc;
-        this.blockSubmittingReviewAskConfirmation = blockSubmittingReviewAskConfirmation;
-        this.blockError = blockError;
+        this.blockService = blockService;
     }
 
     public void handle(
@@ -42,40 +35,94 @@ public class SubmittingReviewStateTextHandler {
         Session session
     ) throws NluException, MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateSubmittingReviewBag bag = session.stateSubmittingReviewBag;
-        final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
+        switch (session.bagSubmitting.state) {
 
-        if (submittingReviewState==SubmittingReviewState.WRITING_COMMENT) {
-            if (!text.equalsIgnoreCase("No review")) {
-                bag.setComment(text);
-            }
-            bag.setSubmittingReviewState(SubmittingReviewState.ASKING_FOR_CONFIRMATION);
-            blockSubmittingReviewAskConfirmation.send(session);
-        } else if (submittingReviewState==SubmittingReviewState.ASKING_FOR_CONFIRMATION) {
-            if (text.equalsIgnoreCase("Yes")) {
-                msc.sendTextMessage(
-                    session.user.messengerId,
-                    "Thanks! Your review has been submitted"
-                );
-                msc.sendTextMessage(
-                    session.user.messengerId,
-                    "[END OF SUBMIT REVIEW DEMO: No review has been submitted.]"
-                );
+            case RATING:
+                handleRating(text, session);
+                break;
 
-                session.state = SessionState.ITEM;
-                intentService.handleSeeItem(session);
-            } else if (text.equalsIgnoreCase("No")) {
-                msc.sendTextMessage(
-                    session.user.messengerId,
-                    "No problem. Your review has been canceled"
-                );
-                session.state = SessionState.ITEM;
-                intentService.handleSeeItem(session);
-            } else {
-                blockError.send(session.user.messengerId);
-            }
-        } else {
-            blockError.send(session.user.messengerId);
+            case WRITING_COMMENT:
+                handleWritingComment(text, session);
+                break;
+
+            case ASKING_FOR_CONFIRMATION:
+                handleAskingForConfirmation(text, session);
+                break;
+
+            default:
+                blockService.getError().send(session.user.messengerId);
         }
+    }
+
+    public void handleRating(
+        String text,
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+
+        if (
+            text.equalsIgnoreCase("1") ||
+            text.equalsIgnoreCase("2") ||
+            text.equalsIgnoreCase("3") ||
+            text.equalsIgnoreCase("4") ||
+            text.equalsIgnoreCase("5")
+        ) {
+            session.bagSubmitting.rate = Integer.valueOf(text);
+            session.bagSubmitting.state = SubmittingReviewState.WRITING_COMMENT;
+
+            blockService.getSubmittingReviewComment().send(session.user.messengerId);
+        } else {
+            //TODO: mensaje diciendo que no es una respuesta válida
+            blockService.getSubmittingReviewRate().send(session.user.messengerId);
+        }
+    }
+
+    public void handleWritingComment(
+        String text,
+        Session session
+    ) {
+        if (!text.equalsIgnoreCase("No review")) {
+            bag.comment = text;
+        }
+
+        bag.state = SubmittingReviewState.ASKING_FOR_CONFIRMATION;
+
+        blockSubmittingReviewAskConfirmation.send(session);
+    }
+
+    public void handleAskingForConfirmation(
+        String text,
+        Session session
+    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+
+        if (text.equalsIgnoreCase("Yes")) {
+
+            msc.sendTextMessage(
+                session.user.messengerId,
+                "Thanks! Your review has been submitted"
+            );
+            msc.sendTextMessage(
+                session.user.messengerId,
+                "[END OF SUBMIT REVIEW DEMO: No review has been submitted.]"
+            );
+
+            session.state = SessionState.ITEM;
+            intentService.getIntentSeeItem().handle(session);
+
+            return true;
+
+        } else if (text.equalsIgnoreCase("No")) {
+
+            msc.sendTextMessage(
+                session.user.messengerId,
+                "No problem. Your review has been canceled"
+            );
+
+            session.state = SessionState.ITEM;
+            intentService.getIntentSeeItem().handle(session);
+
+            return true;
+        }
+
+        return false;
     }
 }

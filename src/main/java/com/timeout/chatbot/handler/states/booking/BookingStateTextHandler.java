@@ -35,12 +35,12 @@ public class BookingStateTextHandler {
         this.blockBookingAskEmail = blockBookingAskEmail;
     }
 
-    public void handle(
+    public boolean handle(
         String text,
         Session session
     ) throws NluException, MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateBookingBag bookingBag = session.stateBookingBag;
+        final SessionStateBookingBag bookingBag = session.bagBooking;
         final BookingState bookingState = bookingBag.getBookingState();
 
         switch (bookingState) {
@@ -50,15 +50,15 @@ public class BookingStateTextHandler {
                 break;
 
             case DATE:
-                //TODO
+                handleDate(text, session);
                 break;
 
             case TIME:
-                //TODO
+                handleTime(text, session);
                 break;
 
             case CONFIRMATION_BOOKING_DETAILS:
-                //TODO
+                handleConfirmationBookingDetails(text, session);
                 break;
 
             case FIRST_NAME:
@@ -76,11 +76,9 @@ public class BookingStateTextHandler {
             case PHONE:
                 handlePhone(text, session);
                 break;
-
-
-            default:
-                //TODO
         }
+
+        return false;
     }
 
     private void handePeopleCount(
@@ -102,6 +100,27 @@ public class BookingStateTextHandler {
             );
             blockBookingPeopleCount.send(userMessengerId);
         }
+    }
+
+    private void handleDate(
+        String text,
+        Session session
+    ) {
+        //TODO
+    }
+
+    private void handleTime(
+        String text,
+        Session session
+    ) {
+        //TODO
+    }
+
+    private void handleConfirmationBookingDetails(
+        String text,
+        Session session
+    ) {
+        //TODO
     }
 
     private void handleFirstName(

@@ -2,13 +2,9 @@ package com.timeout.chatbot.handler.intent;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
-import com.google.gson.JsonElement;
 import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
-import java.util.HashMap;
 
 @Component
 public class IntentService {
@@ -64,6 +60,10 @@ public class IntentService {
 
     public IntentFindVenuesHandler getIntentFindVenuesHandler() { return intentFindVenuesHandler; }
 
+    public IntentDiscoverHandler getIntentDiscoverHandler() { return discoverHandler; }
+
+    public IntentSeeItem getIntentSeeItem() {return seeItem; }
+
     public void handleHelp(Session session) {
         helpHandler.handle(session);
     }
@@ -76,34 +76,24 @@ public class IntentService {
         suggestionsHandler.handle(session);
     }
 
-    public void handleDiscover(Session session) throws MessengerApiException, MessengerIOException {
-        discoverHandler.handle(session);
-    }
-
     public void handleWhatsnew(Session session) {
         whatsnewHandler.handle(session);
     }
 
     public void handleFindThingsToDo(Session session) throws MessengerApiException, MessengerIOException { findThingsToDoHandler.handle(session); }
 
-    public void handleFindRestaurants(
-        Session session,
-        HashMap<String, JsonElement> nluParameters
-    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-        intentFindVenuesHandler.handle(session, nluParameters);
-    }
-
-    public void handleFindRestaurants(
-        Session session
-    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-        intentFindVenuesHandler.handle(session);
-    }
-
-    public void handleSeeItem(
-        Session session
-    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-        seeItem.handle(session);
-    }
+//    public void handleFindRestaurants(
+//        Session session,
+//        HashMap<String, JsonElement> nluParameters
+//    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+//        intentFindVenuesHandler.handle(session, nluParameters);
+//    }
+//
+//    public void handleFindRestaurants(
+//        Session session
+//    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+//        intentFindVenuesHandler.handle(session);
+//    }
 
     public void handleGetasummary(
         Session session

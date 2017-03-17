@@ -81,7 +81,7 @@ public class AttachmentMessageEventAsyncHandler {
                 locationPayload.getCoordinates().getLongitude()
             );
 
-        final SessionStateSearchingBag bag = session.stateSearchingBag;
+        final SessionStateSearchingBag bag = session.bagSearching;
 
         bag.geolocation = geolocation;
 

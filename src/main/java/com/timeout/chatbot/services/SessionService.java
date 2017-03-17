@@ -86,10 +86,10 @@ public class SessionService {
         session.page = page;
         session.user = user;
 
-//        final SessionStateSearchingBag stateSearchingBag = new SessionStateSearchingBag();
-//        stateSearchingBag.category = Category.RESTAURANTS;
-//        stateSearchingBag.subcategory = null;
-//        session.stateSearchingBag = stateSearchingBag;
+//        final SessionStateSearchingBag bagSearching = new SessionStateSearchingBag();
+//        bagSearching.category = Category.RESTAURANTS;
+//        bagSearching.subcategory = null;
+//        session.bagSearching = bagSearching;
 
         final String url =
             "https://graph.facebook.com/v2.6/" + user.messengerId +
@@ -106,10 +106,10 @@ public class SessionService {
         Session session
     ) {
         session.state = SessionState.UNDEFINED;
-        session.stateSearchingBag = null;
-        session.stateItemBag = null;
-        session.stateBookingBag = null;
-        session.stateSubmittingReviewBag = null;
+        session.bagSearching = null;
+        session.bagItem = null;
+        session.bagBooking = null;
+        session.bagSubmitting = null;
     }
 
     public void persistSession(

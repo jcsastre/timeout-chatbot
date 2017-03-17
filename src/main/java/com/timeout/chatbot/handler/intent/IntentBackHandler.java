@@ -59,7 +59,7 @@ public class IntentBackHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateSearchingBag bag = session.stateSearchingBag;
+        final SessionStateSearchingBag bag = session.bagSearching;
 
         if (
             bag.graffittiCategory == GraffittiCategory.RESTAURANTS ||

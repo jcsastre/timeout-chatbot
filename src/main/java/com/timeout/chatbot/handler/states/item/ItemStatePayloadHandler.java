@@ -101,7 +101,7 @@ public class ItemStatePayloadHandler {
 
     public void handlePhotos(Session session) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateItemBag itemBag = session.stateItemBag;
+        final SessionStateItemBag itemBag = session.bagItem;
 
         final GraffittiType graffittiType = itemBag.graffittiType;
         if (graffittiType == GraffittiType.VENUE) {
@@ -120,18 +120,18 @@ public class ItemStatePayloadHandler {
     }
 
     public void handleBook(Session session) throws MessengerApiException, MessengerIOException {
-        final SessionStateItemBag itemBag = session.stateItemBag;
+        final SessionStateItemBag itemBag = session.bagItem;
 
         final GraffittiType graffittiType = itemBag.graffittiType;
         if (
             graffittiType == GraffittiType.VENUE &&
-            session.stateSearchingBag.graffittiCategory == GraffittiCategory.RESTAURANTS
+            session.bagSearching.graffittiCategory == GraffittiCategory.RESTAURANTS
         ) {
 
             blockBookingBeginDeveloperNote.send(session.user.messengerId);
 
             session.state = SessionState.BOOKING;
-            final SessionStateBookingBag bookingBag = session.stateBookingBag;
+            final SessionStateBookingBag bookingBag = session.bagBooking;
             bookingBag.setBookingState(BookingState.PEOPLE_COUNT);
             blockBookingPeopleCount.send(session.user.messengerId);
 
@@ -152,7 +152,7 @@ public class ItemStatePayloadHandler {
         final SessionState sessionState = session.state;
         if (sessionState == SessionState.ITEM) {
             session.state = SessionState.SUBMITTING_REVIEW;
-            final SessionStateSubmittingReviewBag bag = session.stateSubmittingReviewBag;
+            final SessionStateSubmittingReviewBag bag = session.bagSubmitting;
             bag.setSubmittingReviewState(SubmittingReviewState.RATING);
             bag.setRate(null);
             bag.setComment(null);
