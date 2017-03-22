@@ -49,7 +49,7 @@ public class IntentStartOverHandler {
 
         sessionService.resetSession(session);
 
-        blockService.getWelcomeBackBlock().send(
+        blockService.getWelcomeBack().send(
             session
         );
 

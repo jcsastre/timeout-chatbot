@@ -47,6 +47,20 @@ public class AttachmentMessageEventAsyncHandler {
     public void handle(
         AttachmentMessageEvent event
     ) {
+        final Session session =
+            sessionService.getSession(
+                event.getRecipient().getId(),
+                event.getSender().getId()
+            );
+
+        handleInternal(event);
+
+        sessionService.persistSession(session);
+    }
+
+    private void handleInternal(
+        AttachmentMessageEvent event
+    ) {
         Session session =
             sessionService.getSession(
                 event.getRecipient().getId(),
@@ -75,11 +89,9 @@ public class AttachmentMessageEventAsyncHandler {
         final AttachmentMessageEvent.LocationPayload locationPayload =
             attachment.getPayload().asLocationPayload();
 
-        final Geolocation geolocation =
-            new Geolocation(
-                locationPayload.getCoordinates().getLatitude(),
-                locationPayload.getCoordinates().getLongitude()
-            );
+        final Geolocation geolocation = new Geolocation();
+        geolocation.latitude = locationPayload.getCoordinates().getLatitude();
+        geolocation.longitude = locationPayload.getCoordinates().getLongitude();
 
         final SessionStateSearchingBag bag = session.bagSearching;
 

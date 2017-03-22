@@ -7,22 +7,18 @@ import org.springframework.stereotype.Component;
 @Component
 public class PostbackEventHandlerImpl implements PostbackEventHandler {
 
-    private final PayloadAsyncHandler payloadAsyncHandler;
+    private final PostbackEventHandlerAsyncImpl postbackEventHandlerAsync;
 
     public PostbackEventHandlerImpl(
-        PayloadAsyncHandler payloadAsyncHandler
+        PostbackEventHandlerAsyncImpl postbackEventHandlerAsync
     ) {
-        this.payloadAsyncHandler = payloadAsyncHandler;
+        this.postbackEventHandlerAsync = postbackEventHandlerAsync;
     }
 
     @Override
     public void handle(
         PostbackEvent event
     ) {
-        payloadAsyncHandler.handleAsync(
-            event.getPayload(),
-            event.getRecipient().getId(),
-            event.getSender().getId()
-        );
+        postbackEventHandlerAsync.handle(event);
     }
 }

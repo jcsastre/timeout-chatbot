@@ -13,7 +13,6 @@ import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewState
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.SessionService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.state.SessionState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
@@ -76,16 +75,18 @@ public class TextMessageEventHandlerAsyncImpl implements TextMessageEventHandler
         String text
     ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException, NluException {
 
-        boolean handled = false;
+        switch (session.state) {
 
-        if (session.state == SessionState.SUBMITTING_REVIEW) {
-            handled = submittingReviewStateTextHandler.handle(text, session);
-        } else if (session.state == SessionState.BOOKING) {
-            handled = bookingStateTextHandler.handle(text, session);
-        }
+            case SUBMITTING_REVIEW:
+                submittingReviewStateTextHandler.handle(text, session);
+                break;
 
-        if (!handled) {
-            defaultTextHandler.handle(text, session);
+            case BOOKING:
+                bookingStateTextHandler.handle(text, session);
+                break;
+
+            default:
+                defaultTextHandler.handle(text, session);
         }
     }
 }

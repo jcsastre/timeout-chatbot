@@ -19,10 +19,6 @@ public class AttachmentMessageEventHandlerImpl implements AttachmentMessageEvent
     public void handle(
         AttachmentMessageEvent event
     ) {
-        System.out.println("*** AttachmentMessageEventHandlerImpl.handle() BEGIN");
-
         attachmentMessageEventAsyncHandler.handle(event);
-
-        System.out.println("*** AttachmentMessageEventHandlerImpl.handle() END");
     }
 }

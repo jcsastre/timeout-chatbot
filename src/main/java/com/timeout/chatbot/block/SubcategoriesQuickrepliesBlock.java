@@ -58,14 +58,14 @@ public class SubcategoriesQuickrepliesBlock {
 
         if (pageNumber == 1) {
             builder.addTextQuickReply(
-                "All " + bag.graffittiCategory.getSubcategoriesNamePlural().toLowerCase(),
+                "All " + bag.graffittiCategory.subcategoriesNamePlural.toLowerCase(),
                 new JSONObject()
                     .put("type", PayloadType.subcategory_any)
                     .toString()
             ).toList();
         }
 
-        final List<GraffittiSubcategory> subcategories = bag.graffittiCategory.getSubcategories();
+        final List<GraffittiSubcategory> subcategories = bag.graffittiCategory.subcategories;
 
         final int count = subcategories.size();
 
@@ -88,7 +88,7 @@ public class SubcategoriesQuickrepliesBlock {
 
         if (pageNumber * PAGE_SIZE < count) {
             builder.addTextQuickReply(
-                "More " + bag.graffittiCategory.getSubcategoriesNamePlural().toLowerCase(),
+                "More " + bag.graffittiCategory.subcategoriesNamePlural.toLowerCase(),
                 new JSONObject()
                     .put("type", PayloadType.searching_ShowSubcategories)
                     .put("pageNumber", pageNumber+1)

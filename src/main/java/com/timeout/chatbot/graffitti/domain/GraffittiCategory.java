@@ -85,4 +85,14 @@ public enum GraffittiCategory implements Serializable {
 
         return null;
     }
+
+    public static GraffittiCategory findByGraffittiId(String graffittiId) {
+        for (GraffittiCategory graffittiCategory : GraffittiCategory.values()) {
+            if (graffittiCategory.graffittiId.equalsIgnoreCase(graffittiId)) {
+                return graffittiCategory;
+            }
+        }
+
+        return null;
+    }
 }

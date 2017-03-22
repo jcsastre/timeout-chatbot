@@ -7,20 +7,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class QuickReplyMessageEventHandlerImpl implements QuickReplyMessageEventHandler {
 
-    private final PayloadAsyncHandler payloadAsyncHandler;
+    private final QuickReplyMessageEventHandlerAsyncImpl quickReplyMessageEventHandlerAsyncImpl;
 
-    public QuickReplyMessageEventHandlerImpl(PayloadAsyncHandler payloadAsyncHandler) {
-        this.payloadAsyncHandler = payloadAsyncHandler;
+    public QuickReplyMessageEventHandlerImpl(QuickReplyMessageEventHandlerAsyncImpl quickReplyMessageEventHandlerAsyncImpl) {
+        this.quickReplyMessageEventHandlerAsyncImpl = quickReplyMessageEventHandlerAsyncImpl;
     }
 
     @Override
     public void handle(
         QuickReplyMessageEvent event
     ) {
-        payloadAsyncHandler.handleAsync(
-            event.getQuickReply().getPayload(),
-            event.getRecipient().getId(),
-            event.getSender().getId()
-        );
+        quickReplyMessageEventHandlerAsyncImpl.handle(event);
     }
 }

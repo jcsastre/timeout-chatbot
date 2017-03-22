@@ -7,16 +7,10 @@ import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
 import com.timeout.chatbot.graffitti.domain.GraffittiSubcategory;
-import com.timeout.chatbot.graffitti.domain.GraffittiType;
-import com.timeout.chatbot.graffitti.response.search.page.GraffittiSearchResponse;
-import com.timeout.chatbot.graffitti.uri.GraffittiQueryParameterType;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
 import com.timeout.chatbot.messenger4j.SenderActionsHelper;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
-import com.timeout.chatbot.session.state.SessionState;
-import io.mikael.urlbuilder.UrlBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,22 +44,6 @@ public class IntentFindVenuesHandler {
         this.searchUrlBuilder = searchUrlBuilder;
         this.senderActionsHelper = senderActionsHelper;
     }
-
-//    public void handle(
-//        Session session,
-//        HashMap<String, JsonElement> nluParameters
-//    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-//        switch (session.state) {
-//
-//            case SEARCHING:
-//                applyNluParameters(session, nluParameters);
-//                break;
-//
-//            default:
-//                blockService.sendErrorBlock(session.user);
-//                break;
-//        }
-//    }
 
     public void handle(
         Session session,
@@ -103,25 +81,25 @@ public class IntentFindVenuesHandler {
         Neighborhood neighborhood,
         Geolocation geolocation
     ) {
-        if (where != null) {
-            final SessionStateSearchingBag bag = session.bagSearching;
-
-            if (
-                    where.equalsIgnoreCase("nearby") ||
-                    where.equalsIgnoreCase("near me") ||
-                    where.equalsIgnoreCase("near of me")
-                ) {
-                if (bag.geolocation == null) {
-                    blockService.sendGeolocationAskBlock(session.user.messengerId);
-                } else {
-                    handle(session);
-                }
-            } else {
-                handle(session);
-                //TODO: map text to valid where
-                //bag.setGraffittiWhere(where);
-            }
-        }
+//        if (where != null) {
+//            final SessionStateSearchingBag bag = session.bagSearching;
+//
+//            if (
+//                    where.equalsIgnoreCase("nearby") ||
+//                    where.equalsIgnoreCase("near me") ||
+//                    where.equalsIgnoreCase("near of me")
+//                ) {
+//                if (bag.geolocation == null) {
+//                    blockService.sendGeolocationAskBlock(session.user.messengerId);
+//                } else {
+//                    handle(session);
+//                }
+//            } else {
+//                handle(session);
+//                //TODO: map text to valid where
+//                //bag.setGraffittiWhere(where);
+//            }
+//        }
     }
 
 //    private void applyNluParameters(
@@ -164,88 +142,88 @@ public class IntentFindVenuesHandler {
         Neighborhood neighborhood,
         Integer reaminingItems
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-
-        UrlBuilder urlBuilder =
-            searchUrlBuilder.build(
-                graffittiSubcategory != null ? graffittiSubcategory.graffittiId : graffittiCategory.graffittiId,
-                GraffittiType.VENUE.toValue(),
-                pageNumber
-            );
-
-        if (geolocation != null) {
-            urlBuilder =
-                urlBuilder
-                    .addParameter(
-                        GraffittiQueryParameterType.LATITUDE.getValue(),
-                        geolocation.getLatitude().toString()
-                    )
-                    .addParameter(
-                        GraffittiQueryParameterType.LONGITUDE.getValue(),
-                        geolocation.getLongitude().toString()
-                    )
-                    .addParameter(
-                        GraffittiQueryParameterType.RADIUS.getValue(),
-                        "1"
-                    )
-                    .addParameter(
-                        GraffittiQueryParameterType.SORT.getValue(),
-                        "distance"
-                    );
-        } else if (neighborhood != null) {
-            urlBuilder =
-                urlBuilder
-                    .addParameter(
-                        GraffittiQueryParameterType.WHERE.getValue(),
-                        neighborhood.graffitiId
-                    );
-        }
-
-        senderActionsHelper.typingOn(userMessengerId);
-        messengerSendClient.sendTextMessage(
-            userMessengerId,
-            buildMessage(
-                graffittiCategory,
-                graffittiSubcategory,
-                geolocation,
-                neighborhood
-            )
-        );
-
-        senderActionsHelper.typingOn(userMessengerId);
-
-        logger.debug(urlBuilder.toUrl().toString());
-
-        final GraffittiSearchResponse graffittiSearchResponse =
-            restTemplate.getForObject(
-                urlBuilder.toUri(),
-                GraffittiSearchResponse.class
-            );
-
-        if (graffittiSearchResponse.getMeta().getTotalItems() > 0) {
-
-            blockService.getVenuesPageBlock().send(
-                userMessengerId,
-                graffittiSearchResponse.getPageItems(),
-                graffittiCategory.namePlural
-            );
-
-            senderActionsHelper.typingOn(userMessengerId);
-            blockService.getVenuesRemainingBlock().send(
-                userMessengerId,
-                graffittiCategory,
-                graffittiSubcategory,
-                reaminingItems,
-                neighborhood,
-                geolocation
-            );
-        } else {
-            messengerSendClient.sendTextMessage(
-                userMessengerId,
-                "There are not available " + graffittiCategory.namePlural + " for your request."
-            );
-        }
-
-        session.state = SessionState.SEARCHING;
+//
+//        UrlBuilder urlBuilder =
+//            searchUrlBuilder.build(
+//                graffittiSubcategory != null ? graffittiSubcategory.graffittiId : graffittiCategory.graffittiId,
+//                GraffittiType.VENUE.toValue(),
+//                pageNumber
+//            );
+//
+//        if (geolocation != null) {
+//            urlBuilder =
+//                urlBuilder
+//                    .addParameter(
+//                        GraffittiQueryParameterType.LATITUDE.getValue(),
+//                        geolocation.latitude.toString()
+//                    )
+//                    .addParameter(
+//                        GraffittiQueryParameterType.LONGITUDE.getValue(),
+//                        geolocation.longitude.toString()
+//                    )
+//                    .addParameter(
+//                        GraffittiQueryParameterType.RADIUS.getValue(),
+//                        "1"
+//                    )
+//                    .addParameter(
+//                        GraffittiQueryParameterType.SORT.getValue(),
+//                        "distance"
+//                    );
+//        } else if (neighborhood != null) {
+//            urlBuilder =
+//                urlBuilder
+//                    .addParameter(
+//                        GraffittiQueryParameterType.WHERE.getValue(),
+//                        neighborhood.graffitiId
+//                    );
+//        }
+//
+//        senderActionsHelper.typingOn(userMessengerId);
+//        messengerSendClient.sendTextMessage(
+//            userMessengerId,
+//            buildMessage(
+//                graffittiCategory,
+//                graffittiSubcategory,
+//                geolocation,
+//                neighborhood
+//            )
+//        );
+//
+//        senderActionsHelper.typingOn(userMessengerId);
+//
+//        logger.debug(urlBuilder.toUrl().toString());
+//
+//        final GraffittiSearchResponse graffittiSearchResponse =
+//            restTemplate.getForObject(
+//                urlBuilder.toUri(),
+//                GraffittiSearchResponse.class
+//            );
+//
+//        if (graffittiSearchResponse.getMeta().getTotalItems() > 0) {
+//
+//            blockService.getVenuesPageBlock().send(
+//                userMessengerId,
+//                graffittiSearchResponse.getPageItems(),
+//                graffittiCategory.namePlural
+//            );
+//
+//            senderActionsHelper.typingOn(userMessengerId);
+//            blockService.getVenuesRemainingBlock().send(
+//                userMessengerId,
+//                graffittiCategory,
+//                graffittiSubcategory,
+//                reaminingItems,
+//                neighborhood,
+//                geolocation
+//            );
+//        } else {
+//            messengerSendClient.sendTextMessage(
+//                userMessengerId,
+//                "There are not available " + graffittiCategory.namePlural + " for your request."
+//            );
+//        }
+//
+//        session.state = SessionState.SEARCHING;
     }
 
     public void fetchAndSend(
@@ -269,20 +247,22 @@ public class IntentFindVenuesHandler {
         final Geolocation geolocation,
         final Neighborhood neighborhood
     ) {
-        String msg = "Looking for";
+//        String msg = "Looking for";
+//
+//        if (graffittiSubcategory != null) {
+//            msg = msg + " " + graffittiSubcategory.name.toLowerCase();
+//        }
+//
+//        msg = msg + " " + graffittiCategory.namePlural.toLowerCase();
+//
+//        if (geolocation != null) {
+//            msg = msg + " near the location you specified";
+//        } else if (neighborhood != null) {
+//            msg = msg + " at " + neighborhood.name;
+//        }
+//
+//        return msg;
 
-        if (graffittiSubcategory != null) {
-            msg = msg + " " + graffittiSubcategory.name.toLowerCase();
-        }
-
-        msg = msg + " " + graffittiCategory.namePlural.toLowerCase();
-
-        if (geolocation != null) {
-            msg = msg + " near the location you specified";
-        } else if (neighborhood != null) {
-            msg = msg + " at " + neighborhood.name;
-        }
-
-        return msg;
+        return  null;
     }
 }

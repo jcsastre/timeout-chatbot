@@ -7,7 +7,6 @@ import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.state.SessionState;
 import com.timeout.chatbot.session.state.SubmittingReviewState;
 import org.springframework.stereotype.Component;
 
@@ -79,14 +78,12 @@ public class SubmittingReviewStateTextHandler {
     public void handleWritingComment(
         String text,
         Session session
-    ) {
-        if (!text.equalsIgnoreCase("No review")) {
-            bag.comment = text;
-        }
+    ) throws MessengerApiException, MessengerIOException {
 
-        bag.state = SubmittingReviewState.ASKING_FOR_CONFIRMATION;
+        session.bagSubmitting.comment = text;
+        session.bagSubmitting.state = SubmittingReviewState.ASKING_FOR_CONFIRMATION;
 
-        blockSubmittingReviewAskConfirmation.send(session);
+        blockService.getSubmittingReviewAskConfirmation().send(session);
     }
 
     public void handleAskingForConfirmation(
@@ -94,35 +91,37 @@ public class SubmittingReviewStateTextHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        if (text.equalsIgnoreCase("Yes")) {
+        blockService.getSubmittingReviewAskConfirmation().send(session);
 
-            msc.sendTextMessage(
-                session.user.messengerId,
-                "Thanks! Your review has been submitted"
-            );
-            msc.sendTextMessage(
-                session.user.messengerId,
-                "[END OF SUBMIT REVIEW DEMO: No review has been submitted.]"
-            );
-
-            session.state = SessionState.ITEM;
-            intentService.getIntentSeeItem().handle(session);
-
-            return true;
-
-        } else if (text.equalsIgnoreCase("No")) {
-
-            msc.sendTextMessage(
-                session.user.messengerId,
-                "No problem. Your review has been canceled"
-            );
-
-            session.state = SessionState.ITEM;
-            intentService.getIntentSeeItem().handle(session);
-
-            return true;
-        }
-
-        return false;
+//        if (text.equalsIgnoreCase("Yes")) {
+//
+//            msc.sendTextMessage(
+//                session.user.messengerId,
+//                "Thanks! Your review has been submitted"
+//            );
+//            msc.sendTextMessage(
+//                session.user.messengerId,
+//                "[END OF SUBMIT REVIEW DEMO: No review has been submitted.]"
+//            );
+//
+//            session.state = SessionState.ITEM;
+//            intentService.getIntentSeeItem().handle(session);
+//
+//            return true;
+//
+//        } else if (text.equalsIgnoreCase("No")) {
+//
+//            msc.sendTextMessage(
+//                session.user.messengerId,
+//                "No problem. Your review has been canceled"
+//            );
+//
+//            session.state = SessionState.ITEM;
+//            intentService.getIntentSeeItem().handle(session);
+//
+//            return true;
+//        }
+//
+//        return false;
     }
 }

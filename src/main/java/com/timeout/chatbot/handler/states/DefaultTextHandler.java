@@ -3,24 +3,20 @@ package com.timeout.chatbot.handler.states;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.google.gson.JsonElement;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.nlu.NluResult;
 import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
-import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.handler.states.booking.BookingStateTextHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStateTextHandler;
 import com.timeout.chatbot.services.NluService;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import com.timeout.chatbot.session.state.SessionState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.HashMap;
 
 @Component
 public class DefaultTextHandler {
@@ -210,21 +206,15 @@ public class DefaultTextHandler {
         NluResult nluResult
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        session.state = SessionState.SEARCHING;
+        //TODO: process nluResult to get parameter subcategory, neighborhood, etc
 
-        session.bagSearching = new SessionStateSearchingBag();
-        session.bagSearching.graffittiCategory = GraffittiCategory.RESTAURANTS;
-        session.bagSearching.graffittiType = GraffittiType.VENUE;
-        session.bagSearching.pageNumber = 1;
-
-        final HashMap<String, JsonElement> nluParameters = nluResult.getParameters();
-
-        String where = null;
-        if (nluResult.getParameters().containsKey("whereUkLondon")) {
-            where = nluParameters.get("whereUkLondon").getAsString();
-        }
-
-        intentService.getIntentFindVenuesHandler().handle(session, where);
+        intentService.getIntentFindVenuesHandler().handle(
+            session,
+            GraffittiCategory.RESTAURANTS,
+            null,
+            null,
+            null
+        );
     }
 
 
@@ -233,12 +223,14 @@ public class DefaultTextHandler {
         NluResult nluResult
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        session.state = SessionState.SEARCHING;
+        //TODO: process nluResult to get parameter subcategory, neighborhood, etc
 
-        session.bagSearching = new SessionStateSearchingBag();
-        session.bagSearching.graffittiCategory = GraffittiCategory.HOTELS;
-        session.bagSearching.pageNumber = 1;
-
-        intentService.handleFindRestaurants(session, nluResult.getParameters());
+        intentService.getIntentFindVenuesHandler().handle(
+            session,
+            GraffittiCategory.HOTELS,
+            null,
+            null,
+            null
+        );
     }
 }

@@ -52,11 +52,11 @@ public class BlockSubmittingReviewAskConfirmation {
 
     private String buildMessage(SessionStateSubmittingReviewBag bag) {
         String msg =
-            "Your rating is: " + bag.getRate() + "\n" +
+            "Your rating is: " + bag.rate + "\n" +
             "\n";
-        if (bag.getComment() != null) {
+        if (bag.comment != null) {
             msg = msg +
-                "Your comment is: " + bag.getComment() + "\n" +
+                "Your comment is: " + bag.comment + "\n" +
                 "\n";
         }
         msg = msg + "Is that correct?";

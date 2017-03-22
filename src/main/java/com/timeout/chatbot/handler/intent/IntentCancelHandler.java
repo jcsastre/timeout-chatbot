@@ -35,7 +35,7 @@ public class IntentCancelHandler {
                 break;
 
             default:
-                blockService.sendErrorBlock(session.user);
+                blockService.getError().send(session.user.messengerId);
                 break;
         }
     }

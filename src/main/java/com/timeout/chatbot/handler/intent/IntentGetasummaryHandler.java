@@ -52,7 +52,7 @@ public class IntentGetasummaryHandler {
             case BOOKING:
             case UNDEFINED:
             default:
-                blockService.sendErrorBlock(session.user);
+                blockService.getError().send(session.user.messengerId);
                 break;
         }
     }

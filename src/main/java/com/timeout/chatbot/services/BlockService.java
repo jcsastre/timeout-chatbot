@@ -31,7 +31,7 @@ public class BlockService {
     private final MainOptionsBlock mainOptionsBlock;
     private final VenuesPageBlock venuesPageBlock;
     private final VenuesRemainingBlock venuesRemainingBlock;
-    private final SubcategoriesQuickrepliesBlock subcategoriesQuickrepliesBlock;
+    private final SubcategoriesQuickrepliesBlock subcategoriesQuickreplies;
     private final VenueSummaryBlock venueSummaryBlock;
     private final GeolocationAskBlock geolocationAskBlock;
     private final FilmsPageBlock filmsPageBlock;
@@ -40,6 +40,7 @@ public class BlockService {
     private final BlockSubmittingReviewRate submittingReviewRate;
     private final BlockSubmittingReviewComment submittingReviewComment;
     private final BlockSubmittingReviewAskConfirmation submittingReviewAskConfirmation;
+    private final BlockAreas areas;
     private final BlockError error;
 
 
@@ -54,7 +55,7 @@ public class BlockService {
         MainOptionsBlock mainOptionsBlock,
         VenuesPageBlock venuesPageBlock,
         VenuesRemainingBlock venuesRemainingBlock,
-        SubcategoriesQuickrepliesBlock subcategoriesQuickrepliesBlock,
+        SubcategoriesQuickrepliesBlock subcategoriesQuickreplies,
         VenueSummaryBlock venueSummaryBlock,
         GeolocationAskBlock geolocationAskBlock,
         FilmsPageBlock filmsPageBlock,
@@ -63,7 +64,7 @@ public class BlockService {
         BlockSubmittingReviewRate submittingReviewRate,
         BlockSubmittingReviewComment submittingReviewComment,
         BlockSubmittingReviewAskConfirmation submittingReviewAskConfirmation,
-        BlockError error
+        BlockAreas areas, BlockError error
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
         this.discoverBlock = discoverBlock;
@@ -75,7 +76,7 @@ public class BlockService {
         this.mainOptionsBlock = mainOptionsBlock;
         this.venuesPageBlock = venuesPageBlock;
         this.venuesRemainingBlock = venuesRemainingBlock;
-        this.subcategoriesQuickrepliesBlock = subcategoriesQuickrepliesBlock;
+        this.subcategoriesQuickreplies = subcategoriesQuickreplies;
         this.venueSummaryBlock = venueSummaryBlock;
         this.geolocationAskBlock = geolocationAskBlock;
         this.filmsPageBlock = filmsPageBlock;
@@ -84,6 +85,7 @@ public class BlockService {
         this.submittingReviewRate = submittingReviewRate;
         this.submittingReviewComment = submittingReviewComment;
         this.submittingReviewAskConfirmation = submittingReviewAskConfirmation;
+        this.areas = areas;
         this.error = error;
     }
 
@@ -91,7 +93,7 @@ public class BlockService {
 
     public DiscoverBlock getDiscoverBlock() { return discoverBlock; }
 
-    public WelcomeBackBlock getWelcomeBackBlock() { return welcomeBackBlock; }
+    public WelcomeBackBlock getWelcomeBack() { return welcomeBackBlock; }
 
     public BlockSubmittingReviewRate getSubmittingReviewRate() {
         return submittingReviewRate;
@@ -160,13 +162,7 @@ public class BlockService {
         venueSummaryBlock.send(userId, restaurantId);
     }
 
-    public void sendSubcategoriesQuickrepliesBlock(
-        Session session,
-        Integer pageNumber
-    ) throws MessengerApiException, MessengerIOException {
-
-        subcategoriesQuickrepliesBlock.send(session, pageNumber);
-    }
+    public SubcategoriesQuickrepliesBlock getSubcategoriesQuickreplies() { return subcategoriesQuickreplies; }
 
     public void sendGeolocationAskBlock(
         String userId
@@ -195,5 +191,6 @@ public class BlockService {
         );
     }
 
+    public BlockAreas getAreas() { return areas; }
     public BlockError getError() { return error; }
 }

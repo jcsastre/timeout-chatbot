@@ -2,24 +2,16 @@ package com.timeout.chatbot.domain.payload;
 
 public enum PayloadType {
 
-    _StartOver,
-    _GetStarted,
-    _Utterance,
-    _SearchSuggestions,
-    _Discover,
-    _WhatsNew,
-    _MostLoved,
     _Cancel,
-    _GetASummary,
     _TemporalyDisabled,
 
-    searching_ItemMoreOptions,
-    searching_VenuesShowAreas,
-    searching_ShowSubcategories,
-    searching_VenuesSetNeighborhood,
-    searching_SetSubcategory,
-    searching_WhereEverywhere,
-    searching_SeeMore,
+//    searching_ItemMoreOptions,
+//    searching_VenuesShowAreas,
+//    searching_ShowSubcategories,
+//    searching_VenuesSetNeighborhood,
+//    searching_SetSubcategory,
+//    searching_WhereEverywhere,
+//    searching_SeeMore,
 
     item_Back,
     item_Book,

@@ -78,40 +78,33 @@ public class DefaultPayloadHandler {
         Session session
     ) throws NluException, MessengerIOException, MessengerApiException, IOException, InterruptedException {
 
+        final SessionState sessionState = session.state;
 
+        try {
+            switch (sessionState) {
 
-        if (payloadType == PayloadType._Discover) {
-            intentService.handleDiscover(session);
-        } else {
+                case ITEM:
+                    itemStatePayloadHandler.handle(session, payloadAsJson);
+                    break;
 
-            final SessionState sessionState = session.state;
+                case SUBMITTING_REVIEW:
+                    submittingReviewStatePayloadHandler.handle(session, payloadAsJson);
+                    break;
 
-            try {
-                switch (sessionState) {
+                case BOOKING:
+                    bookingStatePayloadHandler.handle(session, payloadAsJson);
+                    break;
 
-                    case ITEM:
-                        itemStatePayloadHandler.handle(session, payloadAsJson);
-                        break;
+                case SEARCHING:
+                    searchingStatePayloadHandler.handle(session, payloadAsJson);
+                    break;
 
-                    case SUBMITTING_REVIEW:
-                        submittingReviewStatePayloadHandler.handle(session, payloadAsJson);
-                        break;
-
-                    case BOOKING:
-                        bookingStatePayloadHandler.handle(session, payloadAsJson);
-                        break;
-
-                    case SEARCHING:
-                        searchingStatePayloadHandler.handle(session, payloadAsJson);
-                        break;
-
-                    default:
-                        handleInternal(session, payloadAsJson);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                blockService.sendErrorBlock(session.user);
+                default:
+                    handleInternal(session, payloadAsJson);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+//            blockService.sendErrorBlock(session.user);
         }
     }
 
@@ -124,14 +117,14 @@ public class DefaultPayloadHandler {
 
         switch (payloadType) {
 
-            case _GetStarted:
-                intentService.handleGetStarted(session);
-                break;
-
-            case _Utterance:
-                final String utterance = payload.getString("utterance");
-                defaultTextHandler.handle(utterance, session);
-                break;
+//            case _GetStarted:
+//                intentService.handleGetStarted(session);
+//                break;
+//
+//            case _Utterance:
+//                final String utterance = payload.getString("utterance");
+//                defaultTextHandler.handle(utterance, session);
+//                break;
 
 //            case help:
 //                intentService.handleHelp(session);
@@ -143,10 +136,10 @@ public class DefaultPayloadHandler {
 ////                blockService.sendSuggestionsBlock(session);
 //                break;
 
-            case _MostLoved:
-                session.state = SessionState.MOST_LOVED;
-                blockService.sendMostLovedBlock(session);
-                break;
+//            case _MostLoved:
+//                session.state = SessionState.MOST_LOVED;
+//                blockService.sendMostLovedBlock(session);
+//                break;
 
 //            case _WhatsNew:
 //                session.setSessionState(SessionState.WHATS_NEW);
@@ -155,10 +148,6 @@ public class DefaultPayloadHandler {
 
             case set_geolocation:
                 blockService.sendGeolocationAskBlock(session.user.messengerId);
-                break;
-
-            case _GetASummary:
-                intentService.handleGetasummary(session);
                 break;
 
             case venues_more_info:
@@ -171,7 +160,7 @@ public class DefaultPayloadHandler {
             case no_see_at_timeout:
                 msc.sendTextMessage(
                     session.user.messengerId,
-                    "Ok, item_Back to the list of restaurants"
+                    "Ok, back to the list of restaurants"
                 );
                 intentService.handleFindRestaurants(session);
                 break;
@@ -183,13 +172,13 @@ public class DefaultPayloadHandler {
                 );
                 break;
 
-            case _TemporalyDisabled:
-                msc.sendTextMessage(
-                    session.user.messengerId,
-                    "Sorry, my creator has temporarily disabled the 'Search suggestions' :(",
-                    quickReplyBuilderForCurrentSessionState.build(session)
-                );
-                break;
+//            case _TemporalyDisabled:
+//                msc.sendTextMessage(
+//                    session.user.messengerId,
+//                    "Sorry, my creator has temporarily disabled the 'Search suggestions' :(",
+//                    quickReplyBuilderForCurrentSessionState.build(session)
+//                );
+//                break;
 
             default:
                 msc.sendTextMessage(

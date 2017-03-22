@@ -4,6 +4,7 @@ import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.domain.payload.QuickreplyPayload;
 import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
 import com.timeout.chatbot.graffitti.domain.GraffittiSubcategory;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
@@ -37,7 +38,7 @@ public class VenuesRemainingBlock {
             userMessengerId,
             String.format(
                 "There are %s %s more",
-                reaminingItems, graffittiCategory.getNamePlural()
+                reaminingItems, graffittiCategory.namePlural
             ),
             buildQuickReplies(
                 graffittiCategory,
@@ -63,7 +64,7 @@ public class VenuesRemainingBlock {
             listBuilder.addTextQuickReply(
                 "See more",
                 new JSONObject()
-                    .put("type", PayloadType.searching_SeeMore)
+                    .put("type", QuickreplyPayload.searching_see_more)
                     .toString()
             ).toList();
         }
@@ -80,14 +81,20 @@ public class VenuesRemainingBlock {
         listBuilder.addTextQuickReply(
             areaSet ? "Change area" : "Set area",
             new JSONObject()
-                .put("type", PayloadType.searching_VenuesShowAreas)
+                .put("type", QuickreplyPayload.searching_show_areas)
                 .put("pageNumber", 1)
+//                // We add extra info to allow to execute action even when session has expired
+//                .put("graffitti_category_id", graffittiCategory.graffittiId)
+//                .put("graffitti_subcategory_id", graffittiSubcategory.graffittiId)
+//                .put("graffitti_neighborhood_id", neighborhood!=null ? neighborhood.graffitiId : null)
+//                .put("geolocation_lat", geolocation!=null ? geolocation.latitude : null)
+//                .put("geolocation_lon", geolocation!=null ? geolocation.longitude : null)
                 .toString()
         ).toList();
 
-        final List<GraffittiSubcategory> graffittiSubcategories = graffittiCategory.getSubcategories();
+        final List<GraffittiSubcategory> graffittiSubcategories = graffittiCategory.subcategories;
         if (graffittiSubcategories!= null && graffittiSubcategories.size()>0) {
-            final String subcategoryName = graffittiCategory.getSubcategoriesName().toLowerCase();
+            final String subcategoryName = graffittiCategory.subcategoriesName.toLowerCase();
             listBuilder.addTextQuickReply(
                 graffittiSubcategory == null ?
                     "Set " + subcategoryName : "Change " + subcategoryName,
