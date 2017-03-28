@@ -3,7 +3,7 @@ package com.timeout.chatbot.handler.states.booking;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.timeout.chatbot.block.state.booking.*;
-import com.timeout.chatbot.handler.intent.IntentSeeItem;
+import com.timeout.chatbot.action.SeeItemAction;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateBookingBag;
 import com.timeout.chatbot.session.state.BookingState;
@@ -25,7 +25,7 @@ public class BookingStateHandler {
     private final BlockBookingSubmitted blockBookingSubmitted;
     private final BlockBookingEndDeveloperNote blockBookingEndDeveloperNote;
     private final BlockBookingCancelled blockBookingCancelled;
-    private final IntentSeeItem intentSeeItem;
+    private final SeeItemAction seeItemAction;
 
     @Autowired
     public BookingStateHandler(
@@ -35,7 +35,7 @@ public class BookingStateHandler {
         BlockBookingAskEmail blockBookingAskEmail,
         BlockBookingAskPhone blockBookingAskPhone,
         BlockConfirmationPersonalDetails blockConfirmationPersonalDetails,
-        BlockBookingSubmitted blockBookingSubmitted, BlockBookingEndDeveloperNote blockBookingEndDeveloperNote, BlockBookingCancelled blockBookingCancelled, IntentSeeItem intentSeeItem) {
+        BlockBookingSubmitted blockBookingSubmitted, BlockBookingEndDeveloperNote blockBookingEndDeveloperNote, BlockBookingCancelled blockBookingCancelled, SeeItemAction seeItemAction) {
         this.blockBookingDate = blockBookingDate;
         this.blockBookingFbLastNameConfirmation = blockBookingFbLastNameConfirmation;
         this.blockBookingAskLastname = blockBookingAskLastname;
@@ -45,7 +45,7 @@ public class BookingStateHandler {
         this.blockBookingSubmitted = blockBookingSubmitted;
         this.blockBookingEndDeveloperNote = blockBookingEndDeveloperNote;
         this.blockBookingCancelled = blockBookingCancelled;
-        this.intentSeeItem = intentSeeItem;
+        this.seeItemAction = seeItemAction;
     }
 
     void setPeopleCountAndContinue(
@@ -123,7 +123,7 @@ public class BookingStateHandler {
         blockBookingEndDeveloperNote.send(session.user.messengerId);
 
         session.state = SessionState.ITEM;
-        intentSeeItem.handle(session);
+        seeItemAction.perform(session);
     }
 
     void canceldBooking(

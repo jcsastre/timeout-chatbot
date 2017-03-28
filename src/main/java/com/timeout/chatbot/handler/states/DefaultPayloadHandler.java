@@ -7,7 +7,6 @@ import com.timeout.chatbot.block.cloudinary.CloudinaryUrlBuilder;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.handler.states.booking.BookingStatePayloadHandler;
 import com.timeout.chatbot.handler.states.item.ItemStatePayloadHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStatePayloadHandler;
@@ -29,7 +28,6 @@ public class DefaultPayloadHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultPayloadHandler.class);
 
-    private final IntentService intentService;
     private final BlockService blockService;
     private final MessengerSendClient msc;
     private final DefaultTextHandler defaultTextHandler;
@@ -43,7 +41,6 @@ public class DefaultPayloadHandler {
 
     @Autowired
     public DefaultPayloadHandler(
-        IntentService intentService,
         BlockService blockService,
         MessengerSendClient msc,
         DefaultTextHandler defaultTextHandler,
@@ -55,7 +52,6 @@ public class DefaultPayloadHandler {
         CloudinaryUrlBuilder cloudinaryUrlBuilder,
         SessionService sessionService
     ) {
-        this.intentService = intentService;
         this.blockService = blockService;
         this.msc = msc;
         this.defaultTextHandler = defaultTextHandler;
@@ -115,7 +111,7 @@ public class DefaultPayloadHandler {
 //
 //            case _Utterance:
 //                final String utterance = payload.getString("utterance");
-//                defaultTextHandler.handle(utterance, session);
+//                defaultTextHandler.perform(utterance, session);
 //                break;
 
 //            case help:

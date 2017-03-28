@@ -125,6 +125,12 @@ public class DiscoverBlock {
                         .put("type", PostbackPayload.discover_hotels)
                         .toString();
 
+            case THINGS_TO_DO:
+                return
+                    new JSONObject()
+                        .put("type", PostbackPayload.not_available) //TODO: change!!!
+                        .toString();
+
             default:
                 return null;
         }

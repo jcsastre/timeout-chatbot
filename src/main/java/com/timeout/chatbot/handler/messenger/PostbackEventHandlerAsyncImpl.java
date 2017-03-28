@@ -4,10 +4,11 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.receive.events.PostbackEvent;
 import com.github.messenger4j.send.MessengerSendClient;
+import com.timeout.chatbot.action.FindVenuesAction;
+import com.timeout.chatbot.action.SeeItemAction;
+import com.timeout.chatbot.action.StartOverAction;
 import com.timeout.chatbot.domain.payload.PostbackPayload;
-import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
-import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.SessionService;
 import com.timeout.chatbot.session.Session;
@@ -23,19 +24,24 @@ import java.io.IOException;
 public class PostbackEventHandlerAsyncImpl {
 
     private final SessionService sessionService;
-    private final IntentService intentService;
     private final BlockService blockService;
+    private final FindVenuesAction findVenuesAction;
+    private final SeeItemAction seeItemAction;
+    private final StartOverAction startOverAction;
     private final MessengerSendClient msc;
 
     public PostbackEventHandlerAsyncImpl(
         SessionService sessionService,
-        IntentService intentService,
         BlockService blockService,
-        MessengerSendClient msc
+        FindVenuesAction findVenuesAction,
+        SeeItemAction seeItemAction,
+        StartOverAction startOverAction, MessengerSendClient msc
     ) {
         this.sessionService = sessionService;
-        this.intentService = intentService;
         this.blockService = blockService;
+        this.findVenuesAction = findVenuesAction;
+        this.seeItemAction = seeItemAction;
+        this.startOverAction = startOverAction;
         this.msc = msc;
     }
 
@@ -93,6 +99,10 @@ public class PostbackEventHandlerAsyncImpl {
                 handleItemSee(session, payload);
                 break;
 
+            case not_available:
+                handleNotAvailable(session);
+                break;
+
             default:
                 blockService.getError().send(session.user.messengerId);
         }
@@ -118,33 +128,23 @@ public class PostbackEventHandlerAsyncImpl {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        intentService.getIntentStartOverHandler().handle(session);
+        startOverAction.perform(session);
     }
 
     private void handleDiscoverRestaurants(
         Session session
     ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException {
 
-        intentService.getIntentFindVenuesHandler().handle(
-            session,
-            GraffittiCategory.RESTAURANTS,
-            null,
-            null,
-            null
-        );
+        session.updateToSearchRestaurants();
+        findVenuesAction.perform(session);
     }
 
     private void handleDiscoverHotels(
         Session session
     ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException {
 
-        intentService.getIntentFindVenuesHandler().handle(
-            session,
-            GraffittiCategory.HOTELS,
-            null,
-            null,
-            null
-        );
+        session.updateToSearchHotels();
+        findVenuesAction.perform(session);
     }
 
     private void handleItemSee(
@@ -156,12 +156,22 @@ public class PostbackEventHandlerAsyncImpl {
         switch (graffittiType) {
 
             case VENUE:
+                session.state = SessionState.ITEM;
                 session.bagItem = new SessionStateItemBag();
                 session.bagItem.graffittiType = graffittiType;
                 session.bagItem.itemId = payload.getString("item_id");
-                session.state = SessionState.ITEM;
-                intentService.getIntentSeeItem().handle(session);
+                seeItemAction.perform(session);
                 break;
         }
+    }
+
+    private void handleNotAvailable(
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+
+        msc.sendTextMessage(
+            session.user.messengerId,
+            "Sorry, this feature is not available at the moment"
+        );
     }
 }

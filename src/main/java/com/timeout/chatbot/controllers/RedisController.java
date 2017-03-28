@@ -64,7 +64,7 @@ public class RedisController {
 //    @ResponseBody
 //    public ResponseEntity<String> theone() {
 //
-//        System.out.println("Finding the One : "+personRepo.find("3"));
+//        System.out.println("Finding the One : "+personRepo.perform("3"));
 //
 //        return ResponseEntity.ok("Ok");
 //    }
@@ -73,7 +73,7 @@ public class RedisController {
 //    @ResponseBody
 //    public ResponseEntity<String> read() {
 //
-//        System.out.println("Finding the One : "+personRepo.find("3"));
+//        System.out.println("Finding the One : "+personRepo.perform("3"));
 //        Map<Object,Object> personMatrixMap = personRepo.findAll();
 //        System.out.println("Currently in the Redis Matrix");
 //        System.out.println(personMatrixMap);

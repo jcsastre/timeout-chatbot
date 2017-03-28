@@ -75,7 +75,7 @@ public class WelcomeFirstTimeBlock {
         senderActionsHelper.typingOnAndWait(userMessengerId, 2000);
         messengerSendClient.sendTextMessage(
             userMessengerId,
-            "I can help you to find the most beautiful places and vibrant events in London"
+            "I can help you to perform the most beautiful places and vibrant events in London"
         );
     }
 

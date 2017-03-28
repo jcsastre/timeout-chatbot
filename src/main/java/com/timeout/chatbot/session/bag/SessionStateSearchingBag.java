@@ -32,6 +32,16 @@ public class SessionStateSearchingBag implements Serializable {
 //
 //    public Double radius = 0.5D;
 
+    public SessionStateSearchingBag() {
+        this.graffittiCategory = null;
+        this.graffittiSubcategory = null;
+        this.graffittiType = null;
+        this.neighborhood = null;
+        this.geolocation = null;
+        this.pageNumber = 1;
+        this.reaminingItems = 0;
+    }
+
     @Override
     public String toString() {
         return String.format(
@@ -40,6 +50,7 @@ public class SessionStateSearchingBag implements Serializable {
                 "graffittiType=%s, " +
                 "graffittiSubcategory=%s, " +
                 "neighborhood=%s, " +
+                "geolocation=%s, " +
                 "pageNumber=%s" +
             "}",
             graffittiCategory,

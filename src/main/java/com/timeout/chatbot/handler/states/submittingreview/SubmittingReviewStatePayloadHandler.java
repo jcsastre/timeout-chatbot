@@ -9,7 +9,7 @@ import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewCom
 import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewSubmitted;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.handler.intent.IntentSeeItem;
+import com.timeout.chatbot.action.SeeItemAction;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateSubmittingReviewBag;
 import com.timeout.chatbot.session.state.SessionState;
@@ -28,7 +28,7 @@ public class SubmittingReviewStatePayloadHandler {
     private final BlockSubmittingReviewSubmitted blockSubmittingReviewSubmitted;
     private final BlockSubmittingReviewCancelled blockSubmittingReviewCancelled;
     private final BlockError blockError;
-    private final IntentSeeItem intentSeeItem;
+    private final SeeItemAction seeItemAction;
 
     @Autowired
     public SubmittingReviewStatePayloadHandler(
@@ -37,14 +37,14 @@ public class SubmittingReviewStatePayloadHandler {
         BlockSubmittingReviewSubmitted blockSubmittingReviewSubmitted,
         BlockSubmittingReviewCancelled blockSubmittingReviewCancelled,
         BlockError blockError,
-        IntentSeeItem intentSeeItem
+        SeeItemAction seeItemAction
     ) {
         this.blockSubmittingReviewComment = blockSubmittingReviewComment;
         this.blockSubmittingReviewAskConfirmation = blockSubmittingReviewAskConfirmation;
         this.blockSubmittingReviewSubmitted = blockSubmittingReviewSubmitted;
         this.blockSubmittingReviewCancelled = blockSubmittingReviewCancelled;
         this.blockError = blockError;
-        this.intentSeeItem = intentSeeItem;
+        this.seeItemAction = seeItemAction;
     }
 
     public void handle(
@@ -140,7 +140,7 @@ public class SubmittingReviewStatePayloadHandler {
                 }
 
                 session.state = SessionState.ITEM;
-                intentSeeItem.handle(session);
+                seeItemAction.perform(session);
             } else {
                 blockError.send(session.user.messengerId);
             }

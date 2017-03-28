@@ -7,7 +7,7 @@ import com.timeout.chatbot.block.state.booking.*;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.domain.user.User;
-import com.timeout.chatbot.handler.intent.IntentSeeItem;
+import com.timeout.chatbot.action.SeeItemAction;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateBookingBag;
 import com.timeout.chatbot.session.state.BookingState;
@@ -29,7 +29,7 @@ public class BookingStatePayloadHandler {
     private final BlockBookingFbFirstNameConfirmation blockBookingFbFirstNameConfirmation;
     private final BlockBookingAskLastname blockBookingAskLastname;
     private final BlockError blockError;
-    private final IntentSeeItem intentSeeItem;
+    private final SeeItemAction seeItemAction;
 
     @Autowired
     public BookingStatePayloadHandler(
@@ -40,7 +40,7 @@ public class BookingStatePayloadHandler {
         BlockBookingFbFirstNameConfirmation blockBookingFbFirstNameConfirmation,
         BlockBookingAskLastname blockBookingAskLastname,
         BlockError blockError,
-        IntentSeeItem intentSeeItem) {
+        SeeItemAction seeItemAction) {
         this.bookingStateHandler = bookingStateHandler;
         this.blockBookingTime = blockBookingTime;
         this.blockConfirmationBookingDetails = blockConfirmationBookingDetails;
@@ -48,7 +48,7 @@ public class BookingStatePayloadHandler {
         this.blockBookingFbFirstNameConfirmation = blockBookingFbFirstNameConfirmation;
         this.blockBookingAskLastname = blockBookingAskLastname;
         this.blockError = blockError;
-        this.intentSeeItem = intentSeeItem;
+        this.seeItemAction = seeItemAction;
     }
 
     public void handle(

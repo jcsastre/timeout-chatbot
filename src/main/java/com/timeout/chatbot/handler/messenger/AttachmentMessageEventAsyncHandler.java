@@ -8,7 +8,7 @@ import com.timeout.chatbot.block.BlockError;
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
 import com.timeout.chatbot.handler.intent.IntentFindVenuesHandler;
-import com.timeout.chatbot.handler.intent.IntentSeeItem;
+import com.timeout.chatbot.action.SeeItemAction;
 import com.timeout.chatbot.services.SessionService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
@@ -26,7 +26,7 @@ public class AttachmentMessageEventAsyncHandler {
     private final IntentFindVenuesHandler findRestaurantsHandler;
     private final BlockError blockError;
     private final MessengerSendClient messengerSendClient;
-    private final IntentSeeItem intentSeeItem;
+    private final SeeItemAction seeItemAction;
 
     @Autowired
     public AttachmentMessageEventAsyncHandler(
@@ -34,13 +34,13 @@ public class AttachmentMessageEventAsyncHandler {
         IntentFindVenuesHandler findRestaurantsHandler,
         BlockError blockError,
         MessengerSendClient messengerSendClient,
-        IntentSeeItem intentSeeItem
+        SeeItemAction seeItemAction
     ) {
         this.sessionService = sessionService;
         this.findRestaurantsHandler = findRestaurantsHandler;
         this.blockError = blockError;
         this.messengerSendClient = messengerSendClient;
-        this.intentSeeItem = intentSeeItem;
+        this.seeItemAction = seeItemAction;
     }
 
     @Async
@@ -126,7 +126,7 @@ public class AttachmentMessageEventAsyncHandler {
 //            bag.setItemId(payload.getString("item_id"));
 //            session.state = SessionState.ITEM;
 //            intentService.handleSeeItem(session);
-            intentSeeItem.handle(session);
+            seeItemAction.perform(session);
         }
     }
 }

@@ -3,11 +3,10 @@ package com.timeout.chatbot.handler.states;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
+import com.timeout.chatbot.action.FindVenuesAction;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.nlu.NluResult;
-import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
-import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.handler.states.booking.BookingStateTextHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStateTextHandler;
 import com.timeout.chatbot.services.NluService;
@@ -21,28 +20,27 @@ import java.io.IOException;
 @Component
 public class DefaultTextHandler {
 
-    private final IntentService intentService;
     private final NluService nluService;
     private final MessengerSendClient msc;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
     private final SubmittingReviewStateTextHandler submittingReviewStateTextHandler;
     private final BookingStateTextHandler bookingStateTextHandler;
+    private final FindVenuesAction findVenuesAction;
 
     @Autowired
     public DefaultTextHandler(
-        IntentService intentService,
         NluService nluService,
         MessengerSendClient msc,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
         SubmittingReviewStateTextHandler submittingReviewStateTextHandler,
-        BookingStateTextHandler bookingStateTextHandler
-    ) {
-        this.intentService = intentService;
+        BookingStateTextHandler bookingStateTextHandler,
+        FindVenuesAction findVenuesAction) {
         this.nluService = nluService;
         this.msc = msc;
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
         this.submittingReviewStateTextHandler = submittingReviewStateTextHandler;
         this.bookingStateTextHandler = bookingStateTextHandler;
+        this.findVenuesAction = findVenuesAction;
     }
 
     public void handle(
@@ -93,29 +91,29 @@ public class DefaultTextHandler {
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
         switch (nluResult.getNluIntentType()) {
 
-            case GET_STARTED:
-                intentService.handleGetStarted(session);
-                break;
-
-            case FORGET_ME:
-                intentService.handleForgetMe(session);
-                break;
-
-            case GREETINGS:
-                intentService.handleGreetings(session);
-                break;
-
-            case SUGGESTIONS:
-                intentService.handleSuggestions(session);
-                break;
-
-            case DISCOVER:
-                intentService.getIntentDiscoverHandler().handle(session);
-                break;
-
-            case FIND_THINGSTODO:
-                intentService.handleFindThingsToDo(session);
-                break;
+//            case GET_STARTED:
+//                intentService.handleGetStarted(session);
+//                break;
+//
+//            case FORGET_ME:
+//                intentService.handleForgetMe(session);
+//                break;
+//
+//            case GREETINGS:
+//                intentService.handleGreetings(session);
+//                break;
+//
+//            case SUGGESTIONS:
+//                intentService.handleSuggestions(session);
+//                break;
+//
+//            case DISCOVER:
+//                intentService.getIntentDiscoverHandler().handle(session);
+//                break;
+//
+//            case FIND_THINGSTODO:
+//                intentService.handleFindThingsToDo(session);
+//                break;
 
             case FIND_RESTAURANTS:
                 handleFindRestaurants(session, nluResult);
@@ -208,15 +206,9 @@ public class DefaultTextHandler {
 
         //TODO: process nluResult to get parameter subcategory, neighborhood, etc
 
-        intentService.getIntentFindVenuesHandler().handle(
-            session,
-            GraffittiCategory.RESTAURANTS,
-            null,
-            null,
-            null
-        );
+        session.updateToSearchRestaurants();
+        findVenuesAction.perform(session);
     }
-
 
     private void handleFindHotels(
         Session session,
@@ -225,12 +217,7 @@ public class DefaultTextHandler {
 
         //TODO: process nluResult to get parameter subcategory, neighborhood, etc
 
-        intentService.getIntentFindVenuesHandler().handle(
-            session,
-            GraffittiCategory.HOTELS,
-            null,
-            null,
-            null
-        );
+        session.updateToSearchHotels();
+        findVenuesAction.perform(session);
     }
 }

@@ -14,6 +14,7 @@ import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
 import com.timeout.chatbot.messenger4j.SenderActionsHelper;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
+import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import io.mikael.urlbuilder.UrlBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,48 +50,30 @@ public class FindVenuesAction {
         this.senderActionsHelper = senderActionsHelper;
     }
 
-    public void find(
+    public void perform(
         Session session
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        findInternal(
-            session.user.messengerId,
-            session.bagSearching.graffittiCategory,
-            session.bagSearching.graffittiSubcategory,
-            session.bagSearching.pageNumber,
-            session.bagSearching.geolocation,
-            session.bagSearching.neighborhood,
-            session.bagSearching.reaminingItems
-        );
-    }
-
-    public void findInternal(
-        String userMessengerId,
-        GraffittiCategory graffittiCategory,
-        GraffittiSubcategory graffittiSubcategory,
-        Integer pageNumber,
-        Geolocation geolocation,
-        Neighborhood neighborhood,
-        Integer reaminingItems
-    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+        String userMessengerId = session.user.messengerId;
+        final SessionStateSearchingBag bag = session.bagSearching;
 
         UrlBuilder urlBuilder =
             searchUrlBuilder.build(
-                graffittiSubcategory != null ? graffittiSubcategory.graffittiId : graffittiCategory.graffittiId,
+                bag.graffittiSubcategory != null ? bag.graffittiSubcategory.graffittiId : bag.graffittiCategory.graffittiId,
                 GraffittiType.VENUE.toValue(),
-                pageNumber
+                bag.pageNumber
             );
 
-        if (geolocation != null) {
+        if (bag.geolocation != null) {
             urlBuilder =
                 urlBuilder
                     .addParameter(
                         GraffittiQueryParameterType.LATITUDE.getValue(),
-                        geolocation.latitude.toString()
+                        bag.geolocation.latitude.toString()
                     )
                     .addParameter(
                         GraffittiQueryParameterType.LONGITUDE.getValue(),
-                        geolocation.longitude.toString()
+                        bag.geolocation.longitude.toString()
                     )
                     .addParameter(
                         GraffittiQueryParameterType.RADIUS.getValue(),
@@ -100,12 +83,12 @@ public class FindVenuesAction {
                         GraffittiQueryParameterType.SORT.getValue(),
                         "distance"
                     );
-        } else if (neighborhood != null) {
+        } else if (bag.neighborhood != null) {
             urlBuilder =
                 urlBuilder
                     .addParameter(
                         GraffittiQueryParameterType.WHERE.getValue(),
-                        neighborhood.graffitiId
+                        bag.neighborhood.graffitiId
                     );
         }
 
@@ -113,10 +96,10 @@ public class FindVenuesAction {
         messengerSendClient.sendTextMessage(
             userMessengerId,
             buildMessage(
-                graffittiCategory,
-                graffittiSubcategory,
-                geolocation,
-                neighborhood
+                bag.graffittiCategory,
+                bag.graffittiSubcategory,
+                bag.geolocation,
+                bag.neighborhood
             )
         );
 
@@ -132,25 +115,27 @@ public class FindVenuesAction {
 
         if (graffittiSearchResponse.getMeta().getTotalItems() > 0) {
 
+            bag.reaminingItems = graffittiSearchResponse.getRemainingItems();
+
             blockService.getVenuesPageBlock().send(
                 userMessengerId,
                 graffittiSearchResponse.getPageItems(),
-                graffittiCategory.namePlural
+                bag.graffittiCategory.namePlural
             );
 
             senderActionsHelper.typingOn(userMessengerId);
             blockService.getVenuesRemainingBlock().send(
                 userMessengerId,
-                graffittiCategory,
-                graffittiSubcategory,
-                reaminingItems,
-                neighborhood,
-                geolocation
+                bag.graffittiCategory,
+                bag.graffittiSubcategory,
+                bag.reaminingItems,
+                bag.neighborhood,
+                bag.geolocation
             );
         } else {
             messengerSendClient.sendTextMessage(
                 userMessengerId,
-                "There are not available " + graffittiCategory.namePlural + " for your request."
+                "There are not available " + bag.graffittiCategory.namePlural + " for your request."
             );
         }
     }

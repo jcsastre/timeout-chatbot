@@ -3,10 +3,8 @@ package com.timeout.chatbot.handler.messenger;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.receive.events.TextMessageEvent;
-import com.github.messenger4j.receive.handlers.TextMessageEventHandler;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.domain.nlu.NluException;
-import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.handler.states.DefaultTextHandler;
 import com.timeout.chatbot.handler.states.booking.BookingStateTextHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStateTextHandler;
@@ -20,12 +18,10 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class TextMessageEventHandlerAsyncImpl implements TextMessageEventHandler {
+public class TextMessageEventHandlerAsyncImpl {
 
     private final SessionService sessionService;
-    private final IntentService intentService;
     private final BlockService blockService;
-    private final MessengerSendClient msc;
     private final DefaultTextHandler defaultTextHandler;
     private final SubmittingReviewStateTextHandler submittingReviewStateTextHandler;
     private final BookingStateTextHandler bookingStateTextHandler;
@@ -33,17 +29,13 @@ public class TextMessageEventHandlerAsyncImpl implements TextMessageEventHandler
     @Autowired
     public TextMessageEventHandlerAsyncImpl(
         SessionService sessionService,
-        IntentService intentService,
         BlockService blockService,
-        MessengerSendClient msc,
         DefaultTextHandler defaultTextHandler,
         SubmittingReviewStateTextHandler submittingReviewStateTextHandler,
         BookingStateTextHandler bookingStateTextHandler
     ) {
         this.sessionService = sessionService;
-        this.intentService = intentService;
         this.blockService = blockService;
-        this.msc = msc;
         this.defaultTextHandler = defaultTextHandler;
         this.submittingReviewStateTextHandler = submittingReviewStateTextHandler;
         this.bookingStateTextHandler = bookingStateTextHandler;

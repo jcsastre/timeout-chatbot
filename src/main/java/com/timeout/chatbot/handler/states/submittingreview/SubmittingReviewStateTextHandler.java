@@ -4,7 +4,6 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.domain.nlu.NluException;
-import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.state.SubmittingReviewState;
@@ -15,16 +14,13 @@ import java.io.IOException;
 @Component
 public class SubmittingReviewStateTextHandler {
 
-    private final IntentService intentService;
     private final MessengerSendClient msc;
     private final BlockService blockService;
 
     public SubmittingReviewStateTextHandler(
-        IntentService intentService,
         MessengerSendClient msc,
         BlockService blockService
     ) {
-        this.intentService = intentService;
         this.msc = msc;
         this.blockService = blockService;
     }
@@ -105,7 +101,7 @@ public class SubmittingReviewStateTextHandler {
 //            );
 //
 //            session.state = SessionState.ITEM;
-//            intentService.getIntentSeeItem().handle(session);
+//            intentService.getIntentSeeItem().perform(session);
 //
 //            return true;
 //
@@ -117,7 +113,7 @@ public class SubmittingReviewStateTextHandler {
 //            );
 //
 //            session.state = SessionState.ITEM;
-//            intentService.getIntentSeeItem().handle(session);
+//            intentService.getIntentSeeItem().perform(session);
 //
 //            return true;
 //        }

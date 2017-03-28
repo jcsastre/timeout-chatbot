@@ -3,6 +3,8 @@ package com.timeout.chatbot.session;
 import com.timeout.chatbot.domain.FbUserProfile;
 import com.timeout.chatbot.domain.page.Page;
 import com.timeout.chatbot.domain.user.User;
+import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
+import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.session.bag.SessionStateBookingBag;
 import com.timeout.chatbot.session.bag.SessionStateItemBag;
 import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
@@ -41,6 +43,22 @@ public class Session implements Serializable {
         String senderId
     ) {
         return recipientId + "-" + senderId;
+    }
+
+    public void updateToSearchRestaurants() {
+        state = SessionState.SEARCHING;
+
+        bagSearching = new SessionStateSearchingBag();
+        bagSearching.graffittiCategory = GraffittiCategory.RESTAURANTS;
+        bagSearching.graffittiType = GraffittiType.VENUE;
+    }
+
+    public void updateToSearchHotels() {
+        state = SessionState.SEARCHING;
+
+        bagSearching = new SessionStateSearchingBag();
+        bagSearching.graffittiCategory = GraffittiCategory.HOTELS;
+        bagSearching.graffittiType = GraffittiType.VENUE;
     }
 
     @Override

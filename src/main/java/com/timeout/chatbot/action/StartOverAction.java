@@ -1,37 +1,38 @@
-package com.timeout.chatbot.handler.intent;
+package com.timeout.chatbot.action;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.timeout.chatbot.block.DiscoverBlock;
-import com.timeout.chatbot.block.WelcomeFirstTimeBlock;
+import com.timeout.chatbot.block.WelcomeBackBlock;
+import com.timeout.chatbot.services.SessionService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.state.SessionState;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class IntentGetStartedHandler {
+public class StartOverAction {
 
-    private final WelcomeFirstTimeBlock welcomeFirstTimeBlock;
+    private final SessionService sessionService;
+    private final WelcomeBackBlock welcomeBackBlock;
     private final DiscoverBlock discoverBlock;
 
-    @Autowired
-    public IntentGetStartedHandler(
-        WelcomeFirstTimeBlock welcomeFirstTimeBlock,
+    public StartOverAction(
+        SessionService sessionService,
+        WelcomeBackBlock welcomeBackBlock,
         DiscoverBlock discoverBlock
     ) {
-        this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
+        this.sessionService = sessionService;
+        this.welcomeBackBlock = welcomeBackBlock;
         this.discoverBlock = discoverBlock;
     }
 
-    public void handle(
+    public void perform(
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        welcomeFirstTimeBlock.send(
-            session.user.messengerId,
-            session.fbUserProfile
-        );
+        sessionService.resetSession(session);
+
+        welcomeBackBlock.send(session);
 
         session.state = SessionState.DISCOVER;
         discoverBlock.send(session.user.messengerId);

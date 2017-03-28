@@ -92,10 +92,10 @@ public class IntentFindVenuesHandler {
 //                if (bag.geolocation == null) {
 //                    blockService.sendGeolocationAskBlock(session.user.messengerId);
 //                } else {
-//                    handle(session);
+//                    perform(session);
 //                }
 //            } else {
-//                handle(session);
+//                perform(session);
 //                //TODO: map text to valid where
 //                //bag.setGraffittiWhere(where);
 //            }
@@ -121,15 +121,15 @@ public class IntentFindVenuesHandler {
 //                if (bag.geolocation == null) {
 //                    blockService.sendGeolocationAskBlock(session.user.messengerId);
 //                } else {
-//                    handle(session);
+//                    perform(session);
 //                }
 //            } else {
-//                handle(session);
+//                perform(session);
 //                //TODO: map text to valid where
 //                //bag.setGraffittiWhere(where);
 //            }
 //        } else {
-//            handle(session);
+//            perform(session);
 //        }
 //    }
 

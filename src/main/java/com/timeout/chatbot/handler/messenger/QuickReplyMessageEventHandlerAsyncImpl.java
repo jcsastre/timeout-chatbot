@@ -110,7 +110,7 @@ public class QuickReplyMessageEventHandlerAsyncImpl {
 
         if (session.state == SessionState.SEARCHING) {
             session.bagSearching.pageNumber = session.bagSearching.pageNumber + 1;
-            findVenuesAction.find(session);
+            findVenuesAction.perform(session);
         } else {
             //TODO: ha pasado mucho tiempo, y los resultados pueden ser distintos, que hacer?
         }
@@ -158,7 +158,7 @@ public class QuickReplyMessageEventHandlerAsyncImpl {
                 session.bagSearching.neighborhood = neighborhood;
                 session.bagSearching.geolocation = null;
                 session.bagSearching.pageNumber = 1;
-                findVenuesAction.find(session);
+                findVenuesAction.perform(session);
             } else {
                 blockService.getError().send(session.user.messengerId);
             }
@@ -176,7 +176,7 @@ public class QuickReplyMessageEventHandlerAsyncImpl {
             session.bagSearching.neighborhood = null;
             session.bagSearching.geolocation = null;
             session.bagSearching.pageNumber = 1;
-            findVenuesAction.find(session);
+            findVenuesAction.perform(session);
         } else {
             //TODO: ha pasado mucho tiempo, y los resultados pueden ser distintos, que hacer?
         }
@@ -191,7 +191,7 @@ public class QuickReplyMessageEventHandlerAsyncImpl {
             final String subcategoryId = payload.getString("subcategory_id");
             session.bagSearching.graffittiSubcategory = session.bagSearching.graffittiCategory.findSubcategoryByGraffittiId(subcategoryId);
             session.bagSearching.pageNumber = 1;
-            findVenuesAction.find(session);
+            findVenuesAction.perform(session);
         } else {
             //TODO: ha pasado mucho tiempo, y los resultados pueden ser distintos, que hacer?
         }
@@ -205,7 +205,7 @@ public class QuickReplyMessageEventHandlerAsyncImpl {
         if (session.state == SessionState.SEARCHING) {
             session.bagSearching.graffittiSubcategory = null;
             session.bagSearching.pageNumber = 1;
-            findVenuesAction.find(session);
+            findVenuesAction.perform(session);
         } else {
             //TODO: ha pasado mucho tiempo, y los resultados pueden ser distintos, que hacer?
         }
@@ -220,7 +220,7 @@ public class QuickReplyMessageEventHandlerAsyncImpl {
 //                final Date currentTimestamp = session.getCurrentTimestamp();
 //                session.setCurrentTimestamp(currentTimestamp);
 //                try {
-//                    defaultPayloadHandler.handle(payload, session);
+//                    defaultPayloadHandler.perform(payload, session);
 //                } catch (Exception e) {
 //                    e.printStackTrace();
 //                    blockError.send(session.user);
