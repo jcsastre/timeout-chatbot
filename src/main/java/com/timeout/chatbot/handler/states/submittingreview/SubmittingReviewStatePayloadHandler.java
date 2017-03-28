@@ -89,11 +89,10 @@ public class SubmittingReviewStatePayloadHandler {
         if (sessionState == SessionState.SUBMITTING_REVIEW) {
 
             final SessionStateSubmittingReviewBag bag = session.bagSubmitting;
-            final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
-            if (submittingReviewState == SubmittingReviewState.RATING) {
+            if (bag.state == SubmittingReviewState.RATING) {
 
-                bag.setRate(payload.getInt("rate"));
-                bag.setSubmittingReviewState(SubmittingReviewState.WRITING_COMMENT);
+                bag.rate = payload.getInt("rate");
+                bag. state = SubmittingReviewState.WRITING_COMMENT;
                 blockSubmittingReviewComment.send(session.user.messengerId);
             } else {
                 blockError.send(session.user.messengerId);
@@ -111,10 +110,9 @@ public class SubmittingReviewStatePayloadHandler {
         if (sessionState == SessionState.SUBMITTING_REVIEW) {
 
             final SessionStateSubmittingReviewBag bag = session.bagSubmitting;
-            final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
-            if (submittingReviewState == SubmittingReviewState.WRITING_COMMENT) {
+            if (bag.state == SubmittingReviewState.WRITING_COMMENT) {
 
-                bag.setSubmittingReviewState(SubmittingReviewState.ASKING_FOR_CONFIRMATION);
+                bag.state = SubmittingReviewState.ASKING_FOR_CONFIRMATION;
                 blockSubmittingReviewAskConfirmation.send(session);
             } else {
                 blockError.send(session.user.messengerId);
@@ -133,8 +131,7 @@ public class SubmittingReviewStatePayloadHandler {
         if (sessionState == SessionState.SUBMITTING_REVIEW) {
 
             final SessionStateSubmittingReviewBag bag = session.bagSubmitting;
-            final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
-            if (submittingReviewState == SubmittingReviewState.ASKING_FOR_CONFIRMATION) {
+            if (bag.state == SubmittingReviewState.ASKING_FOR_CONFIRMATION) {
 
                 if (isYes) {
                     blockSubmittingReviewSubmitted.send(session.user.messengerId);

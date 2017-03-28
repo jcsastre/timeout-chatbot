@@ -28,42 +28,6 @@ public class QuickReplyBuilderHelper {
         this.restTemplate = restTemplate;
     }
 
-    public void addDiscoverToList(QuickReply.ListBuilder listBuilder) {
-        listBuilder.addTextQuickReply(
-            "Discover",
-            new JSONObject()
-                .put("type", PayloadType._Discover)
-                .toString()
-        ).toList();
-    }
-
-    public void addWhatsNewToList(QuickReply.ListBuilder listBuilder) {
-        listBuilder.addTextQuickReply(
-            "What's new",
-            new JSONObject()
-                .put("type", PayloadType._WhatsNew)
-                .toString()
-        ).toList();
-    }
-
-    public void addMostLovedToList(QuickReply.ListBuilder listBuilder) {
-        listBuilder.addTextQuickReply(
-            "Most loved",
-            new JSONObject()
-                .put("type", PayloadType._MostLoved)
-                .toString()
-        ).toList();
-    }
-
-    public void addSearchSuggestionsToList(QuickReply.ListBuilder listBuilder) {
-        listBuilder.addTextQuickReply(
-            "Search suggestions",
-            new JSONObject()
-                .put("type", PayloadType._SearchSuggestions)
-                .toString()
-        ).toList();
-    }
-
     public List<QuickReply> buildForSeeVenueItem(
         Venue venue
     ) {
@@ -82,13 +46,6 @@ public class QuickReplyBuilderHelper {
                 .put("type", PayloadType.item_Book)
                 .toString()
         ).toList();
-
-//        listBuilder.addTextQuickReply(
-//            "Get a summary",
-//            new JSONObject()
-//                .put("type", PayloadType.get_a_summary)
-//                .toString()
-//        ).toList();
 
         if (venue.getImages()!=null && venue.getImages().size()>0) {
             listBuilder.addTextQuickReply(

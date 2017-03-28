@@ -67,7 +67,7 @@ public class GraffittiService {
 
             GraffittiFacetV4FacetNode categoryNode = null;
             for (GraffittiFacetV4FacetNode child : facetWhatCategoriesRootNode.getChildren()) {
-                if (child.getId().equalsIgnoreCase(category.getGraffittiId())) {
+                if (child.getId().equalsIgnoreCase(category.graffittiId)) {
                     categoryNode = child;
                 }
             }
@@ -83,7 +83,7 @@ public class GraffittiService {
 
                     subcategories.add(graffittiSubcategory);
                 }
-                category.setSubcategories(subcategories);
+                category.subcategories = subcategories;
             }
         }
     }

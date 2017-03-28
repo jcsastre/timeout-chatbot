@@ -5,6 +5,7 @@ import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.domain.payload.QuickreplyPayload;
 import com.timeout.chatbot.graffitti.domain.GraffittiSubcategory;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
@@ -80,7 +81,7 @@ public class SubcategoriesQuickrepliesBlock {
             builder.addTextQuickReply(
                 name,
                 new JSONObject()
-                    .put("type", PayloadType.searching_SetSubcategory)
+                    .put("type", QuickreplyPayload.searching_set_subcategory)
                     .put("subcategory_id", subcategory.graffittiId)
                     .toString()
             ).toList();
@@ -90,7 +91,7 @@ public class SubcategoriesQuickrepliesBlock {
             builder.addTextQuickReply(
                 "More " + bag.graffittiCategory.subcategoriesNamePlural.toLowerCase(),
                 new JSONObject()
-                    .put("type", PayloadType.searching_ShowSubcategories)
+                    .put("type", QuickreplyPayload.searching_show_subcategories)
                     .put("pageNumber", pageNumber+1)
                     .toString()
             ).toList();

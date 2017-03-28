@@ -3,7 +3,6 @@ package com.timeout.chatbot.block;
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.Neighborhood;
-import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.domain.payload.QuickreplyPayload;
 import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
 import com.timeout.chatbot.graffitti.domain.GraffittiSubcategory;
@@ -99,7 +98,7 @@ public class VenuesRemainingBlock {
                 graffittiSubcategory == null ?
                     "Set " + subcategoryName : "Change " + subcategoryName,
                 new JSONObject()
-                    .put("type", PayloadType.searching_ShowSubcategories)
+                    .put("type", QuickreplyPayload.searching_show_subcategories)
                     .put("pageNumber", 1)
                     .toString()
             ).toList();

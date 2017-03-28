@@ -18,7 +18,6 @@ import com.timeout.chatbot.handler.intent.IntentPhotosHandler;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateBookingBag;
 import com.timeout.chatbot.session.bag.SessionStateItemBag;
-import com.timeout.chatbot.session.bag.SessionStateSubmittingReviewBag;
 import com.timeout.chatbot.session.state.BookingState;
 import com.timeout.chatbot.session.state.SessionState;
 import com.timeout.chatbot.session.state.SubmittingReviewState;
@@ -152,10 +151,9 @@ public class ItemStatePayloadHandler {
         final SessionState sessionState = session.state;
         if (sessionState == SessionState.ITEM) {
             session.state = SessionState.SUBMITTING_REVIEW;
-            final SessionStateSubmittingReviewBag bag = session.bagSubmitting;
-            bag.setSubmittingReviewState(SubmittingReviewState.RATING);
-            bag.setRate(null);
-            bag.setComment(null);
+            session.bagSubmitting.state = SubmittingReviewState.RATING;
+            session.bagSubmitting.rate = null;
+            session.bagSubmitting.comment = null;
             blockSubmittingReviewRate.send(session.user.messengerId);
         } else {
             blockError.send(session.user.messengerId);

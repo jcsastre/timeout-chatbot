@@ -10,7 +10,6 @@ import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.handler.intent.IntentService;
 import com.timeout.chatbot.handler.states.booking.BookingStatePayloadHandler;
 import com.timeout.chatbot.handler.states.item.ItemStatePayloadHandler;
-import com.timeout.chatbot.handler.states.searching.SearchingStatePayloadHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStatePayloadHandler;
 import com.timeout.chatbot.messenger4j.SenderActionsHelper;
 import com.timeout.chatbot.services.BlockService;
@@ -38,7 +37,6 @@ public class DefaultPayloadHandler {
     private final SubmittingReviewStatePayloadHandler submittingReviewStatePayloadHandler;
     private final BookingStatePayloadHandler bookingStatePayloadHandler;
     private final ItemStatePayloadHandler itemStatePayloadHandler;
-    private final SearchingStatePayloadHandler searchingStatePayloadHandler;
     private final SenderActionsHelper senderActionsHelper;
     private final CloudinaryUrlBuilder cloudinaryUrlBuilder;
     private final SessionService sessionService;
@@ -53,7 +51,6 @@ public class DefaultPayloadHandler {
         SubmittingReviewStatePayloadHandler submittingReviewStatePayloadHandler,
         BookingStatePayloadHandler bookingStatePayloadHandler,
         ItemStatePayloadHandler itemStatePayloadHandler,
-        SearchingStatePayloadHandler searchingStatePayloadHandler,
         SenderActionsHelper senderActionsHelper,
         CloudinaryUrlBuilder cloudinaryUrlBuilder,
         SessionService sessionService
@@ -66,7 +63,6 @@ public class DefaultPayloadHandler {
         this.submittingReviewStatePayloadHandler = submittingReviewStatePayloadHandler;
         this.bookingStatePayloadHandler = bookingStatePayloadHandler;
         this.itemStatePayloadHandler = itemStatePayloadHandler;
-        this.searchingStatePayloadHandler = searchingStatePayloadHandler;
         this.senderActionsHelper = senderActionsHelper;
         this.cloudinaryUrlBuilder = cloudinaryUrlBuilder;
         this.sessionService = sessionService;
@@ -93,10 +89,6 @@ public class DefaultPayloadHandler {
 
                 case BOOKING:
                     bookingStatePayloadHandler.handle(session, payloadAsJson);
-                    break;
-
-                case SEARCHING:
-                    searchingStatePayloadHandler.handle(session, payloadAsJson);
                     break;
 
                 default:
@@ -157,13 +149,13 @@ public class DefaultPayloadHandler {
                 );
                 break;
 
-            case no_see_at_timeout:
-                msc.sendTextMessage(
-                    session.user.messengerId,
-                    "Ok, back to the list of restaurants"
-                );
-                intentService.handleFindRestaurants(session);
-                break;
+//            case no_see_at_timeout:
+//                msc.sendTextMessage(
+//                    session.user.messengerId,
+//                    "Ok, back to the list of restaurants"
+//                );
+//                intentService.handleFindRestaurants(session);
+//                break;
 
             case films_find_cinemas:
                 msc.sendTextMessage(

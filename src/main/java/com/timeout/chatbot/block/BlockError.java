@@ -2,7 +2,7 @@ package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.ButtonTemplate;
-import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.domain.payload.PostbackPayload;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class BlockError {
                     .addPostbackButton(
                         "Start over",
                         new JSONObject()
-                            .put("type", PayloadType._StartOver)
+                            .put("type", PostbackPayload.start_over)
                             .toString()
                     ).toList()
                     .build()

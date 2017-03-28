@@ -50,7 +50,7 @@ public class IntentBackHandler {
 
             case BOOKING:
             default:
-                blockService.sendErrorBlock(session.user);
+                blockService.getError().send(session.user.messengerId);
                 break;
         }
     }
