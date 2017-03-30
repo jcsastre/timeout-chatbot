@@ -3,7 +3,7 @@ package com.timeout.chatbot.action;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.timeout.chatbot.block.SeeVenueItemBlock;
+import com.timeout.chatbot.block.BlockItem;
 import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.services.GraffittiService;
@@ -18,17 +18,17 @@ public class SeeItemAction {
 
     private final MessengerSendClient messengerSendClient;
     private final GraffittiService graffittiService;
-    private final SeeVenueItemBlock seeVenueItemBlock;
+    private final BlockItem blockItem;
 
     @Autowired
     public SeeItemAction(
         MessengerSendClient messengerSendClient,
         GraffittiService graffittiService,
-        SeeVenueItemBlock seeVenueItemBlock
+        BlockItem blockItem
     ) {
         this.messengerSendClient = messengerSendClient;
         this.graffittiService = graffittiService;
-        this.seeVenueItemBlock = seeVenueItemBlock;
+        this.blockItem = blockItem;
     }
 
     public void perform(
@@ -40,7 +40,7 @@ public class SeeItemAction {
             final Venue venue = graffittiService.fetchVenue(session.bagItem.itemId);
             session.bagItem.venue = venue;
 
-            seeVenueItemBlock.send(
+            blockItem.send(
                 session.user.messengerId,
                 venue
             );

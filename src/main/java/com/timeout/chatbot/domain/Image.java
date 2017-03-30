@@ -5,31 +5,22 @@ import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 import java.io.Serializable;
 
 public class Image implements Serializable {
-    private String id;
-    private String url;
-    private String title;
-    private String altText;
 
-    public Image(GraffittiImage gi) {
-        id = gi.getId();
-        url = gi.getUrl();
-        title = gi.getTitle();
-        altText = gi.getAltText();
-    }
+    public String id;
+    public String url;
+    public String title;
+    public String altText;
 
-    public String getId() {
-        return id;
-    }
+    public static Image build(
+        GraffittiImage gi
+    ) {
+        Image image = new Image();
 
-    public String getUrl() {
-        return url;
-    }
+        image.id = gi.getId();
+        image.url = gi.getUrl();
+        image.title = gi.getTitle();
+        image.altText = gi.getAltText();
 
-    public String getTitle() {
-        return title;
-    }
-
-    public String getAltText() {
-        return altText;
+        return image;
     }
 }

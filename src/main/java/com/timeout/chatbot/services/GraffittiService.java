@@ -397,7 +397,7 @@ public class GraffittiService {
             );
 
         return
-            new Venue(
+            Venue.build(
                 graffittiVenueResponse.getBody(),
                 graffittiImagesResponse.getGraffittiImages()
             );

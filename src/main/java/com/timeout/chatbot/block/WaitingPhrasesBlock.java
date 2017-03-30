@@ -42,17 +42,23 @@ public class WaitingPhrasesBlock implements Runnable {
             if (counter==0) {
                 text = "Don't worry, I'm on it :)";
             } else if (counter==1) {
-                gifUrl = "https://media.giphy.com/media/6hE5JyVPvivCg/giphy.gif";
-            } else if (counter==2) {
                 text = "I'm still working on it :|";
-            } else if (counter==3) {
-                gifUrl = "https://media.giphy.com/media/XIqCQx02E1U9W/giphy.gif";
-            } else if (counter==4) {
+//                gifUrl = "https://media.giphy.com/media/6hE5JyVPvivCg/giphy.gif";
+            } else if (counter==2) {
                 text = "Work in progress :)";
+//                text = "I'm still working on it :|";
+            } else if (counter==3) {
+                text = "Don't worry, I'm on it :)";
+//                gifUrl = "https://media.giphy.com/media/XIqCQx02E1U9W/giphy.gif";
+            } else if (counter==4) {
+                text = "I'm still working on it :|";
+//                text = "Work in progress :)";
             } else if (counter==5) {
-                gifUrl = "https://media.giphy.com/media/l0HlJR8AWpaS22XIs/giphy.gif";
+                text = "Work in progress :)";
+//                gifUrl = "https://media.giphy.com/media/l0HlJR8AWpaS22XIs/giphy.gif";
             } else {
-                gifUrl = " https://media.giphy.com/media/MIY4jpusckRmU/giphy.gif";
+                text = "Don't worry, I'm on it :)";
+//                gifUrl = " https://media.giphy.com/media/MIY4jpusckRmU/giphy.gif";
             }
 
             if (!isCancelled) {

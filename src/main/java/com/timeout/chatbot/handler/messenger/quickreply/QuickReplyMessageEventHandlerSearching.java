@@ -1,80 +1,48 @@
-package com.timeout.chatbot.handler.messenger;
+package com.timeout.chatbot.handler.messenger.quickreply;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
-import com.github.messenger4j.receive.events.QuickReplyMessageEvent;
 import com.timeout.chatbot.action.FindVenuesAction;
 import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.domain.payload.QuickreplyPayload;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.GraffittiService;
-import com.timeout.chatbot.services.SessionService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.state.SessionState;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 @Component
-public class QuickReplyMessageEventHandlerAsyncImpl {
+public class QuickReplyMessageEventHandlerSearching {
 
-    private final SessionService sessionService;
+    private final GraffittiService graffittiService;
     private final BlockService blockService;
     private final FindVenuesAction findVenuesAction;
-    private final GraffittiService graffittiService;
 
     @Autowired
-    public QuickReplyMessageEventHandlerAsyncImpl(
-        SessionService sessionService,
+    public QuickReplyMessageEventHandlerSearching(
         BlockService blockService,
         FindVenuesAction findVenuesAction,
         GraffittiService graffittiService
     ) {
-        this.sessionService = sessionService;
         this.blockService = blockService;
         this.findVenuesAction = findVenuesAction;
         this.graffittiService = graffittiService;
     }
 
-    @Async
     public void handle(
-        QuickReplyMessageEvent event
-    ) {
-        final Session session =
-            sessionService.getSession(
-                event.getRecipient().getId(),
-                event.getSender().getId()
-            );
-
-        final JSONObject payload = new JSONObject(event.getQuickReply().getPayload());
-
-        try {
-            handleInternal(
-                session,
-                payload
-            );
-
-            sessionService.persistSession(session);
-
-        } catch (InterruptedException | IOException | MessengerApiException | MessengerIOException e) {
-            e.printStackTrace();
-            blockService.getError().send(session.user.messengerId);
-        }
-    }
-
-    private void handleInternal(
-        Session session,
-        JSONObject payload
+        JSONObject payload,
+        Session session
     ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException {
 
         final QuickreplyPayload payloadType = QuickreplyPayload.valueOf(payload.getString("type"));
         switch (payloadType) {
 
             case searching_see_more:
-                handleSearchingSeeMore(session, payload);
+                handleSearchingSeeMore(session);
                 break;
 
             case searching_show_areas:
@@ -100,12 +68,15 @@ public class QuickReplyMessageEventHandlerAsyncImpl {
             case searching_set_subcategory_any:
                 handleSearchingSetSubcategoryAny(session, payload);
                 break;
+
+            case searching_set_cancel:
+                handleSearchingSetCancel(session);
+                break;
         }
     }
 
     private void handleSearchingSeeMore(
-        Session session,
-        JSONObject payload
+        Session session
     ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException {
 
         if (session.state == SessionState.SEARCHING) {
@@ -206,6 +177,24 @@ public class QuickReplyMessageEventHandlerAsyncImpl {
             session.bagSearching.graffittiSubcategory = null;
             session.bagSearching.pageNumber = 1;
             findVenuesAction.perform(session);
+        } else {
+            //TODO: ha pasado mucho tiempo, y los resultados pueden ser distintos, que hacer?
+        }
+    }
+
+    private void handleSearchingSetCancel(
+        Session session
+    ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException {
+
+        if (session.state == SessionState.SEARCHING) {
+            blockService.getVenuesRemainingBlock().send(
+                session.user.messengerId,
+                session.bagSearching.graffittiCategory,
+                session.bagSearching.graffittiSubcategory,
+                session.bagSearching.reaminingItems,
+                session.bagSearching.neighborhood,
+                session.bagSearching.geolocation
+            );
         } else {
             //TODO: ha pasado mucho tiempo, y los resultados pueden ser distintos, que hacer?
         }

@@ -4,7 +4,6 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.QuickReply;
-import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.domain.payload.QuickreplyPayload;
 import com.timeout.chatbot.graffitti.domain.GraffittiSubcategory;
 import com.timeout.chatbot.session.Session;
@@ -51,7 +50,7 @@ public class SubcategoriesQuickrepliesBlock {
         builder.addTextQuickReply(
             "Cancel",
             new JSONObject()
-                .put("type", PayloadType._Cancel)
+                .put("type", QuickreplyPayload.searching_set_cancel)
                 .toString()
         ).toList();
 
@@ -61,7 +60,7 @@ public class SubcategoriesQuickrepliesBlock {
             builder.addTextQuickReply(
                 "All " + bag.graffittiCategory.subcategoriesNamePlural.toLowerCase(),
                 new JSONObject()
-                    .put("type", PayloadType.subcategory_any)
+                    .put("type", QuickreplyPayload.searching_set_subcategory_any)
                     .toString()
             ).toList();
         }

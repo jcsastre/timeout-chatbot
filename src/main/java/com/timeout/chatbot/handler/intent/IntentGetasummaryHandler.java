@@ -68,7 +68,7 @@ public class IntentGetasummaryHandler {
 
             final Venue venue = itemBag.venue;
 
-            String summary = venue.getSummary();
+            String summary = venue.summary;
             if (summary == null) {
                 summary = "Sorry, there is no summary available";
             }

@@ -6,7 +6,7 @@ import com.github.messenger4j.receive.MessengerReceiveClient;
 import com.timeout.chatbot.configuration.MessengerConfiguration;
 import com.timeout.chatbot.handler.messenger.AttachmentMessageEventHandlerImpl;
 import com.timeout.chatbot.handler.messenger.PostbackEventHandlerImpl;
-import com.timeout.chatbot.handler.messenger.QuickReplyMessageEventHandlerImpl;
+import com.timeout.chatbot.handler.messenger.quickreply.QuickReplyMessageEventHandlerImpl;
 import com.timeout.chatbot.handler.messenger.TextMessageEventHandlerImpl;
 import com.timeout.chatbot.session.SessionPool;
 import org.slf4j.Logger;

@@ -6,7 +6,6 @@ import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.domain.Geolocation;
 import com.timeout.chatbot.domain.Neighborhood;
-import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.domain.payload.QuickreplyPayload;
 import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
 import com.timeout.chatbot.graffitti.domain.GraffittiSubcategory;
@@ -65,7 +64,7 @@ public class BlockAreas {
         builder.addTextQuickReply(
             "Cancel",
                 new JSONObject()
-                    .put("type", PayloadType._Cancel)
+                    .put("type", QuickreplyPayload.searching_set_cancel)
                     .toString()
         ).toList();
 

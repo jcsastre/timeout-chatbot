@@ -13,34 +13,36 @@ import java.util.List;
 
 public class Venue implements Serializable {
 
-    private String id;
-    private CategoryNode categoryPrimary;
-    private CategoryNode categorySecondary;
-    private String name;
-    private String summary;
-    private String location;
-    private String annotation;
-    private String toWebsite;
-    private String phone;
-    private Integer editorialRating;
-    private Integer userRatingsCount;
-    private Integer userRatingsAverage;
-    private List<Image> images;
-    private String address1;
-    private String city;
-    private String postCode;
+    public String id;
+    public CategoryNode categoryPrimary;
+    public CategoryNode categorySecondary;
+    public String name;
+    public String summary;
+    public String location;
+    public String annotation;
+    public String toWebsite;
+    public String phone;
+    public Integer editorialRating;
+    public Integer userRatingsCount;
+    public Integer userRatingsAverage;
+    public List<Image> images;
+    public String address1;
+    public String city;
+    public String postCode;
 
-    public Venue(
+    public static Venue build(
         GraffittiVenueResponse.Body gvrb,
         List<GraffittiImage> lgi
     ) {
-        id = gvrb.getId();
+        Venue venue = new Venue();
+
+        venue.id = gvrb.getId();
 
         final GraffittiCategorisation gc = gvrb.getGraffittiCategorisation();
         if (gc != null) {
             final GraffittiCategorisationPrimary gcp = gc.getGraffittiCategorisationPrimary();
             if (gcp != null) {
-                categoryPrimary =
+                venue.categoryPrimary =
                     new CategoryNode(
                         gcp.getName(),
                         gcp.getTreeNodeId()
@@ -48,7 +50,7 @@ public class Venue implements Serializable {
             }
             final GraffittiCategorisationSecondary gcs = gc.getGraffittiCategorisationSecondary();
             if (gcs != null) {
-                categorySecondary =
+                venue.categorySecondary =
                     new CategoryNode(
                         gcs.getName(),
                         gcs.getTreeNodeId()
@@ -56,88 +58,39 @@ public class Venue implements Serializable {
             }
         }
 
-        name = gvrb.getName();
-        summary = gvrb.getSummary();
-        location = gvrb.getLocation();
-        annotation = gvrb.getAnnotation();
-        toWebsite = gvrb.getToWebsite();
-        phone = gvrb.getPhone();
-        editorialRating = gvrb.getEditorialRating();
-        address1 = gvrb.getAddress1();
-        city = gvrb.getCity();
-        postCode = gvrb.getPostCode();
+        venue.name = gvrb.getName();
+        venue.summary = gvrb.getSummary();
+        venue.location = gvrb.getLocation();
+        venue.annotation = gvrb.getAnnotation();
+        venue.toWebsite = gvrb.getToWebsite();
+        venue.phone = gvrb.getPhone();
+        venue.editorialRating = gvrb.getEditorialRating();
+        venue.address1 = gvrb.getAddress1();
+        venue.city = gvrb.getCity();
+        venue.postCode = gvrb.getPostCode();
 
         final UserRatingsSummary userRatingsSummary = gvrb.getUserRatingsSummary();
         if (userRatingsSummary != null) {
-            userRatingsCount = userRatingsSummary.getCount();
-            userRatingsAverage = userRatingsSummary.getAverage();
+            venue.userRatingsCount = userRatingsSummary.getCount();
+            venue.userRatingsAverage = userRatingsSummary.getAverage();
         }
 
         if (lgi != null) {
-            images = new ArrayList<>();
+            venue.images = new ArrayList<>();
             for (GraffittiImage gi : lgi) {
-                images.add(new Image(gi));
+                venue.images.add(
+                    Image.build(gi)
+                );
             }
         }
-    }
 
-    public String getId() {
-        return id;
-    }
-
-    public CategoryNode getCategoryPrimary() {
-        return categoryPrimary;
-    }
-
-    public CategoryNode getCategorySecondary() {
-        return categorySecondary;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public String getAnnotation() {
-        return annotation;
-    }
-
-    public String getToWebsite() {
-        return toWebsite;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public Integer getEditorialRating() {
-        return editorialRating;
-    }
-
-    public Integer getUserRatingsCount() {
-        return userRatingsCount;
-    }
-
-    public Integer getUserRatingsAverage() {
-        return userRatingsAverage;
-    }
-
-    public List<Image> getImages() {
-        return images;
+        return venue;
     }
 
     public Image getMainImage() {
 
         Image image = null;
 
-        final List<Image> images = getImages();
         if (images != null) {
             if (images.size() > 0) {
                 image = images.get(0);
@@ -145,17 +98,5 @@ public class Venue implements Serializable {
         }
 
         return image;
-    }
-
-    public String getAddress1() {
-        return address1;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getPostCode() {
-        return postCode;
     }
 }

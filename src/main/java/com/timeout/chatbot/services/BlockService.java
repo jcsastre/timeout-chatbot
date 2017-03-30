@@ -35,7 +35,7 @@ public class BlockService {
     private final VenueSummaryBlock venueSummaryBlock;
     private final GeolocationAskBlock geolocationAskBlock;
     private final FilmsPageBlock filmsPageBlock;
-    private final SeeVenueItemBlock seeVenueItemBlock;
+    private final BlockItem blockItem;
     private final PhoneCallBlock phoneCallBlock;
     private final BlockSubmittingReviewRate submittingReviewRate;
     private final BlockSubmittingReviewComment submittingReviewComment;
@@ -59,7 +59,7 @@ public class BlockService {
         VenueSummaryBlock venueSummaryBlock,
         GeolocationAskBlock geolocationAskBlock,
         FilmsPageBlock filmsPageBlock,
-        SeeVenueItemBlock seeVenueItemBlock,
+        BlockItem blockItem,
         PhoneCallBlock phoneCallBlock,
         BlockSubmittingReviewRate submittingReviewRate,
         BlockSubmittingReviewComment submittingReviewComment,
@@ -80,7 +80,7 @@ public class BlockService {
         this.venueSummaryBlock = venueSummaryBlock;
         this.geolocationAskBlock = geolocationAskBlock;
         this.filmsPageBlock = filmsPageBlock;
-        this.seeVenueItemBlock = seeVenueItemBlock;
+        this.blockItem = blockItem;
         this.phoneCallBlock = phoneCallBlock;
         this.submittingReviewRate = submittingReviewRate;
         this.submittingReviewComment = submittingReviewComment;
@@ -175,7 +175,7 @@ public class BlockService {
         Venue venue
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        seeVenueItemBlock.send(userId, venue);
+        blockItem.send(userId, venue);
     }
 
     public void sendPhoneCallBlock(

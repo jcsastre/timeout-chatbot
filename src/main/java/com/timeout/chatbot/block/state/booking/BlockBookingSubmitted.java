@@ -48,11 +48,11 @@ public class BlockBookingSubmitted {
                 bookingBag.getPeopleCount(),
                 bookingBag.getLocalDate(),
                 bookingBag.getLocalTime(),
-                venue.getMainImage().getId(),
-                venue.getName(),
-                venue.getAddress1(),
-                venue.getCity(),
-                venue.getPostCode()
+                venue.getMainImage().id,
+                venue.name,
+                venue.address1,
+                venue.city,
+                venue.postCode
             );
 
         msc.sendTextMessage(

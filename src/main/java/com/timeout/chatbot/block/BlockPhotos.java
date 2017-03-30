@@ -13,13 +13,13 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class PhotosBlock {
+public class BlockPhotos {
 
     private final MessengerSendClientWrapper messengerSendClientWrapper;
     private final QuickReplyBuilderHelper quickReplyBuilderHelper;
 
     @Autowired
-    public PhotosBlock(
+    public BlockPhotos(
         MessengerSendClientWrapper messengerSendClientWrapper,
         QuickReplyBuilderHelper quickReplyBuilderHelper
     ) {
@@ -31,23 +31,23 @@ public class PhotosBlock {
         String userId,
         Venue venue
     ) {
-        List<Image> images = venue.getImages();
-        if (venue.getImages().size() > 10) {
+        List<Image> images = venue.images;
+        if (venue.images.size() > 10) {
             images = images.subList(0, 10);
         }
 
         final GenericTemplate.Builder genericTemplateBuilder = GenericTemplate.newBuilder();
         final GenericTemplate.Element.ListBuilder listBuilder = genericTemplateBuilder.addElements();
         for (Image image : images) {
-            String title = image.getAltText();
+            String title = image.altText;
             if (title == null) {
-                title = image.getTitle();
+                title = image.title;
                 if (title == null) {
-                    title = venue.getName();
+                    title = venue.name;
                 }
             }
 
-            listBuilder.addElement(title).imageUrl(image.getUrl()).toList().done();
+            listBuilder.addElement(title).imageUrl(image.url).toList().done();
         }
         final GenericTemplate genericTemplate = genericTemplateBuilder.build();
 

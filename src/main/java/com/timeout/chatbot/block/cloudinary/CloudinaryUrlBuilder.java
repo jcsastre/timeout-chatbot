@@ -4,7 +4,6 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.timeout.chatbot.configuration.TimeoutConfiguration;
 import com.timeout.chatbot.domain.CategoryNode;
-import com.timeout.chatbot.domain.Image;
 import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.response.common.UserRatingsSummary;
@@ -26,7 +25,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
-import java.util.List;
 import java.util.Locale;
 
 @Component
@@ -266,11 +264,11 @@ public class CloudinaryUrlBuilder {
         // Categorisation
         String categoryPrimaryName = null;
         String categorySecondaryName = null;
-        final CategoryNode categoryPrimary = venue.getCategoryPrimary();
+        final CategoryNode categoryPrimary = venue.categoryPrimary;
         if (categoryPrimary != null) {
             categoryPrimaryName = categoryPrimary.getName();
             if (categoryPrimaryName != null) {
-                final CategoryNode categorySecondary = venue.getCategorySecondary();
+                final CategoryNode categorySecondary = venue.categorySecondary;
                 if (categorySecondary != null) {
                     categorySecondaryName = categorySecondary.getName();
                 }
@@ -279,19 +277,18 @@ public class CloudinaryUrlBuilder {
 
         // Image Id
         String imageId = null;
-        final List<Image> images = venue.getImages();
-        if (images!=null && images.size()>0) {
-            imageId = images.get(0).getId();
+        if (venue.images!=null && venue.images.size()>0) {
+            imageId = venue.images.get(0).id;
         }
 
         return buildImageUrl(
             categoryPrimaryName,
             categorySecondaryName,
-            venue.getEditorialRating(),
-            venue.getUserRatingsAverage(),
-            venue.getUserRatingsCount(),
+            venue.editorialRating,
+            venue.userRatingsAverage,
+            venue.userRatingsCount,
             GraffittiType.VENUE,
-            venue.getLocation(),
+            venue.location,
             imageId
         );
     }
