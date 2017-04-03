@@ -10,4 +10,9 @@ public class SessionStateSubmittingReviewBag implements Serializable {
     public Integer rate;
     public String comment;
 
+    public SessionStateSubmittingReviewBag() {
+        this.state = SubmittingReviewState.RATING;
+        this.rate = null;
+        this.comment = null;
+    }
 }

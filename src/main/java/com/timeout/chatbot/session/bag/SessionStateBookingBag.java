@@ -8,7 +8,7 @@ import java.time.LocalTime;
 
 public class SessionStateBookingBag implements Serializable {
 
-    public BookingState bookingState;
+    public BookingState state;
     public Integer peopleCount;
     public LocalDate localDate;
     public LocalTime localTime;
@@ -18,10 +18,10 @@ public class SessionStateBookingBag implements Serializable {
     public String phone;
 
     public SessionStateBookingBag() {
-        this.bookingState = BookingState.FIRST_PROPOSAL;
-        this.peopleCount = null;
-        this.localDate = null;
-        this.localTime = null;
+        this.state = BookingState.PROPOSAL;
+        this.peopleCount = 2;
+        this.localDate = LocalDate.now().plusDays(1);
+        this.localTime = LocalTime.of(14, 0);
         this.firstName = null;
         this.lastName = null;
         this.email = null;

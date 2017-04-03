@@ -5,11 +5,13 @@ import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.action.BackFromItemAction;
 import com.timeout.chatbot.block.BlockPhotos;
+import com.timeout.chatbot.block.state.booking.BlockBookingProposal;
+import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewRate;
 import com.timeout.chatbot.domain.payload.QuickreplyPayload;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateBookingBag;
+import com.timeout.chatbot.session.bag.SessionStateSubmittingReviewBag;
 import com.timeout.chatbot.session.state.SessionState;
-import com.timeout.chatbot.session.state.SubmittingReviewState;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -22,16 +24,22 @@ public class QuickReplyMessageEventHandlerItem {
     private final BackFromItemAction backFromItemAction;
     private final BlockPhotos blockPhotos;
     private final MessengerSendClient msc;
+    private final BlockSubmittingReviewRate blockSubmittingReviewRate;
+    private final BlockBookingProposal blockBookingProposal;
 
     @Autowired
     public QuickReplyMessageEventHandlerItem(
         BackFromItemAction backFromItemAction,
         BlockPhotos blockPhotos,
-        MessengerSendClient msc
+        MessengerSendClient msc,
+        BlockSubmittingReviewRate blockSubmittingReviewRate,
+        BlockBookingProposal blockBookingProposal
     ) {
         this.backFromItemAction = backFromItemAction;
         this.blockPhotos = blockPhotos;
         this.msc = msc;
+        this.blockSubmittingReviewRate = blockSubmittingReviewRate;
+        this.blockBookingProposal = blockBookingProposal;
     }
 
     public void handle(
@@ -55,7 +63,7 @@ public class QuickReplyMessageEventHandlerItem {
                 break;
 
             case item_submit_review:
-                handleSumitReview(session);
+                handleSubmitReview(session);
                 break;
 
             case item_submit_photo:
@@ -69,6 +77,7 @@ public class QuickReplyMessageEventHandlerItem {
     ) throws InterruptedException, MessengerApiException, MessengerIOException, IOException {
 
         if (session.state == SessionState.ITEM) {
+
             backFromItemAction.perform(session);
         } else {
             //TODO: ha pasado mucho tiempo, y los resultados pueden ser distintos, que hacer?
@@ -83,7 +92,7 @@ public class QuickReplyMessageEventHandlerItem {
 
             session.state = SessionState.BOOKING;
             session.bagBooking = new SessionStateBookingBag();
-            //TODO
+            blockBookingProposal.send(session, true);
         } else {
             //TODO: ha pasado mucho tiempo, y los resultados pueden ser distintos, que hacer?
         }
@@ -104,16 +113,14 @@ public class QuickReplyMessageEventHandlerItem {
         }
     }
 
-    private void handleSumitReview(
+    private void handleSubmitReview(
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
         if (session.state == SessionState.ITEM) {
 
             session.state = SessionState.SUBMITTING_REVIEW;
-            session.bagSubmitting.state = SubmittingReviewState.RATING;
-            session.bagSubmitting.rate = null;
-            session.bagSubmitting.comment = null;
+            session.bagSubmitting = new SessionStateSubmittingReviewBag();
             blockSubmittingReviewRate.send(session.user.messengerId);
         } else {
             //TODO: ha pasado mucho tiempo, y los resultados pueden ser distintos, que hacer?
@@ -125,6 +132,7 @@ public class QuickReplyMessageEventHandlerItem {
     ) throws MessengerApiException, MessengerIOException {
 
         if (session.state == SessionState.ITEM) {
+
             msc.sendTextMessage(
                 session.user.messengerId,
                 "Please attach one or more photos"

@@ -47,7 +47,7 @@ public class SessionContextBooking extends SessionContext {
         this.messengerSendClientWrapper = messengerSendClientWrapper;
 //        this.bookingBlocksHelper = bookingBlocksHelper;
 
-//        this.bookingState = BookingState.UNKOWN;
+//        this.state = BookingState.UNKOWN;
     }
 
     public void startBooking() {
@@ -83,7 +83,7 @@ public class SessionContextBooking extends SessionContext {
                 // TODO: submit to Api.ai
                 // TODO: validate
                 // setLocalDate(date);
-                // bookingState = BookingState.TIME;
+                // state = BookingState.TIME;
                 // bookingBlocksHelper.sendBookingTimeBlock(user);
                 break;
 
@@ -91,7 +91,7 @@ public class SessionContextBooking extends SessionContext {
                 // TODO: submit to Api.ai
                 // TODO: validate
                 // setLocalTime(LocalTime.of(new Integer(time), 0));
-                // bookingState = BookingState.CONFIRMATION_BOOKING_DETAILS;
+                // state = BookingState.CONFIRMATION_BOOKING_DETAILS;
                 // askConfirmationInfo();
                 break;
 
@@ -324,7 +324,7 @@ public class SessionContextBooking extends SessionContext {
 //        try {
 //            Integer peopleCount = Integer.parseInt(peopleCountAsString);
 //            setPeopleCount(peopleCount);
-//            bookingState = BookingState.DATE;
+//            state = BookingState.DATE;
 //            bookingBlocksHelper.sendBookingDateBlock(user);
 //        } catch(NumberFormatException e) {
 //            sendTextMessage("Please, type a number");

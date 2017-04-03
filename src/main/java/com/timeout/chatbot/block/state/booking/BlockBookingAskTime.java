@@ -4,7 +4,7 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.QuickReply;
-import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.domain.payload.QuickreplyPayload;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,11 +12,12 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class BlockBookingTime {
+public class BlockBookingAskTime {
+
     private final MessengerSendClient messengerSendClient;
 
     @Autowired
-    public BlockBookingTime(
+    public BlockBookingAskTime(
         MessengerSendClient messengerSendClient
     ) {
         this.messengerSendClient = messengerSendClient;
@@ -40,7 +41,7 @@ public class BlockBookingTime {
         listBuilder.addTextQuickReply(
             "13:00",
             new JSONObject()
-                .put("type", PayloadType.booking_time)
+                .put("type", QuickreplyPayload.booking_update_time)
                 .put("time", "13")
                 .toString()
         ).toList();
@@ -48,7 +49,7 @@ public class BlockBookingTime {
         listBuilder.addTextQuickReply(
             "14:00",
             new JSONObject()
-                .put("type", PayloadType.booking_time)
+                .put("type", QuickreplyPayload.booking_update_time)
                 .put("time", "14")
                 .toString()
         ).toList();
@@ -56,7 +57,7 @@ public class BlockBookingTime {
         listBuilder.addTextQuickReply(
             "19:00",
             new JSONObject()
-                .put("type", PayloadType.booking_time)
+                .put("type", QuickreplyPayload.booking_update_time)
                 .put("time", "19")
                 .toString()
         ).toList();
@@ -64,7 +65,7 @@ public class BlockBookingTime {
         listBuilder.addTextQuickReply(
             "20:00",
             new JSONObject()
-                .put("type", PayloadType.booking_time)
+                .put("type", QuickreplyPayload.booking_update_time)
                 .put("time", "20")
                 .toString()
         ).toList();

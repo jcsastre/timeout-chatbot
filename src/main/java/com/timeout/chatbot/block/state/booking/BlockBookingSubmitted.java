@@ -39,15 +39,15 @@ public class BlockBookingSubmitted {
             "Your booking has been submitted"
         );
 
-        final SessionStateBookingBag bookingBag = session.bagBooking;
-        final SessionStateItemBag itemBag = session.bagItem;
-        final Venue venue = itemBag.venue;
+        final SessionStateBookingBag bagBooking = session.bagBooking;
+        final SessionStateItemBag bagItem = session.bagItem;
+        final Venue venue = bagItem.venue;
 
         String receiptImageUrl =
             cloudinaryUrlBuilder.buildBookReceiptUrl(
-                bookingBag.getPeopleCount(),
-                bookingBag.getLocalDate(),
-                bookingBag.getLocalTime(),
+                bagBooking.peopleCount,
+                bagBooking.localDate,
+                bagBooking.localTime,
                 venue.getMainImage().id,
                 venue.name,
                 venue.address1,

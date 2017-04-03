@@ -8,7 +8,6 @@ import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionSt
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.handler.states.booking.BookingStatePayloadHandler;
-import com.timeout.chatbot.handler.states.item.ItemStatePayloadHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStatePayloadHandler;
 import com.timeout.chatbot.messenger4j.SenderActionsHelper;
 import com.timeout.chatbot.services.BlockService;
@@ -34,7 +33,6 @@ public class DefaultPayloadHandler {
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
     private final SubmittingReviewStatePayloadHandler submittingReviewStatePayloadHandler;
     private final BookingStatePayloadHandler bookingStatePayloadHandler;
-    private final ItemStatePayloadHandler itemStatePayloadHandler;
     private final SenderActionsHelper senderActionsHelper;
     private final CloudinaryUrlBuilder cloudinaryUrlBuilder;
     private final SessionService sessionService;
@@ -47,7 +45,6 @@ public class DefaultPayloadHandler {
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
         SubmittingReviewStatePayloadHandler submittingReviewStatePayloadHandler,
         BookingStatePayloadHandler bookingStatePayloadHandler,
-        ItemStatePayloadHandler itemStatePayloadHandler,
         SenderActionsHelper senderActionsHelper,
         CloudinaryUrlBuilder cloudinaryUrlBuilder,
         SessionService sessionService
@@ -58,7 +55,6 @@ public class DefaultPayloadHandler {
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
         this.submittingReviewStatePayloadHandler = submittingReviewStatePayloadHandler;
         this.bookingStatePayloadHandler = bookingStatePayloadHandler;
-        this.itemStatePayloadHandler = itemStatePayloadHandler;
         this.senderActionsHelper = senderActionsHelper;
         this.cloudinaryUrlBuilder = cloudinaryUrlBuilder;
         this.sessionService = sessionService;
@@ -74,10 +70,6 @@ public class DefaultPayloadHandler {
 
         try {
             switch (sessionState) {
-
-                case ITEM:
-                    itemStatePayloadHandler.handle(session, payloadAsJson);
-                    break;
 
                 case SUBMITTING_REVIEW:
                     submittingReviewStatePayloadHandler.handle(session, payloadAsJson);

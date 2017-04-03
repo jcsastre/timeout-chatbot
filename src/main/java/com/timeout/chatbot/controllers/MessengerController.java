@@ -8,7 +8,6 @@ import com.timeout.chatbot.handler.messenger.AttachmentMessageEventHandlerImpl;
 import com.timeout.chatbot.handler.messenger.PostbackEventHandlerImpl;
 import com.timeout.chatbot.handler.messenger.quickreply.QuickReplyMessageEventHandlerImpl;
 import com.timeout.chatbot.handler.messenger.TextMessageEventHandlerImpl;
-import com.timeout.chatbot.session.SessionPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ public class MessengerController {
     @Autowired
     public MessengerController(
         MessengerConfiguration messengerConfiguration,
-        SessionPool sessionPool,
         TextMessageEventHandlerImpl textMessageEventHandlerImpl,
         QuickReplyMessageEventHandlerImpl quickReplyMessageEventHandlerImpl,
         PostbackEventHandlerImpl postbackEventHandlerImpl,

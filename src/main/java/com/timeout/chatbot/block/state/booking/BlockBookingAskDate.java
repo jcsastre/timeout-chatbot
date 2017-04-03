@@ -4,23 +4,24 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.QuickReply;
-import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.domain.payload.QuickreplyPayload;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
 
 @Component
-public class BlockBookingDate {
+public class BlockBookingAskDate {
 
     private final MessengerSendClient messengerSendClient;
 
     @Autowired
-    public BlockBookingDate(
+    public BlockBookingAskDate(
         MessengerSendClient messengerSendClient
     ) {
         this.messengerSendClient = messengerSendClient;
@@ -57,40 +58,51 @@ public class BlockBookingDate {
 
         final LocalDate tomorrowPlus1 = tomorrow.plusDays(1);
         addTextQuickReply(
-            "next " + tomorrowPlus1.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.UK),
+            buildText(tomorrowPlus1),
             tomorrowPlus1,
             listBuilder
         );
 
         final LocalDate tomorrowPlus2 = tomorrow.plusDays(2);
         addTextQuickReply(
-            "next " + tomorrowPlus2.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.UK),
+            buildText(tomorrowPlus2),
             tomorrowPlus2,
             listBuilder
         );
 
         final LocalDate tomorrowPlus3 = tomorrow.plusDays(3);
         addTextQuickReply(
-            "next " + tomorrowPlus3.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.UK),
+            buildText(tomorrowPlus3),
             tomorrowPlus3,
             listBuilder
         );
 
         final LocalDate tomorrowPlus4 = tomorrow.plusDays(4);
         addTextQuickReply(
-            "next " + tomorrowPlus4.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.UK),
+            buildText(tomorrowPlus4),
             tomorrowPlus4,
             listBuilder
         );
 
         final LocalDate tomorrowPlus5 = tomorrow.plusDays(5);
         addTextQuickReply(
-            "next " + tomorrowPlus5.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.UK),
+            buildText(tomorrowPlus5),
             tomorrowPlus5,
             listBuilder
         );
 
         return listBuilder.build();
+    }
+
+    private String buildText(
+        LocalDate localDate
+    ) {
+        return
+            String.format(
+                "%s (%s)",
+                localDate.getDayOfWeek().getDisplayName(TextStyle.FULL, Locale.UK),
+                localDate.format(DateTimeFormatter.ofPattern("d MMM"))
+            );
     }
 
     private void addTextQuickReply(
@@ -102,7 +114,7 @@ public class BlockBookingDate {
         listBuilder.addTextQuickReply(
             title,
             new JSONObject()
-                .put("type", PayloadType.booking_date)
+                .put("type", QuickreplyPayload.booking_update_day)
                 .put("date", localDate.toString())
                 .toString()
         ).toList();

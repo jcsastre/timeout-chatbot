@@ -4,11 +4,9 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.block.state.booking.BlockBookingAskEmail;
-import com.timeout.chatbot.block.state.booking.BlockBookingPeopleCount;
+import com.timeout.chatbot.block.state.booking.BlockBookingAskPeopleCount;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateBookingBag;
-import com.timeout.chatbot.session.state.BookingState;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -19,17 +17,17 @@ import java.io.IOException;
 public class BookingStateTextHandler {
 
     private final MessengerSendClient msc;
-    private final BlockBookingPeopleCount blockBookingPeopleCount;
+    private final BlockBookingAskPeopleCount blockBookingAskPeopleCount;
     private final BookingStateHandler bookingStateHandler;
     private final BlockBookingAskEmail blockBookingAskEmail;
 
     @Autowired
     public BookingStateTextHandler(
         MessengerSendClient msc,
-        BlockBookingPeopleCount blockBookingPeopleCount,
+        BlockBookingAskPeopleCount blockBookingAskPeopleCount,
         BookingStateHandler bookingStateHandler,
         BlockBookingAskEmail blockBookingAskEmail) {
-        this.blockBookingPeopleCount = blockBookingPeopleCount;
+        this.blockBookingAskPeopleCount = blockBookingAskPeopleCount;
         this.msc = msc;
         this.bookingStateHandler = bookingStateHandler;
         this.blockBookingAskEmail = blockBookingAskEmail;
@@ -40,10 +38,7 @@ public class BookingStateTextHandler {
         Session session
     ) throws NluException, MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionStateBookingBag bookingBag = session.bagBooking;
-        final BookingState bookingState = bookingBag.getBookingState();
-
-        switch (bookingState) {
+        switch (session.bagBooking.state) {
 
             case PEOPLE_COUNT:
                 handePeopleCount(text, session);
@@ -98,7 +93,7 @@ public class BookingStateTextHandler {
                 userMessengerId,
                 "Please, enter a number for the number of people"
             );
-            blockBookingPeopleCount.send(userMessengerId);
+            blockBookingAskPeopleCount.send(userMessengerId);
         }
     }
 

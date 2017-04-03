@@ -4,7 +4,10 @@ import java.io.Serializable;
 
 public enum BookingState implements Serializable {
 
-    FIRST_PROPOSAL,
+    PROPOSAL,
+    ASKING_DATE,
+    ASKING_TIME,
+    ASKING_PEOPLE,
 
     PEOPLE_COUNT,
     DATE,

@@ -17,8 +17,11 @@ public enum QuickreplyPayload {
     item_submit_review,
     item_submit_photo,
 
-    booking_first_proposal_ok,
-    booking_change_day,
-    booking_change_time,
-    booking_change_people
+    booking_proposal_ok,
+    booking_ask_day,
+    booking_ask_time,
+    booking_ask_people,
+    booking_update_day,
+    booking_update_time,
+    booking_update_people
 }
