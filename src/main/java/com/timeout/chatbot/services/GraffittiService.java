@@ -2,8 +2,8 @@ package com.timeout.chatbot.services;
 
 import com.timeout.chatbot.domain.Neighborhood;
 import com.timeout.chatbot.domain.Venue;
-import com.timeout.chatbot.domain.entities.Category;
-import com.timeout.chatbot.domain.entities.Subcategory;
+import com.timeout.chatbot.graffitti.domain.GraffittiCategory;
+import com.timeout.chatbot.graffitti.domain.GraffittiSubcategory;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4FacetNode;
 import com.timeout.chatbot.graffitti.response.facets.v4.GraffittiFacetV4Response;
 import com.timeout.chatbot.graffitti.response.facets.v5.GraffittiFacetV5Node;
@@ -63,27 +63,27 @@ public class GraffittiService {
     }
 
     public void initializeSubcategoriesOfCategories() {
-        for (Category category : Category.values()) {
+        for (GraffittiCategory category : GraffittiCategory.values()) {
 
             GraffittiFacetV4FacetNode categoryNode = null;
             for (GraffittiFacetV4FacetNode child : facetWhatCategoriesRootNode.getChildren()) {
-                if (child.getId().equalsIgnoreCase(category.getGraffittiId())) {
+                if (child.getId().equalsIgnoreCase(category.graffittiId)) {
                     categoryNode = child;
                 }
             }
 
             if (categoryNode != null) {
-                List<Subcategory> subcategories = new ArrayList<>();
+                List<GraffittiSubcategory> subcategories = new ArrayList<>();
                 for (GraffittiFacetV4FacetNode node : categoryNode.getChildren()) {
-                    subcategories.add(
-                        new Subcategory(
-                            node.getId(),
-                            node.getName(),
-                            node.getConcept().getName()
-                        )
-                    );
+
+                    final GraffittiSubcategory graffittiSubcategory = new GraffittiSubcategory();
+                    graffittiSubcategory.graffittiId = node.getId();
+                    graffittiSubcategory.name = node.getName();
+                    graffittiSubcategory.conceptName = node.getConcept().getName();
+
+                    subcategories.add(graffittiSubcategory);
                 }
-                category.setSubcategories(subcategories);
+                category.subcategories = subcategories;
             }
         }
     }
@@ -97,12 +97,10 @@ public class GraffittiService {
             if (facet.getId().equalsIgnoreCase("where")) {
                 for (GraffittiFacetV4FacetNode facetWhereChild : facet.getChildren()) {
                     if(!facetWhereChild.getId().equalsIgnoreCase("canned-near_here")) {
-                        neighborhoods.add(
-                            new Neighborhood(
-                                facetWhereChild.getId(),
-                                facetWhereChild.getName()
-                            )
-                        );
+                        Neighborhood neighborhood = new Neighborhood();
+                        neighborhood.graffitiId = facetWhereChild.getId();
+                        neighborhood.name = facetWhereChild.getName();
+                        neighborhoods.add(neighborhood);
                     }
                 }
             }
@@ -113,7 +111,7 @@ public class GraffittiService {
 
     public Neighborhood getNeighborhoodByGraffittiId(String graffittiId) {
         for (Neighborhood neighborhood : neighborhoods) {
-            if (neighborhood.getGraffitiId().equalsIgnoreCase(graffittiId)) {
+            if (neighborhood.graffitiId.equalsIgnoreCase(graffittiId)) {
                 return neighborhood;
             }
         }
@@ -399,7 +397,7 @@ public class GraffittiService {
             );
 
         return
-            new Venue(
+            Venue.build(
                 graffittiVenueResponse.getBody(),
                 graffittiImagesResponse.getGraffittiImages()
             );

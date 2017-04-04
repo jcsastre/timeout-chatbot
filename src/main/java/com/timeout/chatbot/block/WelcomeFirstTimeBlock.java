@@ -3,7 +3,7 @@ package com.timeout.chatbot.block;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
-import com.timeout.chatbot.domain.user.User;
+import com.timeout.chatbot.domain.FbUserProfile;
 import com.timeout.chatbot.messenger4j.SenderActionsHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -24,88 +24,94 @@ public class WelcomeFirstTimeBlock {
     }
 
     public void send(
-        User user
+        String userMessengerId,
+        FbUserProfile fbUserProfile
     ) throws MessengerApiException, MessengerIOException {
 
-        final String messengerId = user.getMessengerId();
+        msgHi(userMessengerId, fbUserProfile);
 
-        msgHi(user, messengerId);
+        msgPresentation(userMessengerId);
 
-        msgPresentation(user, messengerId);
-
-        msgHelp(user, messengerId);
+        msgHelp(userMessengerId);
 
         /////////////////////
 
 //        messengerSendClient.sendImageAttachment(
-//            user.getMessengerId(),
+//            user.messengerId,
 //            "https://im.ezgif.com/tmp/ezgif-1-2c120f0a36.gif"
 //        );
 
 //
 //
 //        messengerSendClient.sendImageAttachment(
-//            user.getMessengerId(),
+//            user.messengerId,
 //            "https://media.giphy.com/media/pxwlYSM8PfY5y/giphy.gif"
 //        );
 
 
 //        messengerSendClient.sendTextMessage(
-//            user.getMessengerId(),
+//            user.messengerId,
 //            "Let's start!"
 //        );
 
 //        messengerSendClient.sendTextMessage(
-//            user.getMessengerId(),
+//            user.messengerId,
 //            "First, some examples of questions you can ask me"
 //        );
 
-//        suggestionsBlock.send(user.getMessengerId());
+//        suggestionsBlock.send(user.messengerId);
 
 //        messengerSendClient.sendTextMessage(
-//            user.getMessengerId(),
+//            user.messengerId,
 //            "If the options above doesn't fit your needs, just ask me. " +
 //                "And if you don't know what to ask type 'help'"
 //        );
     }
 
-    private void msgHelp(User user, String messengerId) throws MessengerApiException, MessengerIOException {
-        senderActionsHelper.typingOnAndWait(messengerId, 2000);
+    private void msgHelp(
+        String userMessengerId
+    ) throws MessengerApiException, MessengerIOException {
+
+        senderActionsHelper.typingOnAndWait(userMessengerId, 2000);
         messengerSendClient.sendTextMessage(
-            user.getMessengerId(),
-            "I can help you to find the most beautiful places and vibrant events in London"
+            userMessengerId,
+            "I can help you to perform the most beautiful places and vibrant events in London"
         );
     }
 
     private void msgPresentation(
-        User user,
-        String messengerId
+        String userMessengerId
     ) throws MessengerApiException, MessengerIOException {
 
-        senderActionsHelper.typingOnAndWait(messengerId, 1500);
+        senderActionsHelper.typingOnAndWait(userMessengerId, 1500);
         messengerSendClient.sendTextMessage(
-            user.getMessengerId(),
+            userMessengerId,
             "I'm Brian, the chatbot of Timeout London"
         );
 
-        senderActionsHelper.typingOn(messengerId);
+        senderActionsHelper.typingOn(userMessengerId);
         messengerSendClient.sendImageAttachment(
-            user.getMessengerId(),
+            userMessengerId,
             "https://media.giphy.com/media/QGMiTNBw8hB72/giphy.gif"
         );
     }
 
-    private void msgHi(User user, String messengerId) throws MessengerApiException, MessengerIOException {
+    private void msgHi(
+        String userMessengerId,
+        FbUserProfile fbUserProfile
+    ) throws MessengerApiException, MessengerIOException {
+
         String msg = null;
-        if (user.getFbUserProfile().getFirstName() != null) {
-            msg = "Hi " + user.getFbUserProfile().getFirstName() + "!";
+
+        if (fbUserProfile.getFirstName() != null) {
+            msg = "Hi " + fbUserProfile.getFirstName() + "!";
         } else {
             msg = "Hi!";
         }
 
-        senderActionsHelper.typingOnAndWait(messengerId, 300);
+        senderActionsHelper.typingOnAndWait(userMessengerId, 300);
         messengerSendClient.sendTextMessage(
-            user.getMessengerId(),
+            userMessengerId,
             msg
         );
     }

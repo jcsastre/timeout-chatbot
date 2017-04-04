@@ -1,6 +1,9 @@
 package com.timeout.chatbot.domain.page;
 
-public class PageUid {
+import java.io.Serializable;
+
+public class PageUid implements Serializable {
+
     private final String value;
 
     public PageUid(String value) {

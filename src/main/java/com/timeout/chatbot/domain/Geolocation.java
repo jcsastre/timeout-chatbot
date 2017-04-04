@@ -1,28 +1,10 @@
 package com.timeout.chatbot.domain;
 
-public class Geolocation {
+import java.io.Serializable;
 
-    private Double latitude;
-    private Double longitude;
+public class Geolocation implements Serializable {
 
-    public Geolocation(Double latitude, Double longitude) {
-        this.latitude = latitude;
-        this.longitude = longitude;
-    }
+    public Double latitude;
+    public Double longitude;
 
-    public Double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
 }

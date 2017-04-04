@@ -3,17 +3,33 @@ package com.timeout.chatbot.domain;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import java.io.Serializable;
+
+@Embeddable
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FbUserProfile {
+public class FbUserProfile implements Serializable {
 
     @JsonProperty("first_name")
+    @Column(name = "fb_first_name")
     private String firstName;
+
     @JsonProperty("last_name")
+    @Column(name = "fb_last_name")
     private String lastName;
+
     @JsonProperty("profile_pic")
+    @Column(name = "fb_profile_pic")
     private String profilePic;
+
+    @Column(name = "fb_locale")
     private String locale;
+
+    @Column(name = "fb_timezone")
     private String timezone;
+
+    @Column(name = "fb_gender")
     private String gender;
 
     public String getFirstName() {

@@ -1,6 +1,6 @@
 package com.timeout.chatbot.domain;
 
-public enum What {
+public enum WhatDeprecated {
     RESTAURANT("Restaurant", "RestaurantsManager"),
     BAR("Bars & Pubs", "Bars & Pubs"),
     HOTEL("Hotel", "Hotels"),
@@ -8,7 +8,7 @@ public enum What {
 
     private String singularName;
     private String pluralName;
-    What(String singularName, String pluralName) {
+    WhatDeprecated(String singularName, String pluralName) {
         this.singularName = singularName;
         this.pluralName = pluralName;
     }

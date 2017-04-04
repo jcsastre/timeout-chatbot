@@ -9,7 +9,7 @@ import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewCom
 import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewSubmitted;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.handler.intent.IntentSeeItem;
+import com.timeout.chatbot.action.SeeItemAction;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateSubmittingReviewBag;
 import com.timeout.chatbot.session.state.SessionState;
@@ -28,7 +28,7 @@ public class SubmittingReviewStatePayloadHandler {
     private final BlockSubmittingReviewSubmitted blockSubmittingReviewSubmitted;
     private final BlockSubmittingReviewCancelled blockSubmittingReviewCancelled;
     private final BlockError blockError;
-    private final IntentSeeItem intentSeeItem;
+    private final SeeItemAction seeItemAction;
 
     @Autowired
     public SubmittingReviewStatePayloadHandler(
@@ -37,14 +37,14 @@ public class SubmittingReviewStatePayloadHandler {
         BlockSubmittingReviewSubmitted blockSubmittingReviewSubmitted,
         BlockSubmittingReviewCancelled blockSubmittingReviewCancelled,
         BlockError blockError,
-        IntentSeeItem intentSeeItem
+        SeeItemAction seeItemAction
     ) {
         this.blockSubmittingReviewComment = blockSubmittingReviewComment;
         this.blockSubmittingReviewAskConfirmation = blockSubmittingReviewAskConfirmation;
         this.blockSubmittingReviewSubmitted = blockSubmittingReviewSubmitted;
         this.blockSubmittingReviewCancelled = blockSubmittingReviewCancelled;
         this.blockError = blockError;
-        this.intentSeeItem = intentSeeItem;
+        this.seeItemAction = seeItemAction;
     }
 
     public void handle(
@@ -75,7 +75,7 @@ public class SubmittingReviewStatePayloadHandler {
                 break;
 
             default:
-                blockError.send(session.getUser());
+                blockError.send(session.user.messengerId);
                 break;
         }
     }
@@ -85,21 +85,20 @@ public class SubmittingReviewStatePayloadHandler {
         JSONObject payload
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionState sessionState = session.getSessionState();
+        final SessionState sessionState = session.state;
         if (sessionState == SessionState.SUBMITTING_REVIEW) {
 
-            final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
-            final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
-            if (submittingReviewState == SubmittingReviewState.RATING) {
+            final SessionStateSubmittingReviewBag bag = session.bagSubmitting;
+            if (bag.state == SubmittingReviewState.RATING) {
 
-                bag.setRate(payload.getInt("rate"));
-                bag.setSubmittingReviewState(SubmittingReviewState.WRITING_COMMENT);
-                blockSubmittingReviewComment.send(session.getUser().getMessengerId());
+                bag.rate = payload.getInt("rate");
+                bag. state = SubmittingReviewState.WRITING_COMMENT;
+                blockSubmittingReviewComment.send(session.user.messengerId);
             } else {
-                blockError.send(session.getUser());
+                blockError.send(session.user.messengerId);
             }
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.user.messengerId);
         }
     }
 
@@ -107,20 +106,19 @@ public class SubmittingReviewStatePayloadHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionState sessionState = session.getSessionState();
+        final SessionState sessionState = session.state;
         if (sessionState == SessionState.SUBMITTING_REVIEW) {
 
-            final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
-            final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
-            if (submittingReviewState == SubmittingReviewState.WRITING_COMMENT) {
+            final SessionStateSubmittingReviewBag bag = session.bagSubmitting;
+            if (bag.state == SubmittingReviewState.WRITING_COMMENT) {
 
-                bag.setSubmittingReviewState(SubmittingReviewState.ASKING_FOR_CONFIRMATION);
+                bag.state = SubmittingReviewState.ASKING_FOR_CONFIRMATION;
                 blockSubmittingReviewAskConfirmation.send(session);
             } else {
-                blockError.send(session.getUser());
+                blockError.send(session.user.messengerId);
             }
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.user.messengerId);
         }
     }
 
@@ -129,26 +127,25 @@ public class SubmittingReviewStatePayloadHandler {
         Boolean isYes
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        final SessionState sessionState = session.getSessionState();
+        final SessionState sessionState = session.state;
         if (sessionState == SessionState.SUBMITTING_REVIEW) {
 
-            final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
-            final SubmittingReviewState submittingReviewState = bag.getSubmittingReviewState();
-            if (submittingReviewState == SubmittingReviewState.ASKING_FOR_CONFIRMATION) {
+            final SessionStateSubmittingReviewBag bag = session.bagSubmitting;
+            if (bag.state == SubmittingReviewState.ASKING_FOR_CONFIRMATION) {
 
                 if (isYes) {
-                    blockSubmittingReviewSubmitted.send(session.getUser().getMessengerId());
+                    blockSubmittingReviewSubmitted.send(session.user.messengerId);
                 } else {
-                    blockSubmittingReviewCancelled.send(session.getUser().getMessengerId());
+                    blockSubmittingReviewCancelled.send(session.user.messengerId);
                 }
 
-                session.setSessionState(SessionState.ITEM);
-                intentSeeItem.handle(session);
+                session.state = SessionState.ITEM;
+                seeItemAction.perform(session);
             } else {
-                blockError.send(session.getUser());
+                blockError.send(session.user.messengerId);
             }
         } else {
-            blockError.send(session.getUser());
+            blockError.send(session.user.messengerId);
         }
     }
 }

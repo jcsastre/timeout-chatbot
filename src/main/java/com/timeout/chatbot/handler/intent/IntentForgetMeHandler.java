@@ -31,10 +31,10 @@ public class IntentForgetMeHandler {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        final User user = session.getUser();
+        final User user = session.user;
         userRepository.delete(user);
 
-        final String messengerId = session.getUser().getMessengerId();
+        final String messengerId = session.user.messengerId;
 
         msc.sendImageAttachment(
             messengerId,
@@ -43,7 +43,7 @@ public class IntentForgetMeHandler {
 
         senderActionsHelper.typingOnAndWait(messengerId, 1500);
         msc.sendTextMessage(
-            user.getMessengerId(),
+            user.messengerId,
             "Hey! You know, your face looks familiar"
         );
     }

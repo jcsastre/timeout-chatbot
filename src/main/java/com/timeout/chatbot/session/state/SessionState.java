@@ -1,6 +1,9 @@
 package com.timeout.chatbot.session.state;
 
-public enum SessionState {
+import java.io.Serializable;
+
+public enum SessionState implements Serializable {
+
     UNDEFINED,
     SEARCH_SUGGESTIONS,
     DISCOVER,

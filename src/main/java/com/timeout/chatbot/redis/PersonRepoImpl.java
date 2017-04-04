@@ -10,37 +10,41 @@ public class PersonRepoImpl implements PersonRepo {
 
     private static String PERSON_KEY = "Person";
 
-    public RedisTemplate<String, Person> getRedisTemplate()
-    {
+    public RedisTemplate<String, Person> getRedisTemplate() {
+
         return redisTemplate;
     }
 
-    public void setRedisTemplate(RedisTemplate<String, Person> redisTemplate)
-    {
+    public void setRedisTemplate(
+        RedisTemplate<String, Person> redisTemplate
+    ) {
         this.redisTemplate = redisTemplate;
+
     }
 
     @Override
-    public void save(Person person)
-    {
+    public void save(
+        Person person
+    ) {
         this.redisTemplate.opsForHash().put(PERSON_KEY, person.getId(), person);
     }
 
     @Override
-    public Person find(String id)
-    {
+    public Person find(
+        String id
+    ) {
         return (Person)this.redisTemplate.opsForHash().get(PERSON_KEY, id);
     }
 
     @Override
-    public Map<Object,Object> findAll()
-    {
+    public Map<Object,Object> findAll() {
+
         return this.redisTemplate.opsForHash().entries(PERSON_KEY);
     }
 
     @Override
-    public void delete(String id)
-    {
+    public void delete(String id) {
+
         this.redisTemplate.opsForHash().delete(PERSON_KEY,id);
     }
 }

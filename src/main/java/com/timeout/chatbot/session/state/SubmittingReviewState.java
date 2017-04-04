@@ -1,6 +1,9 @@
 package com.timeout.chatbot.session.state;
 
-public enum SubmittingReviewState {
+import java.io.Serializable;
+
+public enum SubmittingReviewState implements Serializable {
+
     RATING,
     WRITING_COMMENT,
     ASKING_FOR_CONFIRMATION

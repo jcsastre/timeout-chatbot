@@ -4,11 +4,12 @@ import java.io.Serializable;
 
 public class Person implements Serializable {
 
-    public enum Gender{Male, Female}
     private String id;
+    public enum Gender{Male, Female}
     private String name;
     private Gender gender;
     private int age;
+    private Address address;
 
     public String getId() {
         return id;
@@ -40,6 +41,14 @@ public class Person implements Serializable {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public Address getAddress() {
+        return address;
+    }
+
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     @Override
@@ -91,6 +100,6 @@ public class Person implements Serializable {
 
     @Override
     public String toString() {
-        return "Person [id=" + id + ", name=" + name + ", gender=" + gender + ", age=" + age + "]";
+        return "Person [id=" + id + ", address=" + address + ", name=" + name + ", gender=" + gender + ", age=" + age + "]";
     }
 }

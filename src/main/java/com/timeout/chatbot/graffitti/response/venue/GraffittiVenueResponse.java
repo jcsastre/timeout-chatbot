@@ -6,8 +6,10 @@ import com.timeout.chatbot.graffitti.response.common.UserRatingsSummary;
 import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCategorisation;
 import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 
+import java.io.Serializable;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GraffittiVenueResponse {
+public class GraffittiVenueResponse implements Serializable {
 
     private Body body;
 
@@ -20,7 +22,7 @@ public class GraffittiVenueResponse {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public class Body {
+    public class Body implements Serializable {
 
         @JsonProperty("categorisation")
         private GraffittiCategorisation graffittiCategorisation;
@@ -39,6 +41,10 @@ public class GraffittiVenueResponse {
         private Integer editorialRating;
         @JsonProperty("user_ratings_summary")
         private UserRatingsSummary userRatingsSummary;
+        private String address1;
+        private String city;
+        @JsonProperty("postcode")
+        private String postCode;
 
         public GraffittiCategorisation getGraffittiCategorisation() {
             return graffittiCategorisation;
@@ -142,6 +148,30 @@ public class GraffittiVenueResponse {
 
         public void setUserRatingsSummary(UserRatingsSummary userRatingsSummary) {
             this.userRatingsSummary = userRatingsSummary;
+        }
+
+        public String getAddress1() {
+            return address1;
+        }
+
+        public void setAddress1(String address1) {
+            this.address1 = address1;
+        }
+
+        public String getCity() {
+            return city;
+        }
+
+        public void setCity(String city) {
+            this.city = city;
+        }
+
+        public String getPostCode() {
+            return postCode;
+        }
+
+        public void setPostCode(String postCode) {
+            this.postCode = postCode;
         }
     }
 }

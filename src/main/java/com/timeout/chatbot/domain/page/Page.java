@@ -1,34 +1,16 @@
 package com.timeout.chatbot.domain.page;
 
-/**
- * Page of facebook.
- */
-public class Page {
-    private PageUid uid;
+import java.io.Serializable;
 
-    public Page(PageUid uid) {
-        this.uid = uid;
-    }
+public class Page implements Serializable {
 
-    public PageUid getUid() {
-        return uid;
-    }
-
-    @Override
-    public boolean equals(Object other){
-        if (other == null) return false;
-        if (other == this) return true;
-        if (!(other instanceof PageUid))return false;
-
-        Page otherPage = (Page)other;
-        return this.uid.equals(otherPage.uid);
-    }
+    public String id;
 
     @Override
     public String toString() {
         return String.format(
-            "Page[uid=%s]",
-            uid
+            "Page[id=%s]",
+            id
         );
     }
 }

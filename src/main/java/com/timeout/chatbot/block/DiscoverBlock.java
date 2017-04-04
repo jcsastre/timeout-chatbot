@@ -7,7 +7,7 @@ import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.domain.entities.Category;
-import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.domain.payload.PostbackPayload;
 import com.timeout.chatbot.graffitti.response.search.page.GraffittiSearchResponse;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.graffitti.urlbuilder.SearchUrlBuilder;
@@ -69,7 +69,8 @@ public class DiscoverBlock {
                 addPageItemToListBuilder(
                     listBuilder,
                     category.getNamePlural(),
-                    pageItem
+                    pageItem,
+                    buildJsonPayloadAsString(category)
                 );
             }
         }
@@ -80,7 +81,8 @@ public class DiscoverBlock {
     private void addPageItemToListBuilder(
         GenericTemplate.Element.ListBuilder listBuilder,
         String nodeName,
-        PageItem pageItem
+        PageItem pageItem,
+        String payloadAsJsonString
     ) {
         String titleForButton = nodeName;
         if (
@@ -99,14 +101,39 @@ public class DiscoverBlock {
                 Button.newListBuilder()
                     .addPostbackButton(
                         titleForButton,
-                        new JSONObject()
-                            .put("type", PayloadType.utterance)
-                            .put("utterance", nodeName)
-                            .toString()
+                        payloadAsJsonString
                     ).toList()
                     .build()
             )
             .toList();
+    }
+
+    private String buildJsonPayloadAsString(
+        Category category
+    ) {
+        switch (category) {
+
+            case RESTAURANTS:
+                return
+                    new JSONObject()
+                        .put("type", PostbackPayload.discover_restaurants)
+                        .toString();
+
+            case HOTELS:
+                return
+                    new JSONObject()
+                        .put("type", PostbackPayload.discover_hotels)
+                        .toString();
+
+            case THINGS_TO_DO:
+                return
+                    new JSONObject()
+                        .put("type", PostbackPayload.not_available) //TODO: change!!!
+                        .toString();
+
+            default:
+                return null;
+        }
     }
 
     private PageItem getPageItemWithImage(

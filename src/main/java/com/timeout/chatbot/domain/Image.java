@@ -2,32 +2,25 @@ package com.timeout.chatbot.domain;
 
 import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 
-public class Image {
-    private String id;
-    private String url;
-    private String title;
-    private String altText;
+import java.io.Serializable;
 
-    public Image(GraffittiImage gi) {
-        id = gi.getId();
-        url = gi.getUrl();
-        title = gi.getTitle();
-        altText = gi.getAltText();
-    }
+public class Image implements Serializable {
 
-    public String getId() {
-        return id;
-    }
+    public String id;
+    public String url;
+    public String title;
+    public String altText;
 
-    public String getUrl() {
-        return url;
-    }
+    public static Image build(
+        GraffittiImage gi
+    ) {
+        Image image = new Image();
 
-    public String getTitle() {
-        return title;
-    }
+        image.id = gi.getId();
+        image.url = gi.getUrl();
+        image.title = gi.getTitle();
+        image.altText = gi.getAltText();
 
-    public String getAltText() {
-        return altText;
+        return image;
     }
 }

@@ -1,12 +1,14 @@
 package com.timeout.chatbot.repository;
 
 import com.timeout.chatbot.domain.user.User;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-@Repository
-public interface UserRepository extends MongoRepository<User, String> {
+import java.util.UUID;
 
-    public User findByMessengerId(String messengerId);
+@Repository
+public interface UserRepository extends CrudRepository<User, UUID> {
+
+    User findByMessengerId(String messengerId);
 
 }

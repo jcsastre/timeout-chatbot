@@ -1,8 +1,10 @@
 package com.timeout.chatbot.block.state.booking;
 
+import com.github.messenger4j.exceptions.MessengerApiException;
+import com.github.messenger4j.exceptions.MessengerIOException;
+import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.QuickReply;
-import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
+import com.timeout.chatbot.domain.payload.QuickreplyPayload;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,20 +12,22 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class BlockBookingPeopleCount {
-    private final MessengerSendClientWrapper messengerSendClientWrapper;
+public class BlockBookingAskPeopleCount {
+
+    private final MessengerSendClient msc;
 
     @Autowired
-    public BlockBookingPeopleCount(
-        MessengerSendClientWrapper messengerSendClientWrapper
+    public BlockBookingAskPeopleCount(
+        MessengerSendClient messengerSendClientWrapper
     ) {
-        this.messengerSendClientWrapper = messengerSendClientWrapper;
+        this.msc = messengerSendClientWrapper;
     }
 
     public void send(
         String userId
-    ) {
-        messengerSendClientWrapper.sendTextMessage(
+    ) throws MessengerApiException, MessengerIOException {
+
+        msc.sendTextMessage(
             userId,
             "Please, press or type the number of people",
             buildQuickReplies()
@@ -38,7 +42,7 @@ public class BlockBookingPeopleCount {
             listBuilder.addTextQuickReply(
                 Integer.toString(i),
                 new JSONObject()
-                    .put("type", PayloadType.booking_people_count)
+                    .put("type", QuickreplyPayload.booking_update_people)
                     .put("count", i)
                     .toString()
             ).toList();

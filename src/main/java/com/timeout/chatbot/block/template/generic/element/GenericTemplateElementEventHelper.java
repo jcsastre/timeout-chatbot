@@ -5,7 +5,7 @@ import com.cloudinary.Transformation;
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.configuration.TimeoutConfiguration;
-import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.domain.payload.PostbackPayload;
 import com.timeout.chatbot.graffitti.response.common.UserRatingsSummary;
 import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCategorisation;
 import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCategorisationSecondary;
@@ -212,7 +212,7 @@ public class GenericTemplateElementEventHelper {
         buttonsBuilder.addPostbackButton(
             "More options",
             new JSONObject()
-                .put("type", PayloadType.searching_ItemMoreOptions)
+                .put("type", PostbackPayload.item_see)
                 .put("item_type", pageItem.getType())
                 .put("item_id", pageItem.getId())
                 .toString()

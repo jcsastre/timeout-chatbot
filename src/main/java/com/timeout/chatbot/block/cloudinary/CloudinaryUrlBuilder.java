@@ -4,7 +4,6 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.Transformation;
 import com.timeout.chatbot.configuration.TimeoutConfiguration;
 import com.timeout.chatbot.domain.CategoryNode;
-import com.timeout.chatbot.domain.Image;
 import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
 import com.timeout.chatbot.graffitti.response.common.UserRatingsSummary;
@@ -13,6 +12,8 @@ import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCat
 import com.timeout.chatbot.graffitti.response.common.categorisation.GraffittiCategorisationSecondary;
 import com.timeout.chatbot.graffitti.response.images.GraffittiImage;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,11 +25,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
-import java.util.List;
 import java.util.Locale;
 
 @Component
 public class CloudinaryUrlBuilder {
+
+    private static final Logger logger = LoggerFactory.getLogger(CloudinaryUrlBuilder.class);
 
     private final TimeoutConfiguration timeoutConfiguration;
     private final Cloudinary cloudinary;
@@ -53,7 +55,6 @@ public class CloudinaryUrlBuilder {
         LocalTime localTime,
         String venueImageId,
         String venueName,
-        String name,
         String address,
         String city,
         String postCode
@@ -188,7 +189,7 @@ public class CloudinaryUrlBuilder {
                 );
         }
 
-        // Location if venue
+        // Location if VENUE
         if (graffittiType==GraffittiType.VENUE && location!=null) {
             transformation = chainLocation(transformation, location);
         }
@@ -250,7 +251,7 @@ public class CloudinaryUrlBuilder {
             pageItem.getEditorialRating(),
             userRatingsAverage,
             userRatingsCount,
-            GraffittiType.fromString(pageItem.getType()),
+            GraffittiType.fromValue(pageItem.getType()),
             pageItem.getLocation(),
             imageId
         );
@@ -263,11 +264,11 @@ public class CloudinaryUrlBuilder {
         // Categorisation
         String categoryPrimaryName = null;
         String categorySecondaryName = null;
-        final CategoryNode categoryPrimary = venue.getCategoryPrimary();
+        final CategoryNode categoryPrimary = venue.categoryPrimary;
         if (categoryPrimary != null) {
             categoryPrimaryName = categoryPrimary.getName();
             if (categoryPrimaryName != null) {
-                final CategoryNode categorySecondary = venue.getCategorySecondary();
+                final CategoryNode categorySecondary = venue.categorySecondary;
                 if (categorySecondary != null) {
                     categorySecondaryName = categorySecondary.getName();
                 }
@@ -276,19 +277,18 @@ public class CloudinaryUrlBuilder {
 
         // Image Id
         String imageId = null;
-        final List<Image> images = venue.getImages();
-        if (images!=null && images.size()>0) {
-            imageId = images.get(0).getId();
+        if (venue.images!=null && venue.images.size()>0) {
+            imageId = venue.images.get(0).id;
         }
 
         return buildImageUrl(
             categoryPrimaryName,
             categorySecondaryName,
-            venue.getEditorialRating(),
-            venue.getUserRatingsAverage(),
-            venue.getUserRatingsCount(),
+            venue.editorialRating,
+            venue.userRatingsAverage,
+            venue.userRatingsCount,
             GraffittiType.VENUE,
-            venue.getLocation(),
+            venue.location,
             imageId
         );
     }
@@ -297,31 +297,39 @@ public class CloudinaryUrlBuilder {
         String targetUrl
     ) throws IOException, InterruptedException {
 
-        System.out.println("checkUrlAvailability: " + targetUrl);
+        logger.debug("checkUrlAvailability: " + targetUrl);
 
-//        Thread.sleep(5000);
+        try {
+            HttpURLConnection.setFollowRedirects(false);
+            HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(targetUrl).openConnection();
+            httpUrlConnection.setRequestMethod("HEAD");
+            httpUrlConnection.setConnectTimeout(3000);
 
-        HttpURLConnection httpUrlConnection = (HttpURLConnection) new URL(targetUrl).openConnection();
-        httpUrlConnection.setRequestMethod("HEAD");
-
-        int responseCode = httpUrlConnection.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            return true;
-        } else {
-            System.out.println("\tReceived code " + responseCode);
-            System.out.println("\t" + httpUrlConnection.getHeaderFields().toString());
-            System.out.println("\tWaiting " + 100 + "ms");
-            Thread.sleep(100);
-        }
-
-        responseCode = httpUrlConnection.getResponseCode();
-        if (responseCode == HttpURLConnection.HTTP_OK) {
-            return true;
-        } else {
-            System.out.println("\tReceived code " + responseCode);
-            System.out.println("\t" + httpUrlConnection.getHeaderFields().toString());
+            return (httpUrlConnection.getResponseCode() == HttpURLConnection.HTTP_OK);
+        } catch (IOException e) {
             return false;
         }
+
+//        httpUrlConnection.setRequestMethod("HEAD");
+//
+//        int responseCode = httpUrlConnection.getResponseCode();
+//        if (responseCode == HttpURLConnection.HTTP_OK) {
+//            return true;
+//        } else {
+//            System.out.println("\tReceived code " + responseCode);
+//            System.out.println("\t" + httpUrlConnection.getHeaderFields().toString());
+//            System.out.println("\tWaiting " + 100 + "ms");
+//            Thread.sleep(100);
+//        }
+//
+//        responseCode = httpUrlConnection.getResponseCode();
+//        if (responseCode == HttpURLConnection.HTTP_OK) {
+//            return true;
+//        } else {
+//            System.out.println("\tReceived code " + responseCode);
+//            System.out.println("\t" + httpUrlConnection.getHeaderFields().toString());
+//            return false;
+//        }
 
         //        boolean isAvailable = false;
 //        int numberOfChecksDone = 0;
@@ -354,11 +362,11 @@ public class CloudinaryUrlBuilder {
 //    }
 
 //    private String buildBaseImageUrl(
-//        Venue venue
+//        Venue VENUE
 //    ) {
 //        String imageId = null;
 //
-//        final List<Image> images = venue.getImages();
+//        final List<Image> images = VENUE.getImages();
 //        if (images!=null && images.size()>0) {
 //            imageId = images.get(0).getId();
 //        }

@@ -49,7 +49,7 @@ public class GraffittiEndpoints {
 //        "http://graffiti.timeout.com/v1/sites/uk-london/search?" +
 //            "locale=en-GB" +
 //            "&what=%s" +
-//            "&type=venue" +
+//            "&type=VENUE" +
 //            "&page_size=10" +
 //            "&page_number=%s"
 //    ),
@@ -61,7 +61,7 @@ public class GraffittiEndpoints {
 //            "&what=%s" +
 //            "&latitude=%s" +
 //            "&longitude=%s" +
-//            "&type=film" +
+//            "&type=FILM" +
 //            "&page_size=10" +
 //            "&page_number=%s"
 //    ),

@@ -1,8 +1,9 @@
 package com.timeout.chatbot.domain.entities;
 
+import java.io.Serializable;
 import java.util.List;
 
-public enum Category {
+public enum Category implements Serializable {
 
     RESTAURANTS(
         "node-7083",
@@ -44,7 +45,7 @@ public enum Category {
 //        "node-7073",
 //        "Film",
 //        "Films",
-//        "film (category)",
+//        "FILM (category)",
 //        "Genre",
 //        "Genres"
 //    );

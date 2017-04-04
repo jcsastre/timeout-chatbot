@@ -41,16 +41,16 @@ public class GenericTemplateWithSingleElementVenueBuilder {
 
         final GenericTemplate.Element.Builder elementBuilder =
             listBuilder.addElement(
-                venue.getName()
+                venue.name
             );
 
         final String cloudinaryUrl = cloudinaryUrlBuilder.buildImageUrl(venue);
         if (cloudinaryUrl != null) {
             elementBuilder.imageUrl(cloudinaryUrl);
         } else {
-            final List<Image> images = venue.getImages();
+            final List<Image> images = venue.images;
             if (images != null && images.size()>0) {
-                elementBuilder.imageUrl(images.get(0).getUrl());
+                elementBuilder.imageUrl(images.get(0).url);
             } else {
                 elementBuilder.imageUrl(timeoutConfiguration.getImageUrlPlacholder());
             }
@@ -85,7 +85,7 @@ public class GenericTemplateWithSingleElementVenueBuilder {
     ) {
         final Button.ListBuilder buttonsBuilder = Button.newListBuilder();
 
-        final String phone = venue.getPhone();
+        final String phone = venue.phone;
         if (phone != null) {
             String prefix = "+44";
             if (timeoutConfiguration.getSite().equals("es-barcelona")) {
@@ -98,7 +98,7 @@ public class GenericTemplateWithSingleElementVenueBuilder {
             ).toList();
         }
 
-        addCommonButtonsToButtonsListBuilder(buttonsBuilder, venue.getToWebsite());
+        addCommonButtonsToButtonsListBuilder(buttonsBuilder, venue.toWebsite);
 
         return buttonsBuilder.build();
     }

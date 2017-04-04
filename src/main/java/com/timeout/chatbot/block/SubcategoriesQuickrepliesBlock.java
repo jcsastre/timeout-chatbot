@@ -4,9 +4,8 @@ import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
 import com.github.messenger4j.send.QuickReply;
-import com.timeout.chatbot.domain.entities.Category;
-import com.timeout.chatbot.domain.entities.Subcategory;
-import com.timeout.chatbot.domain.payload.PayloadType;
+import com.timeout.chatbot.domain.payload.QuickreplyPayload;
+import com.timeout.chatbot.graffitti.domain.GraffittiSubcategory;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateSearchingBag;
 import org.json.JSONObject;
@@ -33,7 +32,7 @@ public class SubcategoriesQuickrepliesBlock {
     ) throws MessengerApiException, MessengerIOException {
 
         messengerSendClient.sendTextMessage(
-            session.getUser().getMessengerId(),
+            session.user.messengerId,
             "Please, select one",
             buildQuickReplies(
                 session,
@@ -51,30 +50,29 @@ public class SubcategoriesQuickrepliesBlock {
         builder.addTextQuickReply(
             "Cancel",
             new JSONObject()
-                .put("type", PayloadType.cancel)
+                .put("type", QuickreplyPayload.searching_set_cancel)
                 .toString()
         ).toList();
 
-        final SessionStateSearchingBag bag = session.getSessionStateSearchingBag();
-        final Category category = bag.getCategory();
+        final SessionStateSearchingBag bag = session.bagSearching;
 
         if (pageNumber == 1) {
             builder.addTextQuickReply(
-                "All " + category.getSubcategoriesNamePlural().toLowerCase(),
+                "All " + bag.graffittiCategory.subcategoriesNamePlural.toLowerCase(),
                 new JSONObject()
-                    .put("type", PayloadType.subcategory_any)
+                    .put("type", QuickreplyPayload.searching_set_subcategory_any)
                     .toString()
             ).toList();
         }
 
-        final List<Subcategory> subcategories = category.getSubcategories();
+        final List<GraffittiSubcategory> subcategories = bag.graffittiCategory.subcategories;
 
         final int count = subcategories.size();
 
         int initPos = (pageNumber - 1) * PAGE_SIZE;
         for (int i=initPos; i<initPos+PAGE_SIZE && i<count; i++) {
-            final Subcategory subcategory = subcategories.get(i);
-            String name = subcategory.getName();
+            final GraffittiSubcategory subcategory = subcategories.get(i);
+            String name = subcategory.name;
             if (name.length()>20) {
                 name = name.substring(0, 20);
             }
@@ -82,17 +80,17 @@ public class SubcategoriesQuickrepliesBlock {
             builder.addTextQuickReply(
                 name,
                 new JSONObject()
-                    .put("type", PayloadType.searching_SetSubcategory)
-                    .put("subcategory_id", subcategory.getGraffittiId())
+                    .put("type", QuickreplyPayload.searching_set_subcategory)
+                    .put("subcategory_id", subcategory.graffittiId)
                     .toString()
             ).toList();
         }
 
         if (pageNumber * PAGE_SIZE < count) {
             builder.addTextQuickReply(
-                "More " + category.getSubcategoriesNamePlural().toLowerCase(),
+                "More " + bag.graffittiCategory.subcategoriesNamePlural.toLowerCase(),
                 new JSONObject()
-                    .put("type", PayloadType.searching_ShowSubcategories)
+                    .put("type", QuickreplyPayload.searching_show_subcategories)
                     .put("pageNumber", pageNumber+1)
                     .toString()
             ).toList();

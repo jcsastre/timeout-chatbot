@@ -1,80 +1,31 @@
 package com.timeout.chatbot.domain.user;
 
-import com.timeout.chatbot.domain.FbUserProfile;
-import org.springframework.data.annotation.Id;
+import org.hibernate.annotations.Type;
 
-public class User {
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.io.Serializable;
+
+@Entity
+@Table(name = "`user`")
+public class User implements Serializable {
+
     @Id
     public String id;
 
     public String messengerId;
 
-    private FbUserProfile fbUserProfile;
-
+    @Embedded
+    @Type(type = "com.marvinformatics.hibernate.json.JsonUserType")
     public SuggestionsDone suggestionsDone;
-
-    public User(String messengerId) {
-        this.messengerId = messengerId;
-        this.suggestionsDone = new SuggestionsDone();
-    }
-
-    public String getMessengerId() {
-        return messengerId;
-    }
-
-    public FbUserProfile getFbUserProfile() {
-        return fbUserProfile;
-    }
-
-    public void setFbUserProfile(FbUserProfile fbUserProfile) {
-        this.fbUserProfile = fbUserProfile;
-    }
-
-    public SuggestionsDone getSuggestionsDone() {
-        return suggestionsDone;
-    }
 
     @Override
     public String toString() {
         return String.format(
-            "User[id=%s, messengerId=%s, fbUserProfile=%s, suggestionsDone=%s]",
-            id, messengerId, fbUserProfile.toString(), suggestionsDone.toString()
+            "User[id=%s, messengerId=%s, suggestionsDone=%s]",
+            id, messengerId, suggestionsDone
         );
-    }
-
-    public class SuggestionsDone {
-        private Boolean discover = false;
-
-        private Boolean restaurantsFineSearch = false;
-
-        public SuggestionsDone() {
-            this.restaurantsFineSearch = false;
-        }
-
-        @Override
-        public String toString() {
-            return String.format(
-                "SuggestionsDone[fbUserProfile=%s, discover=%s, restaurantsFineSearch=%s]",
-                fbUserProfile.toString(),
-                discover.toString(),
-                restaurantsFineSearch.toString()
-            );
-        }
-
-        public Boolean getRestaurantsFineSearch() {
-            return restaurantsFineSearch;
-        }
-
-        public void setRestaurantsFineSearch(Boolean restaurantsFineSearch) {
-            this.restaurantsFineSearch = restaurantsFineSearch;
-        }
-
-        public Boolean getDiscover() {
-            return discover;
-        }
-
-        public void setDiscover(Boolean discover) {
-            this.discover = discover;
-        }
     }
 }

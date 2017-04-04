@@ -26,12 +26,12 @@ public class BlockSubmittingReviewAskConfirmation {
     public void send(
         Session session
     ) throws MessengerApiException, MessengerIOException {
-        final SessionStateSubmittingReviewBag bag = session.getSessionStateSubmittingReviewBag();
+        final SessionStateSubmittingReviewBag bag = session.bagSubmitting;
 
         String msg = buildMessage(bag);
 
         messengerSendClient.sendTextMessage(
-            session.getUser().getMessengerId(),
+            session.user.messengerId,
             msg,
             QuickReply.newListBuilder()
                 .addTextQuickReply(
@@ -52,11 +52,11 @@ public class BlockSubmittingReviewAskConfirmation {
 
     private String buildMessage(SessionStateSubmittingReviewBag bag) {
         String msg =
-            "Your rating is: " + bag.getRate() + "\n" +
+            "Your rating is: " + bag.rate + "\n" +
             "\n";
-        if (bag.getComment() != null) {
+        if (bag.comment != null) {
             msg = msg +
-                "Your comment is: " + bag.getComment() + "\n" +
+                "Your comment is: " + bag.comment + "\n" +
                 "\n";
         }
         msg = msg + "Is that correct?";

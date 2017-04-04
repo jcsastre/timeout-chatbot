@@ -7,10 +7,8 @@ import com.github.messenger4j.send.templates.GenericTemplate;
 import com.timeout.chatbot.block.template.generic.element.GenericTemplateElementHelper;
 import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.messenger4j.SenderActionsHelper;
-import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,19 +32,13 @@ public class VenuesPageBlock {
     }
 
     public void send(
-        Session session,
+        String userMessengerId,
         List<PageItem> pageItems,
         String itemPluralName
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        Assert.notNull(session, "The session must not be null");
-        Assert.notNull(pageItems, "The pageItems must not be null");
-        Assert.isTrue(pageItems.size() >= 1, "The pageItems size must be greater than zero");
-        Assert.isTrue(pageItems.size() <= 10, "The pageItems size must be lesser than 10");
-        Assert.notNull(itemPluralName, "The itemPluralName must not be null");
-
         sendHorizontalCarroussel(
-            session.getUser().getMessengerId(),
+            userMessengerId,
             pageItems
         );
     }

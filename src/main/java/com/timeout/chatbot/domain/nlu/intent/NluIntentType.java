@@ -19,7 +19,7 @@ public enum NluIntentType {
     DISCOVER("discover"),
     SUGGESTIONS("search_suggestions"),
     FORGET_ME("forget_me"),
-    GET_STARTED("get_started");
+    GET_STARTED("_GetStarted");
 
     private final String action;
 

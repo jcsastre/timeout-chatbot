@@ -29,28 +29,12 @@ public class QuickReplyBuilderForCurrentSessionState {
     public List<QuickReply> build(
         Session session
     ) {
-        final SessionState sessionState = session.getSessionState();
+        final SessionState sessionState = session.state;
 
         switch (sessionState) {
 
-            case UNDEFINED:
-                return handleStateUndefined(session);
-
             case DISCOVER:
                 return handleDiscover(session);
-
-            case SEARCH_SUGGESTIONS:
-                return handleStateSearchSuggestions(session);
-
-            case MOST_LOVED:
-                return handleStateMostLoved(session);
-
-//            case WHATS_NEW:
-//                return handleWhatsNew(session);
-
-//            case SEARCHING:
-//                //TODO
-//                break;
 
             case ITEM:
                 return handleStateItem(session);
@@ -65,10 +49,6 @@ public class QuickReplyBuilderForCurrentSessionState {
         Session session
     ) {
         final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
-
-        quickReplyBuilderHelper.addMostLovedToList(listBuilder);
-        quickReplyBuilderHelper.addSearchSuggestionsToList(listBuilder);
-//        quickReplyBuilderHelper.addWhatsNewToList(listBuilder);
 
         return listBuilder.build();
     }
@@ -85,66 +65,19 @@ public class QuickReplyBuilderForCurrentSessionState {
 //        return listBuilder.build();
 //    }
 
-    public  List<QuickReply> handleStateMostLoved(
-        Session session
-    ) {
-        final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
-
-        quickReplyBuilderHelper.addDiscoverToList(listBuilder);
-        quickReplyBuilderHelper.addSearchSuggestionsToList(listBuilder);
-//        quickReplyBuilderHelper.addWhatsNewToList(listBuilder);
-
-        return listBuilder.build();
-    }
-
-    public  List<QuickReply> handleStateSearchSuggestions(
-        Session session
-    ) {
-        final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
-
-        quickReplyBuilderHelper.addDiscoverToList(listBuilder);
-        quickReplyBuilderHelper.addMostLovedToList(listBuilder);
-//        quickReplyBuilderHelper.addWhatsNewToList(listBuilder);
-
-        return listBuilder.build();
-    }
-
-    public  List<QuickReply> handleStateUndefined(
-        Session session
-    ) {
-        final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
-
-        quickReplyBuilderHelper.addDiscoverToList(listBuilder);
-        quickReplyBuilderHelper.addMostLovedToList(listBuilder);
-        quickReplyBuilderHelper.addSearchSuggestionsToList(listBuilder);
-//        quickReplyBuilderHelper.addWhatsNewToList(listBuilder);
-
-//        for (GraffittiFacetV5Node primaryCategoryPrimary : graffittiService.getFacetsV5PrimaryCategories()) {
-//            listBuilder.addTextQuickReply(
-//                primaryCategoryPrimary.getName(),
-//                new JSONObject()
-//                    .put("type", "utterance")
-//                    .put("utterance", primaryCategoryPrimary.getName())
-//                    .toString()
-//            ).toList();
-//        }
-
-        return listBuilder.build();
-    }
-
     public  List<QuickReply> handleStateItem(
         Session session
     ) {
-        final SessionStateItemBag itemBag = session.getSessionStateItemBag();
+        final SessionStateItemBag itemBag = session.bagItem;
 
-        final GraffittiType graffittiType = itemBag.getGraffittiType();
+        final GraffittiType graffittiType = itemBag.graffittiType;
 
         switch (graffittiType) {
 
             case VENUE:
                 return
                     quickReplyBuilderHelper.buildForSeeVenueItem(
-                        itemBag.getVenue()
+                        itemBag.venue
                     );
 
             case FILM:

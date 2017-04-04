@@ -17,7 +17,7 @@ public class IntentHelpHandler {
 
     public void handle(Session session) {
         messengerSendClientWrapper.sendTextMessage(
-            session.getUser().getMessengerId(),
+            session.user.messengerId,
             "Sorry, 'Help' is not implemented"
         );
     }

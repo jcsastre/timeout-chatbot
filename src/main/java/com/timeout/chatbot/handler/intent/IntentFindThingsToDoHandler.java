@@ -28,7 +28,7 @@ public class IntentFindThingsToDoHandler {
     ) throws MessengerApiException, MessengerIOException {
 
         messengerSendClient.sendTextMessage(
-            session.getUser().getMessengerId(),
+            session.user.messengerId,
             "Sorry, 'Things to do' is not implemented yet",
             quickReplyBuilderForCurrentSessionState.build(session)
         );

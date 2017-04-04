@@ -6,9 +6,8 @@ import com.github.messenger4j.receive.MessengerReceiveClient;
 import com.timeout.chatbot.configuration.MessengerConfiguration;
 import com.timeout.chatbot.handler.messenger.AttachmentMessageEventHandlerImpl;
 import com.timeout.chatbot.handler.messenger.PostbackEventHandlerImpl;
-import com.timeout.chatbot.handler.messenger.QuickReplyMessageEventHandlerImpl;
+import com.timeout.chatbot.handler.messenger.quickreply.QuickReplyMessageEventHandlerImpl;
 import com.timeout.chatbot.handler.messenger.TextMessageEventHandlerImpl;
-import com.timeout.chatbot.session.SessionPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,8 @@ import static com.github.messenger4j.MessengerPlatform.*;
 
 @RestController
 @RequestMapping("/messenger")
-public class
-MessengerController {
+public class MessengerController {
+
     private static final Logger logger = LoggerFactory.getLogger(MessengerController.class);
 
     private final MessengerReceiveClient receiveClient;
@@ -29,7 +28,6 @@ MessengerController {
     @Autowired
     public MessengerController(
         MessengerConfiguration messengerConfiguration,
-        SessionPool sessionPool,
         TextMessageEventHandlerImpl textMessageEventHandlerImpl,
         QuickReplyMessageEventHandlerImpl quickReplyMessageEventHandlerImpl,
         PostbackEventHandlerImpl postbackEventHandlerImpl,
@@ -88,13 +86,10 @@ MessengerController {
     ) {
         logger.info("Received Messenger Platform callback - payload: {} | signature: {}", payload, signature);
 
-//        return ResponseEntity.status(HttpStatus.OK).build();
-
         try {
             this.receiveClient.processCallbackPayload(payload, signature);
             logger.debug("Processed callback payload successfully");
             return ResponseEntity.status(HttpStatus.OK).build();
-
         } catch (MessengerVerificationException e) {
             logger.warn("Processing of callback payload failed: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();

@@ -1,15 +1,17 @@
 package com.timeout.chatbot.domain.payload;
 
 public enum PayloadType {
-    get_started,
 
-    searching_ItemMoreOptions,
-    searching_VenuesShowAreas,
-    searching_ShowSubcategories,
-    searching_VenuesSetNeighborhood,
-    searching_SetSubcategory,
-    searching_WhereEverywhere,
-    searching_SeeMore,
+    _Cancel,
+    _TemporalyDisabled,
+
+//    searching_ItemMoreOptions,
+//    searching_VenuesShowAreas,
+//    searching_ShowSubcategories,
+//    searching_VenuesSetNeighborhood,
+//    searching_SetSubcategory,
+//    searching_WhereEverywhere,
+//    searching_SeeMore,
 
     item_Back,
     item_Book,
@@ -17,18 +19,7 @@ public enum PayloadType {
     item_SubmitPhoto,
     item_SubmitReview,
 
-    help,
-    search_suggestions,
-    discover,
-    whats_new,
-    most_loved,
-    start_over,
 
-    cancel,
-
-    utterance,
-
-    get_a_summary,
 
     subcategory_any,
 
@@ -55,8 +46,5 @@ public enum PayloadType {
     booking_personal_info_ok,
     booking_personal_info_not_ok,
     booking_save_ok,
-    booking_save_not_ok,
-
-
-    temporaly_disabled;
+    booking_save_not_ok
 }

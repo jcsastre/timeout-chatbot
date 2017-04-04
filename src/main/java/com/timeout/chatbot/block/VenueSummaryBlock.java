@@ -109,7 +109,7 @@ public class VenueSummaryBlock {
         }
     }
 
-//    private void sendNowWhatAndQuickReplies(String userId, GraffittiVenueResponse venue) {
+//    private void sendNowWhatAndQuickReplies(String userId, GraffittiVenueResponse VENUE) {
 //        // Now what?
 //        // See at timeout
 //        // See at map
@@ -118,18 +118,18 @@ public class VenueSummaryBlock {
 //        messengerSendClientWrapper.sendTextMessage(
 //            userId,
 //            "GraffittiFacetV4Where you want to do now?",
-//            buildQuickReplies(venue)
+//            buildQuickReplies(VENUE)
 //        );
 //    }
 
 
 //    private List<QuickReply> buildQuickReplies(
-//        GraffittiVenueResponse venue
+//        GraffittiVenueResponse VENUE
 //    ) {
 //
 //        final QuickReply.ListBuilder builder = QuickReply.newListBuilder();
 //
-//        final GraffittiFacetV4Body body = venue.getBody();
+//        final GraffittiFacetV4Body body = VENUE.getBody();
 //        if (body != null) {
 //
 //            final String toWebsite = body.getToWebsite();

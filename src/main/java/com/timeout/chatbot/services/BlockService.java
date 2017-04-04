@@ -6,47 +6,48 @@ import com.timeout.chatbot.block.*;
 import com.timeout.chatbot.block.deprecated.MainOptionsBlock;
 import com.timeout.chatbot.block.deprecated.PhoneCallBlock;
 import com.timeout.chatbot.block.deprecated.WhatsNewBlock;
-import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewComment;
 import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewAskConfirmation;
+import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewComment;
 import com.timeout.chatbot.block.state.submittingreview.BlockSubmittingReviewRate;
 import com.timeout.chatbot.domain.Venue;
 import com.timeout.chatbot.domain.user.User;
-import com.timeout.chatbot.graffitti.response.search.page.PageItem;
 import com.timeout.chatbot.session.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.util.List;
 
 @Component
 public class BlockService {
 
     private final WelcomeFirstTimeBlock welcomeFirstTimeBlock;
+    private final WelcomeBackBlock welcomeBackBlock;
+    private final DiscoverBlock discoverBlock;
     private final VersionInfoBlock versionInfoBlock;
     private final SearchSuggestionsBlock searchSuggestionsBlock;
     private final MostLovedBlock mostLovedBlock;
     private final WhatsNewBlock whatsNewBlock;
-    private final WelcomeBackBlock welcomeBackBlock;
     private final MainOptionsBlock mainOptionsBlock;
     private final VenuesPageBlock venuesPageBlock;
     private final VenuesRemainingBlock venuesRemainingBlock;
-    private final SubcategoriesQuickrepliesBlock subcategoriesQuickrepliesBlock;
+    private final SubcategoriesQuickrepliesBlock subcategoriesQuickreplies;
     private final VenueSummaryBlock venueSummaryBlock;
     private final GeolocationAskBlock geolocationAskBlock;
     private final FilmsPageBlock filmsPageBlock;
-    private final SeeVenueItemBlock seeVenueItemBlock;
+    private final BlockItem blockItem;
     private final PhoneCallBlock phoneCallBlock;
-    private final BlockSubmittingReviewRate blockSubmittingReviewRate;
-    private final BlockSubmittingReviewComment blockSubmittingReviewComment;
-    private final BlockSubmittingReviewAskConfirmation blockSubmittingReviewAskConfirmation;
-    private final BlockError blockError;
+    private final BlockSubmittingReviewRate submittingReviewRate;
+    private final BlockSubmittingReviewComment submittingReviewComment;
+    private final BlockSubmittingReviewAskConfirmation submittingReviewAskConfirmation;
+    private final BlockAreas areas;
+    private final BlockError error;
+
 
     @Autowired
     public BlockService(
         WelcomeFirstTimeBlock welcomeFirstTimeBlock,
-        VersionInfoBlock versionInfoBlock,
+        DiscoverBlock discoverBlock, VersionInfoBlock versionInfoBlock,
         SearchSuggestionsBlock searchSuggestionsBlock,
         MostLovedBlock mostLovedBlock,
         WhatsNewBlock whatsNewBlock,
@@ -54,18 +55,19 @@ public class BlockService {
         MainOptionsBlock mainOptionsBlock,
         VenuesPageBlock venuesPageBlock,
         VenuesRemainingBlock venuesRemainingBlock,
-        SubcategoriesQuickrepliesBlock subcategoriesQuickrepliesBlock,
+        SubcategoriesQuickrepliesBlock subcategoriesQuickreplies,
         VenueSummaryBlock venueSummaryBlock,
         GeolocationAskBlock geolocationAskBlock,
         FilmsPageBlock filmsPageBlock,
-        SeeVenueItemBlock seeVenueItemBlock,
+        BlockItem blockItem,
         PhoneCallBlock phoneCallBlock,
-        BlockSubmittingReviewRate blockSubmittingReviewRate,
-        BlockSubmittingReviewComment blockSubmittingReviewComment,
-        BlockSubmittingReviewAskConfirmation blockSubmittingReviewAskConfirmation,
-        BlockError blockError
+        BlockSubmittingReviewRate submittingReviewRate,
+        BlockSubmittingReviewComment submittingReviewComment,
+        BlockSubmittingReviewAskConfirmation submittingReviewAskConfirmation,
+        BlockAreas areas, BlockError error
     ) {
         this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
+        this.discoverBlock = discoverBlock;
         this.versionInfoBlock = versionInfoBlock;
         this.searchSuggestionsBlock = searchSuggestionsBlock;
         this.mostLovedBlock = mostLovedBlock;
@@ -74,23 +76,35 @@ public class BlockService {
         this.mainOptionsBlock = mainOptionsBlock;
         this.venuesPageBlock = venuesPageBlock;
         this.venuesRemainingBlock = venuesRemainingBlock;
-        this.subcategoriesQuickrepliesBlock = subcategoriesQuickrepliesBlock;
+        this.subcategoriesQuickreplies = subcategoriesQuickreplies;
         this.venueSummaryBlock = venueSummaryBlock;
         this.geolocationAskBlock = geolocationAskBlock;
         this.filmsPageBlock = filmsPageBlock;
-        this.seeVenueItemBlock = seeVenueItemBlock;
+        this.blockItem = blockItem;
         this.phoneCallBlock = phoneCallBlock;
-        this.blockSubmittingReviewRate = blockSubmittingReviewRate;
-        this.blockSubmittingReviewComment = blockSubmittingReviewComment;
-        this.blockSubmittingReviewAskConfirmation = blockSubmittingReviewAskConfirmation;
-        this.blockError = blockError;
+        this.submittingReviewRate = submittingReviewRate;
+        this.submittingReviewComment = submittingReviewComment;
+        this.submittingReviewAskConfirmation = submittingReviewAskConfirmation;
+        this.areas = areas;
+        this.error = error;
     }
 
-    public void sendWelcomeFirstTimeBlock(
-        User user
-    ) throws MessengerApiException, MessengerIOException {
+    public WelcomeFirstTimeBlock getWelcomeFirstTimeBlock() { return welcomeFirstTimeBlock; }
 
-        welcomeFirstTimeBlock.send(user);
+    public DiscoverBlock getDiscoverBlock() { return discoverBlock; }
+
+    public WelcomeBackBlock getWelcomeBack() { return welcomeBackBlock; }
+
+    public BlockSubmittingReviewRate getSubmittingReviewRate() {
+        return submittingReviewRate;
+    }
+
+    public BlockSubmittingReviewComment getSubmittingReviewComment() {
+        return submittingReviewComment;
+    }
+
+    public BlockSubmittingReviewAskConfirmation getSubmittingReviewAskConfirmation() {
+        return  submittingReviewAskConfirmation;
     }
 
     public void sendVersionInfoBlock(
@@ -98,12 +112,6 @@ public class BlockService {
     ) throws MessengerApiException, MessengerIOException {
 
         versionInfoBlock.send(userId);
-    }
-
-    public void sendWelcomeBackBlock(
-        User user
-    ) {
-        welcomeBackBlock.send(user);
     }
 
     public void sendSuggestionsBlock(
@@ -143,26 +151,9 @@ public class BlockService {
         mainOptionsBlock.send(user);
     }
 
-    public void sendVenuesPageBlock(
-        Session session,
-        List<PageItem> pageItems,
-        String itemPluralName
-    ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
+    public VenuesPageBlock getVenuesPageBlock() { return  venuesPageBlock; }
 
-        venuesPageBlock.send(
-            session,
-            pageItems,
-            itemPluralName
-        );
-    }
-
-    public void sendVenuesRemainingBlock(
-        Session session
-    ) {
-        venuesRemainingBlock.send(
-            session
-        );
-    }
+    public VenuesRemainingBlock getVenuesRemainingBlock() { return venuesRemainingBlock; }
 
     public void sendVenueSummaryBlock(
         String userId,
@@ -171,13 +162,7 @@ public class BlockService {
         venueSummaryBlock.send(userId, restaurantId);
     }
 
-    public void sendSubcategoriesQuickrepliesBlock(
-        Session session,
-        Integer pageNumber
-    ) throws MessengerApiException, MessengerIOException {
-
-        subcategoriesQuickrepliesBlock.send(session, pageNumber);
-    }
+    public SubcategoriesQuickrepliesBlock getSubcategoriesQuickreplies() { return subcategoriesQuickreplies; }
 
     public void sendGeolocationAskBlock(
         String userId
@@ -190,7 +175,7 @@ public class BlockService {
         Venue venue
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
 
-        seeVenueItemBlock.send(userId, venue);
+        blockItem.send(userId, venue);
     }
 
     public void sendPhoneCallBlock(
@@ -206,30 +191,6 @@ public class BlockService {
         );
     }
 
-    public void sendSubmittingReviewRateBlock(
-        String userId
-    ) throws MessengerApiException, MessengerIOException {
-
-        blockSubmittingReviewRate.send(userId);
-    }
-
-    public void sendSubmittingReviewCommentBlock(
-        String userId
-    ) throws MessengerApiException, MessengerIOException {
-
-        blockSubmittingReviewComment.send(userId);
-    }
-
-    public void sendSubmittingReviewConfirmationBlock(
-        Session session
-    ) throws MessengerApiException, MessengerIOException {
-
-        blockSubmittingReviewAskConfirmation.send(session);
-    }
-
-    public void sendErrorBlock(
-        User user
-    ) {
-        blockError.send(user);
-    }
+    public BlockAreas getAreas() { return areas; }
+    public BlockError getError() { return error; }
 }

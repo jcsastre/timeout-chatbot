@@ -31,7 +31,7 @@ public class MainOptionsBlock {
         String msg = "GraffittiFacetV4Where are you looking for?";
 
         messengerSendClientWrapper.sendTextMessage(
-            user.getMessengerId(),
+            user.messengerId,
             msg,
             buildQuickReplies()
         );
@@ -45,7 +45,7 @@ public class MainOptionsBlock {
             listBuilder.addTextQuickReply(
                 primaryCategoryPrimary.getName(),
                 new JSONObject()
-                    .put("type", "utterance")
+                    .put("type", "_Utterance")
                     .put("utterance", primaryCategoryPrimary.getName())
                     .toString()
             ).toList();

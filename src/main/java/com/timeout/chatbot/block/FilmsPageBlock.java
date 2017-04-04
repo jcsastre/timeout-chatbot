@@ -37,7 +37,7 @@ public class FilmsPageBlock {
         @NotNull Integer pageNumber
     ) {
         messengerSendClientWrapper.sendTextMessage(
-            session.getUser().getMessengerId(),
+            session.user.messengerId,
             "Looking for Films within 500 meters."
         );
 
@@ -46,8 +46,8 @@ public class FilmsPageBlock {
         final GraffittiSearchResponse graffittiSearchResponse =
             restTemplate.getForObject(
                 FilmsEndpoint.buildGeolocatedUri(
-                    session.getSessionStateSearchingBag().getGeolocation().getLatitude(),
-                    session.getSessionStateSearchingBag().getGeolocation().getLongitude(),
+                    session.bagSearching.geolocation.latitude,
+                    session.bagSearching.geolocation.longitude,
                     pageNumber
                 ),
                 GraffittiSearchResponse.class
@@ -64,7 +64,7 @@ public class FilmsPageBlock {
         }
 
         sendHorizontalCarroussel(
-            session.getUser().getMessengerId(),
+            session.user.messengerId,
             graffitiFilmResponses
         );
     }

@@ -2,8 +2,7 @@ package com.timeout.chatbot.block;
 
 import com.github.messenger4j.send.buttons.Button;
 import com.github.messenger4j.send.templates.ButtonTemplate;
-import com.timeout.chatbot.domain.payload.PayloadType;
-import com.timeout.chatbot.domain.user.User;
+import com.timeout.chatbot.domain.payload.PostbackPayload;
 import com.timeout.chatbot.messenger4j.send.MessengerSendClientWrapper;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,17 +20,17 @@ public class BlockError {
     }
 
     public void send(
-        User user
+        String senderId
     ) {
         messengerSendClientWrapper.sendTemplate(
-            user.getMessengerId(),
+            senderId,
             ButtonTemplate.newBuilder(
                 "Sorry, an error occurred. You can start over if you like",
                 Button.newListBuilder()
                     .addPostbackButton(
                         "Start over",
                         new JSONObject()
-                            .put("type", PayloadType.start_over)
+                            .put("type", PostbackPayload.start_over)
                             .toString()
                     ).toList()
                     .build()

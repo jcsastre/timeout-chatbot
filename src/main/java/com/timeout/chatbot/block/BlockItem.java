@@ -14,14 +14,14 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 @Component
-public class SeeVenueItemBlock {
+public class BlockItem {
 
     private final MessengerSendClient messengerSendClient;
     private final GenericTemplateWithSingleElementVenueBuilder genericTemplateWithSingleElementVenueBuilder;
     private final QuickReplyBuilderHelper quickReplyBuilderHelper;
 
     @Autowired
-    public SeeVenueItemBlock(
+    public BlockItem(
         MessengerSendClient messengerSendClient,
         GenericTemplateWithSingleElementVenueBuilder genericTemplateWithSingleElementVenueBuilder,
         QuickReplyBuilderHelper quickReplyBuilderHelper
@@ -35,7 +35,6 @@ public class SeeVenueItemBlock {
         String userId,
         Venue venue
     ) throws MessengerApiException, MessengerIOException, IOException, InterruptedException {
-
 
         messengerSendClient.sendTemplate(
             Recipient.newBuilder().recipientId(userId).build(),
