@@ -8,7 +8,6 @@ import com.timeout.chatbot.block.state.booking.*;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.payload.PayloadType;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.state.BookingState;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -103,15 +102,15 @@ public class BookingStatePayloadHandler {
         JSONObject payload
     ) throws MessengerApiException, MessengerIOException {
 
-        if (session.bagBooking.state == BookingState.PEOPLE_COUNT) {
-
-            bookingStateHandler.setPeopleCountAndContinue(
-                session,
-                payload.getInt("count")
-            );
-        } else {
-            blockError.send(session.user.messengerId);
-        }
+//        if (session.bagBooking.state == BookingState.PEOPLE_COUNT) {
+//
+//            bookingStateHandler.setPeopleCountAndContinue(
+//                session,
+//                payload.getInt("count")
+//            );
+//        } else {
+//            blockError.send(session.user.messengerId);
+//        }
     }
 
     private void handleInfoOk(

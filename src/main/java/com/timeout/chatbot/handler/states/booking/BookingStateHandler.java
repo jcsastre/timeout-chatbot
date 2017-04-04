@@ -2,11 +2,9 @@ package com.timeout.chatbot.handler.states.booking;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
-import com.timeout.chatbot.block.state.booking.*;
 import com.timeout.chatbot.action.SeeItemAction;
+import com.timeout.chatbot.block.state.booking.*;
 import com.timeout.chatbot.session.Session;
-import com.timeout.chatbot.session.bag.SessionStateBookingBag;
-import com.timeout.chatbot.session.state.BookingState;
 import com.timeout.chatbot.session.state.SessionState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -53,10 +51,10 @@ public class BookingStateHandler {
         Integer peopleCount
     ) throws MessengerApiException, MessengerIOException {
 
-        final SessionStateBookingBag bag = session.bagBooking;
-        bag.peopleCount = peopleCount;
-        bag.state = BookingState.DATE;
-        blockBookingAskDate.send(session.user.messengerId);
+//        final SessionStateBookingBag bag = session.bagBooking;
+//        bag.peopleCount = peopleCount;
+//        bag.state = BookingState.DATE;
+//        blockBookingAskDate.send(session.user.messengerId);
     }
 
     void setFirstNameAndContinue(

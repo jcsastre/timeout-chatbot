@@ -7,9 +7,11 @@ import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.action.FindVenuesAction;
 import com.timeout.chatbot.action.SeeItemAction;
 import com.timeout.chatbot.action.StartOverAction;
+import com.timeout.chatbot.block.BlockError;
+import com.timeout.chatbot.block.DiscoverBlock;
+import com.timeout.chatbot.block.WelcomeFirstTimeBlock;
 import com.timeout.chatbot.domain.payload.PostbackPayload;
 import com.timeout.chatbot.graffitti.domain.GraffittiType;
-import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.SessionService;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateItemBag;
@@ -24,25 +26,31 @@ import java.io.IOException;
 public class PostbackEventHandlerAsyncImpl {
 
     private final SessionService sessionService;
-    private final BlockService blockService;
     private final FindVenuesAction findVenuesAction;
     private final SeeItemAction seeItemAction;
     private final StartOverAction startOverAction;
     private final MessengerSendClient msc;
+    private final BlockError blockError;
+    private final DiscoverBlock discoverBlock;
+    private final WelcomeFirstTimeBlock welcomeFirstTimeBlock;
 
     public PostbackEventHandlerAsyncImpl(
         SessionService sessionService,
-        BlockService blockService,
         FindVenuesAction findVenuesAction,
         SeeItemAction seeItemAction,
-        StartOverAction startOverAction, MessengerSendClient msc
-    ) {
+        StartOverAction startOverAction,
+        MessengerSendClient msc,
+        BlockError blockError,
+        DiscoverBlock discoverBlock,
+        WelcomeFirstTimeBlock welcomeFirstTimeBlock) {
         this.sessionService = sessionService;
-        this.blockService = blockService;
         this.findVenuesAction = findVenuesAction;
         this.seeItemAction = seeItemAction;
         this.startOverAction = startOverAction;
         this.msc = msc;
+        this.blockError = blockError;
+        this.discoverBlock = discoverBlock;
+        this.welcomeFirstTimeBlock = welcomeFirstTimeBlock;
     }
 
     @Async
@@ -67,7 +75,7 @@ public class PostbackEventHandlerAsyncImpl {
 
         } catch (InterruptedException | IOException | MessengerApiException | MessengerIOException e) {
             e.printStackTrace();
-            blockService.getError().send(session.user.messengerId);
+            blockError.send(session.user.messengerId);
         }
     }
 
@@ -104,7 +112,7 @@ public class PostbackEventHandlerAsyncImpl {
                 break;
 
             default:
-                blockService.getError().send(session.user.messengerId);
+                blockError.send(session.user.messengerId);
         }
     }
 
@@ -112,12 +120,12 @@ public class PostbackEventHandlerAsyncImpl {
         Session session
     ) throws MessengerApiException, MessengerIOException {
 
-        blockService.getWelcomeFirstTimeBlock().send(
+        welcomeFirstTimeBlock.send(
             session.user.messengerId,
             session.fbUserProfile
         );
 
-        blockService.getDiscoverBlock().send(
+        discoverBlock.send(
             session.user.messengerId
         );
 

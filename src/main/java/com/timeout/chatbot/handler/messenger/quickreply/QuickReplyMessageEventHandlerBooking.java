@@ -2,10 +2,8 @@ package com.timeout.chatbot.handler.messenger.quickreply;
 
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
-import com.timeout.chatbot.block.state.booking.BlockBookingAskDate;
-import com.timeout.chatbot.block.state.booking.BlockBookingAskPeopleCount;
-import com.timeout.chatbot.block.state.booking.BlockBookingAskTime;
-import com.timeout.chatbot.block.state.booking.BlockBookingProposal;
+import com.timeout.chatbot.block.DiscoverBlock;
+import com.timeout.chatbot.block.state.booking.*;
 import com.timeout.chatbot.domain.payload.QuickreplyPayload;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.state.BookingState;
@@ -17,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -27,18 +26,24 @@ public class QuickReplyMessageEventHandlerBooking {
     private final BlockBookingAskDate blockBookingAskDate;
     private final BlockBookingAskTime blockBookingAskTime;
     private final BlockBookingAskPeopleCount blockBookingAskPeopleCount;
+    private final BlockBookingSubmitted blockBookingSubmitted;
+    private final DiscoverBlock discoverBlock;
 
     @Autowired
     public QuickReplyMessageEventHandlerBooking(
         BlockBookingProposal blockBookingProposal,
         BlockBookingAskDate blockBookingAskDate,
         BlockBookingAskTime blockBookingAskTime,
-        BlockBookingAskPeopleCount blockBookingAskPeopleCount
+        BlockBookingAskPeopleCount blockBookingAskPeopleCount,
+        BlockBookingSubmitted blockBookingSubmitted,
+        DiscoverBlock discoverBlock
     ) {
         this.blockBookingProposal = blockBookingProposal;
         this.blockBookingAskDate = blockBookingAskDate;
         this.blockBookingAskTime = blockBookingAskTime;
         this.blockBookingAskPeopleCount = blockBookingAskPeopleCount;
+        this.blockBookingSubmitted = blockBookingSubmitted;
+        this.discoverBlock = discoverBlock;
     }
 
     public void handle(
@@ -71,21 +76,27 @@ public class QuickReplyMessageEventHandlerBooking {
 
             case booking_update_time:
                 handleUpdateTime(session, payload);
+                break;
 
             case booking_update_people:
                 handleUpdatePeople(session, payload);
+                break;
+
+            case booking_back_to_discover:
+                handleBackToDiscover(session);
                 break;
         }
     }
 
     private void handleProposalOk(
         Session session
-    ) {
+    ) throws UnsupportedEncodingException, MessengerIOException, MessengerApiException {
         if (
             session.state == SessionState.BOOKING &&
             session.bagBooking.state == BookingState.PROPOSAL
         ) {
-            //TODO
+
+            blockBookingSubmitted.send(session);
         } else {
             //TODO: ha pasado mucho tiempo, y los resultados pueden ser distintos, que hacer?
         }
@@ -189,6 +200,16 @@ public class QuickReplyMessageEventHandlerBooking {
             //TODO: ha pasado mucho tiempo, y los resultados pueden ser distintos, que hacer?
         }
     }
+
+    private void handleBackToDiscover(
+        Session session
+    ) throws MessengerApiException, MessengerIOException {
+
+        session.state = SessionState.DISCOVER;
+        discoverBlock.send(session.user.messengerId);
+    }
+
+
 
     private static final Logger logger = LoggerFactory.getLogger(QuickReplyMessageEventHandlerBooking.class);
 }

@@ -94,7 +94,7 @@ public class GenericTemplateElementHelper {
 
             case VENUE:
                 buttonsBuilder.addPostbackButton(
-                    "More options ...",
+                    "Select",
                     new JSONObject()
                         .put("type", PostbackPayload.item_see)
                         .put("item_type", pageItem.getType())

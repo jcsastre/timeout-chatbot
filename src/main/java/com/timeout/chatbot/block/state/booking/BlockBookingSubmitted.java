@@ -3,15 +3,19 @@ package com.timeout.chatbot.block.state.booking;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.send.MessengerSendClient;
+import com.github.messenger4j.send.QuickReply;
 import com.timeout.chatbot.block.cloudinary.CloudinaryUrlBuilder;
 import com.timeout.chatbot.domain.Venue;
+import com.timeout.chatbot.domain.payload.QuickreplyPayload;
 import com.timeout.chatbot.session.Session;
 import com.timeout.chatbot.session.bag.SessionStateBookingBag;
 import com.timeout.chatbot.session.bag.SessionStateItemBag;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 @Component
 public class BlockBookingSubmitted {
@@ -62,7 +66,22 @@ public class BlockBookingSubmitted {
 
         msc.sendImageAttachment(
             userMessengerId,
-            receiptImageUrl
+            receiptImageUrl,
+            buildQuickReplies()
         );
+    }
+
+    public List<QuickReply> buildQuickReplies() {
+
+        final QuickReply.ListBuilder listBuilder = QuickReply.newListBuilder();
+
+        listBuilder.addTextQuickReply(
+            "Continue",
+            new JSONObject()
+                .put("type", QuickreplyPayload.booking_back_to_discover)
+                .toString()
+        ).toList();
+
+        return listBuilder.build();
     }
 }

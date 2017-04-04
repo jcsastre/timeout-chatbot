@@ -3,10 +3,8 @@ package com.timeout.chatbot.handler.messenger;
 import com.github.messenger4j.exceptions.MessengerApiException;
 import com.github.messenger4j.exceptions.MessengerIOException;
 import com.github.messenger4j.receive.events.TextMessageEvent;
-import com.github.messenger4j.send.MessengerSendClient;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.handler.states.DefaultTextHandler;
-import com.timeout.chatbot.handler.states.booking.BookingStateTextHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStateTextHandler;
 import com.timeout.chatbot.services.BlockService;
 import com.timeout.chatbot.services.SessionService;
@@ -24,21 +22,18 @@ public class TextMessageEventHandlerAsyncImpl {
     private final BlockService blockService;
     private final DefaultTextHandler defaultTextHandler;
     private final SubmittingReviewStateTextHandler submittingReviewStateTextHandler;
-    private final BookingStateTextHandler bookingStateTextHandler;
 
     @Autowired
     public TextMessageEventHandlerAsyncImpl(
         SessionService sessionService,
         BlockService blockService,
         DefaultTextHandler defaultTextHandler,
-        SubmittingReviewStateTextHandler submittingReviewStateTextHandler,
-        BookingStateTextHandler bookingStateTextHandler
+        SubmittingReviewStateTextHandler submittingReviewStateTextHandler
     ) {
         this.sessionService = sessionService;
         this.blockService = blockService;
         this.defaultTextHandler = defaultTextHandler;
         this.submittingReviewStateTextHandler = submittingReviewStateTextHandler;
-        this.bookingStateTextHandler = bookingStateTextHandler;
     }
 
     @Async
@@ -71,10 +66,6 @@ public class TextMessageEventHandlerAsyncImpl {
 
             case SUBMITTING_REVIEW:
                 submittingReviewStateTextHandler.handle(text, session);
-                break;
-
-            case BOOKING:
-                bookingStateTextHandler.handle(text, session);
                 break;
 
             default:

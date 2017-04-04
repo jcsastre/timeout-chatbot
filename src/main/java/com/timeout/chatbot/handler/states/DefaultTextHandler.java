@@ -7,7 +7,6 @@ import com.timeout.chatbot.action.FindVenuesAction;
 import com.timeout.chatbot.block.quickreply.QuickReplyBuilderForCurrentSessionState;
 import com.timeout.chatbot.domain.nlu.NluException;
 import com.timeout.chatbot.domain.nlu.NluResult;
-import com.timeout.chatbot.handler.states.booking.BookingStateTextHandler;
 import com.timeout.chatbot.handler.states.submittingreview.SubmittingReviewStateTextHandler;
 import com.timeout.chatbot.services.NluService;
 import com.timeout.chatbot.session.Session;
@@ -24,7 +23,6 @@ public class DefaultTextHandler {
     private final MessengerSendClient msc;
     private final QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState;
     private final SubmittingReviewStateTextHandler submittingReviewStateTextHandler;
-    private final BookingStateTextHandler bookingStateTextHandler;
     private final FindVenuesAction findVenuesAction;
 
     @Autowired
@@ -33,13 +31,12 @@ public class DefaultTextHandler {
         MessengerSendClient msc,
         QuickReplyBuilderForCurrentSessionState quickReplyBuilderForCurrentSessionState,
         SubmittingReviewStateTextHandler submittingReviewStateTextHandler,
-        BookingStateTextHandler bookingStateTextHandler,
-        FindVenuesAction findVenuesAction) {
+        FindVenuesAction findVenuesAction
+    ) {
         this.nluService = nluService;
         this.msc = msc;
         this.quickReplyBuilderForCurrentSessionState = quickReplyBuilderForCurrentSessionState;
         this.submittingReviewStateTextHandler = submittingReviewStateTextHandler;
-        this.bookingStateTextHandler = bookingStateTextHandler;
         this.findVenuesAction = findVenuesAction;
     }
 
@@ -54,10 +51,6 @@ public class DefaultTextHandler {
 
             case SUBMITTING_REVIEW:
                 submittingReviewStateTextHandler.handle(text, session);
-                break;
-
-            case BOOKING:
-                bookingStateTextHandler.handle(text, session);
                 break;
 
             default:

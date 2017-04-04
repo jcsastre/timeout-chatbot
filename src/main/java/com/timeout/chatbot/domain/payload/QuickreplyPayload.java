@@ -23,5 +23,6 @@ public enum QuickreplyPayload {
     booking_ask_people,
     booking_update_day,
     booking_update_time,
-    booking_update_people
+    booking_update_people,
+    booking_back_to_discover
 }
